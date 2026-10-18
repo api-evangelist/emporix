@@ -1,0 +1,384 @@
+openapi: 3.2.0
+info:
+  title: Emporix Tax calculation API
+  version: ''
+  contact:
+    email: documentation@emporix.com
+  description: 'Operations tagged Tax calculation across 2 of this provider''s published API definitions: emporix-tax-service-openapi.yml, emporix-tax-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Tax calculation
+paths:
+  /tax/{tenant}/taxes/calculation-commands:
+    parameters:
+    - $ref: '#/components/parameters/trait_tenant'
+    put:
+      summary: Calculating net and gross values for prices
+      operationId: PUT-tax-calculate-commands
+      responses:
+        '200':
+          description: The request was successful. The calculated value is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/taxCalculationResponse'
+              examples:
+                Net to gross:
+                  value:
+                    commandUuid: cb0d5627-08ef-4de9-a676-a254a4311261
+                    input:
+                      targetCountry: DE
+                      targetTaxClass: STANDARD
+                      includesTax: false
+                      price: 1.59
+                    output:
+                      netPrice: 1.59
+                      grossPrice: 1.8921
+                      targetTaxRate: 19
+                Gross to net:
+                  value:
+                    commandUuid: 4c489943-0af3-43e7-ad97-b0475b66ff27
+                    input:
+                      targetLocation:
+                        countryCode: DE
+                      targetTaxClass: STANDARD
+                      includesTax: true
+                      price: 1.59
+                    output:
+                      netPrice: 1.3361344538
+                      grossPrice: 1.59
+                      sourceTaxRate: 19
+                Gross in one country to gross in another country:
+                  value:
+                    commandUuid: d72bf92b-7840-4f53-a222-fd1d807fd6aa
+                    input:
+                      sourceLocation:
+                        countryCode: DE
+                      sourceTaxClass: STANDARD
+                      targetLocation:
+                        countryCode: PL
+                      targetTaxClass: STANDARD
+                      includesTax: true
+                      price: 1.59
+                    output:
+                      netPrice: 1.3361344538
+                      grossPrice: 1.643445378174
+                      sourceTaxRate: 19
+                      targetTaxRate: 23
+        '400':
+          $ref: '#/components/responses/BadRequest_400'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/taxCalculationRequest'
+            examples:
+              Net to gross:
+                value:
+                  input:
+                    targetLocation:
+                      countryCode: DE
+                    targetTaxClass: STANDARD
+                    includesTax: false
+                    price: 1.59
+              Gross to net:
+                value:
+                  input:
+                    targetLocation:
+                      countryCode: DE
+                    targetTaxClass: STANDARD
+                    includesTax: true
+                    price: 1.59
+              Gross in one country to gross in another country:
+                value:
+                  input:
+                    sourceLocation:
+                      countryCode: DE
+                    sourceTaxClass: STANDARD
+                    targetLocation:
+                      countryCode: PL
+                    targetTaxClass: STANDARD
+                    includesTax: true
+                    price: 1.59
+      description: 'Supports the following calculation operations for prices:
+
+        * Net to gross values
+
+        * Gross to net values
+
+        * Gross values in one country to gross values in another country
+
+
+        **Note**: This endpoint calculates net and gross values for prices based on existing tax configurations. To use this endpoint, you need to create tax configurations first.
+
+        * To calculate gross values beetween countries, you need to create tax configurations for both countries.'
+      tags:
+      - Tax calculation
+      security:
+      - OAuth2: []
+    servers:
+    - url: https://api.emporix.io
+components:
+  responses:
+    Unauthorized_401:
+      description: Given request is unauthorized - the authorization token is invalid or has expired. Details will be provided in the response payload.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            UnauthorizedExample:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            AccessTokenExpiredExample:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+    BadRequest_400:
+      description: Request was syntactically incorrect. Details will be provided in the response payload.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            BadRequestExample:
+              $ref: '#/components/examples/BadRequest400_AmbiguousTenant'
+    Forbidden_403:
+      description: Given authorization scopes are not sufficient and do not match scopes required by the endpoint.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            ForbiddenExample:
+              value:
+                code: 403
+                status: Forbidden
+                message: The access to the requested resource has been forbidden by the server.
+    InternalServiceError_500:
+      description: Internal Service Error occurred.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            InternalServiceErrorExample:
+              value:
+                code: 500
+                status: Internal Service Error
+                message: A server-side exception occurred that prevented the system from correctly returning the result.
+  schemas:
+    taxCalculationRequest:
+      title: ''
+      type: object
+      description: ''
+      properties:
+        commandUuid:
+          type: string
+          description: 'Calculation command''s unique identifier.
+
+
+            **Note**: This field is optional. If not specified, the `commandUuid` will be generated by the server.'
+        input:
+          type: object
+          description: Information based on which the price will be calculated.
+          required:
+          - targetTaxClass
+          - targetLocation
+          - price
+          properties:
+            sourceLocation:
+              description: 'Country for which the provided price is originally defined.
+
+
+                **Note**: This field is only mandatory if the `includesTax` field is set to `true`.'
+              allOf:
+              - $ref: '#/components/schemas/location'
+            sourceTaxClass:
+              type: string
+              description: 'Tax class originally applied to the provided price.
+
+
+                **Note**: This field is only mandatory if the `includesTax` field is set to `true`.'
+            targetLocation:
+              description: Country for which the price should be calculated.
+              allOf:
+              - $ref: '#/components/schemas/location'
+            targetTaxClass:
+              type: string
+              description: Tax class that should be applied when calculating the price.
+            includesTax:
+              type: boolean
+              description: 'Flag indicating whether the value provided in the `price` field is expressed as net or gross.
+
+
+                | Value | Description |
+
+                | --- | --- |
+
+                | `true` | Prices are expressed as gross values. |
+
+                | `false` | Prices are expressed as net values. |'
+            price:
+              type: number
+              description: 'Original price value.
+
+
+                This field should contain by a number where the cent part is separated by a dot sign - such as `12.99`.
+
+
+                **Note**: The cent part of the price is not limited to two digits. You can specify the price with any precision.'
+      required:
+      - input
+    taxCalculationResponse:
+      title: ''
+      type: object
+      description: ''
+      properties:
+        commandUuid:
+          type: string
+          description: Calculation command's unique identifier.
+        input:
+          type: object
+          description: Information based on which the price was calculated.
+          properties:
+            sourceLocation:
+              description: Country for which the provided price was originally defined.
+              allOf:
+              - $ref: '#/components/schemas/location'
+            sourceTaxClass:
+              type: string
+              description: Tax class originally applied to the provided price.
+            targetLocation:
+              description: Country for which the price was calculated.
+              allOf:
+              - $ref: '#/components/schemas/location'
+            targetTaxClass:
+              type: string
+              description: Tax class that was applied when calculating the price.
+            includesTax:
+              type: boolean
+              description: 'Flag indicating whether the price provided in the request was expressed as net or gross.
+
+
+                | Value | Description |
+
+                | --- | --- |
+
+                | `true` | Prices will be expressed as gross values. |
+
+                | `false` | Prices will be expressed as net values. |'
+            price:
+              type: number
+              description: Original price value.
+        output:
+          type: object
+          description: Calculation results.
+          properties:
+            netPrice:
+              type: number
+              description: Calculated net price.
+            grossPrice:
+              type: number
+              description: Calculated gross price.
+            sourceTaxRate:
+              type: number
+              description: Tax rate originally applied to the provided price.
+            targetTaxRate:
+              type: number
+              description: Tax rate that was applied when calculating the price.
+    errorMessage:
+      title: error
+      description: Schema for API specified errors.
+      type: object
+      properties:
+        taxConfigurationCode:
+          type: string
+          description: link to documentation to investigate further and finding support
+        code:
+          description: classification of the error type, lower case with underscore eg validation_failure
+          type: integer
+        status:
+          description: original HTTP error code, should be consistent with the response HTTP code
+          type: string
+        message:
+          description: descriptive error message for debugging
+          type: string
+        details:
+          description: list of problems causing this error
+          type: array
+          items:
+            title: errorDetail
+            description: schema for specific error cause
+            type: string
+      required:
+      - code
+      - status
+    location:
+      type: object
+      description: ''
+      properties:
+        countryCode:
+          type: string
+          description: Code of the country for which the tax classes are specified, as defined in the Country Service.
+      required:
+      - countryCode
+  examples:
+    BadRequest400_AmbiguousTenant:
+      value:
+        code: 400
+        status: Bad Request
+        message: Tenant in the header is not matching with the one provided in the URI.
+  parameters:
+    trait_tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: The tenant should always be written in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            tax.tax_manage: Needed to create, update, and delete tax configurations.
+            tax.tax_read: Needed to retrieve tax configurations.
+x-refined-from:
+- emporix-tax-service-openapi.yml
+- emporix-tax-service-openapi.yml

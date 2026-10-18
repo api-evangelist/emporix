@@ -1,0 +1,60 @@
+overlay: 1.0.0
+info:
+  title: Emporix Product Service overlay
+  version: 1.0.0
+  x-generated: '2026-10-18'
+  x-method: generated
+  x-source: mcp/emporix-tool-crosswalk.yml
+extends: ../openapi/_original/emporix-product-service-openapi.yml
+actions:
+- target: $.info
+  update:
+    x-provider: Emporix
+    x-documentation: https://developer.emporix.io/api-references
+    x-llms-txt: https://developer.emporix.io/llms.txt
+    x-docs-mcp: https://developer.emporix.io/~gitbook/mcp
+  description: Provider metadata and agent-facing entry points.
+- target: $.paths['/product/{tenant}/products/search'].post
+  update:
+    x-mcp-tools:
+    - frontend/get-products
+    - product/get-products
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: POST-product-search-products backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/product/{tenant}/products'].get
+  update:
+    x-mcp-tools:
+    - frontend/get-products
+    - product/get-products
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: GET-product-list-products backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/product/{tenant}/products'].post
+  update:
+    x-mcp-tools:
+    - product/upsert-product
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: POST-product-create-product backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/product/{tenant}/products/{productId}'].get
+  update:
+    x-mcp-tools:
+    - product/get-product
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: GET-product-retrieve-product backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/product/{tenant}/products/{productId}'].put
+  update:
+    x-mcp-tools:
+    - product/upsert-product
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: PUT-product-update-product backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/product/{tenant}/products/{productId}'].patch
+  update:
+    x-mcp-tools:
+    - product/partial-update-product
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: PATCH-product-update-product backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/product/{tenant}/products/{productId}'].delete
+  update:
+    x-mcp-tools:
+    - product/delete-product
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: DELETE-product-remove-product backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).

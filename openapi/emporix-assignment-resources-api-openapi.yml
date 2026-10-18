@@ -1,0 +1,599 @@
+openapi: 3.2.0
+info:
+  title: Emporix Assignment Resources API
+  version: ''
+  contact:
+    email: documentation@emporix.com
+  description: 'Operations tagged Assignment Resources across 2 of this provider''s published API definitions: emporix-category-tree-openapi.yml, emporix-category-tree-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2:
+  - category.category_manage
+  - category.category_read_unpublished
+  - category.category_publish
+  - category.category_unpublish
+tags:
+- name: Assignment Resources
+  description: Manage Assignments
+paths:
+  /category/{tenant}/assignments/references/{referenceId}:
+    get:
+      tags:
+      - Assignment Resources
+      summary: Retrieving a list of categories for which the reference id is assigned
+      description: 'Retrieves a list of categories for which the reference id is assigned.
+
+        ***
+
+        ### Additional scope info
+
+
+        * `category.category_read_unpublished` - Only required if the category has not been published.'
+      operationId: GET-category-tree-list-categories-by-reference-id
+      parameters:
+      - name: tenant
+        in: path
+        description: 'Your Emporix tenant name.
+
+
+          **Note**: The tenant should always be written in lowercase.
+
+          '
+        required: true
+        schema:
+          type: string
+          example: saasdev2
+      - name: referenceId
+        in: path
+        description: 'Assignment reference unique identifier, for example: productId.
+
+          '
+        required: true
+        deprecated: false
+        allowEmptyValue: false
+        allowReserved: false
+        schema:
+          type: string
+          example: '44170435'
+        example: ''
+      - name: showUnpublished
+        in: query
+        description: 'If set to `true`, resources assigned to not published categories are retrieved as well.
+
+          Possible values:
+
+          * `true`
+
+          * `false`
+
+
+          **Note**: To get unpublished categories you need to have `category.category_read_unpublished` scope.
+
+          '
+        schema:
+          type: boolean
+          example: true
+          default: false
+      - name: expandSupercategoriesIds
+        in: query
+        description: 'If set to `true`, each entry is enriched with `supercategoriesIds` field containing supercategories ids.
+
+          Possible values:
+
+          * `true`
+
+          * `false`
+
+          '
+        schema:
+          type: boolean
+          example: true
+          default: false
+      - name: pageNumber
+        in: query
+        description: 'Page number to be retrieved. The number of the first page is 1.
+
+          **Note**: If the `pageNumber` parameter is passed, size of the pages must be specified in the `pageSize` parameter.
+
+          '
+        schema:
+          minimum: 1
+          type: integer
+          format: int32
+          default: 1
+      - name: pageSize
+        in: query
+        description: 'Number of export files to be retrieved per page.
+
+          '
+        schema:
+          minimum: 1
+          type: integer
+          format: int32
+          default: 60
+      - name: sort
+        in: query
+        description: 'List of properties used to sort the results, separated by commas. This list is validated against available fields. Sorting by deprecated field is forbidden.
+
+          Possible values:
+
+          * `{fieldName}:ASC`
+
+          * `{fieldName}:DESC`
+
+          * `{fieldName}:ASC,{fieldName2}:DESC`
+
+          * `{internationalizedFieldName.en}:ASC` - contains localized field name and extension. Valid only if Accepted-language header contains this extension and it is supported by configuration of the tenant. If all language are accepted (Accept-language=''*'') then extension must exist in tenant configuration. No other sorting are allowed for this specific internationalized field.
+
+          * `{internationalizedFieldName}:ASC` - contains only localized field name. Extension will be deducted based on Accept-language header. If all language are accepted (Accept-language=''*'') then extension is taken from tenant configuration and is equal to default language. In other case the language with highest priority is taken. No other sorting are allowed for this specific localized field.
+
+          '
+        schema:
+          type: string
+          example: '{fieldName}:ASC,{fieldName2}:DESC'
+      - name: Accept-Language
+        in: header
+        description: 'List of properties used to project and sort the results, separated by commas.
+
+          Possible values:
+
+          * `*` - each internationalized field is returned as a map containing all available (specified in tenant configuration) translations. This is also the default behaviour if the header is not set.
+
+          * `en`, `en,de` - each internationalized field is returned as a map containing translation specified by a header value. If translation is not supported by tenant configuration then exception is thrown. First language is the one with highest priority.
+
+          * `fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5` - each internationalized field is returned as a map containing translation specified by a header value. If translation is not supported by tenant configuration then exception is thrown.
+
+          '
+        schema:
+          type: string
+          example: '`*`, `en`, `en,de,fr`, `en-EN`, `fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7`'
+          default: '*'
+      - name: X-Total-Count
+        in: header
+        description: 'The header value indicates if the total count of entities should be returned.
+
+          Possible values:
+
+          * `true`
+
+          * `false`
+
+          Default value: `false`
+
+          '
+        schema:
+          type: boolean
+          example: true
+          default: false
+      responses:
+        '200':
+          description: The request was successful. The categories for given reference id are returned.
+          headers:
+            X-Total-Count:
+              description: Total amount of categories to which resource id is assigned.
+              schema:
+                type: integer
+                format: int32
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+        '400':
+          description: Request was syntactically incorrect. Details will be provided in the response payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    code: 400
+                    status: Bad Request
+                    message: Accept-Language validation failed.
+                    details:
+                    - 'Following languages are not supported: ''ru'''
+        '403':
+          description: Permission denied due to insufficient rights. This may happen when request does not contain sufficient scopes for given query values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    code: 403
+                    status: Forbidden
+                    message: You need a scope for this action.
+                    details:
+                    - 'Required scope(s): category.category_read_unpublished'
+        '404':
+          description: Reference with the specified reference id does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    resourceId: 084bcaf6-66b8-4ddd-9489-65c5f6449e94
+                    code: 404
+                    status: Not Found
+                    message: Error while getting categories for assignment reference
+                    details:
+                    - Categories for assignment reference with id '084bcaf6-66b8-4ddd-9489-65c5f6449e94' not found
+      security:
+      - OAuth2:
+        - category.category_read_unpublished
+    delete:
+      tags:
+      - Assignment Resources
+      summary: Deleting all assignments by referenceId
+      description: Deletes all assignments for a specified referenceId, e.g. all assignments for a given productId.
+      operationId: DELETE-category-tree-remove-all-assignments
+      parameters:
+      - name: tenant
+        in: path
+        description: 'Your Emporix tenant name.
+
+
+          **Note**: The tenant should always be written in lowercase.
+
+          '
+        required: true
+        schema:
+          type: string
+          example: saasdev2
+      - name: referenceId
+        in: path
+        description: 'Assignment reference unique identifier, for example: productId.
+
+          '
+        required: true
+        deprecated: false
+        allowEmptyValue: false
+        allowReserved: false
+        schema:
+          type: string
+          example: '1256792345'
+        example: ''
+      responses:
+        '204':
+          description: Assignments has been successfully deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Object'
+        '403':
+          description: Permission denied due to insufficient rights. This may happen when request does not contain sufficient scopes for given query values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    code: 403
+                    status: Forbidden
+                    message: You need a scope for this action.
+                    details:
+                    - 'Required scope(s): category.category_manage'
+        '404':
+          description: Assignment with given referenceId does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    resourceId: 3123asf-123faewr-124fa
+                    code: 404
+                    status: Not Found
+                    message: Error while getting category reference
+                    details:
+                    - 'Reference id 3123asf-123faewr-124fa not found '
+      security:
+      - OAuth2:
+        - category.category_manage
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    Category:
+      type: object
+      description: Definition of category
+      properties:
+        id:
+          type: string
+          description: Category unique identifier generated when the category is created.
+        parentId:
+          type:
+          - string
+          - 'null'
+          description: Unique identifier of the parent category. No parentId in the body indicates that this is a root category.
+        localizedName:
+          type: object
+          additionalProperties:
+            type: string
+          description: Localized category name as a map of translations.
+        localizedDescription:
+          type: object
+          additionalProperties:
+            type: string
+          description: Localized category description as a map of translations.
+        localizedSlug:
+          type: object
+          additionalProperties:
+            type: string
+          description: Provides localized category name or code without diacritics for the URL.
+        name:
+          type: string
+          description: Category name in tenant default language.
+          deprecated: true
+        description:
+          type: string
+          description: Description in tenant default language.
+          deprecated: true
+        code:
+          type: string
+          description: Unique category identifier defined by the tenant.
+        ecn:
+          type: array
+          description: List of external category numbers (ECNs) unique for each category.
+          items:
+            type: string
+        validity:
+          $ref: '#/components/schemas/Validity'
+          description: Category validity.
+        position:
+          type: integer
+          format: int32
+          description: Category position relative to sibling categories.
+        published:
+          type: boolean
+          description: Flag indicating whether the category has been published.
+        supercategoriesIds:
+          type: array
+          description: IDs of supercategories.
+          items:
+            type: string
+        ownClassificationMixins:
+          type: array
+          description: List of classification mixins defined for this category.
+          items:
+            $ref: '#/components/schemas/OwnClassificationMixin'
+        classificationMixins:
+          type: array
+          description: Combined list of classification mixins from parent categories and category's ownClassification mixins.
+          items:
+            $ref: '#/components/schemas/ClassificationMixin'
+        mixins:
+          type: object
+          description: Custom category attributes included directly in the mixins object.
+        metadata:
+          $ref: '#/components/schemas/MetadataResponse'
+        media:
+          type: array
+          items:
+            $ref: '#/components/schemas/Media'
+      required:
+      - id
+      - localizedName
+      - position
+      - published
+      - metadata
+      - media
+      example:
+        id: 0310086a-d9d6-44bc-9199-ee4381bc9e4e
+        parentId: 4901acd1-5dad-4c7b-b4f0-32d0198621fc
+        localizedName:
+          en: CORDLESS IMPACT DRIVERS
+        name: CORDLESS IMPACT DRIVERS
+        validity: {}
+        position: 0
+        published: true
+        metadata:
+          version: 0
+          createdAt: '2024-08-28T14:00:17.353Z'
+          modifiedAt: '2024-08-28T14:00:17.353Z'
+    ErrorResponse:
+      required:
+      - code
+      - details
+      - message
+      - status
+      type: object
+      properties:
+        resourceId:
+          type:
+          - string
+          - 'null'
+        code:
+          type: integer
+          format: int32
+        status:
+          type: string
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            type: string
+    MetadataUpdate:
+      allOf:
+      - type: object
+        properties:
+          version:
+            type: integer
+            description: Category version.
+            format: int32
+      - $ref: '#/components/schemas/MetadataCreate'
+    Validity:
+      type: object
+      properties:
+        from:
+          type: string
+          description: Date and time from which the category is valid compliant with the ISO 8601 standard.
+          format: date-time
+        to:
+          type: string
+          description: Date and time to which the category is valid compliant with the ISO 8601 standard.
+          format: date-time
+    Object:
+      type: object
+    OwnClassificationMixin:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the mixin.
+          pattern: ^[a-zA-Z0-9_]\S*$
+        schemaUrl:
+          type: string
+          description: URL of the mixin schema.
+          pattern: ^https?://[^\s/$.?#].\S*$
+        required:
+          type: boolean
+          description: Indicates whether the mixin is required.
+      required:
+      - name
+      - schemaUrl
+      description: Classification mixin defined for a given category.
+    Media:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of media.
+        url:
+          type: string
+          description: Url of the file.
+        contentType:
+          type: string
+          description: Content type of the file.
+        metadata:
+          allOf:
+          - $ref: '#/components/schemas/MediaMetadataQueryDocument'
+          - description: Metadata of the file.
+        customAttributes:
+          allOf:
+          - $ref: '#/components/schemas/MediaCustomAttributesQueryDocument'
+          - description: Custom attributes of the file.
+        mixins:
+          type: object
+          description: Custom media attributes.
+      example:
+        id: 345-12345
+        url: https://emporix.com/platform/saas-ag/media/v2/public/files/12345678
+        contentType: image/jpeg
+        metadata:
+          createdAt: '2022-12-06T06:54:36.834Z'
+        customAttributes:
+          id: 345-54353
+          height: 1234
+          width: 1024
+          sizeKB: 5
+          type: jpg
+          name: ima.jpg
+        mixins:
+          mediaCustomAttributes:
+            altText: Cordless impact driver
+    MediaMetadataQueryDocument:
+      type: object
+      properties:
+        createdAt:
+          type: string
+          description: Timestamp indicating when the media was created compliant with the ISO 8601 standard.
+          format: date-time
+        modifiedAt:
+          type: string
+          description: Timestamp indicating when the media was modified compliant with the ISO 8601 standard.
+          format: date-time
+      description: Metadata of the file.
+    MediaCustomAttributesQueryDocument:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of media's custom attributes.
+        height:
+          type: integer
+          description: Height of the media image.
+          format: int32
+        width:
+          type: integer
+          description: Width of the media image.
+          format: int32
+        sizeKB:
+          type: number
+          description: Size in kilobytes of the file.
+          format: double
+        type:
+          type: string
+          description: Mime type of the file.
+        name:
+          type: string
+          description: Name of the file.
+      description: Custom attributes of the file.
+    MetadataCreate:
+      type: object
+      properties:
+        mixins:
+          type: object
+          additionalProperties:
+            type: string
+          description: A key-value map, where key is a mixin name and value is a link to the mixin schema.
+    MetadataResponse:
+      allOf:
+      - type: object
+        properties:
+          createdAt:
+            type: string
+            description: Timestamp indicating when the category was created compliant with the ISO 8601 standard.
+            format: date-time
+          modifiedAt:
+            type: string
+            description: Timestamp indicating when the category was last modified compliant with the ISO 8601 standard.
+            format: date-time
+      - $ref: '#/components/schemas/MetadataUpdate'
+    ClassificationMixin:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the mixin
+          pattern: ^[a-zA-Z0-9_]\S*$
+        mixinPath:
+          type: string
+          description: The mixins path that should be used when defining attributes on a product. It's built based on the following pattern - `class_<sourceCategory.code>_<name>`.
+        schemaUrl:
+          type: string
+          description: URL of the mixin schema.
+          pattern: ^https?://[^\s/$.?#].\S*$
+        required:
+          type: boolean
+          description: Indicates whether the mixin is required.
+        sourceCategoryId:
+          type: string
+          description: Unique identifier of the category from which the mixin comes from. Can be this category ID or one of the parent categories IDs.
+      required:
+      - name
+      - schemaUrl
+      description: Classification mixin with source category information.
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            category.category_manage: Manage a category
+            category.category_read_unpublished: Read unpublished categories
+            category.category_publish: Publish a category
+            category.category_unpublish: Unpublish a category
+x-refined-from:
+- emporix-category-tree-openapi.yml
+- emporix-category-tree-openapi.yml

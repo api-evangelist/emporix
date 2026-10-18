@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-quote-create-from-cart-request-schema.json",
+  "title": "QuoteCreateFromCartRequest",
+  "description": "This schema includes the attributes that are required to be provided when creating a quote from the cart.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-quote-openapi.yml#/components/schemas/QuoteCreateFromCartRequest",
+  "type": "object",
+  "required": [
+    "cartId"
+  ],
+  "properties": {
+    "cartId": {
+      "type": "string",
+      "description": "ID of the cart from which the new quote should be created."
+    },
+    "employeeId": {
+      "type": "string",
+      "description": "The employee ID for which the new quote is created. By default, the employeeId is taken from the configuration, but in case the 'employeeId' property is provided, the employeeId from the request is assigned to the quote. Only user of EMPLOYEE type can assign employee to the quote."
+    },
+    "billingAddressId": {
+      "type": "string",
+      "description": "For B2B customers, it represents the location which should specify the billing address. For B2C customers, it represents identifier of customer's billing address."
+    },
+    "shippingAddressId": {
+      "type": "string",
+      "description": "For B2B customers, it represents the location which should specify the shipping address. For B2C customers, it represents identifier of customer's shipping address."
+    },
+    "shipping": {
+      "$ref": "#/$defs/QuoteShipping"
+    },
+    "customerReference": {
+      "type": "string",
+      "description": "Customer-provided reference stored on the quote."
+    },
+    "customerComment": {
+      "type": "string",
+      "description": "Customer-provided comment stored on the quote."
+    }
+  },
+  "$defs": {
+    "QuoteShipping": {
+      "type": "object",
+      "description": "The shipping cost of the quote.",
+      "properties": {
+        "value": {
+          "type": "number",
+          "description": "Net value of the shipping cost."
+        },
+        "methodId": {
+          "type": "string",
+          "description": "Shipping method's unique identifier."
+        },
+        "zoneId": {
+          "type": "string",
+          "description": "Shipping zone identifier."
+        },
+        "shippingTaxCode": {
+          "type": "string",
+          "description": "Tax code of the shipping method."
+        }
+      }
+    }
+  }
+}

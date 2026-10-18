@@ -1,0 +1,550 @@
+openapi: 3.2.0
+info:
+  title: Emporix Token API
+  version: ''
+  contact:
+    name: Emporix
+    url: https://emporix.com
+    email: documentation@emporix.com
+  description: 'Operations tagged Token across 2 of this provider''s published API definitions: emporix-ai-service-openapi.yml, emporix-ai-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+tags:
+- name: Token
+  description: Manage Tokens
+paths:
+  /ai-service/{tenant}/agentic/tokens:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    - $ref: '#/components/parameters/qParam'
+    - $ref: '#/components/parameters/pageSize'
+    - $ref: '#/components/parameters/pageNumber'
+    - $ref: '#/components/parameters/sort'
+    - $ref: '#/components/parameters/fields'
+    - $ref: '#/components/parameters/header_xTotalCount'
+    get:
+      summary: Listing tokens
+      operationId: GET-ai-list-tokens
+      responses:
+        '200':
+          description: List of tokens.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TokenResponse'
+              examples:
+                Tokens Response:
+                  $ref: '#/components/examples/TokensResponse'
+        '400':
+          $ref: '#/components/responses/400_resp_common'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_resp_common'
+      description: Retrieves tokens based on the provided query.
+      security:
+      - OAuth2:
+        - ai.agent_read
+      tags:
+      - Token
+    servers:
+    - url: https://api.emporix.io
+  /ai-service/{tenant}/agentic/tokens/search:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    post:
+      parameters:
+      - $ref: '#/components/parameters/pageSize'
+      - $ref: '#/components/parameters/pageNumber'
+      - $ref: '#/components/parameters/sort'
+      - $ref: '#/components/parameters/fields'
+      - $ref: '#/components/parameters/header_xTotalCount'
+      summary: Searching tokens
+      operationId: POST-ai-search-tokens
+      responses:
+        '200':
+          description: List of tokens.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TokenResponse'
+              examples:
+                Tokens Response:
+                  $ref: '#/components/examples/TokensResponse'
+        '400':
+          $ref: '#/components/responses/400_resp_common'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_resp_common'
+      requestBody:
+        $ref: '#/components/requestBodies/QParamSearchBody'
+      description: Searches for tokens based on the provided query.
+      security:
+      - OAuth2:
+        - ai.agent_read
+      tags:
+      - Token
+    servers:
+    - url: https://api.emporix.io
+  /ai-service/{tenant}/agentic/tokens/{tokenId}:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    - schema:
+        type: string
+      name: tokenId
+      in: path
+      required: true
+    get:
+      parameters:
+      - $ref: '#/components/parameters/fields'
+      summary: Retrieving token by ID
+      operationId: GET-ai-retrieve-token
+      responses:
+        '200':
+          description: A single token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+              examples:
+                Tool Response:
+                  $ref: '#/components/examples/TokenResponse'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_resp_common'
+        '404':
+          $ref: '#/components/responses/404_resp_common'
+      description: Retrieves the token by given ID.
+      security:
+      - OAuth2:
+        - ai.agent_read
+      tags:
+      - Token
+    put:
+      summary: Upserting token
+      operationId: PUT-ai-upsert-token
+      responses:
+        '201':
+          description: ID of created token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdResponse'
+              examples:
+                Id Of Created Tool:
+                  $ref: '#/components/examples/IdResponse'
+        '204':
+          description: The resource has been successfully updated.
+        '400':
+          $ref: '#/components/responses/400_resp_common'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_resp_common'
+        '404':
+          $ref: '#/components/responses/404_resp_common'
+        '409':
+          $ref: '#/components/responses/409_resp_common'
+      description: 'Updates or creates a specified token by replacing all of its existing data with data from the request body.
+
+        If the `metadata.version` is provided then optimistic locking is enabled and version must match the version in the database.
+
+
+        **Important**: The `value` field cannot be updated, once created token cannot change `value` field.'
+      security:
+      - OAuth2:
+        - ai.agent_manage
+      requestBody:
+        $ref: '#/components/requestBodies/tokenUpsertBody'
+      tags:
+      - Token
+    patch:
+      summary: Partially updating token
+      operationId: PATCH-ai-update-token
+      responses:
+        '204':
+          description: No Content
+        '400':
+          $ref: '#/components/responses/400_resp_common'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_resp_common'
+        '404':
+          $ref: '#/components/responses/404_resp_common'
+      description: 'Partially updates a single token document with given information.
+
+        Single update may contain multiple partial updates in the form of an array. It contains the allowed operations list:
+
+        - `add` (adding an item to the items list)
+
+        - `remove` (removing an item from the items list)
+
+        - `replace` (replacing an item with given ID with new definition)
+
+
+        **Important**: The `value` field cannot be updated, once created token cannot change `value` field.'
+      security:
+      - OAuth2:
+        - ai.agent_manage
+      requestBody:
+        $ref: '#/components/requestBodies/tokenPatchBody'
+      tags:
+      - Token
+    delete:
+      parameters:
+      - $ref: '#/components/parameters/force'
+      summary: Deleting token
+      operationId: DELETE-ai-delete-token
+      responses:
+        '204':
+          description: Given token has been deleted.
+        '400':
+          $ref: '#/components/responses/400_resp_common'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_resp_common'
+      description: 'Deletes tokens by given ID.
+
+
+        ***Important***: If a token is being used by an agent or by an MCP server, then delete operation is not possible without `force` flag set to `true`.'
+      security:
+      - OAuth2:
+        - ai.agent_manage
+      tags:
+      - Token
+    servers:
+    - url: https://api.emporix.io
+components:
+  parameters:
+    qParam:
+      in: query
+      name: q
+      description: 'A standard query parameter is used to search for specific values.
+
+
+        See: [Standard Practices - Query parameter](https://developer.emporix.io/api-documentation/standard-practices/q-param)
+
+        '
+      schema:
+        type: string
+    sort:
+      schema:
+        type: string
+      in: query
+      name: sort
+      description: List of properties used to sort the results, separated by colons.
+    header_xTotalCount:
+      schema:
+        type: boolean
+      in: header
+      name: X-Total-Count
+      description: Flag indicating whether the total number of retrieved results should be returned.
+    path_tenant:
+      name: tenant
+      in: path
+      required: true
+      schema:
+        type: string
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: The tenant name should always be provided in lowercase.
+
+        '
+    force:
+      schema:
+        type: boolean
+      in: query
+      name: force
+      example: false
+      description: Allows you to remove a given entity even if it is used as a dependency in other entries. In that case, the removed entity is unassigned from other entries.
+    pageNumber:
+      schema:
+        type: string
+      in: query
+      name: pageNumber
+      description: The page number to be retrieved. The size of the pages should be specified by the `pageSize` parameter.
+    pageSize:
+      schema:
+        type: string
+      in: query
+      name: pageSize
+      description: The number of documents to be retrieved per page.
+    fields:
+      schema:
+        type: string
+      in: query
+      name: fields
+      description: Fields to be returned in the response.
+  schemas:
+    ErrorMessage:
+      type: object
+      properties:
+        code:
+          type: integer
+        type:
+          type: string
+        message:
+          type: string
+        moreInfo:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              type:
+                type: string
+              message:
+                type: string
+              moreInfo:
+                type: string
+      description: ''
+    QParamSearchBody:
+      type: object
+      properties:
+        q:
+          type: string
+          description: "A standard query parameter is used to search for specific values. \n\nSee: [Standard Practices - Query parameter](https://developer.emporix.io/api-documentation/standard-practices/q-param)\n"
+    IdResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Identifier of the resource.
+    ErrorMessageFault:
+      type: object
+      properties:
+        fault:
+          type: object
+          properties:
+            faultstring:
+              type: string
+            detail:
+              type: object
+              properties:
+                errorcode:
+                  type: string
+    BaseToken:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the token.
+      required:
+      - name
+    TokenResponse:
+      allOf:
+      - $ref: '#/components/schemas/BaseToken'
+      - type: object
+        properties:
+          id:
+            type: string
+            description: Unique identifier of the token.
+          metadata:
+            $ref: '#/components/schemas/MetadataResponse'
+    TokenRequest:
+      allOf:
+      - $ref: '#/components/schemas/BaseToken'
+      - type: object
+        properties:
+          value:
+            type: string
+            description: Value which represents token.
+          metadata:
+            $ref: '#/components/schemas/MetadataRequest'
+        required:
+        - value
+    PatchRequest:
+      type: array
+      description: Partial update operation list.
+      items:
+        type: object
+        properties:
+          op:
+            anyOf:
+            - enum:
+              - ADD
+              - REMOVE
+              - REPLACE
+            type: string
+          path:
+            type: string
+            example: /name
+          value:
+            anyOf:
+            - type: string
+              description: Value of the string type.
+            - type: object
+              description: Any part of the details object.
+        required:
+        - op
+        - path
+    MetadataResponse:
+      allOf:
+      - $ref: '#/components/schemas/MetadataRequest'
+      - type: object
+        properties:
+          createdAt:
+            description: 'Date and time when the object was created. The value is approved as an ISO-8601 representation of an Instant. For example: `2022-04-30T13:18:02.379Z`'
+            type: string
+          modifiedAt:
+            description: 'Date and time when the object was last modified. The value is approved as an ISO-8601 representation of an Instant. For example: `2022-04-30T13:18:02.379Z`'
+            type: string
+        required:
+        - version
+        - createdAt
+        - modifiedAt
+    MetadataRequest:
+      type: object
+      properties:
+        version:
+          minimum: 1
+          type: integer
+          description: Version of the object. The version is required during the update operation because of the optimistic locking mechanism.
+      required:
+      - version
+  examples:
+    TokenResponse:
+      value:
+        id: openai
+        name: OpenAi Token
+    TokenRequest:
+      value:
+        name: OpenAI Token
+        value: sk-secret
+    IdResponse:
+      value:
+        id: a81bc81b-dead-4e5d-abff-90865d1e13b1
+    TokensResponse:
+      value:
+      - id: emporix--openai
+        name: Emporix OpenAi Token
+      - id: openai
+        name: OpenAi Token
+  requestBodies:
+    tokenPatchBody:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PatchRequest'
+          examples:
+            Change name:
+              value:
+              - op: REPLACE
+                path: /name
+                value: New OpenAI Token
+    QParamSearchBody:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/QParamSearchBody'
+          examples:
+            Search Request:
+              value:
+                q: name:~Complaint
+    tokenUpsertBody:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TokenRequest'
+          examples:
+            Create OpenAI Token:
+              $ref: '#/components/examples/TokenRequest'
+  responses:
+    409_resp_common:
+      description: "There are three possible reasons:\n 1. Resource with given code already exists, please choose unique code for your resource\n 2. Optimistic locking failed. If user sends metadata/version attribute which is outdated (someone else updated resource in the time user was performing his changes). User should retrieve the latest product data and retry the request.\n 3. Optimistic locking failed. User did not provide metadata/version attribute in update request, but someone else updated product while it was internally handled by product service. Resending the same request can result in successful update, but the update can override recently persisted changes.\n"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Resource conflict:
+              value:
+                code: 409
+                status: Conflict
+                message: Conflict - a resource with given code or id has already exist.
+    403_resp_common:
+      description: Authorization scopes of the access token are not sufficient and do not match the scopes required by the endpoint.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Access forbidden:
+              value:
+                code: 403
+                status: Forbidden
+                message: The access to the requested resource has been forbidden by the server.
+    400_resp_common:
+      description: The request was syntactically incorrect.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Code must not be null:
+              value:
+                code: 400
+                status: Bad Request
+                message: Validation problem with request body.
+                details:
+                - message: code must not be null nor blank
+    401_resp_common:
+      description: The authorization token is invalid or has expired.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessageFault'
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            Access token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+    404_resp_common:
+      description: Example response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Resource not found:
+              value:
+                resourceId: 628cd20c6e8b2432b6346ca6
+                code: 404
+                status: Not Found
+                message: The resource with id 628cd20c6e8b2432b6346ca6 has not been found.
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes:
+            ai.text_manage: Needed to execute actions related to the text generation.
+            ai.completion_manage: Needed to execute actions related to the AI completions.
+            ai.agentexecution_manage: Needed to execute agentic chat.
+            ai.agentexecution_manage_own: Needed to execute agentic chat by customers.
+            ai.agent_read: Needed to read AI agents.
+            ai.agent_manage: Needed to manage AI agents.
+          tokenUrl: https://api.emporix.io/oauth/token
+x-refined-from:
+- emporix-ai-service-openapi.yml
+- emporix-ai-service-openapi.yml

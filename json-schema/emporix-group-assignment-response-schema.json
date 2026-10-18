@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-group-assignment-response-schema.json",
+  "title": "GroupAssignmentResponse",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-customer-segments-openapi.yml#/components/schemas/GroupAssignmentResponse",
+  "type": "object",
+  "properties": {
+    "segmentId": {
+      "type": "string",
+      "description": "Unique identifier of the customer segment."
+    },
+    "group": {
+      "$ref": "#/$defs/Group"
+    },
+    "mixins": {
+      "type": "object",
+      "description": "A key-value map of additional attributes.",
+      "additionalProperties": true
+    },
+    "metadata": {
+      "$ref": "#/$defs/MetadataResponse"
+    }
+  },
+  "$defs": {
+    "Group": {
+      "type": "object",
+      "description": "IAM group assigned to the customer segment.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier of an existing IAM group, generated when the group is created through the IAM Service."
+        },
+        "name": {
+          "type": "object",
+          "description": "Localized name of the group.",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "MetadataCreate": {
+      "type": "object",
+      "properties": {
+        "mixins": {
+          "type": "object",
+          "description": "A key-value map, where key is a mixin name and value is a link to the mixin schema.",
+          "additionalProperties": true
+        }
+      }
+    },
+    "MetadataResponse": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "createdAt": {
+              "description": "The creation date.",
+              "type": "string",
+              "format": "date-time"
+            },
+            "modifiedAt": {
+              "description": "The modification date.",
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        },
+        {
+          "$ref": "#/$defs/MetadataUpdate"
+        }
+      ]
+    },
+    "MetadataUpdate": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "integer",
+              "description": "The document version number."
+            }
+          }
+        },
+        {
+          "$ref": "#/$defs/MetadataCreate"
+        }
+      ]
+    }
+  }
+}

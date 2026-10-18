@@ -1,0 +1,872 @@
+openapi: 3.2.0
+info:
+  title: Emporix Category Tree Resources API
+  version: ''
+  contact:
+    email: documentation@emporix.com
+  description: 'Operations tagged Category Tree Resources across 2 of this provider''s published API definitions: emporix-category-tree-openapi.yml, emporix-category-tree-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2:
+  - category.category_manage
+  - category.category_read_unpublished
+  - category.category_publish
+  - category.category_unpublish
+tags:
+- name: Category Tree Resources
+  description: Read Category Trees
+paths:
+  /category/{tenant}/categories/categoryTree:
+    parameters:
+    - name: tenant
+      in: path
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: The tenant should always be written in lowercase.
+
+        '
+      required: true
+      schema:
+        maxLength: 16
+        minLength: 3
+        pattern: ^[a-z][a-z0-9]{2,15}$
+        type: string
+    get:
+      tags:
+      - Category Tree Resources
+      summary: Retrieving a category tree
+      description: 'Retrieves a category tree.
+
+
+        **Note**: By default, only published categories are retrieved.'
+      operationId: GET-category-tree-retrieve-category-tree-deprecated
+      responses:
+        '200':
+          description: The request was successful. The category tree is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryDeprecated'
+              examples:
+                example:
+                  value:
+                    id: '38118'
+                    name: ProductRoot
+                    code: productroot
+                    description: '{"type":"ProductRoot"}'
+                    position: 55555
+                    published: true
+                    subcategories:
+                    - id: '38119'
+                      parentId: '38118'
+                      name: Fruits & Vegetables
+                      code: fruits-&-vegetables
+                      description: Fresh and tasty fruits and vegetables.
+                      position: 0
+                      published: true
+                      subcategories:
+                      - id: '38120'
+                        parentId: '38119'
+                        name: Fruit
+                        code: fruit
+                        position: 0
+                        published: true
+        '400':
+          description: Request was syntactically incorrect. Details will be provided in the response payload.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+              examples:
+                example:
+                  value:
+                    status: 400
+                    message: There are validation problems, see details section for more information
+                    type: validation_violation
+                    details:
+                    - field: tenant
+                      message: size must be between 1 and 16
+                      type: invalid_header
+        '401':
+          description: 'Given request is unauthorized - the authorization token is invalid or has expired.
+
+
+            Details will be provided in the response payload.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+              examples:
+                expired:
+                  value:
+                    fault:
+                      faultstring: Access Token expired
+                      detail:
+                        errorcode: keymanagement.service.access_token_expired
+                invalid:
+                  value:
+                    fault:
+                      faultstring: Invalid access token
+                      detail:
+                        errorcode: oauth.v2.InvalidAccessToken
+        '403':
+          description: Given authorization scopes are not sufficient and do not match scopes required by the endpoint.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+              examples:
+                insufficient_permissions:
+                  value:
+                    type: insufficient_permissions
+                    status: 403
+                    message: User not authorized.
+        '404':
+          description: The requested resource does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+              examples:
+                example:
+                  value:
+                    type: resource_not_found
+                    status: 404
+                    message: HTTP 404 Not Found
+        '500':
+          description: Some server-side error occurred. Details will be provided in the response payload.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+              examples:
+                example:
+                  value:
+                    type: internal_service_error
+                    status: 500
+                    message: Something went wrong while processing the request. The error has been logged under code 20210819_095055_677_vwurkrl.
+      deprecated: true
+      security: []
+    servers:
+    - url: https://api.emporix.io
+  /category/{tenant}/category-trees:
+    get:
+      tags:
+      - Category Tree Resources
+      summary: Retrieving the category trees
+      description: 'Retrieves the category trees.
+
+        ***
+
+
+        ### Additional scope info
+
+
+        * `category.category_read_unpublished` - Only required if the response should contain unpublished categories.'
+      operationId: GET-category-tree-retrieve-category-tree
+      parameters:
+      - name: tenant
+        in: path
+        description: 'Your Emporix tenant name.
+
+
+          **Note**: The tenant should always be written in lowercase.
+
+          '
+        required: true
+        schema:
+          type: string
+          example: saasdev2
+      - name: showUnpublished
+        in: query
+        description: 'If set to `true`, not published categories are retrieved as well.
+
+          Possible values:
+
+          * `true`
+
+          * `false`
+
+
+          **Note**: To get unpublished categories you need to have `category.category_read_unpublished` scope.
+
+          '
+        schema:
+          type: boolean
+          example: true
+          default: false
+      - name: categoryIds
+        in: query
+        description: 'List of category IDs. If provided, the response returns only the category trees that include at least one of the specified categories.
+
+          '
+        schema:
+          type: array
+          items:
+            type: string
+          example:
+          - d9e4fdd0-e671-4968-9ba1-a5533a7f3b02
+          - 0f1056cc-b4b4-488b-9f95-245f6b542702
+      responses:
+        '200':
+          description: The request was successful. The category tree is returned.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CategoryTree'
+        '403':
+          description: Permission denied due to insufficient rights. This may happen when request does not contain sufficient scopes for given query values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    code: 403
+                    status: Forbidden
+                    message: You need a scope for this action.
+                    details:
+                    - 'Required scope(s): category.category_read_unpublished'
+      security:
+      - OAuth2:
+        - category.category_read_unpublished
+    servers:
+    - url: https://api.emporix.io
+  /category/{tenant}/category-trees/search:
+    post:
+      tags:
+      - Category Tree Resources
+      summary: Searching for category trees
+      description: 'Searches for category trees.
+
+        ***
+
+        ### Additional scope info
+
+
+        * `category.category_read_unpublished` - Only required if the response should contain unpublished categories.'
+      operationId: POST-category-tree-search-category-trees
+      parameters:
+      - name: tenant
+        in: path
+        description: 'Your Emporix tenant name.
+
+
+          **Note**: The tenant should always be written in lowercase.
+
+          '
+        required: true
+        schema:
+          type: string
+          example: saasdev2
+      - name: showUnpublished
+        in: query
+        description: 'If set to `true`, not published categories are retrieved as well.
+
+          Possible values:
+
+          * `true`
+
+          * `false`
+
+
+          **Note**: To get unpublished categories you need to have `category.category_read_unpublished` scope.
+
+          '
+        schema:
+          type: boolean
+          example: true
+          default: false
+      - name: Content-Language
+        in: header
+        description: 'The Content-Language request HTTP header defines language(s) that can be used in the payload. Request body may contain only translations that are matching the languages specified in the header. Possible values:
+
+          * `*` - request body may contain translations for all languages specified in tenant configuration. This is also the default behaviour if the header is not set.
+
+          * `en`, `en,de`, `fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5` - request body may contain only translations for languages specified in the header (if they are available in tenant configuration).
+
+
+          **Note**: For category requests, localized fields (such as `localizedName`, `localizedDescription`, `localizedSlug`) must always be provided as maps of language codes to values, regardless of the Content-Language header value.
+
+          '
+        schema:
+          type: string
+          example: '`*`, `en`, `en,de,fr`, `en-EN`, `fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7`'
+          default: '*'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryTreeSearchRequest'
+        required: true
+      responses:
+        '200':
+          description: The request was successful. The category tree is returned.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CategoryTree'
+        '400':
+          description: Request was syntactically incorrect. Details will be provided in the response payload.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    message: There is a validation error. Please check the details.
+                    code: 400
+                    status: Bad Request
+                    details:
+                    - field: searchCategoryTree.searchRequest.categoryIds
+                      message: 'searchRequest.categoryIds: must not be null'
+      security:
+      - OAuth2:
+        - category.category_read_unpublished
+    servers:
+    - url: https://api.emporix.io
+  /category/{tenant}/category-trees/{categoryId}:
+    get:
+      tags:
+      - Category Tree Resources
+      summary: Retrieving a specific category tree
+      description: 'Retrieves a category tree for a root category with a given id.
+
+
+        **Note:** You can retrieve a category tree only for a root category. It is not possible to get a category tree for a category that lies lower in the hierarchy.
+
+        ***
+
+
+        ### Additional scope info
+
+
+        * `category.category_read_unpublished` - Only required if the response should contain unpublished categories.'
+      operationId: GET-category-tree-retrieve-category-tree-by-id
+      parameters:
+      - name: tenant
+        in: path
+        description: 'Your Emporix tenant name.
+
+
+          **Note**: The tenant should always be written in lowercase.
+
+          '
+        required: true
+        schema:
+          type: string
+          example: saasdev2
+      - name: categoryId
+        in: path
+        description: 'A unique identifier of a root category, generated when the category is created.
+
+          '
+        required: true
+        deprecated: false
+        allowEmptyValue: false
+        allowReserved: false
+        schema:
+          type: string
+          example: 12a24ba108-e6fd-4139-b831-5ac5fded6d34
+        example: ''
+      - name: showUnpublished
+        in: query
+        description: 'If set to `true`, not published categories are retrieved as well.
+
+          Possible values:
+
+          * `true`
+
+          * `false`
+
+
+          **Note**: To get unpublished categories you need to have `category.category_read_unpublished` scope.
+
+          '
+        schema:
+          type: boolean
+          example: true
+          default: false
+      - name: Content-Language
+        in: header
+        description: 'The Content-Language request HTTP header defines language(s) that can be used in the payload. Request body may contain only translations that are matching the languages specified in the header. Possible values:
+
+          * `*` - request body may contain translations for all languages specified in tenant configuration. This is also the default behaviour if the header is not set.
+
+          * `en`, `en,de`, `fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5` - request body may contain only translations for languages specified in the header (if they are available in tenant configuration).
+
+
+          **Note**: For category requests, localized fields (such as `localizedName`, `localizedDescription`, `localizedSlug`) must always be provided as maps of language codes to values, regardless of the Content-Language header value.
+
+          '
+        schema:
+          type: string
+          example: '`*`, `en`, `en,de,fr`, `en-EN`, `fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7`'
+          default: '*'
+      responses:
+        '200':
+          description: The request was successful. The category tree is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryTree'
+        '403':
+          description: Permission denied due to insufficient rights. This may happen when request does not contain sufficient scopes for given query values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    code: 403
+                    status: Forbidden
+                    message: You need a scope for this action.
+                    details:
+                    - 'Required scope(s): category.category_read_unpublished'
+        '404':
+          description: Category tree with specified id does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    resourceId: 084bcaf6-66b8-4ddd-9489-65c5f6449e94
+                    code: 404
+                    status: Not Found
+                    message: Error while getting category tree
+                    details:
+                    - Category tree for category with id '084bcaf6-66b8-4ddd-9489-65c5f6449e94' not found
+      security:
+      - OAuth2:
+        - category.category_read_unpublished
+    servers:
+    - url: https://api.emporix.io
+  /category/{tenant}/category-trees/{rootCategoryId}/rebuild:
+    post:
+      tags:
+      - Category Tree Resources
+      summary: Rebuilding a category tree
+      description: 'Rebuilds the category tree for a given root category and returns the result.
+
+        ***
+
+
+        ### Additional scope info
+
+
+        * `category.category_read_unpublished` - Only required if the response should contain unpublished categories.'
+      operationId: POST-category-tree-rebuild-category-tree
+      parameters:
+      - name: tenant
+        in: path
+        description: 'Your Emporix tenant name.
+
+
+          **Note**: The tenant should always be written in lowercase.
+
+          '
+        required: true
+        schema:
+          type: string
+          example: saasdev2
+      - name: rootCategoryId
+        in: path
+        description: 'A unique identifier of the root category whose tree should be rebuilt.
+
+          '
+        required: true
+        schema:
+          type: string
+          example: 12a24ba108-e6fd-4139-b831-5ac5fded6d34
+      - name: showUnpublished
+        in: query
+        description: 'If set to `true`, unpublished categories are included in the returned tree.
+
+          Possible values:
+
+          * `true`
+
+          * `false`
+
+
+          **Note**: To get unpublished categories you need to have `category.category_read_unpublished` scope.
+
+          '
+        schema:
+          type: boolean
+          example: true
+          default: false
+      responses:
+        '200':
+          description: The request was successful. The newly rebuilt category tree is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryTree'
+        '403':
+          description: Permission denied due to insufficient rights.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    code: 403
+                    status: Forbidden
+                    message: You need a scope for this action.
+                    details:
+                    - 'Required scope(s): category.category_manage'
+        '404':
+          description: Root category with the specified ID does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    resourceId: 12a24ba108-e6fd-4139-b831-5ac5fded6d34
+                    code: 404
+                    status: Not Found
+                    message: Error while getting category tree
+                    details:
+                    - Category tree for category with id '12a24ba108-e6fd-4139-b831-5ac5fded6d34' not found
+      security:
+      - OAuth2:
+        - category.category_manage
+        - category.category_read_unpublished
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    ErrorResponse:
+      required:
+      - code
+      - details
+      - message
+      - status
+      type: object
+      properties:
+        resourceId:
+          type:
+          - string
+          - 'null'
+        code:
+          type: integer
+          format: int32
+        status:
+          type: string
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            type: string
+    ErrorMessage:
+      title: error
+      type: object
+      properties:
+        status:
+          maximum: 599
+          minimum: 100
+          type: integer
+          description: Original HTTP error code. It should be consistent with the HTTP response code.
+        type:
+          pattern: '[a-z]+[a-z_]*[a-z]+'
+          type: string
+          description: 'Classification of the error type.
+
+
+            **Note:** The error type should be written in lowercase and include underscores, for example `validation_failure`.'
+        message:
+          type: string
+          description: Descriptive error message for debugging purposes.
+        moreInfo:
+          type: string
+          description: More information (such as a link to the documentation) for investigating further and getting support.
+        details:
+          type: array
+          description: List of problems causing the error.
+          items:
+            title: errorDetail
+            required:
+            - type
+            type: object
+            properties:
+              field:
+                type: string
+                description: 'Element in request data which is causing the error, for example `category.name`.
+
+
+                  If the violation was not field-specific, this field will be empty.'
+              type:
+                pattern: '[a-z]+[a-z_]*[a-z]+'
+                type: string
+                description: 'Classification of the specific error cause. This value should always be interpreted within the context of the general error type.
+
+
+                  **Note:** The error type should be written in lowercase and include underscores, for example `missing_value`.'
+              message:
+                type: string
+                description: Descriptive error message for debugging purposes.
+              moreInfo:
+                type: string
+                description: More information (such as a link to the documentation) for investigating further and getting support.
+            description: Specific error cause.
+      description: Schema for API-specific errors.
+    Validity:
+      type: object
+      properties:
+        from:
+          type: string
+          description: Date and time from which the category is valid compliant with the ISO 8601 standard.
+          format: date-time
+        to:
+          type: string
+          description: Date and time to which the category is valid compliant with the ISO 8601 standard.
+          format: date-time
+    CategoryTreeSearchRequest:
+      required:
+      - categoryIds
+      type: object
+      properties:
+        categoryIds:
+          type: array
+          items:
+            type: string
+          description: List of category IDs. If provided, the response returns only the category trees that include at least one of the specified categories.
+      example:
+        categoryIds:
+        - d9e4fdd0-e671-4968-9ba1-a5533a7f3b02
+        - 0f1056cc-b4b4-488b-9f95-245f6b542702
+    AssignmentDeprecated:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Assignment unique identifier generated when a resource is assigned to a category.
+        ref:
+          required:
+          - id
+          - type
+          - url
+          type: object
+          properties:
+            id:
+              type: string
+              description: Resource’s unique identifier generated when the resource is created.
+            type:
+              type: string
+              description: Type of assignment. When assigning products to categories, the value should be set to `product`.
+            url:
+              type: string
+              description: Resource URL generated when the resource is created.
+          description: Reference to the resource.
+      description: Assignment of a resource (such as a product) to a category.
+    CategoryDeprecated:
+      title: ''
+      type: object
+      properties:
+        id:
+          type: string
+          description: Category unique identifier generated when the category is created.
+        parentId:
+          type: string
+          description: Unique identifier of the parent category.
+        name:
+          description: Category name.
+          oneOf:
+          - type: string
+            description: Category name in the default language.
+          - type: object
+            description: 'Map of translations.
+
+              The keys should be ISO language codes.
+
+              The values should be category names in specified languages.'
+        code:
+          type: string
+          description: Unique category identifier, defined by the user.
+        description:
+          description: Category description.
+          oneOf:
+          - type: string
+            description: Category description in the default language.
+          - type: object
+            description: 'Map of translations.
+
+              The keys should be ISO language codes.
+
+              The values should be category descriptions in specified languages.'
+        media:
+          type: array
+          description: Media files attached to the category.
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: Media file's unique identifier generated when the media file is created.
+              url:
+                type: string
+                description: Media file's URL.
+              tags:
+                type: array
+                description: List of media file tags.
+                items:
+                  type: string
+              contentType:
+                type: string
+                description: Media file's MIME type.
+                example: image/jpeg
+              stored:
+                type: boolean
+                description: Flag indicating whether the media file is stored in the Category Service.
+              uploadLink:
+                type: string
+                description: URL where the media file is uploaded, with the file extension specified.
+              mixins:
+                type: object
+                description: Custom media attributes.
+            additionalProperties: false
+        position:
+          minimum: 0
+          type: integer
+          description: Position in the category tree (on the same category level).
+        published:
+          type: boolean
+          description: Flag indicating whether the category has been published or not.
+        ecn:
+          type: array
+          description: 'List of external category numbers (ECNs). '
+          items:
+            type: string
+        subcategories:
+          type: array
+          description: List of direct subcategories.
+          items:
+            $ref: '#/components/schemas/CategoryDeprecated'
+        assignments:
+          type: array
+          description: List of resources assigned to the category.
+          items:
+            $ref: '#/components/schemas/AssignmentDeprecated'
+      description: ''
+    CategoryTree:
+      type: object
+      description: Definition of category tree
+      required:
+      - id
+      - localizedName
+      - name
+      - position
+      - published
+      properties:
+        id:
+          type: string
+          description: Category unique identifier generated when the category is created.
+        name:
+          type: string
+          description: Category name in tenant default language.
+          deprecated: true
+        description:
+          type: string
+          description: Description in tenant default language.
+          deprecated: true
+        code:
+          type: string
+          description: Unique category identifier defined by the tenant.
+        localizedName:
+          type: object
+          additionalProperties:
+            type: string
+          description: Localized category name as a map of translations.
+        localizedDescription:
+          type: object
+          additionalProperties:
+            type: string
+          description: Localized category description as a map of translations.
+        localizedSlug:
+          type: object
+          additionalProperties:
+            type: string
+          description: Provides localized category name or code without diacritics for the URL.
+        validity:
+          $ref: '#/components/schemas/Validity'
+          description: Category validity.
+        position:
+          type: integer
+          format: int32
+          description: Category position in relation to sibling categories.
+        published:
+          type: boolean
+          description: Flag indicating whether the category has been published.
+        ecn:
+          type: array
+          description: List of external category numbers (ECNs) unique for each category.
+          items:
+            type: string
+        subcategories:
+          type: array
+          description: Subcategories of this category.
+          items:
+            $ref: '#/components/schemas/CategoryTree'
+      example:
+        id: 46124ba108-e6fd-4139-b831-5ac5fded6d52
+        localizedName:
+          en: ProductRoot
+        code: productroot
+        localizedSlug:
+          en: productroot
+        localizedDescription:
+          en: ProductRoot
+        position: 55555
+        published: true
+        subcategories:
+        - id: 12a24ba108-e6fd-4139-b831-5ac5fded6d34
+          parentId: 46124ba108-e6fd-4139-b831-5ac5fded6d52
+          localizedName:
+            en: Fruits & Vegetables
+          code: fruits-&-vegetables
+          localizedSlug:
+            en: fruits-&-vegetables
+          localizedDescription:
+            en: Fresh and tasty fruits and vegetables.
+          position: 0
+          published: true
+          subcategories:
+          - id: 34a24ba108-e6fd-4139-b831-5ac5fded6dae
+            parentId: 12a24ba108-e6fd-4139-b831-5ac5fded6d34
+            localizedName:
+              en: Fruit
+            code: fruit
+            localizedSlug:
+              en: fruit
+            position: 0
+            published: true
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            category.category_manage: Manage a category
+            category.category_read_unpublished: Read unpublished categories
+            category.category_publish: Publish a category
+            category.category_unpublish: Unpublish a category
+x-refined-from:
+- emporix-category-tree-openapi.yml
+- emporix-category-tree-openapi.yml

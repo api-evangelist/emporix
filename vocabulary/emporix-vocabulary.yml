@@ -1,0 +1,420 @@
+generated: '2026-10-18'
+method: derived
+generator: derive-vocabulary.py
+source:
+- openapi/emporix-ai-rag-indexer-openapi.yml
+- openapi/emporix-ai-service-openapi.yml
+- openapi/emporix-approval-service-openapi.yml
+- openapi/emporix-audit-logs-changelog-openapi.yml
+- openapi/emporix-availability-openapi.yml
+vocabulary:
+  name: Emporix Domain Vocabulary
+  description: 'Terms declared by Emporix''s own API contract: its resource groups, objects and enumerations, with the contract''s definitions.
+    Derived, not authored.'
+  version: '2026-10-18'
+  terms:
+  - term: Reindex
+    definition: Invoke Reindex
+    tags:
+    - Resource Group
+    source: openapi/emporix-ai-rag-indexer-openapi.yml
+  - term: Metadata
+    definition: Manage Metadata
+    tags:
+    - Resource Group
+    source: openapi/emporix-ai-rag-indexer-openapi.yml
+  - term: Agent
+    definition: Manage Agents
+    tags:
+    - Resource Group
+    source: openapi/emporix-ai-service-openapi.yml
+  - term: Agent Chat
+    definition: Chat With Agents
+    tags:
+    - Resource Group
+    source: openapi/emporix-ai-service-openapi.yml
+  - term: Agent Logs
+    definition: Read Agent Logs
+    tags:
+    - Resource Group
+    source: openapi/emporix-ai-service-openapi.yml
+  - term: Agent Analytics
+    definition: Agent analytics and execution metrics
+    tags:
+    - Resource Group
+    source: openapi/emporix-ai-service-openapi.yml
+  - term: Agent Template
+    definition: Manage Agent Templates
+    tags:
+    - Resource Group
+    source: openapi/emporix-ai-service-openapi.yml
+  - term: AI Completions
+    definition: AI Completions
+    tags:
+    - Resource Group
+    source: openapi/emporix-ai-service-openapi.yml
+  - term: Commerce Events
+    definition: Read Commerce Events
+    tags:
+    - Resource Group
+    source: openapi/emporix-ai-service-openapi.yml
+  - term: Import/Export
+    definition: Import & Export Agents
+    tags:
+    - Resource Group
+    source: openapi/emporix-ai-service-openapi.yml
+  - term: Job
+    definition: Manage Jobs
+    tags:
+    - Resource Group
+    source: openapi/emporix-ai-service-openapi.yml
+  - term: MCP Server
+    definition: Manage MCP Servers
+    tags:
+    - Resource Group
+    source: openapi/emporix-ai-service-openapi.yml
+  - term: Model
+    definition: Read LLM models from supported providers
+    tags:
+    - Resource Group
+    source: openapi/emporix-ai-service-openapi.yml
+  - term: OAuth
+    definition: Manage OAuth configurations (Preview)
+    tags:
+    - Resource Group
+    source: openapi/emporix-ai-service-openapi.yml
+  - term: Text Generation
+    definition: AI Text Generation
+    tags:
+    - Resource Group
+    source: openapi/emporix-ai-service-openapi.yml
+  - term: Token
+    definition: Manage Tokens
+    tags:
+    - Resource Group
+    source: openapi/emporix-ai-service-openapi.yml
+  - term: Tool
+    definition: Manage Tools
+    tags:
+    - Resource Group
+    source: openapi/emporix-ai-service-openapi.yml
+  - term: Conversation
+    definition: Manage Agent Conversations
+    tags:
+    - Resource Group
+    source: openapi/emporix-ai-service-openapi.yml
+  - term: Changelogs
+    definition: Query tenant change history.
+    tags:
+    - Resource Group
+    source: openapi/emporix-audit-logs-changelog-openapi.yml
+  - term: Brands
+    definition: Manage brands
+    tags:
+    - Resource Group
+    source: openapi/emporix-brand-service-openapi.yml
+  - term: Media
+    definition: Manage brands media
+    tags:
+    - Resource Group
+    source: openapi/emporix-brand-service-openapi.yml
+  - term: Carts
+    definition: Manage Carts
+    tags:
+    - Resource Group
+    source: openapi/emporix-cart-openapi.yml
+  - term: Cart items
+    definition: Manage Cart items
+    tags:
+    - Resource Group
+    source: openapi/emporix-cart-openapi.yml
+  - term: Discounts
+    definition: Manage Discounts
+    tags:
+    - Resource Group
+    source: openapi/emporix-cart-openapi.yml
+  - term: Execute
+    definition: Run a chain of existing cart operations in one request.
+    tags:
+    - Resource Group
+    source: openapi/emporix-cart-openapi.yml
+  - term: Catalog management
+    definition: Retrieve lists of catalogs and manage catalog details.
+    tags:
+    - Resource Group
+    source: openapi/emporix-catalog-openapi.yml
+  - term: Category Resources
+    definition: Manage Categories
+    tags:
+    - Resource Group
+    source: openapi/emporix-category-tree-openapi.yml
+  - term: Category Assignment Resources
+    definition: Manage Category Assignments
+    tags:
+    - Resource Group
+    source: openapi/emporix-category-tree-openapi.yml
+  - term: Assignment Resources
+    definition: Manage Assignments
+    tags:
+    - Resource Group
+    source: openapi/emporix-category-tree-openapi.yml
+  - term: Category Tree Resources
+    definition: Read Category Trees
+    tags:
+    - Resource Group
+    source: openapi/emporix-category-tree-openapi.yml
+  - term: Tenant configurations
+    definition: Manage Tenant Configurations
+    tags:
+    - Resource Group
+    source: openapi/emporix-configuration-service-openapi.yml
+  - term: Client configurations
+    definition: Manage Client Configurations
+    tags:
+    - Resource Group
+    source: openapi/emporix-configuration-service-openapi.yml
+  - term: Global configurations
+    definition: Read Global Configurations
+    tags:
+    - Resource Group
+    source: openapi/emporix-configuration-service-openapi.yml
+  - term: Authentication and authorization
+    definition: Create and manage customer access tokens.
+    tags:
+    - Resource Group
+    source: openapi/emporix-customer-management-openapi.yml
+  - term: Account and profile
+    definition: Manage customer account details.
+    tags:
+    - Resource Group
+    source: openapi/emporix-customer-management-openapi.yml
+  - term: Addresses
+    definition: Manage customer address information.
+    tags:
+    - Resource Group
+    source: openapi/emporix-customer-management-openapi.yml
+  - term: Credentials
+    definition: Manage customer credentials.
+    tags:
+    - Resource Group
+    source: openapi/emporix-customer-management-openapi.yml
+  - term: Double opt-in
+    definition: Allow option for double opt-in.
+    tags:
+    - Resource Group
+    source: openapi/emporix-customer-management-openapi.yml
+  - term: Segments
+    definition: Manage segments
+    tags:
+    - Resource Group
+    source: openapi/emporix-customer-segments-openapi.yml
+  - term: Customers Assignments
+    definition: Manage customer assignments to segments
+    tags:
+    - Resource Group
+    source: openapi/emporix-customer-segments-openapi.yml
+  - term: Groups Assignments
+    definition: Manage IAM group assignments to segments
+    tags:
+    - Resource Group
+    source: openapi/emporix-customer-segments-openapi.yml
+  - term: Items Assignments
+    definition: Manage item assignments to segments
+    tags:
+    - Resource Group
+    source: openapi/emporix-customer-segments-openapi.yml
+  - term: Configurations
+    definition: Read import configurations.
+    tags:
+    - Resource Group
+    source: openapi/emporix-import-service-openapi.yml
+  - term: Streams
+    definition: Read the streams of a configuration.
+    tags:
+    - Resource Group
+    source: openapi/emporix-import-service-openapi.yml
+  - term: Schedules
+    definition: Read and set a configuration's run schedule.
+    tags:
+    - Resource Group
+    source: openapi/emporix-import-service-openapi.yml
+  - term: Runs
+    definition: Trigger, monitor, and cancel import runs.
+    tags:
+    - Resource Group
+    source: openapi/emporix-import-service-openapi.yml
+  - term: Data
+    definition: Read imported records.
+    tags:
+    - Resource Group
+    source: openapi/emporix-import-service-openapi.yml
+  - term: Analytics
+    definition: Read aggregated import statistics, health, and the settings behind them.
+    tags:
+    - Resource Group
+    source: openapi/emporix-import-service-openapi.yml
+  - term: License
+    definition: Read the tenant's import limits.
+    tags:
+    - Resource Group
+    source: openapi/emporix-import-service-openapi.yml
+  - term: Assets
+    definition: Manage Assets
+    tags:
+    - Resource Group
+    source: openapi/emporix-media-openapi.yml
+  - term: Orders (Tenant-managed)
+    definition: Manage tenant orders.
+    tags:
+    - Resource Group
+    source: openapi/emporix-order-openapi.yml
+  - term: Orders (Customer-managed)
+    definition: Manage customer orders. **Authentication:** Standard is customer token (Bearer). Alternatively, use access token (client credentials)
+      together with the `saas-token` header.
+    tags:
+    - Resource Group
+    source: openapi/emporix-order-openapi.yml
+  - term: Products
+    definition: 'Manage products. Supported product types include: - `BASIC` — standalone products - `BUNDLE` — groups of products sold together
+      - `PARENT_VARIANT` — products with automatically generated variants defined by a template - `VARIANT` — individual variants of a `PARENT_VARIANT`
+      product - `DYNAMIC_VARIANT` — products forming a flexible variant hierarchy of up to 4 levels. Each variant stores its own `ow'
+    tags:
+    - Resource Group
+    source: openapi/emporix-product-service-openapi.yml
+  - term: Product Templates
+    definition: Manage product templates. Product templates define a set of attributes which are common for all product instances based on that
+      template.
+    tags:
+    - Resource Group
+    source: openapi/emporix-product-service-openapi.yml
+  - term: Customer Group Relations
+    definition: Manage shipping customer groups
+    tags:
+    - Resource Group
+    source: openapi/emporix-shipping-openapi.yml
+  - term: Delivery Windows
+    definition: Manage delivery windows
+    tags:
+    - Resource Group
+    source: openapi/emporix-shipping-openapi.yml
+  - term: Shipping Cost
+    definition: Manage shipping costs
+    tags:
+    - Resource Group
+    source: openapi/emporix-shipping-openapi.yml
+  - term: Shipping Methods
+    definition: Manage shipping methods
+    tags:
+    - Resource Group
+    source: openapi/emporix-shipping-openapi.yml
+  - term: Shipping Zones
+    definition: Manage shipping zones
+    tags:
+    - Resource Group
+    source: openapi/emporix-shipping-openapi.yml
+  - term: Shipping Groups
+    definition: Manage shipping groups
+    tags:
+    - Resource Group
+    source: openapi/emporix-shipping-openapi.yml
+  - term: Sites
+    definition: Find shipping related sites
+    tags:
+    - Resource Group
+    source: openapi/emporix-shipping-openapi.yml
+  - term: Delivery Times Management
+    definition: Manage delivery times
+    tags:
+    - Resource Group
+    source: openapi/emporix-shipping-openapi.yml
+  - term: Delivery Times Slots Management
+    definition: Manage delivery time slots
+    tags:
+    - Resource Group
+    source: openapi/emporix-shipping-openapi.yml
+  - term: Delivery Cycles
+    definition: Generate delivery cycles
+    tags:
+    - Resource Group
+    source: openapi/emporix-shipping-openapi.yml
+  - term: Unit management
+    definition: Manage Units
+    tags:
+    - Resource Group
+    source: openapi/emporix-unit-handling-service-openapi.yml
+  - term: Unit conversion
+    definition: Convert Units
+    tags:
+    - Resource Group
+    source: openapi/emporix-unit-handling-service-openapi.yml
+  - term: Type management
+    definition: Read Units
+    tags:
+    - Resource Group
+    source: openapi/emporix-unit-handling-service-openapi.yml
+  - term: MetadataFilter
+    definition: 'Object declared by the contract with fields: key, name, description, type.'
+    tags:
+    - Object
+    source: openapi/emporix-ai-rag-indexer-openapi.yml#/components/schemas/MetadataFilter
+  - term: ErrorMessage
+    definition: 'Object declared by the contract with fields: code, type, message, moreInfo, details.'
+    tags:
+    - Object
+    source: openapi/emporix-ai-rag-indexer-openapi.yml#/components/schemas/ErrorMessage
+  - term: ErrorMessageFault
+    definition: 'Object declared by the contract with fields: fault.'
+    tags:
+    - Object
+    source: openapi/emporix-ai-rag-indexer-openapi.yml#/components/schemas/ErrorMessageFault
+  - term: AgenticRequest
+    definition: 'Object declared by the contract with fields: agentId, message, attachments.'
+    tags:
+    - Object
+    source: openapi/emporix-ai-service-openapi.yml#/components/schemas/AgenticRequest
+  - term: AgentType
+    definition: Type of the agent handling the request.
+    tags:
+    - Enumeration
+    source: openapi/emporix-ai-service-openapi.yml#/components/schemas/AgentType
+  - term: TextGenerationRequest
+    definition: Represents a request body for a text generation operation.
+    tags:
+    - Object
+    source: openapi/emporix-ai-service-openapi.yml#/components/schemas/TextGenerationRequest
+  - term: IdResponse
+    definition: 'Object declared by the contract with fields: id.'
+    tags:
+    - Object
+    source: openapi/emporix-ai-service-openapi.yml#/components/schemas/IdResponse
+  - term: ExpandableTokenResponse
+    definition: The full response representing token. If the `expand=token` is **not** used, then only `id` field is returned, otherwise all fields
+      are returned.
+    tags:
+    - Object
+    source: openapi/emporix-ai-service-openapi.yml#/components/schemas/ExpandableTokenResponse
+  - term: NativeToolType
+    definition: 'Type of the native tool. Possible values: * `slack` * `rag_custom` * `rag_emporix` * `teams`'
+    tags:
+    - Enumeration
+    source: openapi/emporix-ai-service-openapi.yml#/components/schemas/NativeToolType
+  - term: BaseNativeTool
+    definition: 'Object declared by the contract with fields: type, name, enabled.'
+    tags:
+    - Object
+    source: openapi/emporix-ai-service-openapi.yml#/components/schemas/BaseNativeTool
+  - term: RagCustomEmbeddingNativeToolConfig
+    definition: 'Object declared by the contract with fields: model.'
+    tags:
+    - Object
+    source: openapi/emporix-ai-service-openapi.yml#/components/schemas/RagCustomEmbeddingNativeToolConfig
+  - term: RagCustomDatabaseType
+    definition: Type of the database.
+    tags:
+    - Enumeration
+    source: openapi/emporix-ai-service-openapi.yml#/components/schemas/RagCustomDatabaseType
+  - term: RagEntityType
+    definition: Type of the entity which is stored in the given collection.
+    tags:
+    - Enumeration
+    source: openapi/emporix-ai-service-openapi.yml#/components/schemas/RagEntityType

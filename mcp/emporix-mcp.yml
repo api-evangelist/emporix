@@ -1,0 +1,613 @@
+name: Emporix MCP Server
+type: MCPServer
+generated: '2026-10-18'
+method: searched
+source:
+- https://developer.emporix.io/agentic-commerce-intelligence/mcp-in-emporix/mcp.md
+- https://developer.emporix.io/agentic-commerce-intelligence/mcp-in-emporix/mcp/retrieving-mcp-token.md
+- https://developer.emporix.io/agentic-commerce-intelligence/mcp-in-emporix/mcp/connect-cursor.md
+- https://developer.emporix.io/agentic-commerce-intelligence/agentic-engineering/docs-for-ai.md
+- https://github.com/emporix-shared/ai-skills/blob/main/mcp.json
+status: official
+official: true
+description: Emporix offers a fully managed, cloud-hosted MCP Server (Streamable HTTP) with dedicated predefined servers per business domain (product, order, customer, extensibility, frontend, importtool),
+  plus tenant-managed dynamic MCP servers backed by Cloud Functions (preview, billed separately). Tools returned are filtered to those the MCP token has scopes for and can be narrowed with ?tools=. Separately,
+  Emporix publishes a GitBook documentation MCP server for its docs.
+deployment:
+  mode: remote
+  endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  transport: streamable-http
+  auth: api-key
+  verified: probed
+  auth_detail: MCP_TOKEN is base64(clientId:secret) of a custom API key created in the Emporix Developer Portal with the MCP scope plus the scopes for the tools wanted; it is embedded in the URL path.
+  probe:
+    url: https://api.emporix.io/mcp/product/TENANT/MCP_TOKEN/mcp
+    method: POST initialize
+    http_status: 401
+    body_excerpt: '{"error":"unauthorized","message":"Provided tenant/credentails are invalid or mcp scope is missing."}'
+    date: '2026-10-18'
+  tool_filter: ?tools=<tool-name> query parameter limits exposed tools
+dynamic_servers:
+  endpoint_template: https://api.emporix.io/mcp/dynamic/{TENANT}/{MCP_SERVER_ID}/{MCP_TOKEN}/mcp
+  status: preview
+  note: Tool catalog is tenant-managed Cloud Functions; not enumerable publicly. Requires Emporix Hosting; pay-as-you-go.
+tools_evidence:
+  l3: table
+  evidence_url: https://developer.emporix.io/agentic-commerce-intelligence/mcp-in-emporix/mcp.md
+  note: Tool names and required scopes are copied from the provider-documented tables; the live tools/list on api.emporix.io is gated (401 without tenant credentials) and was not called.
+servers:
+- name: emporix-product
+  domain: product
+  endpoint_template: https://api.emporix.io/mcp/product/{TENANT}/{MCP_TOKEN}/mcp
+  transport: streamable-http
+  tool_count: 44
+  tools:
+  - name: get-product
+    category: Product tools
+    required_scopes:
+    - product.product_read_unpublished
+  - name: get-products
+    category: Product tools
+    required_scopes:
+    - product.product_read_unpublished
+  - name: upsert-product
+    category: Product tools
+    required_scopes:
+    - product.product_manage
+  - name: partial-update-product
+    category: Product tools
+    required_scopes:
+    - product.product_manage
+  - name: delete-product
+    category: Product tools
+    required_scopes:
+    - product.product_manage
+  - name: get-price
+    category: Price tools
+    required_scopes:
+    - price.price_read
+  - name: get-prices
+    category: Price tools
+    required_scopes:
+    - price.price_read
+  - name: upsert-price
+    category: Price tools
+    required_scopes:
+    - price.price_manage
+  - name: delete-price
+    category: Price tools
+    required_scopes:
+    - price.price_manage
+  - name: get-price-model
+    category: Price tools
+    required_scopes:
+    - price.pricemodel_read
+  - name: match-prices
+    category: Price tools
+    required_scopes:
+    - price.price_read
+  - name: get-availabilities-by-site
+    category: Availability tools
+    required_scopes:
+    - availability.availability_read
+  - name: get-availabilities-by-product-ids
+    category: Availability tools
+    required_scopes:
+    - availability.availability_read
+  - name: upsert-availability
+    category: Availability tools
+    required_scopes:
+    - availability.availability_manage
+  - name: delete-availability
+    category: Availability tools
+    required_scopes:
+    - availability.availability_manage
+  - name: get-catalog
+    category: Catalog tools
+    required_scopes:
+    - catalog.catalog_read
+  - name: get-catalogs
+    category: Catalog tools
+    required_scopes:
+    - catalog.catalog_read
+  - name: upsert-catalog
+    category: Catalog tools
+    required_scopes:
+    - catalog.catalog_manage
+  - name: partial-update-catalog
+    category: Catalog tools
+    required_scopes:
+    - catalog.catalog_manage
+  - name: delete-catalog
+    category: Catalog tools
+    required_scopes:
+    - catalog.catalog_manage
+  - name: get-category-catalogs
+    category: Catalog tools
+    required_scopes:
+    - catalog.catalog_read
+  - name: get-category
+    category: Category tools
+    required_scopes:
+    - category.category_read_unpublished
+  - name: get-categories
+    category: Category tools
+    required_scopes:
+    - category.category_read_unpublished
+  - name: upsert-category
+    category: Category tools
+    required_scopes:
+    - category.category_manage
+  - name: partial-update-category
+    category: Category tools
+    required_scopes:
+    - category.category_manage
+  - name: delete-category
+    category: Category tools
+    required_scopes:
+    - category.category_manage
+  - name: get-category-assignments
+    category: Category tools
+    required_scopes:
+    - category.category_read_unpublished
+  - name: upsert-category-assignment
+    category: Category tools
+    required_scopes:
+    - category.category_manage
+  - name: delete-category-assignments
+    category: Category tools
+    required_scopes:
+    - category.category_manage
+  - name: delete-category-assignment-by-id
+    category: Category tools
+    required_scopes:
+    - category.category_manage
+  - name: delete-category-assignment-by-product
+    category: Category tools
+    required_scopes:
+    - category.category_manage
+  - name: get-categories-by-product-assignment
+    category: Category tools
+    required_scopes:
+    - category.category_read_unpublished
+  - name: delete-category-assignments-by-product
+    category: Category tools
+    required_scopes:
+    - category.category_manage
+  - name: get-brand
+    category: Brand tools
+    required_scopes:
+    - brand.brand_read
+  - name: get-brands
+    category: Brand tools
+    required_scopes:
+    - brand.brand_read
+  - name: create-brand
+    category: Brand tools
+    required_scopes:
+    - brand.brand_manage
+  - name: partial-update-brand
+    category: Brand tools
+    required_scopes:
+    - brand.brand_manage
+  - name: delete-brand
+    category: Brand tools
+    required_scopes:
+    - brand.brand_manage
+  - name: get-label
+    category: Label tools
+    required_scopes: []
+  - name: get-labels
+    category: Label tools
+    required_scopes: []
+  - name: create-label
+    category: Label tools
+    required_scopes:
+    - label.label_manage
+  - name: update-label
+    category: Label tools
+    required_scopes:
+    - label.label_manage
+  - name: partial-update-label
+    category: Label tools
+    required_scopes:
+    - label.label_manage
+  - name: delete-label
+    category: Label tools
+    required_scopes:
+    - label.label_manage
+- name: emporix-order
+  domain: order
+  endpoint_template: https://api.emporix.io/mcp/order/{TENANT}/{MCP_TOKEN}/mcp
+  transport: streamable-http
+  tool_count: 13
+  tools:
+  - name: get-return
+    category: Return tools
+    required_scopes:
+    - returns.returns_read
+  - name: get-returns
+    category: Return tools
+    required_scopes:
+    - returns.returns_read
+  - name: create-return
+    category: Return tools
+    required_scopes:
+    - returns.returns_manage
+  - name: update-return
+    category: Return tools
+    required_scopes:
+    - returns.returns_manage
+  - name: partial-update-return
+    category: Return tools
+    required_scopes:
+    - returns.returns_manage
+  - name: delete-return
+    category: Return tools
+    required_scopes:
+    - returns.returns_manage
+  - name: change-returns-status
+    category: Return tools
+    required_scopes:
+    - returns.returns_manage
+  - name: get-order
+    category: Order tools
+    required_scopes:
+    - order.order_read
+  - name: get-orders
+    category: Order tools
+    required_scopes:
+    - order.order_read
+  - name: get-customer-orders
+    category: Order tools
+    required_scopes:
+    - order.order_read
+  - name: update-order-billing-data
+    category: Order tools
+    required_scopes:
+    - order.order_update
+  - name: update-order-delivery-date
+    category: Order tools
+    required_scopes:
+    - order.order_update
+  - name: send-invoice
+    category: Invoice tools
+    required_scopes:
+    - email.invoice_send
+    - pdfmashup.invoice_create
+- name: emporix-customer
+  domain: customer
+  endpoint_template: https://api.emporix.io/mcp/customer/{TENANT}/{MCP_TOKEN}/mcp
+  transport: streamable-http
+  tool_count: 19
+  tools:
+  - name: get-customer
+    category: Customer tools
+    required_scopes:
+    - customer.customer_read
+  - name: get-customers
+    category: Customer tools
+    required_scopes:
+    - customer.customer_read
+  - name: upsert-customer
+    category: Customer tools
+    required_scopes:
+    - customer.customer_manage
+  - name: partial-update-customer
+    category: Customer tools
+    required_scopes:
+    - customer.customer_manage
+  - name: change-customer-activation-status
+    category: Customer tools
+    required_scopes:
+    - customer.customer_manage
+  - name: delete-customer
+    category: Customer tools
+    required_scopes:
+    - customer.customer_manage
+  - name: get-legal-entity
+    category: Legal entity tools
+    required_scopes:
+    - customermanagement.legalentity_read
+  - name: get-legal-entities
+    category: Legal entity tools
+    required_scopes:
+    - customermanagement.legalentity_read
+  - name: upsert-legal-entity
+    category: Legal entity tools
+    required_scopes:
+    - customermanagement.legalentity_manage
+  - name: delete-legal-entity
+    category: Legal entity tools
+    required_scopes:
+    - customermanagement.legalentity_manage
+  - name: get-location
+    category: Location tools
+    required_scopes:
+    - customermanagement.location_read
+  - name: get-locations
+    category: Location tools
+    required_scopes:
+    - customermanagement.location_read
+  - name: upsert-location
+    category: Location tools
+    required_scopes:
+    - customermanagement.location_manage
+  - name: delete-location
+    category: Location tools
+    required_scopes:
+    - customermanagement.location_manage
+  - name: get-contact-assignment
+    category: Contact assignment tools
+    required_scopes:
+    - customermanagement.contactassignment_read
+  - name: get-contact-assignments
+    category: Contact assignment tools
+    required_scopes:
+    - customermanagement.contactassignment_read
+  - name: upsert-contact-assignment
+    category: Contact assignment tools
+    required_scopes:
+    - customermanagement.contactassignment_manage
+  - name: delete-contact-assignment
+    category: Contact assignment tools
+    required_scopes:
+    - customermanagement.contactassignment_manage
+  - name: send-email-to-customer
+    category: Customer email tools
+    required_scopes:
+    - email.email_send
+- name: emporix-extensibility
+  domain: extensibility
+  endpoint_template: https://api.emporix.io/mcp/extensibility/{TENANT}/{MCP_TOKEN}/mcp
+  transport: streamable-http
+  tool_count: 6
+  tools:
+  - name: get-custom-types
+    category: Extensibility
+    required_scopes: []
+  - name: get-custom-type-schema
+    category: Extensibility
+    required_scopes: []
+  - name: get-custom-type-instance
+    category: Extensibility
+    required_scopes:
+    - schema.custominstance_read
+  - name: get-custom-type-instances
+    category: Extensibility
+    required_scopes:
+    - schema.custominstance_read
+  - name: upsert-custom-type-instance
+    category: Extensibility
+    required_scopes:
+    - schema.custominstance_manage
+  - name: partial-update-custom-type-instance
+    category: Extensibility
+    required_scopes:
+    - schema.custominstance_manage
+- name: emporix-importtool
+  domain: importtool
+  endpoint_template: https://api.emporix.io/mcp/importtool/{TENANT}/{MCP_TOKEN}/mcp
+  transport: streamable-http
+  tool_count: 34
+  tools:
+  - name: list-import-jobs
+    category: Jobs & streams
+    required_scopes:
+    - importtool.import_manage
+  - name: get-import-job
+    category: Jobs & streams
+    required_scopes:
+    - importtool.import_manage
+  - name: create-import-job
+    category: Jobs & streams
+    required_scopes:
+    - importtool.import_manage
+  - name: update-import-job
+    category: Jobs & streams
+    required_scopes:
+    - importtool.import_manage
+  - name: create-import-stream
+    category: Jobs & streams
+    required_scopes:
+    - importtool.import_manage
+  - name: update-import-stream
+    category: Jobs & streams
+    required_scopes:
+    - importtool.import_manage
+  - name: get-import-limits
+    category: Jobs & streams
+    required_scopes:
+    - importtool.import_manage
+  - name: list-import-connections
+    category: Connections
+    required_scopes:
+    - importtool.import_manage
+  - name: list-connection-resources
+    category: Connections
+    required_scopes:
+    - importtool.import_manage
+  - name: test-import-connection
+    category: Connections
+    required_scopes:
+    - importtool.import_manage
+  - name: sample-connection
+    category: Connections
+    required_scopes:
+    - importtool.import_manage
+  - name: get-stream-mappings
+    category: Mappings
+    required_scopes:
+    - importtool.import_manage
+  - name: list-source-fields
+    category: Mappings
+    required_scopes:
+    - importtool.import_manage
+  - name: list-target-fields
+    category: Mappings
+    required_scopes:
+    - importtool.import_manage
+  - name: list-target-types
+    category: Mappings
+    required_scopes:
+    - importtool.import_manage
+  - name: generate-stream-mappings
+    category: Mappings
+    required_scopes:
+    - importtool.import_manage
+  - name: set-stream-mappings
+    category: Mappings
+    required_scopes:
+    - importtool.import_manage
+  - name: preview-stream-mappings
+    category: Mappings
+    required_scopes:
+    - importtool.import_manage
+  - name: publish-stream-mappings
+    category: Mappings
+    required_scopes:
+    - importtool.import_manage
+  - name: list-mapping-versions
+    category: Mappings
+    required_scopes:
+    - importtool.import_manage
+  - name: restore-mapping-version
+    category: Mappings
+    required_scopes:
+    - importtool.import_manage
+  - name: check-schema-drift
+    category: Mappings
+    required_scopes:
+    - importtool.import_manage
+  - name: list-transforms
+    category: Mappings
+    required_scopes:
+    - importtool.import_manage
+  - name: trigger-import-run
+    category: Running
+    required_scopes:
+    - importtool.import_trigger
+  - name: cancel-import-run
+    category: Running
+    required_scopes:
+    - importtool.import_trigger
+  - name: retry-failed-records
+    category: Running
+    required_scopes:
+    - importtool.import_trigger
+  - name: get-import-schedule
+    category: Running
+    required_scopes:
+    - importtool.import_manage
+  - name: set-import-schedule
+    category: Running
+    required_scopes:
+    - importtool.import_manage
+  - name: delete-import-schedule
+    category: Running
+    required_scopes:
+    - importtool.import_manage
+  - name: list-import-runs
+    category: Monitoring
+    required_scopes:
+    - importtool.import_manage
+  - name: get-import-run
+    category: Monitoring
+    required_scopes:
+    - importtool.import_manage
+  - name: get-import-run-errors
+    category: Monitoring
+    required_scopes:
+    - importtool.import_manage
+  - name: get-import-stats
+    category: Monitoring
+    required_scopes:
+    - importtool.import_manage
+  - name: search-imported-data
+    category: Monitoring
+    required_scopes:
+    - importtool.import_manage
+- name: emporix-frontend
+  domain: frontend
+  endpoint_template: https://api.emporix.io/mcp/frontend/{TENANT}/{MCP_TOKEN}/mcp
+  transport: streamable-http
+  tool_count: 17
+  tools:
+  - name: get-customer-info
+    category: Customer & Account
+    description: View your account information, including personal details, contact information, and saved addresses.
+  - name: update-customer-profile
+    category: Customer & Account
+    description: Update your account information such as name, email, phone number, company details, preferred language, currency, and site preferences.
+  - name: get-companies-addresses
+    category: Customer & Account
+    description: View all company addresses associated with your account. This is useful for B2B customers who need to manage multiple company addresses.
+  - name: upsert-customer-address
+    category: Customer & Account
+    description: Add a new shipping or billing address to your account, or update an existing address.
+  - name: get-products
+    category: Product & Cart
+    description: Browse and search for products in the catalog. You can filter, sort, and navigate through pages of products.
+  - name: get-cart
+    category: Product & Cart
+    description: View the contents of your shopping cart, including all items, quantities, and prices.
+  - name: modify-cart-items
+    category: Product & Cart
+    description: Add items to your cart, change quantities, or remove items. You can modify multiple items at once.
+  - name: checkout
+    category: Checkout & Payment
+    description: Complete your purchase by placing an order. You need to provide your shipping address, billing address, and selected payment method.
+  - name: get-payment-methods
+    category: Checkout & Payment
+    description: View the available payment options for your site, such as credit cards, bank transfers, or other payment methods.
+  - name: get-customer-orders
+    category: Order & Return
+    description: View your order history. You can see past orders, filter by invoice number or order ID, and browse through multiple pages.
+  - name: get-returns
+    category: Order & Return
+    description: View your return history. You can see all return requests, their status, and browse through multiple pages.
+  - name: create-return
+    category: Order & Return
+    description: Request to return items from an order. You can specify which items from which orders you want to return and provide a reason.
+  - name: get-quote
+    category: Quote
+    description: Request the details of a specific quote and its related information.
+  - name: get-quotes
+    category: Quote
+    description: View your quote history. You can see all quotes, filter them by status (open, accepted, declined, etc.), and browse through multiple pages.
+  - name: get-quote-reasons
+    category: Quote
+    description: View the list of available reasons you can select when declining a quote.
+  - name: create-quote
+    category: Quote
+    description: Request a price quote for the items in your cart. You need to specify shipping and billing addresses.
+  - name: update-quote
+    category: Quote
+    description: Respond to a quote by accepting it, declining it, or requesting changes. When declining, you can provide a reason and comment.
+  notes: Runs in a customer context; requires a customer token injected by Emporix Agents on customer-initiated requests. Usable only from Emporix Agentic AI (e.g. the Frontend Agent).
+documentation_mcp:
+  name: Documentation Portal MCP Server
+  endpoint: https://developer.emporix.io/~gitbook/mcp
+  transport: streamable-http
+  auth: none
+  verified: probed
+  probe:
+    initialize_status: 200
+    serverInfo:
+      name: developer.emporix.io/~gitbook/mcp
+      title: Documentation Portal MCP Server
+      version: 0.27.2
+    tools_list_status: 200
+    date: '2026-10-18'
+  tools:
+  - searchDocumentation
+  - getPage
+  - askQuestion
+  - sendFeedback
+  note: Per-space endpoints exist by appending /~gitbook/mcp to a docs space URL, e.g. https://developer.emporix.io/agentic-commerce-intelligence/~gitbook/mcp.
+clients:
+- name: Cursor
+  docs: https://developer.emporix.io/agentic-commerce-intelligence/mcp-in-emporix/mcp/connect-cursor.md
+- name: OpenAI
+  docs: https://developer.emporix.io/agentic-commerce-intelligence/mcp-in-emporix/mcp/connect-openai.md
+tool_count: 133

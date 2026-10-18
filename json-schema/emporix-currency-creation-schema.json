@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-currency-creation-schema.json",
+  "title": "currencyCreation",
+  "description": "Represents a single currency creation. The currency consists of a code compliant with the ISO-4217 standard (https://www.iso.org/iso-4217-currency-codes.html) and a currency name. The `name` field is localized.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-currency-service-openapi.yml#/components/schemas/currencyCreation",
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string",
+      "description": "Currency code. The currency symbol must consist of three capital letters and must be a valid ISO-4217 code (https://www.iso.org/iso-4217-currency-codes.html).\n"
+    },
+    "name": {
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "Currency name in the specified language."
+        },
+        {
+          "type": "object",
+          "description": "Map of translations in the `key:value` pairs format, where `key` is the language code, and `value` is the translation.\nBoth the source and target currency codes must be compliant with the ISO-4217 standard (https://www.iso.org/iso-4217-currency-codes.html) and must be defined in the system.",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      ],
+      "description": "Currency name. If the `Content-Language` is set to `*`, the field should be provided as a map that contains all translations in the `key:value` pairs format, where `key` is the language code and `value` is the translation. If the `Content-Language` contains a single language, the translation should be passed as a string value. If the `Accept-Language` header is empty, the translation will be returned in the language defined in the `Configuration service` as default.\n\n**Note:** Only the languages defined in the system are allowed to be used here. If a language code not defined in the system is provided, the request will be rejected."
+    }
+  },
+  "required": [
+    "code",
+    "name"
+  ]
+}

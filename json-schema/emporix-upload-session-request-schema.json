@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-upload-session-request-schema.json",
+  "title": "Upload Session Request",
+  "description": "Payload for creating a direct-storage upload session.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-media-openapi.yml#/components/schemas/UploadSessionRequest",
+  "allOf": [
+    {
+      "$ref": "#/$defs/AssetCreateBlob"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "uploadType": {
+          "type": "string",
+          "enum": [
+            "put",
+            "form"
+          ],
+          "default": "put",
+          "description": "Upload flow requested for a private Google Cloud Storage asset.\n* `put`: Returns a signed `PUT` request. This is the default when the property is omitted.\n* `form`: Returns a multipart `POST` policy.\nPublic Cloudinary assets always use a multipart `POST` form, regardless of this value.\n"
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "Asset": {
+      "title": "Asset",
+      "type": "object",
+      "properties": {
+        "access": {
+          "type": "string",
+          "enum": [
+            "PUBLIC",
+            "PRIVATE"
+          ],
+          "description": "Access type of the asset. This property is immutable. \n- `PUBLIC`: Blob assets are stored in Cloudinary and are accessible through a permanent external URL.\n- `PRIVATE`: Blob assets are stored in Google Cloud Storage. Retrieve their content through `/media/{tenant}/assets/{assetId}/download` or request a temporary signed URL through `/media/{tenant}/assets/{assetId}/download-url`.\n"
+        },
+        "refIds": {
+          "type": "array",
+          "description": "List of references.",
+          "items": {
+            "$ref": "#/$defs/RefId"
+          }
+        },
+        "mixins": {
+          "type": "object",
+          "description": "Custom asset attributes."
+        },
+        "metadata": {
+          "$ref": "#/$defs/MetadataCreate"
+        }
+      }
+    },
+    "AssetCreateBlob": {
+      "title": "Asset Create Blob Payload",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/$defs/Asset"
+        }
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier of an asset."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "BLOB"
+          ],
+          "description": "Asset type. This property is immutable."
+        },
+        "details": {
+          "$ref": "#/$defs/AssetDetailsCreate"
+        }
+      },
+      "required": [
+        "type",
+        "access"
+      ]
+    },
+    "AssetDetailsCreate": {
+      "title": "Asset Request Detailed Information",
+      "type": "object",
+      "properties": {
+        "filename": {
+          "type": "string",
+          "description": "Asset filename."
+        },
+        "mimeType": {
+          "type": "string",
+          "description": "The MIME (media) type of the asset."
+        }
+      }
+    },
+    "MetadataCreate": {
+      "type": "object",
+      "properties": {
+        "mixins": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "A key-value map, where key is a mixin name and value is a link to the mixin schema. Must be provided together with the corresponding mixin values in the `mixins` object."
+        }
+      }
+    },
+    "RefId": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Reference type. Can be one of the predefined types: `BRAND`, `CATEGORY`, `LABEL`, `PRODUCT`, `MODULE`, `AGENT` or any custom schema type.\n"
+        },
+        "id": {
+          "type": "string",
+          "description": "Reference Id."
+        }
+      }
+    }
+  }
+}

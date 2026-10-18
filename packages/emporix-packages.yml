@@ -1,0 +1,16 @@
+generated: '2026-10-18'
+method: probed
+generator: harvest-packages.py
+source: registry metadata endpoints (registry.npmjs.org, pypi.org, rubygems.org, api.nuget.org, packagist.org, crates.io)
+ownership_rule: 'official: true only when the registry metadata (homepage, repository, author, URLs) names the provider''s domain (emporix.com,
+  emporix.io, linkedin.com, postman.com, security/emporix-domain-security.yml, security/emporix-trust-center.yml, youtube.com) or its accepted
+  GitHub org.'
+packages:
+- name: emporix
+  registry: npm
+  url: https://www.npmjs.com/package/emporix
+  language: JavaScript
+  official: true
+  version: 0.7.0
+  published: '2026-08-24'
+  evidence: metadata names emporix.io

@@ -1,0 +1,45 @@
+generated: '2026-10-18'
+method: searched
+source:
+- https://zapier.com/apps/emporix/integrations
+- https://n8n.io/integrations/emporix/
+- https://composio.dev/toolkits/emporix
+- https://monid.ai/tools/emporix
+checked:
+- https://composio.dev/toolkits/emporix
+- https://developer.emporix.io/api-documentation/integrations/integrations.md
+- https://developer.emporix.io/user-guides/extensibility-and-integrations/integrations.md
+- https://make.com (search for emporix)
+- https://monid.ai/tools/emporix
+- https://n8n.io/integrations/emporix/
+- https://www.emporix.com (for marketplace/app store)
+- https://zapier.com (search for emporix)
+- https://zapier.com/apps/emporix/integrations
+summary: null
+marketplace_apps: []
+edges:
+- partner: make
+  partner_name: Make (formerly Integromat)
+  type: marketplace
+  marketplace: make
+  direction: provider-built
+  relationship: workflow
+  evidence: https://developer.emporix.io/oe-user-guides/getting-started/understanding-make.md
+  evidence_url: https://developer.emporix.io/oe-user-guides/getting-started/understanding-make.md
+- partner: celonis
+  partner_name: Celonis
+  type: claimed
+  direction: provider-built
+  relationship: core-infrastructure
+  evidence: https://developer.emporix.io/oe-user-guides/value-streams/oe-celonis-data-flow.md
+  evidence_url: https://developer.emporix.io/oe-user-guides/value-streams/oe-celonis-data-flow.md
+- partner: sap
+  partner_name: SAP
+  type: claimed
+  direction: provider-built
+  relationship: core-infrastructure
+  evidence: https://developer.emporix.io/user-guides/extensibility-and-integrations/integrations/sap-integration/sap-sales-quotes-integration.md
+  evidence_url: https://developer.emporix.io/user-guides/extensibility-and-integrations/integrations/sap-integration/sap-sales-quotes-integration.md
+templates: []
+note: No public marketplace listings found on Zapier, Make.com, or other integration platforms. Integration documentation
+  focuses on enterprise systems (SAP, Celonis) and workflow automation (Make).

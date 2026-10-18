@@ -1,0 +1,325 @@
+openapi: 3.2.0
+info:
+  title: Emporix Configurations API
+  version: ''
+  contact:
+    name: Emporix
+    url: https://emporix.com
+    email: documentation@emporix.com
+  description: 'Operations tagged Configurations across 2 of this provider''s published API definitions: emporix-import-service-openapi.yml, emporix-import-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2:
+  - importtool.import_trigger
+tags:
+- name: Configurations
+  description: Read import configurations.
+paths:
+  /importtool/{tenant}/configs:
+    parameters:
+    - $ref: '#/components/parameters/trait_tenant'
+    get:
+      summary: Retrieving all import configurations
+      description: Retrieves all import configurations defined for the tenant.
+      operationId: GET-importtool-list-configs
+      tags:
+      - Configurations
+      security:
+      - OAuth2:
+        - importtool.import_trigger
+      responses:
+        '200':
+          description: The request was successful. The configurations are returned.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ImportConfig'
+              examples:
+                Configurations response:
+                  $ref: '#/components/examples/ImportConfigs_Example'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+    servers:
+    - url: https://api.emporix.io
+  /importtool/{tenant}/configs/{id}:
+    parameters:
+    - $ref: '#/components/parameters/trait_tenant'
+    - $ref: '#/components/parameters/trait_id'
+    get:
+      summary: Retrieving an import configuration
+      description: Retrieves a single import configuration by its identifier.
+      operationId: GET-importtool-get-config
+      tags:
+      - Configurations
+      security:
+      - OAuth2:
+        - importtool.import_trigger
+      responses:
+        '200':
+          description: The request was successful. The configuration is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportConfig'
+              examples:
+                Configuration response:
+                  $ref: '#/components/examples/ImportConfig_Example'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '404':
+          $ref: '#/components/responses/NotFound_404'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+    servers:
+    - url: https://api.emporix.io
+components:
+  responses:
+    Unauthorized_401:
+      description: Given request is unauthorized - the authorization token is invalid or has expired. Details will be provided in the response payload.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            Access token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+    Forbidden_403:
+      description: Given authorization scopes are not sufficient and do not match scopes required by the endpoint.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Access to resource is forbidden:
+              $ref: '#/components/examples/Forbidden403_Example'
+    NotFound_404:
+      description: The requested resource does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Resource not found:
+              $ref: '#/components/examples/NotFound404_Example'
+    InternalServiceError_500:
+      description: Internal Service Error occurred.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Internal service error:
+              $ref: '#/components/examples/InternalServiceError500_Example'
+  schemas:
+    HealthThresholds:
+      title: Health thresholds
+      type: object
+      description: 'The limits that decide whether a stream is reported as `GREEN`, `AMBER`, or `RED`. Each field is optional and resolves independently. An unset field falls back through the hierarchy, from the most specific level to the least specific: stream, configuration, tenant, then the built-in default.'
+      properties:
+        failureRatioAmber:
+          type: number
+          format: double
+          description: The share of failed records (0..1) at or above which the stream is `AMBER`.
+          example: 0.01
+        failureRatioRed:
+          type: number
+          format: double
+          description: The share of failed records (0..1) at or above which the stream is `RED`.
+          example: 0.1
+        staleAmberHours:
+          type: integer
+          description: The age threshold, in hours, for the stream's newest data. The stream is `AMBER` when the data's age reaches or exceeds this threshold.
+          example: 48
+        staleRedHours:
+          type: integer
+          description: The age threshold, in hours, for the stream's newest data. The stream is `RED` when the data's age reaches or exceeds this threshold.
+          example: 168
+        failedRunIsRed:
+          type: boolean
+          description: Whether a failed most-recent run makes the stream `RED` regardless of the other limits.
+          example: true
+    errorMessage:
+      title: Error
+      description: Schema for specific API errors.
+      type: object
+      properties:
+        code:
+          type: integer
+          description: HTTP status code.
+          minimum: 100
+          maximum: 599
+        status:
+          description: HTTP status.
+          type: string
+        message:
+          description: Descriptive error message for debugging.
+          type: string
+        details:
+          description: List of problems causing this error.
+          type: array
+          items:
+            title: Error Detail
+            description: Error details.
+            type: string
+      required:
+      - status
+      - code
+      - message
+    ImportConfig:
+      title: Import configuration
+      type: object
+      description: An import configuration grouping one or more streams.
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The configuration identifier.
+          example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+        tenant:
+          type: string
+          description: The owning tenant.
+          example: mytenant
+        name:
+          type: string
+          description: The configuration name.
+          example: ERP product master import
+        description:
+          type: string
+          description: A free-text description.
+          example: Nightly import of product master data from the ERP system.
+        sourceConnId:
+          type: string
+          format: uuid
+          description: The default source connection for the configuration's streams.
+          example: 550e8400-e29b-41d4-a716-446655440000
+        aiEnabled:
+          type: boolean
+          description: Whether AI-assisted mapping suggestions are enabled for the configuration.
+          example: false
+        enabled:
+          type: boolean
+          description: Whether the configuration is active.
+          example: true
+        version:
+          type: integer
+          description: Incremented on every change to the configuration.
+          example: 3
+        healthThresholds:
+          $ref: '#/components/schemas/HealthThresholds'
+        createdBy:
+          type: string
+          description: The identifier of the user who created the configuration.
+          example: user@example.com
+        createdAt:
+          type: string
+          format: date-time
+          description: When the configuration was created.
+          example: '2026-07-01T10:15:30.000Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: When the configuration was last updated.
+          example: '2026-07-20T08:00:00.000Z'
+  examples:
+    NotFound404_Example:
+      value:
+        status: element_resource_non_existing
+        code: 404
+        message: The requested resource does not exist.
+    Forbidden403_Example:
+      value:
+        status: forbidden
+        code: 403
+        message: The access to the requested resource has been forbidden.
+        details:
+        - Missing required scopes
+    ImportConfigs_Example:
+      value:
+      - id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+        tenant: mytenant
+        name: ERP product master import
+        description: Nightly import of product master data from the ERP system.
+        sourceConnId: 550e8400-e29b-41d4-a716-446655440000
+        aiEnabled: false
+        enabled: true
+        createdAt: '2026-07-01T10:15:30.000Z'
+        updatedAt: '2026-07-20T08:00:00.000Z'
+    InternalServiceError500_Example:
+      value:
+        status: internal_service_error
+        code: 500
+        message: A server-side exception occurred that prevented the system from correctly returning the result.
+        details:
+        - https://pattern.yaas.io/errortypes.html
+    ImportConfig_Example:
+      value:
+        id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+        tenant: mytenant
+        name: ERP product master import
+        description: Nightly import of product master data from the ERP system.
+        sourceConnId: 550e8400-e29b-41d4-a716-446655440000
+        aiEnabled: false
+        enabled: true
+        createdAt: '2026-07-01T10:15:30.000Z'
+        updatedAt: '2026-07-20T08:00:00.000Z'
+  parameters:
+    trait_id:
+      name: id
+      in: path
+      required: true
+      description: The resource identifier.
+      schema:
+        type: string
+        format: uuid
+        example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+    trait_tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'The tenant you want to access.
+
+        '
+      schema:
+        type: string
+        example: mytenant
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            importtool.import_trigger: Needed to trigger, schedule, monitor, and cancel import runs and to read configurations, streams, schedules, runs, and imported data.
+x-refined-from:
+- emporix-import-service-openapi.yml
+- emporix-import-service-openapi.yml

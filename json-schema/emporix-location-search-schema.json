@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-location-search-schema.json",
+  "title": "LocationSearch",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-availability-openapi.yml#/components/schemas/LocationSearch",
+  "type": "object",
+  "properties": {
+    "site": {
+      "type": "string",
+      "description": "Site code, defined when the site is created."
+    },
+    "productIds": {
+      "type": "array",
+      "description": "List of product IDs. A product IDs is generated when the product is created through the Product Service.",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

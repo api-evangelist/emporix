@@ -1,0 +1,480 @@
+openapi: 3.2.0
+info:
+  title: Emporix Quote history API
+  version: ''
+  contact:
+    email: documentation@emporix.com
+  description: 'Operations tagged Quote history across 2 of this provider''s published API definitions: emporix-quote-openapi.yml, emporix-quote-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Quote history
+paths:
+  /quote/{tenant}/quotes/{quoteId}/history:
+    get:
+      tags:
+      - Quote history
+      summary: Retrieving quote history
+      description: 'Retrieves changes related to a quote with a given ID.
+
+
+        When the request uses a B2B customer token, the quote must be linked to the legal entity from the token; otherwise, the request fails with the `404` status code.'
+      operationId: GET-quote-retrieve-quote-history
+      parameters:
+      - name: tenant
+        in: path
+        description: 'Your Emporix tenant name.
+
+
+          **Note**: The tenant name should always be written in lowercase.
+
+          '
+        required: true
+        schema:
+          type: string
+          example: saasdev2
+      - name: quoteId
+        in: path
+        description: 'Quote unique identifier generated when the quote is created.
+
+          '
+        required: true
+        schema:
+          type: string
+          example: 084bcaf5-66b8-4ddd-9489-65c5f6449e94
+      - $ref: '#/components/parameters/X-Total-Count'
+      responses:
+        '200':
+          description: The request was successful. Quote details are returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuoteHistory'
+              examples:
+                Quote history:
+                  value:
+                  - id: 6447b45cac0475131f3a6261
+                    op: ADD
+                    path: /items
+                    newValue:
+                      itemId: 2298854309b06d4c6d3cf1zfe
+                      quantity:
+                        quantity: 1
+                        unitCode: H87
+                      price:
+                        priceId: 14551d2309b06sd46d3cf19bq
+                        unitPrice: 13
+                        totalNetValue: 13
+                        tax:
+                          taxClass: STANDARD
+                          taxRate: 20
+                        product:
+                          productId: 74698542309b06dc46d3cf19fe
+                    userId: 7777i52309521897214
+                    userFirstName: Robin
+                    userLastName: Fritz
+                    restriction: main
+                    userType: EMPLOYEE
+                    modifiedAt: '2024-04-02T13:06:15.280Z'
+                  - id: 6447b45cac0475131f3a6262
+                    op: REPLACE
+                    path: /status
+                    newValue:
+                      value: OPEN
+                    previousValue:
+                      value: AWAITING
+                    userId: 612ji52309521897214
+                    userFirstName: Robin
+                    userLastName: Fritz
+                    userType: EMPLOYEE
+                    modifiedAt: '2024-04-02T13:06:15.280Z'
+                  - id: 6447b45cac0475131f3a6263
+                    op: REPLACE
+                    path: /validTo
+                    newValue: '2025-04-02T13:06:15.280Z'
+                    previousValue: '2023-04-02T13:06:15.280Z'
+                    userId: 612ji52309521897214
+                    userFirstName: Stefan
+                    userLastName: Muller
+                    userType: EMPLOYEE
+                    modifiedAt: '2024-04-02T13:06:15.280Z'
+                  - id: 6447b45cac0475131f3a6264
+                    op: REPLACE
+                    path: /items/2298854309b06d46d3cf19fe
+                    previousValue:
+                      itemId: 2298854309b06d4c6d3cf1zfe
+                      quantity:
+                        quantity: 1
+                        unitCode: H87
+                      price:
+                        priceId: 14551d2309b06sd46d3cf19bq
+                        unitPrice: 13
+                        totalNetValue: 13
+                        tax:
+                          taxClass: STANDARD
+                          taxRate: 20
+                        product:
+                          productId: 74698542309b06dc46d3cf19fe
+                    newValue:
+                      itemId: 2298854309b06d4c6d3cf1zfe
+                      quantity:
+                        quantity: 2
+                        unitCode: H87
+                      price:
+                        priceId: 14551d2309b06sd46d3cf19bq
+                        unitPrice: 14
+                        totalNetValue: 14
+                        tax:
+                          taxClass: STANDARD
+                          taxRate: 21
+                        product:
+                          productId: 74698542309b06dc46d3cf1fff
+                    userId: 5577i52309521897214
+                    userFirstName: Mark
+                    userLastName: Schmidt
+                    userType: EMPLOYEE
+                    modifiedAt: '2024-04-02T13:06:15.280Z'
+                  - id: 6447b45cac0475131f3a6261
+                    op: REMOVE
+                    path: /items/124dfa82410fas824kfa
+                    previousValue:
+                      itemId: 2298854309b06d4c6d3cf1zfe
+                      quantity:
+                        quantity: 1
+                        unitCode: H87
+                      price:
+                        priceId: 14551d2309b06sd46d3cf19bq
+                        unitPrice: 13
+                        totalNetValue: 13
+                        tax:
+                          taxClass: STANDARD
+                          taxRate: 20
+                        product:
+                          productId: 74698542309b06dc46d3cf19fe
+                    userId: 612ji52309521897214
+                    userFirstName: Stefan
+                    userLastName: Muller
+                    userType: EMPLOYEE
+                    modifiedAt: '2024-04-02T13:06:15.280Z'
+        '401':
+          $ref: '#/components/responses/Unathorized_401'
+        '403':
+          description: Permission denied due to insufficient rights. This may happen when request does not contain sufficient scopes for given query values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                Forbidden:
+                  value:
+                    code: 403
+                    status: Forbidden
+                    message: You need a scope for this action.
+                    details:
+                    - 'Required scope(s): quote.quote_read'
+        '404':
+          $ref: '#/components/responses/Not_Found_404'
+      security:
+      - OAuth2:
+        - quote.quote_read
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    ErrorResponse:
+      required:
+      - code
+      - message
+      - status
+      type: object
+      properties:
+        resourceId:
+          type:
+          - string
+          - 'null'
+        code:
+          type: integer
+          format: int32
+        status:
+          type: string
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            type: string
+    QuoteItemIds:
+      type: array
+      description: List of item IDs.
+      items:
+        type: object
+        properties:
+          itemId:
+            type: string
+            description: ID of the item.
+    QuoteUpdateValues:
+      anyOf:
+      - $ref: '#/components/schemas/QuoteItemUpdate'
+      - $ref: '#/components/schemas/QuoteItemsReplaceUpdate'
+      - $ref: '#/components/schemas/QuoteItemUpdatePrice'
+      - $ref: '#/components/schemas/QuoteUpdateStatus'
+      - $ref: '#/components/schemas/QuoteShipping'
+      - $ref: '#/components/schemas/QuoteItemIds'
+      - type: string
+        description: Value of the string type.
+      - type: object
+        description: Mixin request.
+    Restriction:
+      type:
+      - string
+      - 'null'
+      description: "Access control identifier that determines who can view or manage the quotes.\n\n**Purpose**: Restricts quote visibility based on scope permissions. Only users/applications \nwith matching restriction scopes can access quotes with a specific restriction value.\n\n**Access Control**:\n- *Reading*: Users can only query and view quotes with the `restriction` value that matches one of their authorized restrictions.\n\n**Validation**: The value must exist in the tenant's configured list of valid restrictions.\n\n**Restriction Synchronization**:\n- If quote is created by a customer (based on a cart) and `restriction` property is not set, the `restriction` value of quote is inherited from customer's restriction.\n- If a quote is created by an employee and the `restriction` property is not set with tenant configuration property `enableSyncBetweenRestrictionsAndSiteCodes` set to `true`, the `restriction` field automatically syncs with quote's siteCode property.\n"
+      example: DE
+    QuoteItemUpdate:
+      type: object
+      description: Quote item model.
+      properties:
+        quantity:
+          type: object
+          properties:
+            quantity:
+              type: number
+            unitCode:
+              type: string
+        price:
+          $ref: '#/components/schemas/QuoteItemUpdatePriceRow'
+        product:
+          type: object
+          properties:
+            productId:
+              type: string
+      required:
+      - itemType
+      - quantity
+      - price
+      - product
+    QuoteItemsReplaceUpdate:
+      type: array
+      description: Quote item ID.
+      items:
+        allOf:
+        - $ref: '#/components/schemas/QuoteItemUpdate'
+        - type: object
+          properties:
+            itemId:
+              type: string
+              description: ID of the item. It's generated automatically when it's not provided.
+    QuoteHistory:
+      type: array
+      description: Quote update operation list.
+      items:
+        type: object
+        properties:
+          id:
+            description: The unique ID of the audit log.
+            type: string
+          op:
+            description: operation type
+            enum:
+            - ADD
+            - REMOVE
+            - REPLACE
+            - CREATE
+            type: string
+          path:
+            description: Path that indicates on which element the update has been executed.
+            enum:
+            - /quote
+            - /status
+            - /validTo
+            - /comment
+            - /billingAddressId
+            - /shippingAddressId
+            - /companyName
+            - /legalEntityId
+            - /customerId
+            - /shipping
+            - /restriction
+            - /items
+            - /items/{itemId}
+            - /items/{itemId}/price
+            - /items/{itemId}/mixins/{mixinsPath}
+            - /items/{itemId}/metadata/mixins/{mixinsPath}
+            - /items/{itemId}/product/mixins/{mixinsPath}
+            - /items/{itemId}/product/metadata/mixins/{mixinsPath}
+            - /mixins/{mixinsPath}
+            - /metadata/{mixinsPath}
+            type: string
+          newValue:
+            allOf:
+            - $ref: '#/components/schemas/QuoteUpdateValues'
+            - type: object
+              description: New value after the update.
+          previousValue:
+            allOf:
+            - $ref: '#/components/schemas/QuoteUpdateValues'
+            - type: object
+              description: Value before update.
+            description: Value before update.
+          userId:
+            type: string
+            description: ID of the user who modified the item.
+          userFirstName:
+            type: string
+            description: First name of the user who modified the item.
+          userLastName:
+            type: string
+            description: Last name of the user who modified the item.
+          userType:
+            enum:
+            - EMPLOYEE
+            - CUSTOMER
+            - SYSTEM
+            type: string
+          restriction:
+            $ref: '#/components/schemas/Restriction'
+          modifiedAt:
+            type: string
+            description: Modification date.
+    QuoteItemUpdatePrice:
+      type: object
+      description: TotalNetValue item model.
+      properties:
+        totalNetValue:
+          type: number
+    QuoteItemUpdatePriceRow:
+      type: object
+      description: Price details
+      properties:
+        priceId:
+          type: string
+          description: The ID of the matched price
+        unitePrice:
+          minimum: 0
+          type: number
+          description: The effective unit price of the product
+        totalNetValue:
+          minimum: 0
+          type: number
+          description: The total net value for the entire quantity of the item.
+        tax:
+          type: object
+          description: The tax information of the item.
+          required:
+          - taxClass
+          properties:
+            taxClass:
+              type: string
+              description: The matched tax class of the item.
+            taxRate:
+              type: number
+              description: The tax rate of the item.
+      required:
+      - tax
+    QuoteUpdateStatus:
+      type: object
+      description: Quote status.
+      properties:
+        value:
+          type: string
+          description: The status value of the code.
+        comment:
+          type: string
+          description: The comment to the status.
+        quoteReasonId:
+          type: string
+          description: 'The ID of the quote reason. Can be provided only in following scenarios:
+
+            - when changing state from OPEN to IN_PROGRESS - quote reason has to be of CHANGE type
+
+            - when changing state from OPEN to DECLINED - quote reason has to be of DECLINE type
+
+            - when changing state from IN_PROGRESS to DECLINED_BY_MERCHANT - quote reason has to be of DECLINE type'
+      required:
+      - value
+    QuoteShipping:
+      type: object
+      description: The shipping cost of the quote.
+      properties:
+        value:
+          type: number
+          description: Net value of the shipping cost.
+        methodId:
+          type: string
+          description: Shipping method's unique identifier.
+        zoneId:
+          type: string
+          description: Shipping zone identifier.
+        shippingTaxCode:
+          type: string
+          description: Tax code of the shipping method.
+  responses:
+    Not_Found_404:
+      description: Given resource cannot be found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            Quote does not exists:
+              value:
+                resourceId: 084bcag6-66b8-4ddd-9489-65c5f6449e94
+                code: 404
+                status: Not Found
+                message: Error while getting resource
+                details:
+                - Resource with id '084bcaf6-66b8-4ddd-9489-65c5f6449e94' not found
+    Unathorized_401:
+      description: Given request is unauthorized - the authorization token is invalid or has expired. It usually means that tenant from the token does not match tenant from path.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid Access Token:
+              value:
+                fault:
+                  faultstring: Invalid Access Token
+                  detail:
+                    errorcode: keymanagement.service.invalid_access_token
+            Unauthorized:
+              value: {}
+  parameters:
+    X-Total-Count:
+      name: X-Total-Count
+      in: header
+      required: false
+      schema:
+        type: boolean
+        example: true
+        default: false
+      description: 'Flag indicating whether the total number of retrieved items should be returned.
+
+        '
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            quote.quote_read: Needed to retrieve quotes.
+            quote.quote_read_own: Needed to retrieve own quotes by the customer.
+            quote.quote_manage: Needed to manage quotes.
+            quote.quote_manage_own: Needed to manage own quotes by the customer.
+x-refined-from:
+- emporix-quote-openapi.yml
+- emporix-quote-openapi.yml

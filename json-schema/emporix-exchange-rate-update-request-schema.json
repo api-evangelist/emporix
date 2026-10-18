@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-exchange-rate-update-request-schema.json",
+  "title": "exchangeRateUpdateRequest",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-currency-service-openapi.yml#/components/schemas/exchangeRateUpdateRequest",
+  "type": "object",
+  "properties": {
+    "rate": {
+      "type": "string",
+      "description": "Represents the exchange rate.\n\nThe value of the field is represented by a number where the cent part is separated by a comma. For example, `1.09`. The cent part is not limited just to two digits. A rate with any precision can be returned. For example: `1.09193421`"
+    },
+    "metadata": {
+      "$ref": "#/$defs/updateMetadata"
+    }
+  },
+  "required": [
+    "rate",
+    "metadata"
+  ],
+  "$defs": {
+    "updateMetadata": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "minimum": 1,
+          "type": "integer",
+          "description": "Current version of the updated document."
+        }
+      },
+      "required": [
+        "version"
+      ]
+    }
+  }
+}

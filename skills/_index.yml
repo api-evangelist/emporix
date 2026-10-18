@@ -1,0 +1,100 @@
+name: Emporix agent skills
+type: AgentSkill
+generated: '2026-10-18'
+method: generated
+source: openapi/
+skills:
+- name: emporix-authenticate
+  file: skills/emporix-authenticate.md
+  operations:
+  - POST-oauth-request-client-credentials
+  - GET-oauth-generate-anonymous-access-token
+  - POST-customer-authenticate-customer
+- name: emporix-product-onboarding
+  file: skills/emporix-product-onboarding.md
+  operations:
+  - POST-product-create-product
+  - POST-price-create-price
+  - POST-availability-add-product
+  - POST-category-tree-assign-resource
+  - GET-product-retrieve-product
+- name: emporix-storefront-checkout
+  file: skills/emporix-storefront-checkout.md
+  operations:
+  - POST-cart-create-cart
+  - POST-cart-add-item-to-cart
+  - GET-payment-gateway-list-payment-modes-frontend
+  - POST-checkout-trigger-checkout
+  - GET-order-retrieve-order-storefront
+- name: emporix-returns
+  file: skills/emporix-returns.md
+  operations:
+  - POST-returns-create-return
+  - GET-returns-retrieve-return
+  - PATCH-returns-update-return
+- name: emporix-custom-entities
+  file: skills/emporix-custom-entities.md
+  operations:
+  - POST-schema-create-custom-schema-type
+  - POST-schema-create-custom-instance
+  - POST-schema-search-custom-instances
+  - PATCH-schema-patch-custom-instance
+- name: emporix-import-run
+  file: skills/emporix-import-run.md
+  operations:
+  - GET-importtool-list-configs
+  - POST-importtool-trigger-run
+  - GET-importtool-get-run
+  - GET-importtool-list-run-errors
+  - POST-importtool-retry-run
+- name: emporix-create-and-manage-order
+  file: skills/emporix-create-and-manage-order.md
+  operations:
+  - POST-order-create-order-employee
+  - GET-order-retrieve-order-employee
+  - PUT-order-update-order
+  - POST-order-update-order-transition-employee
+  - POST-order-calculate-order-entries-employees
+- name: emporix-create-update-customer-profile
+  file: skills/emporix-create-update-customer-profile.md
+  operations:
+  - POST-customer-tenant-create-customer
+  - GET-customer-tenant-retrieve-customer
+  - PUT-customer-tenant-update-customer
+- name: emporix-manage-customer-address
+  file: skills/emporix-manage-customer-address.md
+  operations:
+  - POST-customer-add-address
+  - GET-customer-retrieve-address-by-id
+  - PATCH-customer-update-customer-address
+  - DELETE-customer-remove-customer-address-by-id
+- name: emporix-manage-customer-segment-assignments
+  file: skills/emporix-manage-customer-segment-assignments.md
+  operations:
+  - GET-customer-segment-retrieve-customers
+  - POST-customer-segment-search-customers
+  - PUT-customer-segment-update-customer-by-customerId
+  - PUT-customer-segment-update-customer
+  - DELETE-customer-segment-remove-customer-by-customerId
+  - DELETE-customer-segment-remove-customer
+  - PUT-customer-segment-update-customers-bulk
+  - DELETE-customer-segment-remove-customers-bulk
+- name: emporix-retrieve-and-update-order-status
+  file: skills/emporix-retrieve-and-update-order-status.md
+  operations:
+  - GET-order-retrieve-order-storefront
+  - GET-order-retrieve-transitions
+  - POST-order-update-order-transition-storefront
+provider_published:
+  repository: https://github.com/emporix-shared/ai-skills
+  license: CC-BY-4.0 (skill content)
+  docs: https://developer.emporix.io/agentic-commerce-intelligence/agentic-engineering/skill-library.md
+  method: searched
+  saved_verbatim:
+  - skills/_original/emporix-auth-SKILL.md
+  - skills/_original/emporix-docs-navigation-SKILL.md
+  - skills/_original/emporix-extensibility-SKILL.md
+  - skills/_original/emporix-product-data-SKILL.md
+  - skills/_original/emporix-storefront-SKILL.md
+  - skills/_original/emporix-terraform-SKILL.md
+  - skills/_original/emporix-sequential-id-SKILL.md

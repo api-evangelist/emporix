@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-quote-reason-response-schema.json",
+  "title": "QuoteReasonResponse",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-quote-openapi.yml#/components/schemas/QuoteReasonResponse",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "The quote reason ID."
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "CHANGE",
+        "DECLINE"
+      ],
+      "description": "Type of the quote reason."
+    },
+    "message": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "description": "Localized message - can be either string or map with languages as map's keys accordingly to specified 'Accept-Language' header."
+    },
+    "code": {
+      "type": "string",
+      "description": "Code of the reason for the quote status change."
+    },
+    "metadata": {
+      "type": "object",
+      "description": "The Quote Reason metadata details.",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "description": "Version of the quote reason that is used for the optimistic locking handling."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The Quote Reason creation timestamp."
+        },
+        "modifiedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The Quote Reason modification timestamp."
+        }
+      }
+    }
+  }
+}

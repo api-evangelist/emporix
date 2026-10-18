@@ -1,0 +1,201 @@
+openapi: 3.2.0
+info:
+  title: Emporix Global configurations API
+  version: ''
+  contact:
+    email: documentation@emporix.com
+  description: 'Operations tagged Global configurations across 2 of this provider''s published API definitions: emporix-configuration-service-openapi.yml, emporix-configuration-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Global configurations
+  description: Read Global Configurations
+paths:
+  /configuration/{tenant}/global-configurations:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    get:
+      summary: Retrieving global configurations
+      tags:
+      - Global configurations
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Configuration'
+              examples:
+                Response example:
+                  value:
+                  - key: customer.deletion.redirecturl
+                    secured: false
+                    value: https://tenant.com/custDelete?token=
+                    version: 1
+                  - key: customer.passwordreset.redirecturl
+                    secured: false
+                    value: https://tenant.com/changePassword?token=
+                    version: 1
+                  - key: customer.changeemail.redirecturl
+                    secured: false
+                    value: https://tenant.com/emailChangeConfirm?token=
+                    version: 1
+                  - key: cust.notification.email.from
+                    secured: false
+                    value: example_email@emporix.com
+                    version: 3
+                  - key: project_country
+                    secured: false
+                    value: EN
+                    version: 2
+                  - key: project_curr
+                    secured: false
+                    value: '[{"id":"EUR","label":"Euro","default":true,"required":true}]'
+                    version: 3
+                  - key: project_lang
+                    secured: false
+                    value: '[{"id":"en","label":"English","default":true,"required":true}]'
+                    version: 2
+                  - key: taxConfiguration
+                    secured: false
+                    value:
+                      taxClassOrder:
+                      - FULL
+                      - HALF
+                      - ZERO
+                      taxClasses:
+                        FULL: 19
+                        HALF: 7
+                        ZERO: 0
+                    version: 2
+                  - key: packagingConf
+                    secured: false
+                    value:
+                      packagingGroupOptions:
+                      - 1_cooling_product
+                      - 2_standard
+                      - 3_fragile
+                      packagingPositionOptions:
+                      - 1_bottom_robust
+                      - 2_bottom_insensitive
+                      - 3_middle_standard
+                      - 4_top_sensitive
+                    version: 2
+                  - key: storefront.htmlPage
+                    secured: false
+                    value: index.html
+                    version: 1
+                  - key: storefront.host
+                    secured: false
+                    value: tenant.com
+                    version: 1
+                  - key: unitConf
+                    secured: false
+                    value:
+                    - units:
+                        LTR:
+                          availableUnitValue: 1
+                          conversion:
+                            MLT: 1000
+                        GRM:
+                          availableUnitValue: 100
+                          conversion:
+                            KGM: 0.001
+                        KGM:
+                          availableUnitValue: 1
+                          conversion:
+                            GRM: 1000
+                        MLT:
+                          availableUnitValue: 100
+                          conversion:
+                            LTR: 0.001
+                      name: UnitConfiguration
+                      description: This object holds the unit configurations and the factors to calculate between different units
+                    version: 1
+      operationId: GET-global-configuration-list-config
+      parameters:
+      - schema:
+          type: string
+        in: query
+        name: keys
+      description: Retrieves a list of global configurations.
+    servers:
+    - url: https://api.emporix.io
+components:
+  parameters:
+    tenant:
+      name: tenant
+      in: path
+      required: true
+      schema:
+        type: string
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: The tenant should always be written in lowercase.
+
+        '
+  schemas:
+    Configuration:
+      allOf:
+      - $ref: '#/components/schemas/BaseConfiguration'
+      - type: object
+    BaseConfiguration:
+      title: BaseConfiguration
+      type: object
+      properties:
+        key:
+          type: string
+          description: Configuration key.
+          minLength: 1
+        value:
+          description: Configuration value. It can be any valid JSON object.
+          oneOf:
+          - type: object
+          - type: string
+          - type: array
+            items:
+              type: object
+          - type: boolean
+        version:
+          type: integer
+          description: Configuration version.
+        description:
+          type: string
+          description: Describes purpose of the configuration.
+        secured:
+          type: boolean
+          description: Flag indicating whether the configuration should be encrypted. It works only if `value` field is of `string` type.
+          default: false
+        restricted:
+          type: boolean
+          description: Flag indicating whether the configuration should be restricted. When configuration is rectricted then it cannot be deleted. When this property is set to `true` then it cannot be unset.
+          default: false
+        readOnly:
+          type: boolean
+          description: Flag indicating whether the configuration should be readOnly. When configuration is readOnly then it cannot be updated.
+          default: false
+        schemaUrl:
+          type: string
+          format: uri
+          description: 'URL of Json Schema for validation purpose. When configuration is created this value can be provided and then each update operation will be validated against this schema. This property cannot be updated so once set it cannot be unset. The Json Schema should contain one root property named `value` in order to work correctly. An example of a valid schema: `{ "$schema": "http://json-schema.org/draft-07/schema#", "type": "object", "required": ["value"], "properties": { "value": { "type": "boolean" } } }` '
+      required:
+      - key
+      - value
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          refreshUrl: ''
+          scopes:
+            configuration.configuration_view: ''
+            configuration.configuration_manage: ''
+          tokenUrl: https://api.emporix.io/oauth/token
+x-refined-from:
+- emporix-configuration-service-openapi.yml
+- emporix-configuration-service-openapi.yml

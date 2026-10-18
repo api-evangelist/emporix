@@ -1,0 +1,657 @@
+openapi: 3.2.0
+info:
+  title: Emporix Reference API
+  version: ''
+  contact:
+    email: documentation@emporix.com
+  description: 'Operations tagged Reference across 2 of this provider''s published API definitions: emporix-schema-openapi.yml, emporix-schema-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Reference
+paths:
+  /schema/{tenant}/references:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    post:
+      tags:
+      - Reference
+      summary: Creating a reference
+      description: Creates a reference entity and uploads provided file to the cloudinary repository.
+      operationId: POST-schema-create-reference
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: object
+                  format: json
+                  description: Content of the file.
+                body:
+                  $ref: '#/components/schemas/ReferenceCreation'
+              required:
+              - file
+              - body
+            examples:
+              Reference:
+                value:
+                  file:
+                    externalValue: https://res.cloudinary.com/saas-ag/raw/upload/emporix-docs/653a30c0951b2b0665884f89_v1.json
+                  body:
+                    name:
+                      en: Product Custom Attributes
+                    types:
+                    - PRODUCT
+        description: ''
+      responses:
+        '201':
+          description: The request was successful. The Reference has been created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdResponse'
+              examples:
+                Reference created:
+                  value:
+                    id: e241dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+        '400':
+          $ref: '#/components/responses/Bad_request_400_cl'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          description: Permission denied due to insufficient rights. This may happen when the request does not contain sufficient scopes for the given query values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                Forbidden:
+                  value:
+                    code: 403
+                    status: Forbidden
+                    message: You need to choose the required scope to complete this action.
+                    details:
+                    - message: 'Required scope(s): schema.schema_manage'
+        '409':
+          $ref: '#/components/responses/Conflict_409'
+      security:
+      - OAuth2:
+        - schema.schema_manage
+      parameters:
+      - $ref: '#/components/parameters/trait_contentLanguage_header'
+    get:
+      summary: Retrieving all references
+      description: Retrieves all references. You can filter the results with query parameters.
+      tags:
+      - Reference
+      responses:
+        '200':
+          description: ''
+          headers:
+            X-Total-Count:
+              description: Total amount of references for given criteria.
+              schema:
+                type: integer
+                format: int32
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReferencesResponse'
+              examples:
+                References:
+                  $ref: '#/components/examples/ReferencesResponse'
+        '400':
+          $ref: '#/components/responses/Bad_request_400'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+      operationId: GET-schema-retrieve-references
+      parameters:
+      - $ref: '#/components/parameters/trail_xTotalCount_header'
+      - $ref: '#/components/parameters/trait_acceptLanguage_header'
+      - $ref: '#/components/parameters/trait_paged_pageNumber'
+      - $ref: '#/components/parameters/trait_paged_pageSize'
+      - $ref: '#/components/parameters/trait_sort'
+      - $ref: '#/components/parameters/trait_q_param'
+      - $ref: '#/components/parameters/trait_fields'
+      - name: type
+        in: query
+        description: 'Filters references by type. Possible types to specify, AVAILABILITY, CART, CART_ITEM, CATEGORY, COMPANY, COUPON, CUSTOMER, CUSTOMER_ADDRESS, LOCATION, ORDER, ORDER_ENTRY, PRODUCT, QUOTE, RETURN, PRICE_LIST, SITE, CUSTOM_ENTITY, VENDOR, VENDOR_LOCATION, MEDIA. When the newer version of a reference is of different type than the previous one and the previous one matches the type specified in this query param, then the previous version is returned.
+
+          '
+        schema:
+          type: string
+    servers:
+    - url: https://api.emporix.io
+  /schema/{tenant}/references/{id}:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    - $ref: '#/components/parameters/id'
+    - $ref: '#/components/parameters/trait_schemaVersion'
+    get:
+      summary: Retrieving a reference
+      description: Retrieves a single reference.
+      tags:
+      - Reference
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReferenceResponse'
+              examples:
+                Reference:
+                  $ref: '#/components/examples/ReferenceResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '404':
+          $ref: '#/components/responses/Not_Found_404'
+      operationId: GET-schema-retrieve-reference
+      parameters:
+      - $ref: '#/components/parameters/trait_acceptLanguage_header'
+    delete:
+      summary: Deleting a reference
+      description: Deletes a single reference. It deletes just a database entry. The cloudinary reference file remains untouched.
+      tags:
+      - Reference
+      responses:
+        '204':
+          description: No content
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+      operationId: DELETE-schema-remove-reference
+      security:
+      - OAuth2:
+        - schema.schema_manage
+    put:
+      summary: Updating a reference
+      description: Updates a single reference.
+      tags:
+      - Reference
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: object
+                  format: json
+                  description: Content of the file.
+                body:
+                  $ref: '#/components/schemas/ReferenceUpdate'
+              required:
+              - file
+              - body
+            examples:
+              Reference:
+                value:
+                  file:
+                    externalValue: https://res.cloudinary.com/saas-ag/raw/upload/emporix-docs/653a30c0951b2b0665884f89_v1.json
+                  body:
+                    name:
+                      en: Product Custom Attributes
+                    types:
+                    - PRODUCT
+                    metadata:
+                      version: 1
+        description: ''
+      responses:
+        '204':
+          description: No content
+        '400':
+          $ref: '#/components/responses/Bad_request_400_cl'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '404':
+          $ref: '#/components/responses/Not_Found_404'
+        '409':
+          $ref: '#/components/responses/Conflict_409'
+      operationId: PUT-schema-update-reference
+      security:
+      - OAuth2:
+        - schema.schema_manage
+      parameters:
+      - $ref: '#/components/parameters/trait_contentLanguage_header'
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    ErrorResponse:
+      required:
+      - code
+      - message
+      - status
+      type: object
+      properties:
+        id:
+          type:
+          - string
+          - 'null'
+        code:
+          type: integer
+          format: int32
+        status:
+          type: string
+        message:
+          type: string
+        errorCode:
+          type:
+          - string
+          - 'null'
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              type:
+                type: string
+              message:
+                type: string
+              moreInfo:
+                type: string
+    IdResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID of the generated document.
+      example:
+        id: e343dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+      description: Id of the created schema.
+    ReferenceUpdate:
+      allOf:
+      - $ref: '#/components/schemas/AbstractSchemaRequest'
+      - type: object
+        properties:
+          metadata:
+            $ref: '#/components/schemas/SchemaMetadataUpdate'
+    AbstractSchemaRequest:
+      type: object
+      properties:
+        name:
+          type: object
+          description: Localized schema name in a form of a map of translations.
+        types:
+          type: array
+          description: List of types which schema should be assigned to.
+          items:
+            $ref: '#/components/schemas/SchemaType'
+      required:
+      - name
+      - types
+    ReferencesResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/ReferenceResponse'
+    SchemaMetadata:
+      allOf:
+      - $ref: '#/components/schemas/SchemaMetadataUpdate'
+      - type: object
+        description: Metadata of schema.
+        properties:
+          url:
+            type: string
+            description: Schema url of the attributes.
+          createdAt:
+            type: string
+            description: 'Date and time when the object was created, compliant with the ISO 8601 standard. For example: `2022-03-31T09:52:15.423Z`'
+          modifiedAt:
+            type: string
+            description: 'Date and time when the object was last modified, compliant with the ISO 8601 standard. For example: `2022-03-31T09:52:15.423Z`'
+    ReferenceResponse:
+      allOf:
+      - $ref: '#/components/schemas/AbstractSchemaResponse'
+    AbstractSchemaResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Identifier of the schema.
+        name:
+          type: object
+          description: Localized schema name in a form of a map of translations.
+        types:
+          type: array
+          description: List of types to which schema should be assigned.
+          items:
+            $ref: '#/components/schemas/SchemaType'
+        metadata:
+          allOf:
+          - $ref: '#/components/schemas/SchemaMetadata'
+    SchemaType:
+      type: string
+      description: Type which the schema should be assigned to. Can be one of the predefined values or any custom schema type id.
+      enum:
+      - AVAILABILITY
+      - CART
+      - CART_ITEM
+      - CATEGORY
+      - COMPANY
+      - COUPON
+      - CUSTOMER
+      - CUSTOMER_ADDRESS
+      - LOCATION
+      - ORDER
+      - ORDER_ENTRY
+      - PRODUCT
+      - QUOTE
+      - RETURN
+      - PRICE_LIST
+      - SITE
+      - CUSTOM_ENTITY
+      - VENDOR
+      - VENDOR_LOCATION
+      - MEDIA
+    ReferenceCreation:
+      allOf:
+      - $ref: '#/components/schemas/AbstractSchemaRequest'
+      - type: object
+        properties:
+          id:
+            type: string
+            description: Identifier of the schema.
+    SchemaMetadataUpdate:
+      type: object
+      properties:
+        version:
+          type: number
+          description: Version of the object. The value is required during update operation.
+  parameters:
+    trail_xTotalCount_header:
+      name: X-Total-Count
+      in: header
+      required: false
+      schema:
+        type: boolean
+        example: true
+        default: false
+      description: 'Flag indicating whether the total number of retrieved items should be returned.
+
+        '
+    trait_fields:
+      name: fields
+      in: query
+      description: 'Fields to be included in the response.
+
+        '
+      schema:
+        type: string
+    trait_paged_pageNumber:
+      name: pageNumber
+      in: query
+      description: 'Page number to be retrieved. The number of the first page is 1.
+
+        '
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    trait_contentLanguage_header:
+      in: header
+      name: Content-Language
+      description: The Content-Language request HTTP header defines language(s) of the payload.
+      schema:
+        type: string
+        example: de
+    tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: Always write the tenant name in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+    trait_q_param:
+      name: q
+      in: query
+      description: "A standard query parameter is used to search for specific values.\n\n* Searching for items by string-based properties:\n  * By a field value: `q=siteCode:main`, where `siteCode` is the field name, and `main` is its desired value.\n  * By a value that is not equal to the specified value: `q=id:!=64d35aa7fa54121ca47db657`, where `id` is the field name, and `64d35aa7fa54121ca47db657` is the excluded schema ID.\n  * By a localized field value: `q=items.product.name.en:apple_lobo`, where `name` is the field name of product, `en` is the language code, and `apple_lobo` is the field value expressed in the specified language. **Note**: This query works only for localized fields, which are stored in a map format, where `key` is the language code and `value` is the translation to particular language.\n* Searching for items by a number-based property:\n  * With a specific value: `q=items.quantity.quantity:20`\n  * With a value greater than: `q=items.quantity.quantity:>20`\n  * With a value lower than: `q=items.quantity.quantity:<20`\n  * With a value greater than or equal to: `q=items.quantity.quantity:>=20`\n  * With a value lower than or equal to: `q=items.quantity.quantity:<=20`\n  * With a value within a range of values: `q=items.quantity.quantity:(>=10 AND <=20)`\\\n   where `items.quantity.quantity` is the name of the number-based field, and `20` is its querying value.\n* Searching for items by a date-based property: All number-based property queries are also valid for dates. In that case, the date should be placed within double quotes: `q=metadataCreatedAt:(>=\"2021-05-18T07:27:27.455Z\" AND <\"2021-05-20T07:27:27.455Z\")`\n* Searching for items by a boolean-based property: `q=description.multiLanguage:true`, where `description.multiLanguage` is the boolean field name, and `true` is its desired value.\n* Searching for items with a nonexistent or empty property: `q=description.en:null`, where `description.en` is the field that has its value set to `null`.\n* Searching for items with an existing property: `q=mixins.mixinName:exists`, where the specific mixin named `mixinName` exists in the database.\n* Searching for items by multiple specific values: `q=id:(5c3325baa9812100098ff48f,5c3325d1a9812100098ff494)`, where `id` is the field name, and strings within the bracket are the desired values.\n* Searching for items by multiple fields: `q=id:5c3325baa9812100098ff48f siteCode:main` where `id` and `siteCode` are field names. All objects that contain the specified values are returned. Multiple fields (separated by space) can be specified. Multiple values for each field can also be specified in the format presented earlier.\n* Searching for items with string-based properties conforming to a regex: `q=siteCode:~ain` or `q=code:(~U PL)` - in case of searching for strings with space, where `siteCode` is the name of the field, and `ain` or `U PL` is its querying regex.\n* Searching for items with a localized string-based property conforming to a regex: `items.product.name.en:~(Yoghurt im)` - where `name` is the product field name, `en` is the desired language, and `Joghurt im` is the search term.\n\nSee: [Standard Practices - Query parameter](https://developer.emporix.io/api-documentation/standard-practices/q-param)\n"
+      schema:
+        type: string
+        example: siteCode:{main}
+    trait_acceptLanguage_header:
+      name: Accept-Language
+      in: header
+      required: false
+      schema:
+        type: string
+      description: 'List of language codes acceptable for the response. You can specify factors that indicate which language should be retrieved if the one with a higher factor was not found in the localized fields. If a value is specified, then it must be present in the tenant configuration.
+
+        * If the header is set to a particular language or a list of languages, all localized fields are retrieved as strings.
+
+        * If the header is set to `*`, all localized fields are retrieved as maps of translations, where the keys are language codes and values are the fields in their respective languages.
+
+        * If the header is empty, localized fields are retrieved in the default language defined in the Configuration Service.
+
+        '
+    trait_schemaVersion:
+      name: version
+      in: query
+      required: false
+      schema:
+        type: integer
+      description: Version of the entity.
+      example: 1
+    trait_paged_pageSize:
+      name: pageSize
+      in: query
+      description: 'Number of items to be retrieved per page.
+
+        '
+      schema:
+        default: 60
+        minimum: 1
+        type: integer
+    trait_sort:
+      name: sort
+      in: query
+      description: "List of properties used to sort the results, separated by colons. The order of properties indicates their priority in sorting.\n\nPossible values:\n* `{fieldName}`\n* `{fieldName}:asc`\n* `{fieldName}:desc`\n\n**Note:** If you want to sort the results by localized properties, the possible values are:\n  * `{fieldName}.{language}`\n  * `{fieldName}.{language}:asc`\n  * `{fieldName}.{language}:desc`\n\nIf the sorting direction is not specified, the fields are sorted in ascending order."
+      schema:
+        type: string
+    id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Unique identifier of the entity.
+  responses:
+    Not_Found_404:
+      description: Given resource cannot be found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            Schema does not exists:
+              value:
+                resourceId: 084bcag6-66b8-4ddd-9489-65c5f6449e94
+                code: 404
+                status: Not Found
+                message: Error while getting resource.
+                details:
+                - message: Resource with id '084bcaf6-66b8-4ddd-9489-65c5f6449e94' not found
+    Forbidden_403:
+      description: Permission denied due to insufficient rights. This may happen when the request does not contain sufficient scopes for the given query values.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            Forbidden:
+              value:
+                code: 403
+                status: Forbidden
+                message: You need to choose the required scope to complete this action.
+                details:
+                - message: 'Required scope(s): schema.schema_manage'
+    Bad_request_400:
+      description: Unsupported language provided.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              status:
+                type: string
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    field:
+                      type: string
+                    type:
+                      type: string
+                    message:
+                      type: string
+                    moreInfo:
+                      type: string
+          examples:
+            Unsupported language:
+              value:
+                code: 400
+                status: Bad Request
+                message: Language header validation failed.
+                details:
+                - message: 'Following languages are not supported: ''ru'''
+    Bad_request_400_cl:
+      description: Unsupported content language provided.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              status:
+                type: string
+              message:
+                type: string
+              errorCode:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    field:
+                      type: string
+                    type:
+                      type: string
+                    message:
+                      type: string
+                    moreInfo:
+                      type: string
+          examples:
+            Bad request:
+              value:
+                code: 400
+                status: Bad Request
+                message: Language header validation failed.
+                details:
+                - message: 'Following languages are not supported: ''ru'''
+    Unauthorized_401:
+      description: Given request is unauthorized - the authorization token is invalid or has expired. It usually means that the tenant from the token does not match tenant from path.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid Access Token:
+              value:
+                fault:
+                  faultstring: Invalid Access Token
+                  detail:
+                    errorcode: keymanagement.service.invalid_access_token
+            Unauthorized:
+              value: {}
+    Conflict_409:
+      description: Conflict.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            code: 409
+            status: Conflict
+            message: Duplicated key.
+  examples:
+    ReferencesResponse:
+      value:
+      - id: 64d35aa7fa54121ca47db657
+        name:
+          en: Product Custom Attributes
+        types:
+        - PRODUCT
+        metadata:
+          version: 1
+          createdAt: '2023-08-09T09:21:42.693Z'
+          modifiedAt: '2023-08-09T09:21:42.693Z'
+          url: https://res.cloudinary.com/saas-ag/raw/upload/emporix-docs/64d35aa7fa54121ca47db657_v1.json
+    ReferenceResponse:
+      value:
+        id: 64d35aa7fa54121ca47db657
+        name:
+          en: Product Custom Attributes
+        types:
+        - PRODUCT
+        metadata:
+          version: 1
+          createdAt: '2023-08-09T09:21:42.693Z'
+          modifiedAt: '2023-08-09T09:21:42.693Z'
+          url: https://res.cloudinary.com/saas-ag/raw/upload/emporix-docs/64d35aa7fa54121ca47db657_v1.json
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            schema.schema_manage: Required for managing schemas.
+            schema.schema_read: Required for reading schemas.
+            schema.custominstance_read: Read custom instances of any custom schema type.
+            schema.custominstance_manage: Manage custom instances of any custom schema type.
+            custom.{lowerCaseType}_manage: Manage custom instances of a given type. For example, for type `DOCUMENT` → `custom.document_manage`.
+            custom.{lowerCaseType}_manage_own: Allows to manage only your own custom instances of a given type. For example, for type `DOCUMENT` → `custom.document_manage_own`.
+            custom.{lowerCaseType}_read: Read custom instances of a given type. For example, for type `DOCUMENT` → `custom.document_read`.
+            custom.{lowerCaseType}_read_own: Allows to read only your own custom instances of a given type. For example, for type `DOCUMENT` → `custom.document_read_own`.
+x-refined-from:
+- emporix-schema-openapi.yml
+- emporix-schema-openapi.yml

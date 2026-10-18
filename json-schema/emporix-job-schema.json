@@ -1,0 +1,225 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-job-schema.json",
+  "title": "Job",
+  "description": "Contains information about the job result - whether it was successful or not, what was the agent output etc.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-ai-service-openapi.yml#/components/schemas/Job",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier of the job."
+    },
+    "agentType": {
+      "$ref": "#/$defs/AgentType"
+    },
+    "status": {
+      "$ref": "#/$defs/JobStatus"
+    },
+    "type": {
+      "$ref": "#/$defs/JobType"
+    },
+    "exportResult": {
+      "$ref": "#/$defs/ExportResult"
+    },
+    "importResult": {
+      "$ref": "#/$defs/ImportResult"
+    },
+    "sessionId": {
+      "type": "string",
+      "description": "Unique identifier of the session. Send this value back as the `session-id` header on later chat and attachment calls."
+    },
+    "agentId": {
+      "type": "string",
+      "description": "Unique identifier of the agent."
+    },
+    "message": {
+      "type": "string",
+      "description": "Agent message."
+    },
+    "commerceEvent": {
+      "type": "string",
+      "description": "Commerce event which triggered the job."
+    },
+    "metadata": {
+      "$ref": "#/$defs/MetadataResponse"
+    }
+  },
+  "$defs": {
+    "AgentType": {
+      "type": "string",
+      "description": "Type of the agent handling the request.",
+      "enum": [
+        "generic",
+        "complaint",
+        "anti_fraud"
+      ]
+    },
+    "ExportResult": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string",
+          "description": "The base64 encoded JSON value of the exported agents with related tools and MCP servers."
+        },
+        "checksum": {
+          "type": "string",
+          "description": "Checksum calculated based on JSON value. Validates if importing JSON is exactly the same as the exported one."
+        }
+      }
+    },
+    "ImportDetails": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Machine-readable reason code for UI localization.",
+          "enum": [
+            "MISSING_FUNCTION",
+            "MISSING_TOKEN",
+            "NOT_IMPORTABLE",
+            "ALREADY_EXISTS",
+            "AGENT_IMPORTED_DISABLED",
+            "IMPORT_FAILED"
+          ]
+        },
+        "objectId": {
+          "type": "string",
+          "description": "ID of the related object, such as a function ID or token ID."
+        },
+        "objectName": {
+          "type": "string",
+          "description": "Display name of the related object, such as a tool name."
+        },
+        "message": {
+          "type": "string",
+          "description": "English fallback message when a localized string is not available."
+        }
+      }
+    },
+    "ImportResult": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "description": "Short summary of the import."
+        },
+        "summary": {
+          "type": "object",
+          "description": "Summary of the import.",
+          "properties": {
+            "agents": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ImportedEntity"
+              }
+            },
+            "tools": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ImportedEntity"
+              }
+            },
+            "mcpServers": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ImportedEntity"
+              }
+            }
+          }
+        }
+      }
+    },
+    "ImportedEntity": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "ID of the imported entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the imported entity."
+        },
+        "state": {
+          "type": "string",
+          "description": "State of the imported entity.",
+          "enum": [
+            "TO_CREATE",
+            "ENABLED",
+            "DISABLED",
+            "EXISTS",
+            "FAILED"
+          ]
+        },
+        "details": {
+          "type": "array",
+          "description": "Reasons the entity was skipped, disabled, or failed during import.",
+          "items": {
+            "$ref": "#/$defs/ImportDetails"
+          }
+        }
+      }
+    },
+    "JobStatus": {
+      "type": "string",
+      "enum": [
+        "in_progress",
+        "success",
+        "failure",
+        "skipped"
+      ],
+      "description": "Status of the job."
+    },
+    "JobType": {
+      "type": "string",
+      "enum": [
+        "IMPORT",
+        "EXPORT",
+        "AGENT_CHAT"
+      ],
+      "description": "Type of the job."
+    },
+    "MetadataRequest": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "minimum": 1,
+          "type": "integer",
+          "description": "Version of the object. The version is required during the update operation because of the optimistic locking mechanism."
+        }
+      },
+      "required": [
+        "version"
+      ]
+    },
+    "MetadataResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/MetadataRequest"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "createdAt": {
+              "description": "Date and time when the object was created. The value is approved as an ISO-8601 representation of an Instant. For example: `2022-04-30T13:18:02.379Z`",
+              "type": "string"
+            },
+            "modifiedAt": {
+              "description": "Date and time when the object was last modified. The value is approved as an ISO-8601 representation of an Instant. For example: `2022-04-30T13:18:02.379Z`",
+              "type": "string"
+            }
+          },
+          "required": [
+            "version",
+            "createdAt",
+            "modifiedAt"
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,88 @@
+generated: '2026-10-18'
+method: probed
+source: pre-flight dossier (docs platform, portal detections) + CNAME chains and response headers of the hosts apis.yml names
+registry: all/0-working/vendors.yml
+areas_vocabulary:
+- documentation
+- developer-portal
+- api-gateway
+- cdn
+- hosting
+- sdk-generation
+- api-collections
+- status-page
+- support
+- community
+- identity
+- mcp-hosting
+vendors:
+- vendor: postman
+  name: Postman
+  area: api-collections
+  host: www.postman.com
+  evidence: https://www.postman.com/emporix/emporix-commerce-orchestration-platform/overview
+  signal: url:postman.com
+  confidence: high
+  kin_score:
+  - postman_collection
+- vendor: cloudflare
+  name: Cloudflare
+  area: cdn
+  host: www.emporix.com
+  evidence: header:cf-ray
+  signal: header
+  confidence: high
+  kin_score:
+  - https_enforced
+  - hsts
+- vendor: gitbook
+  name: GitBook
+  area: documentation
+  host: developer.emporix.io
+  evidence: cname:gitbook.io
+  signal: docs-platform
+  confidence: high
+  kin_score:
+  - openapi_published
+  - llms_txt
+- vendor: hubspot
+  name: HubSpot
+  area: hosting
+  host: www.emporix.com
+  evidence: cname:hubspot.net
+  signal: cname
+  confidence: high
+  kin_score: []
+- vendor: vercel
+  name: Vercel
+  area: hosting
+  host: developer.emporix.io
+  evidence: header:x-vercel-id
+  signal: header
+  confidence: high
+  kin_score: []
+reliance:
+  areas_vendor_served:
+  - api-collections
+  - cdn
+  - documentation
+  - hosting
+  vendor_count: 5
+  areas_observed: 12
+  share_of_observable_areas: 0.333
+  note: areas where a third party was DETECTED serving this provider; an area absent here was either self-run or not observed, and this script
+    cannot tell those apart
+checked:
+- 'docs-platform: gitbook'
+- status.emporix.io (StatusPage)
+- www.emporix.com (Website)
+- developer.emporix.io (DeveloperPortal)
+- developer.emporix.io (Documentation)
+- developer.emporix.io (APIReference)
+- developer.emporix.io (GettingStarted)
+- www.postman.com (Postman)
+- support.emporix.com (Support)
+- community.emporix.io (Community)
+- app.emporix.io (Login)
+- api.emporix.io (baseURL)
+- api.emporix.io (mcp)

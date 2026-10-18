@@ -1,0 +1,125 @@
+openapi: 3.2.0
+info:
+  title: Emporix Type management API
+  version: ''
+  contact:
+    email: documentation@emporix.com
+  description: 'Operations tagged Type management across 2 of this provider''s published API definitions: emporix-unit-handling-service-openapi.yml, emporix-unit-handling-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Type management
+  description: Read Units
+paths:
+  /unit-handling/{tenant}/types:
+    description: Unit types endpoint
+    get:
+      tags:
+      - Type management
+      summary: Retrieving all unit types
+      description: Retrieves list of all unit types present in the database.
+      security:
+      - OAuth2: []
+      parameters:
+      - $ref: '#/components/parameters/tenant-path'
+      responses:
+        '200':
+          description: All unit types retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+              example:
+              - length
+              - mass
+              - quantity
+              - volume
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse401'
+        '500':
+          $ref: '#/components/responses/ServerErrorResponse500'
+      operationId: GET-unit-handling-list-all-unit-types
+    servers:
+    - url: https://api.emporix.io
+components:
+  responses:
+    ServerErrorResponse500:
+      description: Unexpected server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnexpectedError'
+    UnauthorizedResponse401:
+      description: 'Given request is unauthorized - the authorization token is invalid or has expired.
+
+
+        Details will be provided in the response payload.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Unauthorized401'
+          examples:
+            Access Token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+  parameters:
+    tenant-path:
+      in: path
+      name: tenant
+      required: true
+      description: The tenant name.
+      schema:
+        type: string
+  schemas:
+    Unauthorized401:
+      properties:
+        fault:
+          type: object
+          properties:
+            faultstring:
+              type: string
+              example: Invalid access token
+            detail:
+              type: object
+              properties:
+                errorcode:
+                  type: string
+                  example: oauth.v2.InvalidAccessToken
+    UnexpectedError:
+      properties:
+        code:
+          type: integer
+          description: HTTP Status Code.
+          example: 500
+        status:
+          type: string
+          description: HTTP Status.
+          example: Internal server error.
+        message:
+          type: string
+          description: Detailed error message
+          example: There is internal server error.
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            unithandling.unit_manage: Needed to manage measurement units.
+x-refined-from:
+- emporix-unit-handling-service-openapi.yml
+- emporix-unit-handling-service-openapi.yml

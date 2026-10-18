@@ -1,0 +1,46 @@
+overlay: 1.0.0
+info:
+  title: Emporix Quote Service overlay
+  version: 1.0.0
+  x-generated: '2026-10-18'
+  x-method: generated
+  x-source: mcp/emporix-tool-crosswalk.yml
+extends: ../openapi/_original/emporix-quote-openapi.yml
+actions:
+- target: $.info
+  update:
+    x-provider: Emporix
+    x-documentation: https://developer.emporix.io/api-references
+    x-llms-txt: https://developer.emporix.io/llms.txt
+    x-docs-mcp: https://developer.emporix.io/~gitbook/mcp
+  description: Provider metadata and agent-facing entry points.
+- target: $.paths['/quote/{tenant}/quotes'].get
+  update:
+    x-mcp-tools:
+    - frontend/get-quotes
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: GET-quote-list-quotes backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/quote/{tenant}/quotes'].post
+  update:
+    x-mcp-tools:
+    - frontend/create-quote
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: POST-quote-create-quote backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/quote/{tenant}/quotes/{quoteId}'].get
+  update:
+    x-mcp-tools:
+    - frontend/get-quote
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: GET-quote-retrieve-quote backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/quote/{tenant}/quotes/{quoteId}'].patch
+  update:
+    x-mcp-tools:
+    - frontend/update-quote
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: PATCH-quote-update-quote backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/quote/{tenant}/quote-reasons'].get
+  update:
+    x-mcp-tools:
+    - frontend/get-quote-reasons
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: GET-quote-list-reasons backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).

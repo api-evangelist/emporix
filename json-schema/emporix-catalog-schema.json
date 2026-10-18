@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-catalog-schema.json",
+  "title": "Catalog",
+  "description": "Definition of a catalog",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-catalog-openapi.yml#/components/schemas/Catalog",
+  "required": [
+    "id",
+    "metadata"
+  ],
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Catalog's unique identifier, generated when the catalog is created."
+    },
+    "name": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/Object"
+        },
+        {
+          "description": "Name of the catalog. Depending on the use of the Accept-Language header, it can be either a String or a Map<Locale, String>"
+        }
+      ]
+    },
+    "description": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/Object"
+        },
+        {
+          "description": "Description of the catalog must be a string if the Accept-Language header is specified on the request or a map of translations if the header is missing."
+        }
+      ]
+    },
+    "status": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/Status"
+        },
+        {
+          "description": "Visibility status of the catalog, computed at this moment."
+        }
+      ]
+    },
+    "visibility": {
+      "$ref": "#/$defs/VisibilityInformation"
+    },
+    "publishedSites": {
+      "type": "array",
+      "description": "List of site identifiers on which the catalog is published.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "metadata": {
+      "$ref": "#/$defs/Metadata"
+    },
+    "categoryIds": {
+      "type": "array",
+      "description": "List of root category identifiers that are assigned to the catalog.",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "$defs": {
+    "Metadata": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "description": "Catalog version",
+          "format": "int32"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the catalog was last modified compliant with the ISO 8601 standard.",
+          "format": "date-time"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the catalog was created compliant with the ISO 8601 standard.",
+          "format": "date-time"
+        }
+      }
+    },
+    "Object": {
+      "type": "object",
+      "description": "Localized field that must be provided as a map of language codes to translations.",
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "Status": {
+      "type": "string",
+      "description": "Visibility status of the catalog in this moment. This value is based on configured visibility properties, and is computed for the moment the request is handled. It answers the question 'Is the catalog visible now?'",
+      "enum": [
+        "not_visible",
+        "visible"
+      ]
+    },
+    "VisibilityInformation": {
+      "type": "object",
+      "properties": {
+        "visible": {
+          "type": "boolean",
+          "description": "Flag indicating if the catalog is visible or not, set by the user. ",
+          "default": false
+        },
+        "from": {
+          "type": "string",
+          "description": "Date and time from which the catalog is visible compliant with the ISO 8601 standard."
+        },
+        "to": {
+          "type": "string",
+          "description": "Data and time from which the catalog is visible compliant with the ISO 8601 standard."
+        }
+      },
+      "description": "Visibility configuration for a catalog"
+    }
+  }
+}

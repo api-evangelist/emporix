@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-refund-request-schema.json",
+  "title": "refundRequest",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-payment-gateway-openapi.yml#/components/schemas/refundRequest",
+  "type": "object",
+  "properties": {
+    "amount": {
+      "type": "number",
+      "description": "Amount that should be refunded. The amount should not be greater than amount that was captured."
+    },
+    "currency": {
+      "type": "string",
+      "description": "Currency for the amount that should be refunded."
+    },
+    "captureId": {
+      "type": "string",
+      "description": "Capture identifier. The value is mandatory only if there were more captures for a payment and the refund should be related to a specific capture. In another case the value can be skipped and the capture related to the payment will be chosen automatically."
+    }
+  }
+}

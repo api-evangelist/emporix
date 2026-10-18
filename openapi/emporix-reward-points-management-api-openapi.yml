@@ -1,0 +1,724 @@
+openapi: 3.2.0
+info:
+  title: Emporix Reward Points Management API
+  version: ''
+  contact:
+    email: documentation@emporix.com
+  description: 'Operations tagged Reward Points Management across 2 of this provider''s published API definitions: emporix-reward-points-openapi.yml, emporix-reward-points-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Reward Points Management
+paths:
+  /reward-points/summaryBatch:
+    get:
+      description: 'Retrieves a detailed summary of added and redeemed reward points for all customers of a given tenant. The tenant name is selected based on the access token.
+
+
+        **Note:** Only employees are authorized to perform this action.'
+      operationId: GET-reward-points-retrieve-rewards-summary
+      tags:
+      - Reward Points Management
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/customerSummaryBatchOut'
+              examples:
+                Summary response example:
+                  value:
+                  - customerId: '20242913'
+                    activePoints: 2000
+                    summary:
+                      addedPointsList:
+                      - id: 1c32ce73-8765-42a7-92af-ff370a0a59d6
+                        reference-id: <string>
+                        description: <string>
+                        points: 2000
+                        createdAt: '2023-05-11T18:32:18.591+00:00'
+                        allPointsAfterCreation: 2000
+                        usedPoints: 140
+                        validUntil: '2023-11-11T12:00:50.406+00:00'
+                        usedWith:
+                        - d85c0570-1d51-4611-bf2f-c67452384626
+                        - b5085a36-a5f0-450d-a011-9f92902f3900
+                      - id: b9919f33-3a0b-4fd7-acdb-217edd4fc110
+                        reference-id: null
+                        description: Chargeback - redeemed voucher could not be created.
+                        points: 50
+                        createdAt: '2023-05-11T18:32:38.564+00:00'
+                        allPointsAfterCreation: 2000
+                        usedPoints: 0
+                        validUntil: '2026-05-11T18:32:38.564+00:00'
+                        usedWith: []
+                      - id: 42cd0799-9965-4983-8548-e7ad79160572
+                        reference-id: null
+                        description: Chargeback - redeemed voucher could not be created.
+                        points: 90
+                        createdAt: '2023-05-11T18:32:50.981+00:00'
+                        allPointsAfterCreation: 2000
+                        usedPoints: 0
+                        validUntil: '2026-05-11T18:32:50.981+00:00'
+                        usedWith: []
+                      redeemedPointsList:
+                      - id: d85c0570-1d51-4611-bf2f-c67452384626
+                        description: test desc
+                        points: 50
+                        createdAt: '2023-05-11T18:32:38.501+00:00'
+                        allPointsAfterCreation: 1950
+                      - id: b5085a36-a5f0-450d-a011-9f92902f3900
+                        description: For 90 points you can have a voucher for 10 euros generated. You can also pass this voucher on to friends and acquaintances.
+                        points: 90
+                        createdAt: '2023-05-11T18:32:50.946+00:00'
+                        allPointsAfterCreation: 1910
+        '401':
+          $ref: '#/components/responses/trait_unauthorized_401'
+        '403':
+          $ref: '#/components/responses/trait_forbidden_403'
+        '500':
+          $ref: '#/components/responses/trait_internal_500'
+      parameters: []
+      security:
+      - OAuth2:
+        - rewardspoints.rewardpoints_view
+      summary: Retrieving reward points of all customers
+    servers:
+    - url: https://api.emporix.io
+  /reward-points/customer/{customerId}:
+    parameters:
+    - $ref: '#/components/parameters/customerId'
+    get:
+      description: 'Fetches the number of reward points for a particular customer of a given tenant. The tenant name is retrieved from the access token.
+
+
+        **Note:** Only employees are authorized to perform this action.'
+      operationId: GET-reward-points-fetch-customer-reward-points
+      tags:
+      - Reward Points Management
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                title: pointsOut
+                type: integer
+              examples:
+                Customer points:
+                  value: 2000
+        '400':
+          $ref: '#/components/responses/trait_badRequest_400'
+        '403':
+          $ref: '#/components/responses/trait_forbidden_403'
+        '500':
+          $ref: '#/components/responses/trait_internal_500'
+      parameters: []
+      security:
+      - OAuth2:
+        - rewardspoints.rewardpoints_view
+      summary: Retrieving reward points of a customer
+    post:
+      description: Creates a new reward points entry for a particular customer of a given tenant. The tenant name is retrieved from the access token.
+      operationId: POST-reward-points-create-customer-reward-entry
+      tags:
+      - Reward Points Management
+      responses:
+        '200':
+          description: ''
+        '400':
+          $ref: '#/components/responses/trait_badRequest_400'
+        '401':
+          $ref: '#/components/responses/trait_unauthorized_401'
+        '403':
+          $ref: '#/components/responses/trait_forbidden_403'
+        '409':
+          $ref: '#/components/responses/trait_conflict_409'
+        '500':
+          $ref: '#/components/responses/trait_internal_500'
+      parameters:
+      - $ref: '#/components/parameters/siteCode'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/newCustomerIn'
+            examples:
+              New entry example:
+                value:
+                  customerId: C4289081720
+                  startPoints:
+                    id: 12345fee-0b83-48aa-95dc-11e3dcf84aaa
+                    reference-id: '123456'
+                    description: points added
+                    points: 20
+                    createdAt: '2019-08-24T14:15:22Z'
+                    allPointsAfterCreation: 20
+                    usedPoints: 5
+                    validUntil: '2019-08-24T14:15:22Z'
+                    usedWith:
+                    - 5237bcac-c548-4e49-8626-03dab65376d6
+        description: ''
+      security:
+      - OAuth2:
+        - rewardspoints.rewardpoints_manage
+      summary: Creating a new reward points entry for a customer
+    delete:
+      description: Deletes a reward points entry of a specified customer for a given tenant. The tenant name is retrieved from the access token.
+      operationId: DELETE-reward-points-remove-customer-reward-entry
+      tags:
+      - Reward Points Management
+      responses:
+        '200':
+          description: ''
+        '401':
+          $ref: '#/components/responses/trait_unauthorized_401'
+        '403':
+          $ref: '#/components/responses/trait_forbidden_403'
+        '500':
+          $ref: '#/components/responses/trait_internal_500'
+      parameters: []
+      security:
+      - OAuth2:
+        - rewardspoints.rewardpoints_manage
+      summary: Deleting reward points of a customer
+    servers:
+    - url: https://api.emporix.io
+  /reward-points/customer/{customerId}/summary:
+    parameters:
+    - $ref: '#/components/parameters/customerId'
+    get:
+      description: 'Retrieves a detailed summary of added and redeemed reward points of a single specified customer for a given tenant. The tenant name is retrieved from the access token.
+
+
+        **Note:** Only employees are authorized to perform this action.'
+      operationId: GET-reward-points-retrieve-customer-reward-summary
+      tags:
+      - Reward Points Management
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/pointsSummaryOut'
+              examples:
+                Customer summary sample:
+                  value:
+                    customerId: '123'
+                    activePoints: 1153
+                    summary:
+                      addedPointsList:
+                      - id: zzpscd12uimlmybtthb
+                        reference-id: B7011746
+                        description: Bonuspunkte für Bestellung B7011746
+                        points: 209
+                        createdAt: '2020-09-03T09:45:02.248+00:00'
+                        allPointsAfterCreation: 209
+                        usedPoints: 209
+                        validUntil: '2023-09-02T22:00:00.000+00:00'
+                        usedWith:
+                        - e7522b99-2448-44b5-8f68-8bffcc207d18
+                      - id: c9joe623gl4obochkrmy8i
+                        reference-id: B7011745
+                        description: Bonuspunkte für Bestellung B7011745
+                        points: 209
+                        createdAt: '2020-09-03T09:45:02.318+00:00'
+                        allPointsAfterCreation: 418
+                        usedPoints: 209
+                        validUntil: '2023-09-02T22:00:00.000+00:00'
+                        usedWith:
+                        - e7522b99-2448-44b5-8f68-8bffcc207d18
+                      redeemedPointsList:
+                      - id: e7522b99-2448-44b5-8f68-8bffcc207d18
+                        description: Für 600 Punkte können Sie sich einen Gutschein über 5 Euro generieren lassen. Diesen Gutschein können Sie auch an Freunde und Bekannte weitergeben.
+                        points: 600
+                        createdAt: '2020-09-03T12:44:22.747+00:00'
+                        allPointsAfterCreation: 2953
+        '401':
+          $ref: '#/components/responses/trait_unauthorized_401'
+        '403':
+          $ref: '#/components/responses/trait_forbidden_403'
+        '404':
+          $ref: '#/components/responses/trait_notFound_404'
+        '500':
+          $ref: '#/components/responses/trait_internal_500'
+      parameters: []
+      security:
+      - OAuth2:
+        - rewardspoints.rewardpoints_view
+      summary: Retrieving a reward points summary for a single customer
+    servers:
+    - url: https://api.emporix.io
+  /reward-points/customer/{customerId}/addPoints:
+    parameters:
+    - $ref: '#/components/parameters/customerId'
+    post:
+      description: 'Adds reward points to a specific customer''s account for a given tenant. The tenant name is retrieved from the access token.
+
+
+        **Note:** Only employees are authorized to perform this action.'
+      operationId: POST-reward-points-add-customer-reward-points
+      tags:
+      - Reward Points Management
+      responses:
+        '201':
+          description: ''
+        '400':
+          $ref: '#/components/responses/trait_badRequest_400'
+        '401':
+          $ref: '#/components/responses/trait_unauthorized_401'
+        '403':
+          $ref: '#/components/responses/trait_forbidden_403'
+        '500':
+          $ref: '#/components/responses/trait_internal_500'
+      parameters:
+      - $ref: '#/components/parameters/siteCode'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/addedPoints'
+            examples:
+              Add points:
+                value:
+                  id: 12345fee-0b83-48aa-95dc-11e3dcf84aaa
+                  reference-id: '123456'
+                  description: points added
+                  points: 123
+                  createdAt: '2023-10-24T14:15:22Z'
+                  allPointsAfterCreation: 56778
+                  usedPoints: 5
+                  validUntil: '2029-08-24T14:15:22Z'
+                  usedWith:
+                  - 5237bcac-c548-4e49-8626-03dab65376d6
+      security:
+      - OAuth2:
+        - rewardspoints.rewardpoints_manage
+      summary: Adding reward points for a customer
+    servers:
+    - url: https://api.emporix.io
+  /reward-points/customer/{customerId}/redeemPoints:
+    parameters:
+    - description: Unique identifier of a customer
+      in: path
+      name: customerId
+      required: true
+      schema:
+        type: string
+    post:
+      description: 'Redeems reward points for a specified customer for a given tenant without generating a coupon. The tenant name is retrieved from the access token.
+
+
+        **Note:** Only employees are authorized to perform this action.'
+      operationId: POST-reward-points-redeem-customer-points
+      tags:
+      - Reward Points Management
+      responses:
+        '201':
+          description: ''
+        '400':
+          $ref: '#/components/responses/trait_badRequest_400'
+        '401':
+          $ref: '#/components/responses/trait_unauthorized_401'
+        '403':
+          $ref: '#/components/responses/trait_forbidden_403'
+        '500':
+          $ref: '#/components/responses/trait_internal_500'
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/redeemedPoints'
+            examples:
+              Redeem Options:
+                value:
+                  description: points redeemed
+                  points: 50
+        description: ''
+      security:
+      - OAuth2:
+        - rewardspoints.rewardpoints_manage
+      summary: Redeeming reward points of a customer
+    servers:
+    - url: https://api.emporix.io
+components:
+  parameters:
+    customerId:
+      name: customerId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Unique identifier of a customer, generated when the customer is created through the Customer Service.
+    siteCode:
+      name: siteCode
+      in: query
+      required: false
+      schema:
+        type: string
+        default: main
+      description: Site code, defined when a site is created.
+  schemas:
+    customerSummary:
+      title: customerSummary
+      type: object
+      properties:
+        addedPointsList:
+          type: array
+          items:
+            $ref: '#/components/schemas/addedPoints'
+        redeemedPointsList:
+          type: array
+          items:
+            $ref: '#/components/schemas/redeemedPoints'
+      required:
+      - addedPointsList
+    addedPoints:
+      title: addedPoints
+      type: object
+      properties:
+        id:
+          type: string
+        reference-id:
+          type:
+          - string
+          - 'null'
+          description: Order Id for which the points were created
+        description:
+          type: string
+          description: Auto-generated description
+        points:
+          type: integer
+          description: Number of points added in the operation
+        createdAt:
+          type: string
+          format: date-time
+        validUntil:
+          format: date-time
+          type: string
+          description: The date until when the points can be redeemed
+        allPointsAfterCreation:
+          type: integer
+          description: Number of points after creation
+        usedPoints:
+          type: integer
+          description: Number of points already used
+        usedWith:
+          type: array
+          items:
+            type: string
+      required:
+      - points
+    redeemedPoints:
+      title: redeemedPoints
+      type: object
+      properties:
+        id:
+          type: string
+          description: Identifier of the redeemed points
+        description:
+          type: string
+          description: A comment for the redeem operation
+        points:
+          type: integer
+          description: The amount of the redeemed points
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the points were redeemed
+        allPointsAfterCreation:
+          type: integer
+          description: Number of points after creation
+      required:
+      - points
+    newCustomerIn:
+      type: object
+      properties:
+        customerId:
+          type: string
+        startPoints:
+          $ref: '#/components/schemas/addedPoints'
+      description: ''
+    customerSummaryBatchOut:
+      title: Collection of Summaries
+      type: array
+      items:
+        $ref: '#/components/schemas/pointsSummaryOut'
+    pointsSummaryOut:
+      title: pointsSummaryOut
+      type: object
+      properties:
+        customerId:
+          type: string
+          description: Id of the customer to whom the points are assigned
+        activePoints:
+          type: integer
+          description: Active points that can be redeemed
+        summary:
+          $ref: '#/components/schemas/customerSummary'
+  responses:
+    trait_badRequest_400:
+      description: Request syntactically incorrect. Details of the error are included in the response payload.
+      content:
+        application/json:
+          schema:
+            title: error
+            description: Schema for API specified errors.
+            example:
+              status: 400
+              message: There are validation problems, see details section for more information
+              moreInfo: ''
+              type: validation_violation
+              details:
+              - field: tenant
+                message: size must be between 3 and 16
+                type: invalid_header
+            type: object
+            properties:
+              status:
+                minimum: 100
+                maximum: 599
+                description: Original HTTP error code, should be consistent with the response HTTP code
+                type: integer
+              title:
+                pattern: '[a-z]+[a-z_]*[a-z]+'
+                description: 'Classification of the error type in the lower case with underscore format, for example: `validation_failure`'
+                type: string
+              type:
+                description: Type of the error.
+                type: string
+              instance:
+                type: string
+                description: Resource link
+              detail:
+                description: Detailed information about the error.
+                type: string
+          examples:
+            Bad request:
+              value:
+                type: about:blank
+                title: Bad Request
+                status: 400
+                detail: Invalid request content.
+                instance: /customer/61443563/addPoints
+    trait_internal_500:
+      description: Internal error
+      content:
+        application/json:
+          schema:
+            title: error
+            description: Schema for API specified errors.
+            type: object
+            properties:
+              timestamp:
+                description: Timestamp when the error occurred.
+                type: string
+              status:
+                description: Original HTTP error code, should be consistent with the response HTTP code
+                type: integer
+              error:
+                description: Descriptive error message for debugging
+                type: string
+              path:
+                description: Path of a resource that caused the error.
+                type: string
+          examples:
+            Internal error:
+              value:
+                timestamp: '2023-10-12T06:41:03.866+00:00'
+                status: 500
+                error: Internal Server Error
+                path: /customer/30010284222
+    trait_forbidden_403:
+      description: 'Given authorization scopes are not sufficient and do not match required scopes.
+
+        '
+      content:
+        application/json:
+          schema:
+            title: error
+            description: Schema for API specified errors.
+            type: object
+            properties:
+              code:
+                minimum: 100
+                maximum: 599
+                description: Original HTTP error code, should be consistent with the response HTTP code
+                type: integer
+              status:
+                pattern: '[a-z]+[a-z_]*[a-z]+'
+                description: 'Classification of the error type in the lower case with underscore format, for example: `validation_failure`'
+                type: string
+              message:
+                description: Descriptive error message for debugging
+                type: string
+              details:
+                description: List of problems causing this error
+                type: array
+                items:
+                  title: errorDetail
+                  description: Schema for a specific error cause
+                  type: string
+            required:
+            - code
+            - status
+          examples:
+            Forbidden:
+              value:
+                code: 403
+                status: Forbidden
+                message: Scope validation failed
+                details:
+                - Missing required scopes '[rewardspoints.rewardpoints_view, saasag.rewardpoints_view]'
+    trait_unauthorized_401:
+      description: ''
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Unauthorized:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+    trait_notFound_404:
+      description: 'Entity not found.
+
+        '
+      content:
+        application/json:
+          schema:
+            title: error
+            description: Schema for API specified errors.
+            type: object
+            properties:
+              type:
+                description: 'Classification of the error type in the lower case with underscore format, for example: `validation_failure`'
+                type: string
+              status:
+                description: Original HTTP error code, should be consistent with the response HTTP code
+                type: integer
+              message:
+                description: Descriptive error message for debugging
+                type: string
+              details:
+                description: List of problems causing this error
+                type: array
+                items:
+                  title: errorDetail
+                  description: Schema for a specific error cause
+                  type: string
+          examples:
+            Not Found:
+              value:
+                type: resource_not_found
+                status: 404
+                message: No reward points found for customer 202429132
+    trait_conflict_409:
+      description: ''
+      content:
+        application/json:
+          schema:
+            title: error
+            description: Schema for API specified errors.
+            example:
+              status: 400
+              message: There are validation problems, see details section for more information
+              moreInfo: ''
+              type: validation_violation
+              details:
+              - field: tenant
+                message: size must be between 3 and 16
+                type: invalid_header
+            type: object
+            properties:
+              status:
+                minimum: 100
+                maximum: 599
+                description: Original HTTP error code, should be consistent with the response HTTP code
+                type: integer
+              type:
+                pattern: '[a-z]+[a-z_]*[a-z]+'
+                description: 'Classification of the error type in the lower case with underscore format, for example: `validation_failure`'
+                type: string
+              message:
+                description: Descriptive error message for debugging
+                type: string
+              moreInfo:
+                type: string
+                description: Documentation link
+              details:
+                description: List of problems causing this error
+                type: array
+                items:
+                  title: errorDetail
+                  description: Schema for a specific error cause
+                  type: object
+                  properties:
+                    field:
+                      description: 'A bean notation expression specifying the element in request data that causes the error, for example: `product.variants[3].name`. This field can be empty if the violation was not field-specific'
+                      type:
+                      - string
+                      - 'null'
+                    type:
+                      pattern: '[a-z]+[a-z_]*[a-z]+'
+                      description: 'Classification of the error type with details, provided in the lower case with underscore format, for example: `missing_value`. This value must be always interpreted in context of the general error type.'
+                      type:
+                      - string
+                      - 'null'
+                    message:
+                      description: Detailed descriptive error message for debugging
+                      type: string
+                    moreInfo:
+                      type: string
+                      description: Documentation link
+                  required:
+                  - type
+            required:
+            - status
+            - type
+          examples:
+            Conflict:
+              value:
+                status: 409
+                type: application/json
+                message: New Reward Point Entry not Created
+                moreInfo: ''
+                details:
+                - field: null
+                  type: null
+                  message: Couldn't create a new reward point entry for the customer '20242913'
+                  moreInfo: ''
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            rewardspoints.rewardpoints_view: Nedeed to view reward points information
+            rewardspoints.rewardpoints_manage: Needed to manage reward points
+    CustomerAccessToken:
+      type: http
+      scheme: bearer
+x-refined-from:
+- emporix-reward-points-openapi.yml
+- emporix-reward-points-openapi.yml

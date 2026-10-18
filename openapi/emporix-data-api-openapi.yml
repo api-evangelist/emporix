@@ -1,0 +1,419 @@
+openapi: 3.2.0
+info:
+  title: Emporix Data API
+  version: ''
+  contact:
+    name: Emporix
+    url: https://emporix.com
+    email: documentation@emporix.com
+  description: 'Operations tagged Data across 2 of this provider''s published API definitions: emporix-import-service-openapi.yml, emporix-import-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2:
+  - importtool.import_trigger
+tags:
+- name: Data
+  description: Read imported records.
+paths:
+  /importtool/{tenant}/data/types:
+    parameters:
+    - $ref: '#/components/parameters/trait_tenant'
+    get:
+      summary: Retrieving imported data types
+      description: Retrieves the distinct target types that currently hold imported records.
+      operationId: GET-importtool-list-data-types
+      tags:
+      - Data
+      security:
+      - OAuth2:
+        - importtool.import_trigger
+      responses:
+        '200':
+          description: The request was successful. The types are returned.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  example: product
+              examples:
+                Data types response:
+                  $ref: '#/components/examples/DataTypes_Example'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+    servers:
+    - url: https://api.emporix.io
+  /importtool/{tenant}/data/records:
+    parameters:
+    - $ref: '#/components/parameters/trait_tenant'
+    get:
+      summary: Searching imported records
+      description: Searches imported records of a given type with an optional `search` filter on the natural key, paginated.
+      operationId: GET-importtool-search-data-records
+      tags:
+      - Data
+      parameters:
+      - name: type
+        in: query
+        required: true
+        description: The target type to search.
+        schema:
+          type: string
+          example: product
+      - name: search
+        in: query
+        required: false
+        description: Optional free-text filter. This is a case-insensitive substring match on the record's natural key only — it is NOT the Emporix query language, so field selectors and operators (e.g. `field:value`, comparisons, boolean logic) are not supported.
+        schema:
+          type: string
+          default: ''
+          example: SKU-1001
+      - name: outcome
+        in: query
+        required: false
+        description: Optional filter by import outcome. Omit to return records of all outcomes. `UPSERTED` (created or updated), `DELETED` (removed at the source), `DELETED_TARGET` (removed in Emporix), `FAILED`, `DRY_RUN` (produced by a dry run).
+        schema:
+          type: string
+          enum:
+          - UPSERTED
+          - DELETED
+          - DELETED_TARGET
+          - FAILED
+          - DRY_RUN
+      - $ref: '#/components/parameters/trait_page'
+      - $ref: '#/components/parameters/trait_size'
+      security:
+      - OAuth2:
+        - importtool.import_trigger
+      responses:
+        '200':
+          description: The request was successful. The records are returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportedRecordPage'
+              examples:
+                Imported records response:
+                  $ref: '#/components/examples/ImportedRecordPage_Example'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+    servers:
+    - url: https://api.emporix.io
+  /importtool/{tenant}/data/streams/{streamId}/records:
+    parameters:
+    - $ref: '#/components/parameters/trait_tenant'
+    - $ref: '#/components/parameters/trait_streamId'
+    get:
+      summary: Searching a stream's imported records
+      description: Searches the imported records produced by a specific stream with an optional `search` filter on the natural key, paginated.
+      operationId: GET-importtool-search-stream-records
+      tags:
+      - Data
+      parameters:
+      - name: search
+        in: query
+        required: false
+        description: Optional free-text filter. This is a case-insensitive substring match on the record's natural key only — it is NOT the Emporix query language, so field selectors and operators (e.g. `field:value`, comparisons, boolean logic) are not supported.
+        schema:
+          type: string
+          default: ''
+          example: SKU-1001
+      - name: outcome
+        in: query
+        required: false
+        description: Optional filter by import outcome. Omit to return records of all outcomes. `UPSERTED` (created or updated), `DELETED` (removed at the source), `DELETED_TARGET` (removed in Emporix), `FAILED`, `DRY_RUN` (produced by a dry run).
+        schema:
+          type: string
+          enum:
+          - UPSERTED
+          - DELETED
+          - DELETED_TARGET
+          - FAILED
+          - DRY_RUN
+      - $ref: '#/components/parameters/trait_page'
+      - $ref: '#/components/parameters/trait_size'
+      security:
+      - OAuth2:
+        - importtool.import_trigger
+      responses:
+        '200':
+          description: The request was successful. The records are returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportedRecordPage'
+              examples:
+                Stream records response:
+                  $ref: '#/components/examples/ImportedRecordPage_Example'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+    servers:
+    - url: https://api.emporix.io
+components:
+  responses:
+    Unauthorized_401:
+      description: Given request is unauthorized - the authorization token is invalid or has expired. Details will be provided in the response payload.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            Access token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+    Forbidden_403:
+      description: Given authorization scopes are not sufficient and do not match scopes required by the endpoint.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Access to resource is forbidden:
+              $ref: '#/components/examples/Forbidden403_Example'
+    InternalServiceError_500:
+      description: Internal Service Error occurred.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Internal service error:
+              $ref: '#/components/examples/InternalServiceError500_Example'
+  parameters:
+    trait_streamId:
+      name: streamId
+      in: path
+      required: true
+      description: The stream identifier.
+      schema:
+        type: string
+        format: uuid
+        example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+    trait_size:
+      name: size
+      in: query
+      required: false
+      description: The page size.
+      schema:
+        type: integer
+        example: 20
+    trait_tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'The tenant you want to access.
+
+        '
+      schema:
+        type: string
+        example: mytenant
+    trait_page:
+      name: page
+      in: query
+      required: false
+      description: The zero-based page number.
+      schema:
+        type: integer
+        default: 0
+        example: 0
+  schemas:
+    errorMessage:
+      title: Error
+      description: Schema for specific API errors.
+      type: object
+      properties:
+        code:
+          type: integer
+          description: HTTP status code.
+          minimum: 100
+          maximum: 599
+        status:
+          description: HTTP status.
+          type: string
+        message:
+          description: Descriptive error message for debugging.
+          type: string
+        details:
+          description: List of problems causing this error.
+          type: array
+          items:
+            title: Error Detail
+            description: Error details.
+            type: string
+      required:
+      - status
+      - code
+      - message
+    ImportedRecord:
+      title: Imported record
+      type: object
+      description: A record that was imported. Holds keys and outcome; for composite parents it also holds the embedded child arrays.
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The imported-record identifier.
+          example: 1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed
+        configId:
+          type: string
+          format: uuid
+          description: The configuration the record belongs to.
+          example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+        streamId:
+          type: string
+          format: uuid
+          description: The stream that produced the record.
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+        runId:
+          type: string
+          format: uuid
+          description: The run that last touched the record.
+          example: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
+        targetEntity:
+          type: string
+          description: The target writer code.
+          example: emporix.customEntity
+        targetType:
+          type: string
+          description: The target type.
+          example: product
+        naturalKey:
+          type: string
+          description: The source natural key.
+          example: SKU-1001
+        targetId:
+          type: string
+          description: The deterministic Emporix instance ID the record was written under. It's derived from the natural key and allows the record to be located in the target.
+          example: id-sku-1001
+        fields:
+          type: object
+          description: The stored fields.
+          example:
+            name: Pipe cutter
+            sku: SKU-1001
+            active: true
+        outcome:
+          type: string
+          description: The last outcome, one of `UPSERTED`, `DELETED`, `DELETED_TARGET`, `FAILED`, or `DRY_RUN`.
+          example: UPDATED
+        importedAt:
+          type: string
+          format: date-time
+          description: When the record was last imported.
+          example: '2026-07-27T02:03:55.000Z'
+    ImportedRecordPage:
+      title: Imported record page
+      allOf:
+      - $ref: '#/components/schemas/Page'
+      - type: object
+        properties:
+          content:
+            type: array
+            description: The imported records on this page.
+            items:
+              $ref: '#/components/schemas/ImportedRecord'
+    Page:
+      title: Page
+      type: object
+      description: Pagination metadata for a page of results.
+      properties:
+        totalElements:
+          type: integer
+          description: The total number of elements across all pages.
+          example: 1250
+        totalPages:
+          type: integer
+          description: The total number of pages.
+          example: 63
+        number:
+          type: integer
+          description: The current zero-based page number.
+          example: 0
+        size:
+          type: integer
+          description: The page size.
+          example: 20
+  examples:
+    Forbidden403_Example:
+      value:
+        status: forbidden
+        code: 403
+        message: The access to the requested resource has been forbidden.
+        details:
+        - Missing required scopes
+    InternalServiceError500_Example:
+      value:
+        status: internal_service_error
+        code: 500
+        message: A server-side exception occurred that prevented the system from correctly returning the result.
+        details:
+        - https://pattern.yaas.io/errortypes.html
+    ImportedRecordPage_Example:
+      value:
+        totalElements: 1250
+        totalPages: 63
+        number: 0
+        size: 20
+        content:
+        - id: 1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed
+          configId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+          streamId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          runId: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
+          targetEntity: emporix.customEntity
+          targetType: product
+          naturalKey: SKU-1001
+          fields:
+            name: Pipe cutter
+            sku: SKU-1001
+            active: true
+          outcome: UPDATED
+          importedAt: '2026-07-27T02:03:55.000Z'
+    DataTypes_Example:
+      value:
+      - product
+      - category
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            importtool.import_trigger: Needed to trigger, schedule, monitor, and cancel import runs and to read configurations, streams, schedules, runs, and imported data.
+x-refined-from:
+- emporix-import-service-openapi.yml
+- emporix-import-service-openapi.yml

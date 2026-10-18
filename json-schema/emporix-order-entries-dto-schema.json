@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-order-entries-dto-schema.json",
+  "title": "orderEntriesDto",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-order-openapi.yml#/components/schemas/orderEntriesDto",
+  "properties": {
+    "entries": {
+      "title": "Entries of the order",
+      "type": "array",
+      "items": {
+        "properties": {
+          "entryId": {
+            "type": "string",
+            "description": "Order entry id. Required if `productId` is not provided. Use for entry modification. Cannot be provided along with `productId`."
+          },
+          "productId": {
+            "type": "string",
+            "description": "Id of the product added to the order. Required if `entryId` is not provided. Cannot be provided along with `entryId`."
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Quantity of the products added to the order. When set to `0` then such entries are removed from the order."
+          }
+        },
+        "required": [
+          "quantity"
+        ]
+      }
+    }
+  },
+  "required": [
+    "entries"
+  ]
+}

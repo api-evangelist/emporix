@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-update-catalog-properties-schema.json",
+  "title": "UpdateCatalogProperties",
+  "description": "Payload for partially updating a catalog.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-catalog-openapi.yml#/components/schemas/UpdateCatalogProperties",
+  "required": [
+    "metadata"
+  ],
+  "type": "object",
+  "properties": {
+    "name": {
+      "$ref": "#/$defs/Object",
+      "description": "Name of the catalog. Must be provided as a map of language codes to translations."
+    },
+    "description": {
+      "$ref": "#/$defs/Object",
+      "description": "Description of the catalog. Must be provided as a map of language codes to translations."
+    },
+    "visibility": {
+      "$ref": "#/$defs/VisibilityInformation"
+    },
+    "publishedSites": {
+      "type": "array",
+      "description": "List of site identifiers on which the catalog is published.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "categoryIds": {
+      "type": "array",
+      "description": "List of root category identifiers that are assigned to the catalog.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "metadata": {
+      "$ref": "#/$defs/Metadata"
+    }
+  },
+  "$defs": {
+    "Metadata": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "description": "Catalog version",
+          "format": "int32"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the catalog was last modified compliant with the ISO 8601 standard.",
+          "format": "date-time"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the catalog was created compliant with the ISO 8601 standard.",
+          "format": "date-time"
+        }
+      }
+    },
+    "Object": {
+      "type": "object",
+      "description": "Localized field that must be provided as a map of language codes to translations.",
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "VisibilityInformation": {
+      "type": "object",
+      "properties": {
+        "visible": {
+          "type": "boolean",
+          "description": "Flag indicating if the catalog is visible or not, set by the user. ",
+          "default": false
+        },
+        "from": {
+          "type": "string",
+          "description": "Date and time from which the catalog is visible compliant with the ISO 8601 standard."
+        },
+        "to": {
+          "type": "string",
+          "description": "Data and time from which the catalog is visible compliant with the ISO 8601 standard."
+        }
+      },
+      "description": "Visibility configuration for a catalog"
+    }
+  }
+}

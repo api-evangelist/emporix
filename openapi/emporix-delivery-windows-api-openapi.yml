@@ -1,0 +1,541 @@
+openapi: 3.2.0
+info:
+  title: Emporix Delivery Windows API
+  version: ''
+  contact:
+    name: Emporix
+    url: https://emporix.com
+    email: documentation@emporix.com
+  description: 'Operations tagged Delivery Windows across 2 of this provider''s published API definitions: emporix-shipping-openapi.yml, emporix-shipping-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- oAuth2: []
+tags:
+- name: Delivery Windows
+  description: Manage delivery windows
+paths:
+  /shipping/{tenant}/areaDeliveryTimes/{deliveryAreaId}/{cartId}:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    - $ref: '#/components/parameters/deliveryAreaId'
+    - $ref: '#/components/parameters/cartId'
+    get:
+      tags:
+      - Delivery Windows
+      summary: Retrieving delivery windows by delivery area
+      description: 'Retrieves delivery windows for the specified delivery area and cart.
+
+
+        **Note**: You can filter out delivery windows before the store''s cutoff time using the `afterCutOffTime` query parameter.'
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/deliveryAreaId'
+      - $ref: '#/components/parameters/cartId'
+      - $ref: '#/components/parameters/siteCodeQuery'
+      - $ref: '#/components/parameters/afterCutOffTimeQuery'
+      responses:
+        '200':
+          description: Resource successfully retrieved.
+          content:
+            application/json:
+              example:
+              - id: 1234567890abcdef123abc0
+                deliveryDate: '2015-06-20T12:00:00.000Z'
+                deliveryTimeRange:
+                  startTime: '15:00'
+                  endTime: '23:00'
+                deliveryMethod: method1
+                cutOffTime: '10:00'
+                slotId: 1234567890abcdef123abgi
+              - id: 1234567890abcdef123abc1
+                deliveryDate: '2015-06-24T12:00:00.000Z'
+                deliveryTimeRange:
+                  startTime: '12:00'
+                  endTime: '16:00'
+                deliveryMethod: method1
+                cutOffTime: '11:00'
+                slotId: 1234567890abcdef123abgh
+              schema:
+                $ref: '#/components/schemas/ActualDeliveryWindows'
+        '400':
+          $ref: '#/components/responses/yaasAware_400'
+        '401':
+          $ref: '#/components/responses/unauthorized_401'
+        '404':
+          $ref: '#/components/responses/notFound_404'
+        '500':
+          $ref: '#/components/responses/internalError_500'
+      operationId: GET-shipping-retrieve-delivery-times-for-delivery-area
+      security:
+      - oAuth2: []
+      deprecated: true
+    servers:
+    - url: https://api.emporix.io
+  /shipping/{tenant}/actualDeliveryWindows/{cartId}:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    - $ref: '#/components/parameters/cartId'
+    get:
+      tags:
+      - Delivery Windows
+      summary: Retrieving delivery windows by cart
+      description: 'Retrieves actual delivery windows for the specified cart.
+
+
+        **NOTE:** In order to properly retrieve delivery windows, the cart must have `countryCode` and `zipCode` specified.'
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/cartId'
+      - $ref: '#/components/parameters/postalCodeQuery'
+      responses:
+        '200':
+          description: Resource successfully retrieved.
+          content:
+            application/json:
+              example:
+              - id: 1234567890abcdef123abc0
+                deliveryDate: '2015-06-20T12:00:00.000Z'
+                deliveryTimeRange:
+                  startTime: '15:00'
+                  endTime: '23:00'
+                deliveryMethod: method1
+                cutOffTime: '2015-06-20T11:00:00.000Z'
+                slotId: 1234567890abcdef123abgh
+                deliveryCycle: 2015-06-20-11
+              - id: 1234567890abcdef123abc1
+                deliveryDate: '2015-06-24T12:00:00.000Z'
+                deliveryTimeRange:
+                  startTime: '12:00'
+                  endTime: '16:00'
+                deliveryMethod: method1
+                cutOffTime: '2015-06-20T10:00:00.000Z'
+                slotId: 1234567890abcdef123abgi
+                deliveryCycle: 2015-06-24-10
+              schema:
+                $ref: '#/components/schemas/ActualDeliveryWindows'
+        '400':
+          $ref: '#/components/responses/yaasAware_400'
+        '401':
+          $ref: '#/components/responses/unauthorized_401'
+        '404':
+          $ref: '#/components/responses/notFound_404'
+        '500':
+          $ref: '#/components/responses/internalError_500'
+      operationId: GET-shipping-retrieve-actual-delivery-window
+      security:
+      - oAuth2: []
+    servers:
+    - url: https://api.emporix.io
+  /shipping/{tenant}/actualDeliveryWindows/incrementCounter:
+    parameters:
+    - name: tenant
+      in: path
+      required: true
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: The tenant should always be written in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+    post:
+      tags:
+      - Delivery Windows
+      summary: Increasing the delivery window counter
+      operationId: POST-shipping-increase-orders-number-in-delivery-window
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          $ref: '#/components/responses/deliveryDate_400'
+        '401':
+          $ref: '#/components/responses/unauthorized_401'
+        '500':
+          $ref: '#/components/responses/internalError_500'
+      description: 'Increases the number of orders in the delivery window counter if there is any capacity available.
+
+
+        ### NOTE
+
+        The delivery window counter increases automatically when the Emporix Checkout Service is utilized. This particular endpoint should only be utilized if there is a Custom Checkout Service implementation.
+
+
+        In case of any validation problem, the below `errorCodes` can be returned:
+
+        - **VALIDATION-DELIVERY-WINDOW-400001**: Lack of required `slotId` property in the request
+
+        - **VALIDATION-DELIVERY-WINDOW-400002**: Date is not in correct format
+
+        - **VALIDATION-DELIVERY-WINDOW-400003**: Delivery window is fully booked or does not exist for given date
+
+        - **VALIDATION-DELIVERY-WINDOW-400004**: Lack of required `zoneId` property in the request
+
+        - **VALIDATION-DELIVERY-WINDOW-500001**: Internal problem with the service'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeliveryWindowValidationDto'
+          application/xml:
+            schema:
+              type: object
+              properties: {}
+    servers:
+    - url: https://api.emporix.io
+  /shipping/{tenant}/deliveryWindowValidation:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    post:
+      tags:
+      - Delivery Windows
+      summary: Validating a delivery window
+      description: 'Validates the specified delivery window.
+
+        ***
+
+
+        ### NOTE
+
+
+        The delivery window is validated automatically when the Emporix Checkout Service is utilized. This particular endpoint should only be utilized if there is a Custom Checkout Service implementation.
+
+
+        In case of any validation problem, the below `errorCodes` can be returned:
+
+        - **VALIDATION-DELIVERY-WINDOW-400001**: Lack of required `slotId` property in the request
+
+        - **VALIDATION-DELIVERY-WINDOW-400002**: Date is not in correct format
+
+        - **VALIDATION-DELIVERY-WINDOW-400003**: Delivery window is fully booked or does not exist for given date
+
+        - **VALIDATION-DELIVERY-WINDOW-400004**: Lack of required `zoneId` property in the request
+
+        - **VALIDATION-DELIVERY-WINDOW-500001**: Internal problem with the service'
+      responses:
+        '200':
+          description: Resource successfully validated.
+          content:
+            application/json:
+              example: true
+              schema:
+                type: boolean
+        '400':
+          $ref: '#/components/responses/deliveryDate_400'
+        '401':
+          $ref: '#/components/responses/unauthorized_401'
+        '500':
+          $ref: '#/components/responses/internalError_500'
+      operationId: GET-shipping-validate-delivery-window
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      requestBody:
+        content:
+          application/json:
+            example:
+              deliveryWindowId: '25'
+              deliveryDate: '2021-01-15T12:00:00.000Z'
+              slotId: slot1
+            schema:
+              $ref: '#/components/schemas/DeliveryWindowValidationDto'
+      security:
+      - oAuth2: []
+    servers:
+    - url: https://api.emporix.io
+components:
+  parameters:
+    siteCodeQuery:
+      description: Store’s site code. The default site code is `main`.
+      name: siteCode
+      in: query
+      required: false
+      schema:
+        type: string
+    postalCodeQuery:
+      description: If provided, the endpoint searches for delivery windows using this postal code (zip code) instead of the one from the cart.
+      name: postalCode
+      in: query
+      required: false
+      schema:
+        type: string
+    cartId:
+      description: Customer cart’s unique identifier generated when a cart is created through the Cart Service.
+      name: cartId
+      in: path
+      required: true
+      schema:
+        type: string
+    afterCutOffTimeQuery:
+      name: afterCutOffTime
+      description: If set to `true`, only the delivery windows available after taking the store’s cutoff time into account are retrieved.
+      in: query
+      required: false
+      schema:
+        type: boolean
+        default: false
+    tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: The tenant should always be written in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+    deliveryAreaId:
+      description: Delivery area’s unique identifier.
+      name: deliveryAreaId
+      in: path
+      required: true
+      schema:
+        type: string
+  responses:
+    deliveryDate_400:
+      description: DeliveryDate is not valid!.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Bad request:
+              value:
+                status: 400
+                message: 'DeliveryDate: 2021-01-15T12:00:00.000Z is not in future"'
+                moreInfo: ''
+                type: validation_violation
+                details:
+                - field: tenant
+                  message: size must be between 1 and 36
+                  type: invalid_header
+    unauthorized_401:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+    internalError_500:
+      description: 'Some server side error occurred.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Internal Server Error:
+              value:
+                status: 500
+                message: Something went wrong while processing the request. Please contact the administrator.
+                errorCode: ENTITY-500001
+                moreInfo: ''
+                type: internal_service_error
+    notFound_404:
+      description: 'The requested resource does not exist.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Not Found:
+              value:
+                status: 404
+                message: The requested URI does not map to a single element resource.
+                errorCode: ENTITY-GET-404001
+                moreInfo: ''
+                type: element_resource_non_existing
+    yaasAware_400:
+      description: Request syntactically incorrect. Details of the error are included in the response payload.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Bad request:
+              value:
+                status: 400
+                message: There are validation problems, see details section for more information
+                moreInfo: ''
+                type: validation_violation
+                details:
+                - field: tenant
+                  message: size must be between 2 and 16
+                  type: invalid_header
+  schemas:
+    TimeRange:
+      title: Time range
+      description: A `from` to `to` time range for which the object is valid
+      type: object
+      properties:
+        startTime:
+          pattern: ^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$
+          type: string
+          description: Time from which the object is valid, provided in local time (e.g. 10:00)
+        endTime:
+          pattern: ^(2[0-4]|[01]?[0-9]):([0-5]?[0-9])$
+          type: string
+          description: Time to which the object is valid, provided in local time (e.g. 10:00).
+      required:
+      - startTime
+      - endTime
+    errorMessage:
+      title: error
+      description: Schema for API specified errors.
+      type: object
+      properties:
+        status:
+          minimum: 100
+          maximum: 599
+          description: original HTTP error code, should be consistent with the response HTTP code
+          type: integer
+        type:
+          pattern: '[a-z]+[a-z_]*[a-z]+'
+          description: classification of the error type, lower case with underscore eg validation_failure
+          type: string
+        message:
+          description: descriptive error message for debugging
+          type: string
+        moreInfo:
+          type: string
+          description: link to documentation to investigate further and finding support
+        errorCode:
+          type: string
+          description: The error code which specify the problem
+        details:
+          description: list of problems causing this error
+          type: array
+          items:
+            title: errorDetail
+            description: schema for specific error cause
+            anyOf:
+            - type: string
+            - type: object
+              properties:
+                field:
+                  description: a bean notation expression specifying the element in request data causing the error, eg shipTo[0].country, this can be empty if violation was not field specific
+                  type: string
+                type:
+                  pattern: '[a-z]+[a-z_]*[a-z]+'
+                  description: classification of the error detail type, lower case with underscore eg missing_value, this value must be always interpreted in context of the general error type.
+                  type: string
+                message:
+                  description: descriptive error detail message for debugging
+                  type: string
+                moreInfo:
+                  type: string
+                  description: link to documentation to investigate further and finding support for error detail
+      required:
+      - status
+      - type
+    ActualDeliveryWindows:
+      title: Collection of actual delivery windows
+      type: array
+      items:
+        $ref: '#/components/schemas/ActualDeliveryWindow'
+    DeliveryWindowValidationDto:
+      title: DeliveryWindowValidationDto
+      type: object
+      properties:
+        deliveryWindowId:
+          type: string
+          description: The selected delivery window
+        deliveryDate:
+          type: string
+          description: The selected delivery date
+        slotId:
+          type: string
+          description: The slot that was selected for the delivery.
+      required:
+      - deliveryWindowId
+      - deliveryDate
+    ActualDeliveryWindow:
+      title: Actual delivery window
+      description: Delivery window is a range of times when the shipment can be delivered to the customers.
+      type: object
+      properties:
+        id:
+          description: Delivery window’s unique identifier.
+          type: string
+        deliveryDate:
+          description: Delivery date compliant with the ISO 8601 standard.
+          type: string
+        deliveryTimeRange:
+          $ref: '#/components/schemas/TimeRange'
+        deliveryCycle:
+          description: Delivery cycle.
+          type: string
+        zoneId:
+          description: Delivery zone’s unique identifier.
+          type: string
+        deliveryMethod:
+          description: Delivery method name.
+          type: string
+        cutOffTime:
+          description: This denotes the latest point in time by which an action (such as an order or request) must be completed for a specific Delivery Time. Date is compliant with the ISO 8601 standard.
+          type: string
+        slotId:
+          description: Delivery time slot's unique identifier.
+          type: string
+        metadata:
+          $ref: '#/components/schemas/MetaData'
+      required:
+      - deliveryDate
+    MetaData:
+      type: object
+      properties:
+        createdAt:
+          type: string
+          description: Date and time when the object was created, compliant with the ISO 8601 format.
+          pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?$
+        modifiedAt:
+          type: string
+          description: Date and time when the object was last modified, compliant with the ISO 8601 format.
+          pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?$
+        version:
+          minimum: 1
+          type: integer
+  securitySchemes:
+    oAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            shipping.shipping_manage: Needed to manage shipping settings.
+            shipping.shipping_read: Needed to read shipping settings.
+x-refined-from:
+- emporix-shipping-openapi.yml
+- emporix-shipping-openapi.yml

@@ -1,0 +1,368 @@
+openapi: 3.2.0
+info:
+  title: Emporix Agent Analytics API
+  version: ''
+  contact:
+    name: Emporix
+    url: https://emporix.com
+    email: documentation@emporix.com
+  description: 'Operations tagged Agent Analytics across 2 of this provider''s published API definitions: emporix-ai-service-openapi.yml, emporix-ai-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+tags:
+- name: Agent Analytics
+  description: Agent analytics and execution metrics
+paths:
+  /ai-service/{tenant}/agentic/analytics:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    get:
+      summary: Retrieving agent analytics bundle for last four weeks
+      operationId: GET-ai-agentic-analytics
+      parameters:
+      - name: agentId
+        in: query
+        required: false
+        schema:
+          type: string
+        description: 'When set, metrics are scoped to this agent. When omitted, tenant-wide aggregates are returned.
+
+          '
+      responses:
+        '200':
+          description: Aggregated request and session metrics, resolution efficiency, and weekly trends.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentAnalyticsResponse'
+        '400':
+          $ref: '#/components/responses/400_resp_common'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_resp_common'
+      description: 'Returns a single bundle of analytics for dashboards: request and session aggregates (including severity breakdowns), resolution efficiency, and per-week session error trends.
+
+
+        ### Required scopes
+
+
+        * `ai.agent_read`'
+      security:
+      - OAuth2:
+        - ai.agent_read
+      tags:
+      - Agent Analytics
+    servers:
+    - url: https://api.emporix.io
+  /ai-service/{tenant}/agentic/analytics/executions:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    get:
+      summary: Retrieving per-agent execution counts by period
+      operationId: GET-ai-agentic-analytics-executions
+      parameters:
+      - name: agentIds
+        in: query
+        required: true
+        schema:
+          type: string
+        description: 'Comma-separated list of agent IDs (no spaces). Maximum 100 IDs.
+
+          '
+      - name: granularity
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - QUARTER
+          - MONTH
+          - WEEK
+          default: QUARTER
+        description: Time bucket for each period (UTC).
+      responses:
+        '200':
+          description: Per-agent execution counts aligned to the returned periods.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutionsResponse'
+        '400':
+          $ref: '#/components/responses/400_resp_common'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_resp_common'
+      description: 'Returns execution (session) counts per agent for each calendar period (quarter, month, or week).
+
+
+        ### Required scopes
+
+
+        * `ai.agent_read`'
+      security:
+      - OAuth2:
+        - ai.agent_read
+      tags:
+      - Agent Analytics
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    AgentExecutionSeries:
+      type: object
+      properties:
+        agentId:
+          type: string
+        counts:
+          type: array
+          description: Execution counts per period, same order as `periods`.
+          items:
+            type: integer
+    ErrorMessage:
+      type: object
+      properties:
+        code:
+          type: integer
+        type:
+          type: string
+        message:
+          type: string
+        moreInfo:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              type:
+                type: string
+              message:
+                type: string
+              moreInfo:
+                type: string
+      description: ''
+    AnalyticsResolutionEfficiency:
+      type: object
+      properties:
+        requestsPerSession:
+          type: number
+          format: double
+          description: Average number of requests per session.
+        totalRequests:
+          type: integer
+        totalSessions:
+          type: integer
+    AgentAnalyticsResponse:
+      type: object
+      description: Combined analytics payload for admin and partner dashboards.
+      properties:
+        requests:
+          $ref: '#/components/schemas/AnalyticsLogMetrics'
+        sessions:
+          $ref: '#/components/schemas/AnalyticsSessionMetrics'
+        resolutionEfficiency:
+          $ref: '#/components/schemas/AnalyticsResolutionEfficiency'
+        requestTrend:
+          type: array
+          items:
+            $ref: '#/components/schemas/AnalyticsRequestTrendPoint'
+        sessionTrend:
+          type: array
+          items:
+            $ref: '#/components/schemas/AnalyticsSessionTrendPoint'
+    ExecutionsResponse:
+      type: object
+      properties:
+        granularity:
+          type: string
+          description: Time bucket used for periods and series (enum constant name).
+          enum:
+          - QUARTER
+          - MONTH
+          - WEEK
+        periods:
+          type: array
+          items:
+            $ref: '#/components/schemas/AnalyticsPeriod'
+        series:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentExecutionSeries'
+    AnalyticsSessionMetrics:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total number of sessions in scope.
+        bySeverity:
+          $ref: '#/components/schemas/AnalyticsSessionSeverityCounts'
+        errorRate:
+          type: number
+          format: double
+          description: Share of error outcome sessions among sessions.
+    AnalyticsRequestTrendPoint:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date-time
+          description: Week start instant (UTC).
+        total:
+          type: integer
+        errors:
+          type: integer
+        errorRate:
+          type: number
+          format: double
+    ErrorMessageFault:
+      type: object
+      properties:
+        fault:
+          type: object
+          properties:
+            faultstring:
+              type: string
+            detail:
+              type: object
+              properties:
+                errorcode:
+                  type: string
+    AnalyticsPeriod:
+      type: object
+      properties:
+        label:
+          type: string
+          description: Human-readable period label (e.g. quarter name).
+        start:
+          type: string
+          format: date-time
+          description: Period start (inclusive), UTC.
+        end:
+          type: string
+          format: date-time
+          description: Period end (exclusive), UTC.
+    AnalyticsSeverityCounts:
+      type: object
+      description: Request log counts by severity.
+      properties:
+        info:
+          type: integer
+        warning:
+          type: integer
+        error:
+          type: integer
+    AnalyticsSessionTrendPoint:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date-time
+          description: Week start instant (UTC).
+        totalSessions:
+          type: integer
+        errorSessions:
+          type: integer
+        errorRate:
+          type: number
+          format: double
+    AnalyticsLogMetrics:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total number of request logs in scope.
+        bySeverity:
+          $ref: '#/components/schemas/AnalyticsSeverityCounts'
+        errorRate:
+          type: number
+          format: double
+          description: Share of error-severity logs among request logs.
+    AnalyticsSessionSeverityCounts:
+      type: object
+      description: Session counts by outcome severity.
+      properties:
+        success:
+          type: integer
+        warning:
+          type: integer
+        error:
+          type: integer
+  responses:
+    403_resp_common:
+      description: Authorization scopes of the access token are not sufficient and do not match the scopes required by the endpoint.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Access forbidden:
+              value:
+                code: 403
+                status: Forbidden
+                message: The access to the requested resource has been forbidden by the server.
+    401_resp_common:
+      description: The authorization token is invalid or has expired.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessageFault'
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            Access token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+    400_resp_common:
+      description: The request was syntactically incorrect.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Code must not be null:
+              value:
+                code: 400
+                status: Bad Request
+                message: Validation problem with request body.
+                details:
+                - message: code must not be null nor blank
+  parameters:
+    path_tenant:
+      name: tenant
+      in: path
+      required: true
+      schema:
+        type: string
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: The tenant name should always be provided in lowercase.
+
+        '
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes:
+            ai.text_manage: Needed to execute actions related to the text generation.
+            ai.completion_manage: Needed to execute actions related to the AI completions.
+            ai.agentexecution_manage: Needed to execute agentic chat.
+            ai.agentexecution_manage_own: Needed to execute agentic chat by customers.
+            ai.agent_read: Needed to read AI agents.
+            ai.agent_manage: Needed to manage AI agents.
+          tokenUrl: https://api.emporix.io/oauth/token
+x-refined-from:
+- emporix-ai-service-openapi.yml
+- emporix-ai-service-openapi.yml

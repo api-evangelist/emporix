@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-request-from-quote-checkout-schema.json",
+  "title": "requestFromQuoteCheckout",
+  "description": "Schema for triggering a checkout from the quote.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-checkout-openapi.yml#/components/schemas/requestFromQuoteCheckout",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "quoteId": {
+      "type": "string",
+      "description": "The identifier of the quote.",
+      "minLength": 0
+    },
+    "paymentMethods": {
+      "description": "Methods chosen to process the payment for the order.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/requestPaymentMethod.json"
+      }
+    },
+    "deliveryWindowId": {
+      "type": "string",
+      "description": "Delivery window's unique identifier."
+    }
+  },
+  "required": [
+    "quoteId",
+    "paymentMethods"
+  ],
+  "$defs": {
+    "requestPaymentMethod.json": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "provider": {
+          "type": "string",
+          "description": "Payment provider, possible values: \n  * `payment-gateway` - When the Emporix Payment-Gateway service is used to handle a payment. For details about custom attributes that are required for a particular payment mode, check https://developer.emporix.io/api-documentation/api-guides/checkout/payment-gateway. \n  * `custom` - When a custom provider is used. In this case the created order has the `IN_CHECKOUT` status.\n  * `none` - For payment by cash or invoice.\n",
+          "minLength": 0
+        },
+        "customAttributes": {
+          "type": "object",
+          "description": "Additional information about the payment method.",
+          "properties": {
+            "token": {
+              "type": "string",
+              "description": "Payment token used for the tokenized credit card flows. The field is used when provider type is `payment-gateway`. For more details, check https://developer.emporix.io/api-documentation/api-guides/checkout/payment-gateway"
+            },
+            "modeId": {
+              "type": "string",
+              "description": "Identifier of a payment mode. The payment mode has to be configured in the Emporix Payment Gateway service beforehand. For more details, check https://developer.emporix.io/api-documentation/api-guides/checkout/payment-gateway"
+            },
+            "paymentType": {
+              "type": "string",
+              "description": "Payment type chosen by the customer, for example `paymentByCredit` or `paymentByDebit`."
+            }
+          }
+        },
+        "method": {
+          "type": "string",
+          "description": "Payment method chosen by the customer, for example `invoice` or `cash-on-delivery`."
+        },
+        "amount": {
+          "type": "number",
+          "description": "Amount to be paid by the customer."
+        }
+      },
+      "required": [
+        "provider"
+      ]
+    }
+  }
+}

@@ -1,0 +1,1318 @@
+openapi: 3.2.0
+info:
+  title: Emporix Addresses API
+  version: ''
+  contact:
+    name: Emporix
+    url: https://emporix.com
+    email: documentation@emporix.com
+  description: 'Operations tagged Addresses across 4 of this provider''s published API definitions: emporix-customer-management-openapi.yml, emporix-customer-service-openapi.yml, emporix-customer-management-openapi.yml, emporix-customer-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+tags:
+- name: Addresses
+  description: Manage customer address information.
+paths:
+  /customer/{tenant}/me/addresses:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    post:
+      responses:
+        '201':
+          description: Created
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceLocation'
+              examples:
+                Response example:
+                  value:
+                    id: b05c20e034
+        '400':
+          $ref: '#/components/responses/400_bad_request'
+        '401':
+          $ref: '#/components/responses/401_unauthorized'
+        '403':
+          $ref: '#/components/responses/403_forbidden'
+      description: 'Adds an address to a customer profile.
+
+
+        **Note**: The request needs to be authorized with a customer access token.'
+      operationId: POST-customer-add-address
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddressCreateDto'
+            examples:
+              Request example:
+                value:
+                  contactName: John Doe
+                  companyName: Emporix
+                  street: Platz der Republik
+                  streetNumber: '1'
+                  streetAppendix: ''
+                  extraLine1: ''
+                  extraLine2: ''
+                  extraLine3: ''
+                  extraLine4: ''
+                  zipCode: '11011'
+                  city: Berlin
+                  country: DE
+                  state: Berlin
+                  contactPhone: '123456789'
+                  tags:
+                  - BILLING
+                  - SHIPPING
+        required: false
+      security:
+      - CustomerAccessToken: []
+      summary: Adding a customer address
+      tags:
+      - Addresses
+    get:
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AddressDto'
+              examples:
+                Response example:
+                  value:
+                  - contactName: John Doe
+                    companyName: Emporix
+                    street: Platz der Republik
+                    streetNumber: '1'
+                    streetAppendix: ''
+                    extraLine1: ''
+                    extraLine2: ''
+                    extraLine3: ''
+                    extraLine4: ''
+                    zipCode: '11011'
+                    city: Berlin
+                    country: DE
+                    state: Berlin
+                    contactPhone: '123456789'
+                    tags:
+                    - BILLING
+                    - SHIPPING
+                    id: b05c20e034
+                    isDefault: true
+        '400':
+          $ref: '#/components/responses/400_bad_request'
+        '401':
+          $ref: '#/components/responses/401_unauthorized'
+        '403':
+          $ref: '#/components/responses/403_forbidden'
+      description: 'Retrieves a list of addresses for a customer.
+
+
+        **Note**: The request needs to be authorized with a customer access token.'
+      operationId: GET-customer-list-customer-addresses
+      security:
+      - CustomerAccessToken: []
+      summary: Retrieving customer addresses
+      tags:
+      - Addresses
+    servers:
+    - url: https://api.emporix.io
+  /customer/{tenant}/me/addresses/{addressId}:
+    parameters:
+    - $ref: '#/components/parameters/addressId'
+    - $ref: '#/components/parameters/tenant'
+    patch:
+      responses:
+        '200':
+          description: OK
+        '400':
+          $ref: '#/components/responses/400_bad_request'
+        '401':
+          $ref: '#/components/responses/401_unauthorized'
+        '403':
+          $ref: '#/components/responses/403_forbidden'
+        '404':
+          $ref: '#/components/responses/404_address'
+      description: 'Updates a specified customer address.
+
+
+        **Note**: The request needs to be authorized with a customer access token.'
+      operationId: PATCH-customer-update-customer-address
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddressUpdateDto'
+            examples:
+              Request example:
+                value:
+                  contactName: John Doe
+                  companyName: Emporix
+                  street: Platz der Republik
+                  streetNumber: '1'
+                  streetAppendix: ''
+                  extraLine1: ''
+                  extraLine2: ''
+                  extraLine3: ''
+                  extraLine4: ''
+                  zipCode: '11011'
+                  city: Berlin
+                  country: DE
+                  state: Berlin
+                  contactPhone: '123456789'
+                  tags:
+                  - BILLING
+                  - SHIPPING
+                  isDefault: true
+        required: false
+      security:
+      - CustomerAccessToken: []
+      summary: Updating a customer address
+      tags:
+      - Addresses
+    get:
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddressDto'
+              examples:
+                Response example:
+                  value:
+                    contactName: John Doe
+                    companyName: Emporix
+                    street: Platz der Republik
+                    streetNumber: '1'
+                    streetAppendix: ''
+                    extraLine1: ''
+                    extraLine2: ''
+                    extraLine3: ''
+                    extraLine4: ''
+                    zipCode: '11011'
+                    city: Berlin
+                    country: DE
+                    state: Berlin
+                    contactPhone: '123456789'
+                    tags:
+                    - BILLING
+                    - SHIPPING
+                    id: b05c20e034
+                    isDefault: true
+        '400':
+          $ref: '#/components/responses/400_bad_request'
+        '401':
+          $ref: '#/components/responses/401_unauthorized'
+        '403':
+          $ref: '#/components/responses/403_forbidden'
+        '404':
+          $ref: '#/components/responses/404_address'
+      description: 'Retrieves a specified customer address and its details.
+
+
+        **Note**: The request needs to be authorized with a customer access token.'
+      operationId: GET-customer-retrieve-address-by-id
+      security:
+      - CustomerAccessToken: []
+      summary: Retrieving a customer address
+      tags:
+      - Addresses
+    delete:
+      responses:
+        '204':
+          description: No Content
+        '400':
+          $ref: '#/components/responses/400_bad_request'
+        '401':
+          $ref: '#/components/responses/401_unauthorized'
+        '403':
+          $ref: '#/components/responses/403_forbidden'
+        '404':
+          $ref: '#/components/responses/404_address'
+      description: 'Deletes a specified customer address and accounts associated with it.
+
+
+        **Note**: The request needs to be authorized with a customer access token.'
+      operationId: DELETE-customer-remove-customer-address-by-id
+      security:
+      - CustomerAccessToken: []
+      summary: Deleting a customer address
+      tags:
+      - Addresses
+    servers:
+    - url: https://api.emporix.io
+  /customer/{tenant}/me/addresses/{addressId}/tags:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    - $ref: '#/components/parameters/addressId'
+    post:
+      summary: Adding tags to a customer address
+      operationId: POST-customer-add-address-tags
+      responses:
+        '204':
+          description: No Content
+        '400':
+          $ref: '#/components/responses/400_bad_request'
+        '401':
+          $ref: '#/components/responses/401_unauthorized'
+        '403':
+          $ref: '#/components/responses/403_forbidden'
+        '404':
+          $ref: '#/components/responses/404_address'
+      tags:
+      - Addresses
+      security:
+      - CustomerAccessToken: []
+      parameters:
+      - $ref: '#/components/parameters/tags'
+      description: 'Adds tags to a specified customer address.
+
+
+        **Note**: The request needs to be authorized with a customer access token.'
+    delete:
+      summary: Deleting tags from a customer address
+      operationId: DELETE-customer-remove-address-tags
+      responses:
+        '204':
+          description: No Content
+        '400':
+          $ref: '#/components/responses/400_bad_request'
+        '401':
+          $ref: '#/components/responses/401_unauthorized'
+        '403':
+          $ref: '#/components/responses/403_forbidden'
+        '404':
+          $ref: '#/components/responses/404_address'
+      tags:
+      - Addresses
+      security:
+      - CustomerAccessToken: []
+      parameters:
+      - $ref: '#/components/parameters/tags'
+      description: 'Deletes tags from a specified customer address.
+
+
+        **Note**: The request needs to be authorized with a customer access token.'
+    servers:
+    - url: https://api.emporix.io
+  /customer/{tenant}/customers/{customerNumber}/addresses:
+    parameters:
+    - $ref: '#/components/parameters/customerNumber'
+    - $ref: '#/components/parameters/Api_Tenant'
+    get:
+      summary: Retrieving customer addresses
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Address'
+              examples:
+                Response example:
+                  value:
+                  - contactName: John Doe
+                    companyName: Emporix
+                    street: Platz der Republik
+                    streetNumber: '1'
+                    streetAppendix: ''
+                    extraLine1: ''
+                    extraLine2: ''
+                    extraLine3: ''
+                    extraLine4: ''
+                    zipCode: '11011'
+                    city: Berlin
+                    country: DE
+                    state: Berlin
+                    contactPhone: '123456789'
+                    tags:
+                    - BILLING
+                    - SHIPPING
+                    id: b05c20e034
+                    isDefault: true
+        '400':
+          $ref: '#/components/responses/400_bad_request'
+        '401':
+          $ref: '#/components/responses/401_unauthorized'
+        '403':
+          $ref: '#/components/responses/403_forbidden_2'
+        '404':
+          description: Not Found
+      description: Retrieves a list of addresses for a specified customer.
+      operationId: GET-customer-tenant-list-customer-addresses
+      parameters: []
+      tags:
+      - Addresses
+      security:
+      - OAuth2:
+        - customer.customer_read
+    post:
+      summary: Adding a customer address
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceLocation'
+              examples:
+                Response example:
+                  value:
+                    id: e6eae2c789
+        '400':
+          $ref: '#/components/responses/400_bad_request'
+        '401':
+          $ref: '#/components/responses/401_unauthorized'
+        '403':
+          $ref: '#/components/responses/403_forbidden_2'
+        '404':
+          $ref: '#/components/responses/404_customer'
+        '409':
+          $ref: '#/components/responses/409_conflict'
+      description: Adds an address to a specified customer profile.
+      operationId: POST-customer-tenant-add-customer-address
+      parameters: []
+      tags:
+      - Addresses
+      security:
+      - OAuth2:
+        - customer.customer_manage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Address_2'
+            examples:
+              Request example:
+                value:
+                  contactName: John Doe
+                  companyName: Emporix
+                  street: Platz der Republik
+                  streetNumber: '1'
+                  streetAppendix: ''
+                  extraLine1: ''
+                  extraLine2: ''
+                  extraLine3: ''
+                  extraLine4: ''
+                  zipCode: '11011'
+                  city: Berlin
+                  country: DE
+                  state: Berlin
+                  contactPhone: '123456789'
+                  tags:
+                  - BILLING
+                  - SHIPPING
+                  isDefault: true
+        description: ''
+    servers:
+    - url: https://api.emporix.io
+  /customer/{tenant}/customers/{customerNumber}/addresses/{addressId}:
+    parameters:
+    - $ref: '#/components/parameters/addressId_2'
+    - $ref: '#/components/parameters/customerNumber'
+    - $ref: '#/components/parameters/tenant_2'
+    put:
+      summary: Upserting a customer address
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceLocation'
+              examples:
+                Response example:
+                  value:
+                    id: e6eae2c789
+        '204':
+          description: No Content - update has been successful
+        '400':
+          $ref: '#/components/responses/400_bad_request'
+        '401':
+          $ref: '#/components/responses/401_unauthorized'
+        '403':
+          $ref: '#/components/responses/403_forbidden_2'
+        '404':
+          $ref: '#/components/responses/404_address_2'
+      description: Updates a specified customer address or creates a new one if it doesn't exist yet.
+      operationId: PUT-customer-tenant-update-customer-address
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddressUpdateDto_2'
+            examples:
+              Request example:
+                value:
+                  contactName: John Doe
+                  companyName: Emporix
+                  street: Platz der Republik
+                  streetNumber: '1'
+                  streetAppendix: ''
+                  extraLine1: ''
+                  extraLine2: ''
+                  extraLine3: ''
+                  extraLine4: ''
+                  zipCode: '11011'
+                  city: Berlin
+                  country: DE
+                  state: Berlin
+                  contactPhone: '123456789'
+                  tags:
+                  - BILLING
+                  - SHIPPING
+                  isDefault: true
+        required: false
+        description: ''
+      parameters: []
+      tags:
+      - Addresses
+      security:
+      - OAuth2:
+        - customer.customer_manage
+    patch:
+      summary: Partially updating a customer address
+      responses:
+        '200':
+          description: OK
+        '400':
+          $ref: '#/components/responses/400_bad_request'
+        '401':
+          $ref: '#/components/responses/401_unauthorized'
+        '403':
+          $ref: '#/components/responses/403_forbidden_2'
+        '404':
+          $ref: '#/components/responses/404_address_2'
+      description: Updates a specified customer address.
+      operationId: PATCH-customer-tenant-update-customer-address
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddressUpdateDto_2'
+            examples:
+              Request example:
+                value:
+                  contactName: John Doe
+                  companyName: Emporix
+                  street: Platz der Republik
+                  streetNumber: '1'
+                  streetAppendix: ''
+                  extraLine1: ''
+                  extraLine2: ''
+                  extraLine3: ''
+                  extraLine4: ''
+                  zipCode: '11011'
+                  city: Berlin
+                  country: DE
+                  state: Berlin
+                  contactPhone: '123456789'
+                  tags:
+                  - BILLING
+                  - SHIPPING
+                  isDefault: true
+        required: false
+        description: ''
+      parameters: []
+      tags:
+      - Addresses
+      security:
+      - OAuth2:
+        - customer.customer_manage
+    get:
+      summary: Retrieving a customer address
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Address'
+              examples:
+                Response example:
+                  value:
+                    contactName: John Doe
+                    companyName: Emporix
+                    street: Platz der Republik
+                    streetNumber: '1'
+                    streetAppendix: ''
+                    extraLine1: ''
+                    extraLine2: ''
+                    extraLine3: ''
+                    extraLine4: ''
+                    zipCode: '11011'
+                    city: Berlin
+                    country: DE
+                    state: Berlin
+                    contactPhone: '123456789'
+                    tags:
+                    - BILLING
+                    - SHIPPING
+                    id: b05c20e034
+                    isDefault: true
+        '400':
+          $ref: '#/components/responses/400_bad_request'
+        '401':
+          $ref: '#/components/responses/401_unauthorized'
+        '403':
+          $ref: '#/components/responses/403_forbidden_2'
+        '404':
+          $ref: '#/components/responses/404_address_2'
+      description: Retrieves a specified customer address and its details.
+      operationId: GET-customer-tenant-retrieve-customer-address-by-id
+      parameters: []
+      tags:
+      - Addresses
+      security:
+      - OAuth2:
+        - customer.customer_read
+    delete:
+      summary: Deleting a customer address
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+        required: false
+      responses:
+        '204':
+          description: No Content
+        '400':
+          $ref: '#/components/responses/400_bad_request'
+        '401':
+          $ref: '#/components/responses/401_unauthorized'
+        '403':
+          $ref: '#/components/responses/403_forbidden_2'
+        '404':
+          $ref: '#/components/responses/404_address_2'
+      description: Deletes a specified customer address.
+      operationId: DELETE-customer-tenant-remove-customer-address
+      parameters: []
+      tags:
+      - Addresses
+      security:
+      - OAuth2:
+        - customer.customer_manage
+    servers:
+    - url: https://api.emporix.io
+  /customer/{tenant}/customers/{customerNumber}/addresses/{addressId}/tags:
+    parameters:
+    - $ref: '#/components/parameters/addressId_2'
+    - $ref: '#/components/parameters/customerNumber'
+    - $ref: '#/components/parameters/tenant_2'
+    post:
+      summary: Adding tags to a customer address
+      responses:
+        '204':
+          description: No Content
+        '400':
+          $ref: '#/components/responses/400_bad_request'
+        '401':
+          $ref: '#/components/responses/401_unauthorized'
+        '403':
+          $ref: '#/components/responses/403_forbidden_2'
+        '404':
+          $ref: '#/components/responses/404_address_2'
+      description: Adds tags to a specified customer address.
+      operationId: POST-customer-tenant-add-address-tags
+      parameters:
+      - $ref: '#/components/parameters/tags_2'
+      tags:
+      - Addresses
+      security:
+      - OAuth2: []
+    delete:
+      summary: Deleting tags from a customer address
+      responses:
+        '204':
+          description: No Content
+        '400':
+          $ref: '#/components/responses/400_bad_request'
+        '401':
+          $ref: '#/components/responses/401_unauthorized'
+        '403':
+          $ref: '#/components/responses/403_forbidden_2'
+        '404':
+          $ref: '#/components/responses/404_address_2'
+      description: Deletes tags from a specified customer address.
+      operationId: DELETE-customer-tenant-remove-address-tags
+      parameters:
+      - $ref: '#/components/parameters/tags_2'
+      tags:
+      - Addresses
+      security:
+      - OAuth2:
+        - customer.customer_manage
+    servers:
+    - url: https://api.emporix.io
+components:
+  parameters:
+    addressId:
+      name: addressId
+      in: path
+      required: true
+      schema:
+        type: string
+        minLength: 1
+      description: Address unique identifier generated when the address is added to a customer profile.
+    tags:
+      name: tags
+      in: query
+      required: true
+      schema:
+        type: string
+        minLength: 1
+        example: BILLING,SHIPPING
+      description: List of address tags, separated by commas.
+    tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: The tenant should always be written in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+    tags_2:
+      name: tags
+      in: query
+      required: true
+      schema:
+        type: string
+        example: BILLING,SHIPPING
+      description: List of address tags, separated by commas.
+    customerNumber:
+      name: customerNumber
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Customer unique identifier generated when the customer profile is created.
+    tenant_2:
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: The tenant should always be written in lowercase.
+
+        '
+      name: tenant
+      in: path
+      required: true
+      schema:
+        type: string
+    Api_Tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: The tenant should always be written in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+    addressId_2:
+      name: addressId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Address unique identifier generated when the address is added to a customer profile.
+    tags_3:
+      name: tags
+      in: query
+      required: true
+      schema:
+        type: string
+        example: BILLING,SHIPPING
+      description: List of address tags, separated by commas.
+    tenant_3:
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: The tenant should always be written in lowercase.
+
+        '
+      name: tenant
+      in: path
+      required: true
+      schema:
+        type: string
+    addressId_3:
+      name: addressId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Address unique identifier generated when the address is added to a customer profile.
+  schemas:
+    AddressDto:
+      title: AddressDto
+      allOf:
+      - $ref: '#/components/schemas/AddressCommonDto'
+      - properties:
+          id:
+            type: string
+            description: Customer address' unique identifier generated when the address is added to the customer account.
+          isDefault:
+            type: boolean
+            description: Flag indicating whether the address is the customer default address.
+        type: object
+    ErrorMessage:
+      title: ''
+      description: Schema for API-specific errors.
+      type: object
+      properties:
+        status:
+          minimum: 100
+          maximum: 599
+          description: Original HTTP error code. It should be consistent with the HTTP response code.
+          type: integer
+        type:
+          pattern: '[a-z]+[a-z_]*[a-z]+'
+          description: 'Classification of the error type.
+
+            **Note:** The error type should be written in lowercase and include underscores, for example `validation_failure`.'
+          type: string
+        message:
+          description: Descriptive error message for debugging purposes.
+          type: string
+        moreInfo:
+          type: string
+          description: More information (such as a link to the documentation) for investigating further and getting support.
+        details:
+          description: List of problems causing the error.
+          type: array
+          items:
+            title: errorDetail
+            description: Specific error cause.
+            type: object
+            properties:
+              field:
+                description: 'Element in request data which is causing the error, for example `category.name`.
+
+                  If the violation was not field-specific, this field will be empty.'
+                type: string
+              type:
+                pattern: '[a-z]+[a-z_]*[a-z]+'
+                description: 'Classification of the specific error cause. This value should always be interpreted within the context of the general error type.
+
+                  **Note:** The error type should be written in lowercase and include underscores, for example `missing_value`.'
+                type: string
+              message:
+                description: Descriptive error message for debugging purposes.
+                type: string
+              moreInfo:
+                type: string
+                description: More information (such as a link to the documentation) for investigating further and getting support.
+    AddressCommonDto:
+      title: AddressCommonDto
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/AddressCreateDto'
+      - type: object
+        properties:
+          metadata:
+            $ref: '#/components/schemas/DefaultDtoMetadata'
+    DefaultDtoMetadata:
+      title: DefaultDtoMetadata
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/BasicMetadataDto'
+      - type: object
+        properties:
+          version:
+            type: integer
+    ResourceLocation:
+      type: object
+      title: Resource Location
+      description: Schema for showing location of the new resource.
+      properties:
+        id:
+          description: Resource identifier.
+          type: string
+    AddressUpdateDto:
+      allOf:
+      - $ref: '#/components/schemas/AddressCommonDto'
+      - type: object
+        properties:
+          isDefault:
+            type: boolean
+            description: Flag indicating whether the address is the customer default address.
+    BasicMetadataDto:
+      title: DefaultDtoMetadata
+      type: object
+      properties:
+        mixins:
+          type: object
+          additionalProperties: true
+      description: Links to mixin schemas.
+    AddressCreateDto:
+      title: AddressCommonDto
+      type: object
+      properties:
+        contactName:
+          type: string
+        companyName:
+          type: string
+        street:
+          type: string
+        streetNumber:
+          type: string
+        streetAppendix:
+          type: string
+        extraLine1:
+          type: string
+        extraLine2:
+          type: string
+        extraLine3:
+          type: string
+        extraLine4:
+          type: string
+        zipCode:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+        state:
+          type: string
+        contactPhone:
+          type: string
+        tags:
+          type: array
+          description: ''
+          items:
+            type: string
+        metadata:
+          $ref: '#/components/schemas/BasicMetadataDto'
+        mixins:
+          type: object
+          description: Customer address' additional properties.
+          additionalProperties: true
+    AddressCommonDto_2:
+      title: AddressCommonDto
+      type: object
+      properties:
+        contactName:
+          type: string
+        companyName:
+          type: string
+        street:
+          type: string
+        streetNumber:
+          type: string
+        streetAppendix:
+          type: string
+        extraLine1:
+          type: string
+        extraLine2:
+          type: string
+        extraLine3:
+          type: string
+        extraLine4:
+          type: string
+        zipCode:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+          description: 2 letter country code compliant with the ISO 3166-1 alpha-2 standard.
+        state:
+          type: string
+        contactPhone:
+          type: string
+        tags:
+          type: array
+          description: ''
+          items:
+            type: string
+        metadata:
+          $ref: '#/components/schemas/DefaultDtoMetadata'
+        mixins:
+          type: object
+          description: Customer address additional properties.
+          additionalProperties: true
+    Address:
+      type: object
+      description: Customer address information.
+      properties:
+        id:
+          type: string
+          description: Customer address unique identifier generated when the address is added to the customer account.
+        contactName:
+          type: string
+        companyName:
+          type: string
+        street:
+          type: string
+        streetNumber:
+          type: string
+        streetAppendix:
+          type: string
+        extraLine1:
+          type: string
+        extraLine2:
+          type: string
+        extraLine3:
+          type: string
+        extraLine4:
+          type: string
+        zipCode:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+          maxLength: 2
+          minLength: 2
+        state:
+          type: string
+        contactPhone:
+          type: string
+        isDefault:
+          type: boolean
+          default: false
+          description: Flag indicating whether the address is the customer default address.
+        tags:
+          type: array
+          description: ''
+          items:
+            type: string
+        metadata:
+          $ref: '#/components/schemas/DefaultDtoMetadata'
+        mixins:
+          type: object
+          description: Customer address additional properties.
+          additionalProperties: true
+      required:
+      - contactName
+    Address_2:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Custom customer address identifier. If not provided, it is automatically generated.
+        contactName:
+          type: string
+        companyName:
+          type: string
+        street:
+          type: string
+        streetNumber:
+          type: string
+        streetAppendix:
+          type: string
+        extraLine1:
+          type: string
+        extraLine2:
+          type: string
+        extraLine3:
+          type: string
+        extraLine4:
+          type: string
+        zipCode:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+          maxLength: 2
+          minLength: 2
+        state:
+          type: string
+        contactPhone:
+          type: string
+        isDefault:
+          type: boolean
+          default: false
+          description: Flag indicating whether the address is the customer default address.
+        tags:
+          type: array
+          description: ''
+          items:
+            type: string
+        metadata:
+          type: object
+          additionalProperties: false
+          description: Links to mixin schemas.
+          properties:
+            mixins:
+              type: object
+              additionalProperties: true
+        mixins:
+          type: object
+          description: Customer address additional properties.
+          additionalProperties: true
+      required:
+      - contactName
+      description: ''
+    AddressUpdateDto_2:
+      allOf:
+      - $ref: '#/components/schemas/AddressCommonDto_2'
+      - type: object
+        properties:
+          isDefault:
+            type: boolean
+            description: Flag indicating whether the address is the customer default address.
+          contactName:
+            type: string
+            description: Required if address does not exist and should be created in upsert operation.
+    AddressCommonDto_3:
+      title: AddressCommonDto
+      type: object
+      properties:
+        contactName:
+          type: string
+        companyName:
+          type: string
+        street:
+          type: string
+        streetNumber:
+          type: string
+        streetAppendix:
+          type: string
+        extraLine1:
+          type: string
+        extraLine2:
+          type: string
+        extraLine3:
+          type: string
+        extraLine4:
+          type: string
+        zipCode:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+          description: 2 letter country code compliant with the ISO 3166-1 alpha-2 standard.
+        state:
+          type: string
+        contactPhone:
+          type: string
+        tags:
+          type: array
+          description: ''
+          items:
+            type: string
+        metadata:
+          $ref: '#/components/schemas/DefaultDtoMetadata'
+        mixins:
+          type: object
+          description: Customer address additional properties.
+          additionalProperties: true
+    AddressUpdateDto_3:
+      allOf:
+      - $ref: '#/components/schemas/AddressCommonDto_3'
+      - type: object
+        properties:
+          isDefault:
+            type: boolean
+            description: Flag indicating whether the address is the customer default address.
+          contactName:
+            type: string
+            description: Required if address does not exist and should be created in upsert operation.
+  responses:
+    404_address:
+      description: Address with the specified `addressId` doesn't exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          example:
+            Address not found:
+              type: resource_not_found
+              status: 404
+              message: Address {addressId} of customer {customerNumber} not found.
+    400_bad_request:
+      description: Request was syntactically incorrect. Details will be provided in the response payload.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Invalid tenant:
+              value:
+                type: bad_request
+                status: 400
+                message: The tenant information provided with the request is not valid.
+    401_unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            Access token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+    403_forbidden:
+      description: 'Given authorization scopes are not sufficient and do not match scopes required by the endpoint.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          example:
+            Missing required scopes:
+              type: Forbidden
+              status: 403
+              message: User not authorized.
+    409_conflict:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          example:
+            Account already exists:
+              type: conflict_resource
+              status: 409
+              message: Duplicate account '{email}' for tenant '{tenant}'.
+    404_customer:
+      description: Customer with the specified `customerNumber` doesn't exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Customer not found:
+              value:
+                status: 404
+                type: application/json
+                message: Customer not Found
+                details:
+                - message: Couldn't find a customer with customerNumber '{customerNumber}'
+    403_forbidden_2:
+      description: 'Given authorization scopes are not sufficient and do not match scopes required by the endpoint.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Missing required scopes:
+              value:
+                type: Forbidden
+                status: 403
+                message: User not authorized.
+    404_address_2:
+      description: The requested resource does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Address not found:
+              value:
+                type: resource_not_found
+                status: 404
+                message: Address {addressId} of customer {customerNumber} not found.
+            Customer not found:
+              value:
+                status: 404
+                type: application/json
+                message: Customer not Found
+                details:
+                - message: Couldn't find a customer with customerNumber '{customerNumber}'
+    403_forbidden_3:
+      description: 'Given authorization scopes are not sufficient and do not match scopes required by the endpoint.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Missing required scopes:
+              value:
+                type: Forbidden
+                status: 403
+                message: User not authorized.
+    404_address_3:
+      description: The requested resource does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Address not found:
+              value:
+                type: resource_not_found
+                status: 404
+                message: Address {addressId} of customer {customerNumber} not found.
+            Customer not found:
+              value:
+                status: 404
+                type: application/json
+                message: Customer not Found
+                details:
+                - message: Couldn't find a customer with customerNumber '{customerNumber}'
+  securitySchemes:
+    CustomerAccessToken:
+      type: http
+      scheme: bearer
+      description: To generate a customer access token, go to the [Logging in a customer](https://developer.emporix.io/api-documentation/api-guides/companies-and-customers/customer-management/api-reference/authentication-and-authorization#post-customer-tenant-login) endpoint.
+    AnonymousAccessToken:
+      type: http
+      scheme: bearer
+      description: To generate an anonymous token, check out the [Requesting an anonymous token](https://developer.emporix.io/api-documentation/api-guides/companies-and-customers/customer-management/api-reference/authentication-and-authorization#get-customerlogin-auth-anonymous-login) endpoint.
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          refreshUrl: ''
+          scopes:
+            customer.customer_read: Needed to retrieve customer profiles.
+            customer.customer_read_own: Needed by customer to retrieve customer profiles from the same company.
+            customer.customer_manage: Needed to manage customer profiles.
+            customer.customer_manage_own: Needed by customer to manage customer profiles from the same company.
+            customer.import_read: Needed to retrieve password migration retention configuration.
+            customer.import_manage: Needed to configure password migration retention and import customers in bulk.
+          tokenUrl: https://api.emporix.io/oauth/token
+x-refined-from:
+- emporix-customer-management-openapi.yml
+- emporix-customer-service-openapi.yml
+- emporix-customer-management-openapi.yml
+- emporix-customer-service-openapi.yml

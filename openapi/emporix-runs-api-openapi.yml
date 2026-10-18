@@ -1,0 +1,1322 @@
+openapi: 3.2.0
+info:
+  title: Emporix Runs API
+  version: ''
+  contact:
+    name: Emporix
+    url: https://emporix.com
+    email: documentation@emporix.com
+  description: 'Operations tagged Runs across 2 of this provider''s published API definitions: emporix-import-service-openapi.yml, emporix-import-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2:
+  - importtool.import_trigger
+tags:
+- name: Runs
+  description: Trigger, monitor, and cancel import runs.
+paths:
+  /importtool/{tenant}/configs/{configId}/runs:
+    parameters:
+    - $ref: '#/components/parameters/trait_tenant'
+    - $ref: '#/components/parameters/trait_configId'
+    post:
+      summary: Triggering an import run
+      description: 'Requests an import run for the configuration and returns immediately with the run in the `QUEUED`
+
+        status. The run starts when a worker of the Import Service is free, usually within moments, and then
+
+        has the `RUNNING` status. If `maxConcurrentImports` runs are already executing for the tenant, the run
+
+        waits until one of them finishes. `queueWaitingFor` says what a queued run waits for. To follow the
+
+        run''s progress, retrieve the run or stream its progress events.
+
+
+        A configuration has at most one run executing and at most one run queued. The service rejects a
+
+        request with a `409 Conflict` response while the configuration has a run in the `QUEUED`, `RUNNING`, or
+
+        `RESUMABLE` status.
+
+
+        A scheduled run is not rejected. It is queued behind the configuration''s current run and starts when
+
+        that run finishes. If the schedule requests another run while the configuration''s run is still
+
+        queued, the service adds the request to the queued run instead of queuing a second run, and counts it
+
+        in `supersededRequests`. The service does this only when the queued run is a real run of the whole
+
+        configuration. If the queued run is a dry run, a run of selected streams, or a retry, the scheduled run
+
+        waits until that run starts and is then queued behind it.
+
+
+        A run executes each stream''s published mappings. Saved mapping changes that are not published yet are
+
+        the draft mappings, and they take effect only after they are published. Publishing mappings is an
+
+        administrative operation that requires the `importtool.import_manage` scope and is not covered in this
+
+        reference. A real run, or a dry run that uses the published mappings, fixes the published mapping version of
+
+        each stream when it starts, so a version published during the run applies from the next run. The run
+
+        reports these versions in `mappingVersions`. A dry run of the draft mappings does not use published
+
+        versions and does not report `mappingVersions`.
+
+
+        A stream whose mappings have never been published is not run. Its entry in the run details (`streams` in
+
+        the response of retrieving a run) has the `ABORTED` status and a `message` that gives the reason, and the
+
+        run finishes with the `PARTIAL` status. The service refuses the whole run when `streamIds` names a stream
+
+        whose mappings have never been published, or when every enabled stream is in that state.
+
+
+        The refusal does not change the response to this request: the service still returns `200` with the run,
+
+        and the run then finishes with the `ABORTED` status and a `message` that names the streams. Retrieve the
+
+        run to check its final status.'
+      operationId: POST-importtool-trigger-run
+      tags:
+      - Runs
+      security:
+      - OAuth2:
+        - importtool.import_trigger
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mode:
+                  type: string
+                  enum:
+                  - FULL
+                  - DELTA
+                  description: The run mode. When omitted, defaults to `DELTA`.
+                  example: DELTA
+                dryRun:
+                  type: boolean
+                  description: When `true`, the run maps and validates but performs no remote writes.
+                  example: false
+                mappings:
+                  type: string
+                  enum:
+                  - published
+                  - draft
+                  default: published
+                  description: Dry-run only. Which mappings the dry run uses. `published` uses each stream's published mappings, which is what a real run executes. `draft` uses the draft mappings, so you can check them before publishing. When omitted, defaults to `published`. A dry run with `published` handles streams whose mappings have never been published in the same way as a real run. The field has no effect when `dryRun` is `false`, because a real run always uses the published mappings.
+                  example: published
+                force:
+                  type: boolean
+                  description: When `true`, every extracted record is rewritten, even if unchanged. It bypasses the idempotency `skip-if-unchanged` check. Use it to force target IDs and values to be rewritten.
+                  example: false
+                sampleSize:
+                  type: integer
+                  minimum: 1
+                  maximum: 100
+                  description: Dry-run only. How many mapped records to sample per stream for the preview returned as `dryRunSample`. Clamped to 1-100; defaults to 25.
+                  example: 25
+                origin:
+                  type: string
+                  maxLength: 40
+                  description: 'What requested this run. Examples: `Dashboard`, an integration scenario name, or a scheduler name. The `trigger` field records only `MANUAL` or `SCHEDULED`. Use `origin` when more than one system calls this endpoint. If you omit `origin` or send a blank value, the service stores the `trigger` value. The service rejects values longer than 40 characters and values that contain control characters. It does not shorten them.'
+                  example: Make scenario 42
+                streamIds:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                  description: 'The stream identifiers to run. Omit the field to run every stream in the configuration. Send a list of stream IDs to run only those streams. Do not send stream names; use the `id` values from the stream resource.
+
+                    The service rejects an empty list. It also rejects a list that includes no stream from this configuration. Listed streams still run in the computed stream order, not in list order.
+
+                    The service also rejects a stream that cannot produce data on its own. A `COMPOSITE_CHILD` stream with `childStrategy` set to `EMBED` is written by its parent. A child that reads values captured during the parent run also cannot run alone. Either stream without its parent would complete successfully without importing records.'
+                  example:
+                  - 8f1b6a5c-2d7e-4a91-9c33-0b5e4d2a7f10
+            examples:
+              Full run:
+                value:
+                  mode: FULL
+                  origin: Dashboard
+              Delta dry run:
+                value:
+                  mode: DELTA
+                  dryRun: true
+              Dry run of unpublished mapping changes:
+                value:
+                  mode: FULL
+                  dryRun: true
+                  mappings: draft
+              Run only two streams:
+                value:
+                  mode: DELTA
+                  streamIds:
+                  - 8f1b6a5c-2d7e-4a91-9c33-0b5e4d2a7f10
+                  - 1c9d3e77-45ab-4f02-8e6d-77a1b0c9e254
+      responses:
+        '200':
+          description: The request was successful. The run has been queued.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportRun'
+              examples:
+                Run response:
+                  $ref: '#/components/examples/ImportRun_Example'
+        '400':
+          description: The request is invalid. For example, `dryRun` is `true` and `mappings` has a value other than `published` or `draft`.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                    format: date-time
+                    description: When the error occurred.
+                  status:
+                    type: integer
+                    description: HTTP status code.
+                  error:
+                    type: string
+                    description: HTTP status reason phrase.
+                  path:
+                    type: string
+                    description: The request path.
+              examples:
+                Invalid mappings value:
+                  value:
+                    timestamp: '2026-09-28T09:15:02.118+00:00'
+                    status: 400
+                    error: Bad Request
+                    path: /importtool/mytenant/configs/7c9e6679-7425-40de-944b-e07fc1f90ae7/runs
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '409':
+          $ref: '#/components/responses/Conflict_409'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+    get:
+      summary: Retrieving run history
+      description: Retrieves the run history for a configuration, most recent first.
+      operationId: GET-importtool-list-runs
+      tags:
+      - Runs
+      parameters:
+      - $ref: '#/components/parameters/trait_page'
+      - $ref: '#/components/parameters/trait_size'
+      security:
+      - OAuth2:
+        - importtool.import_trigger
+      responses:
+        '200':
+          description: The request was successful. The run history is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportRunPage'
+              examples:
+                Run history response:
+                  $ref: '#/components/examples/ImportRunPage_Example'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+    servers:
+    - url: https://api.emporix.io
+  /importtool/{tenant}/runs/{runId}:
+    parameters:
+    - $ref: '#/components/parameters/trait_tenant'
+    - $ref: '#/components/parameters/trait_runId'
+    get:
+      summary: Retrieving a run
+      description: Retrieves a run's status together with its per-stream progress.
+      operationId: GET-importtool-get-run
+      tags:
+      - Runs
+      security:
+      - OAuth2:
+        - importtool.import_trigger
+      responses:
+        '200':
+          description: The request was successful. The run and its streams are returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunDetail'
+              examples:
+                Run detail response:
+                  $ref: '#/components/examples/RunDetail_Example'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '404':
+          $ref: '#/components/responses/NotFound_404'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+    servers:
+    - url: https://api.emporix.io
+  /importtool/{tenant}/runs/{runId}/events:
+    parameters:
+    - $ref: '#/components/parameters/trait_tenant'
+    - $ref: '#/components/parameters/trait_runId'
+    get:
+      summary: Streaming run progress
+      description: 'Streams a run''s progress as Server-Sent Events: an initial `snapshot` (run and streams), then a
+
+        `stream` event per processed batch, and a final `run` event when the run finishes.'
+      operationId: GET-importtool-stream-run-events
+      tags:
+      - Runs
+      security:
+      - OAuth2:
+        - importtool.import_trigger
+      responses:
+        '200':
+          description: The event stream was opened.
+          content:
+            text/event-stream:
+              schema:
+                type: string
+                example: 'event: snapshot
+
+                  data: {"run":{"id":"9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d","status":"RUNNING"},"streams":[{"streamName":"Products","status":"RUNNING","recordsRead":120}]}
+
+
+                  event: stream
+
+                  data: {"streamName":"Products","status":"RUNNING","recordsRead":240,"created":20,"updated":210,"failed":2}
+
+
+                  event: run
+
+                  data: {"id":"9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d","status":"SUCCEEDED","recordsRead":1250}'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+    servers:
+    - url: https://api.emporix.io
+  /importtool/{tenant}/runs/{runId}/cancel:
+    parameters:
+    - $ref: '#/components/parameters/trait_tenant'
+    - $ref: '#/components/parameters/trait_runId'
+    post:
+      summary: Cancelling a run
+      description: 'Requests cancellation of an active run. By default the cancellation is cooperative; with
+
+        `force=true` the run is stopped immediately and its configuration is unblocked.
+
+
+        A run in the `QUEUED` status has not started, so it is cancelled immediately and gets the `CANCELLED`
+
+        status, with or without `force`. A run in the `RESUMABLE` status can be stopped only with
+
+        `force=true`. Without `force`, the request returns a `409 Conflict` response.'
+      operationId: POST-importtool-cancel-run
+      tags:
+      - Runs
+      parameters:
+      - name: force
+        in: query
+        required: false
+        description: When `true`, hard-stops the run immediately.
+        schema:
+          type: boolean
+          default: false
+          example: false
+      security:
+      - OAuth2:
+        - importtool.import_trigger
+      responses:
+        '202':
+          description: The cancellation was accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CancelResult'
+              examples:
+                Cancellation response:
+                  $ref: '#/components/examples/CancelResult_Example'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '409':
+          $ref: '#/components/responses/Conflict_409'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+    servers:
+    - url: https://api.emporix.io
+  /importtool/{tenant}/runs/{runId}/errors:
+    parameters:
+    - $ref: '#/components/parameters/trait_tenant'
+    - $ref: '#/components/parameters/trait_runId'
+    get:
+      summary: Retrieving run errors
+      description: Retrieves the errors recorded during a run, paginated.
+      operationId: GET-importtool-list-run-errors
+      tags:
+      - Runs
+      parameters:
+      - $ref: '#/components/parameters/trait_page'
+      - $ref: '#/components/parameters/trait_size'
+      security:
+      - OAuth2:
+        - importtool.import_trigger
+      responses:
+        '200':
+          description: The request was successful. The errors are returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorRecordPage'
+              examples:
+                Errors response:
+                  $ref: '#/components/examples/ErrorRecordPage_Example'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+    servers:
+    - url: https://api.emporix.io
+  /importtool/{tenant}/runs/{runId}/diagnostics:
+    parameters:
+    - $ref: '#/components/parameters/trait_tenant'
+    - $ref: '#/components/parameters/trait_runId'
+    get:
+      summary: Retrieving run diagnostics
+      description: 'Retrieves the source rows represented by a run''s feed-quality counters.
+
+
+        A run reports how many source rows repeated a natural key (`duplicateKeys`) and how many child
+
+        lines had no parent to attach to (`unresolvedParents`). This endpoint identifies the affected rows
+
+        and returns each record''s key, its parent-linking field and value, and the number of lines waiting
+
+        for each missing parent.
+
+
+        Neither counter is a failure, so these rows are kept separately from run errors.
+
+
+        The rows are a capped SAMPLE, not necessarily the whole set — `recorded` gives how many were
+
+        stored and `sampleTruncated` says whether a stream hit the cap. The run''s own counters show the
+
+        total number of affected rows; do not use the returned row count to measure the size of the problem.'
+      operationId: GET-importtool-list-run-diagnostics
+      tags:
+      - Runs
+      parameters:
+      - $ref: '#/components/parameters/trait_diagnosticsStreamId'
+      - $ref: '#/components/parameters/trait_diagnosticsKind'
+      - name: limit
+        in: query
+        required: false
+        description: Maximum number of rows to return. Defaults differ between the JSON and CSV operations.
+        schema:
+          type: integer
+          default: 500
+          minimum: 1
+          maximum: 50000
+      security:
+      - OAuth2:
+        - importtool.import_trigger
+      responses:
+        '200':
+          description: The request was successful. The diagnostic rows are returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DiagnosticPage'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+    servers:
+    - url: https://api.emporix.io
+  /importtool/{tenant}/runs/{runId}/diagnostics/csv:
+    parameters:
+    - $ref: '#/components/parameters/trait_tenant'
+    - $ref: '#/components/parameters/trait_runId'
+    get:
+      summary: Downloading run diagnostics as CSV
+      description: 'Returns the same rows as a CSV attachment, for opening in a spreadsheet or attaching to a ticket.
+
+
+        Comment lines above the header indicate whether the `limit` parameter restricted the response or
+
+        a stream reached the recording cap. These comments preserve that context when the file is shared
+
+        independently of the request.
+
+
+        Values are quoted. Any value beginning with `=`, `+`, `-`, or `@` is prefixed with an apostrophe
+
+        so that spreadsheet software does not interpret source-provided data as a formula.'
+      operationId: GET-importtool-download-run-diagnostics-csv
+      tags:
+      - Runs
+      parameters:
+      - $ref: '#/components/parameters/trait_diagnosticsStreamId'
+      - $ref: '#/components/parameters/trait_diagnosticsKind'
+      - name: limit
+        in: query
+        required: false
+        description: Maximum number of rows to include. Defaults differ between the JSON and CSV operations.
+        schema:
+          type: integer
+          default: 50000
+          minimum: 1
+          maximum: 50000
+      security:
+      - OAuth2:
+        - importtool.import_trigger
+      responses:
+        '200':
+          description: The request was successful. The CSV file is returned.
+          headers:
+            Content-Disposition:
+              description: Attachment disposition and the suggested file name.
+              schema:
+                type: string
+                example: attachment; filename="diagnostics-tenant-2026-09-23.csv"
+          content:
+            text/csv:
+              schema:
+                type: string
+              example: '# capped sample: 2000 rows recorded (cap 2000 per stream) - the run''s counters show the total number of affected rows
+
+                stream,kind,key,linkingField,linkingValue,targetType,waitingLines,occurrence
+
+                poLine,UNRESOLVED_PARENT,ID:PO-4711,HEADER_ID,PO-4711,PURCHASE_ORDER,7,'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+    servers:
+    - url: https://api.emporix.io
+  /importtool/{tenant}/runs/{runId}/retry:
+    parameters:
+    - $ref: '#/components/parameters/trait_tenant'
+    - $ref: '#/components/parameters/trait_runId'
+    post:
+      summary: Retrying the failed records of a run
+      description: 'Starts a new run that reprocesses only the records that failed in the given run, instead of the
+
+        whole source. The new run is returned immediately in the `QUEUED` status and starts when a worker is
+
+        free. It reports its own progress. The original run is left untouched and keeps its counters.
+
+
+        As with a run that you trigger, the service rejects the retry with a `409 Conflict` response while the
+
+        configuration has a run in the `QUEUED`, `RUNNING`, or `RESUMABLE` status.'
+      operationId: POST-importtool-retry-run
+      tags:
+      - Runs
+      security:
+      - OAuth2:
+        - importtool.import_trigger
+      responses:
+        '200':
+          description: The request was successful. The retry run has been queued.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportRun'
+              examples:
+                Import run response:
+                  $ref: '#/components/examples/ImportRun_Example'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '404':
+          $ref: '#/components/responses/NotFound_404'
+        '409':
+          $ref: '#/components/responses/Conflict_409'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    ImportRunStream:
+      title: Run stream progress
+      type: object
+      description: The per-stream progress within a run.
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The run-stream identifier.
+          example: c56a4180-65aa-42ec-a945-5fd21dec0538
+        runId:
+          type: string
+          format: uuid
+          description: The run this progress belongs to.
+          example: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
+        streamId:
+          type: string
+          format: uuid
+          description: The stream this progress belongs to.
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+        streamName:
+          type: string
+          description: The stream name.
+          example: Products
+        status:
+          type: string
+          enum:
+          - QUEUED
+          - RUNNING
+          - SUCCEEDED
+          - PARTIAL
+          - FAILED
+          - SKIPPED
+          - ABORTED
+          description: The stream's status within the run. `ABORTED` means the service refused to run the stream because of its configuration, for example because its mappings have never been published. It indicates a configuration problem to fix. The `message` field gives the reason.
+          example: PARTIAL
+        recordsRead:
+          type: integer
+          description: Records read for this stream.
+          example: 1250
+        created:
+          type: integer
+          description: Records created.
+          example: 40
+        updated:
+          type: integer
+          description: Records updated.
+          example: 1180
+        skipped:
+          type: integer
+          description: Records skipped.
+          example: 25
+        failed:
+          type: integer
+          description: Records that failed.
+          example: 5
+        deleted:
+          type: integer
+          description: Records deleted.
+          example: 0
+        duplicateKeys:
+          type: integer
+          description: Source rows that repeat a key already imported in this run. The import keeps the last row of each repeated key and discards earlier rows. Duplicate keys do not fail the run; they mean the source feed is not unique on the key the stream imports by.
+          example: 25907
+        unresolvedParents:
+          type: integer
+          description: Child records that were not imported because their parent could not be found. Counted separately from `skipped`, which counts records that were already up to date.
+          example: 25370
+        message:
+          type: string
+          description: A per-stream status message.
+          example: 5 records failed validation.
+    RunDetail:
+      title: Run detail
+      type: object
+      description: A run together with its per-stream progress.
+      properties:
+        run:
+          $ref: '#/components/schemas/ImportRun'
+        streams:
+          type: array
+          description: The per-stream progress.
+          items:
+            $ref: '#/components/schemas/ImportRunStream'
+    DiagnosticPage:
+      type: object
+      description: A page of diagnostic rows with metadata that indicates whether the response contains all recorded rows or only part of a capped sample. Use `recorded`, `cap`, and `sampleTruncated` to interpret the page. The run's counters show the total number of affected rows.
+      properties:
+        rows:
+          type: array
+          items:
+            $ref: '#/components/schemas/DiagnosticRecord'
+        returned:
+          type: integer
+          description: How many rows this response contains.
+          example: 500
+        recorded:
+          type: integer
+          description: How many rows were recorded in total for this scope.
+          example: 2000
+        cap:
+          type: integer
+          description: The per-stream, per-kind recording cap.
+          example: 2000
+        sampleTruncated:
+          type: boolean
+          description: 'Whether at least one stream reached the cap. When true, these rows are a sample, and the run''s
+
+            own counters show the total number of affected rows.'
+          example: true
+        note:
+          type: string
+          description: A human-readable statement of what this response is.
+      example:
+        returned: 2
+        recorded: 2000
+        cap: 2000
+        sampleTruncated: true
+        note: At least one stream hit the recording cap, so these rows are a capped SAMPLE.
+        rows:
+        - streamName: poLine
+          kind: UNRESOLVED_PARENT
+          naturalKey: ID:PO-4711
+          linkingField: HEADER_ID
+          linkingValue: PO-4711
+          targetType: PURCHASE_ORDER
+          waitingLines: 7
+    ImportRunPage:
+      title: Run page
+      allOf:
+      - $ref: '#/components/schemas/Page'
+      - type: object
+        properties:
+          content:
+            type: array
+            description: The runs on this page.
+            items:
+              $ref: '#/components/schemas/ImportRun'
+    ErrorRecordPage:
+      title: Error record page
+      allOf:
+      - $ref: '#/components/schemas/Page'
+      - type: object
+        properties:
+          content:
+            type: array
+            description: The error records on this page.
+            items:
+              $ref: '#/components/schemas/ErrorRecord'
+    ErrorRecord:
+      title: Error record
+      type: object
+      description: A single error recorded during a run.
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The error identifier.
+          example: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
+        runId:
+          type: string
+          format: uuid
+          description: The run the error occurred in.
+          example: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
+        streamId:
+          type: string
+          format: uuid
+          description: The stream the error occurred in.
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+        naturalKey:
+          type: string
+          description: The source natural key of the offending record.
+          example: SKU-1001
+        targetEntity:
+          type: string
+          description: The target writer the record was bound for.
+          example: emporix.customEntity
+        stage:
+          type: string
+          description: The pipeline stage the error occurred in.
+          example: MAPPING
+        errorCode:
+          type: string
+          description: A machine-readable error code.
+          example: REQUIRED_FIELD_MISSING
+        message:
+          type: string
+          description: A human-readable error message.
+          example: Required field 'name' is missing for natural key SKU-1001.
+        createdAt:
+          type: string
+          format: date-time
+          description: When the error was recorded.
+          example: '2026-07-27T02:03:41.000Z'
+    errorMessage:
+      title: Error
+      description: Schema for specific API errors.
+      type: object
+      properties:
+        code:
+          type: integer
+          description: HTTP status code.
+          minimum: 100
+          maximum: 599
+        status:
+          description: HTTP status.
+          type: string
+        message:
+          description: Descriptive error message for debugging.
+          type: string
+        details:
+          description: List of problems causing this error.
+          type: array
+          items:
+            title: Error Detail
+            description: Error details.
+            type: string
+      required:
+      - status
+      - code
+      - message
+    ImportRun:
+      title: Run
+      type: object
+      description: An import run and its reconciled counters.
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The run identifier.
+          example: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
+        configId:
+          type: string
+          format: uuid
+          description: The configuration the run belongs to.
+          example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+        tenant:
+          type: string
+          description: The owning tenant.
+          example: mytenant
+        trigger:
+          type: string
+          enum:
+          - MANUAL
+          - SCHEDULED
+          description: What triggered the run.
+          example: MANUAL
+        dryRunSample:
+          type: array
+          description: Dry-run only. A sample of the mapped records that would be written, so the mapping can be previewed without a real import. Absent on normal runs. Each stream is sampled separately, up to the `sampleSize` set in the run request. A parent stream's records include the records of its composite child streams that have `childStrategy` set to `EMBED` or `PATCH`. Those child records appear in the parent attribute named by the child stream's `embedAttribute`, as a real import writes them. Only child records inside the child stream's own sample are included, so a sampled parent record can show fewer child records than the source contains for that parent, or none. Child records are also sampled under their own stream.
+          items:
+            type: object
+            properties:
+              stream:
+                type: string
+                description: The stream that produced the sample record.
+              targetType:
+                type: string
+                description: The resolved target type the record would be written to.
+              key:
+                type: string
+                description: The record's natural/deterministic key.
+              fields:
+                type: object
+                additionalProperties: true
+                description: The mapped target fields that would be written.
+        origin:
+          type: string
+          description: What requested the run. The `origin` value from the trigger request, or the `trigger` value when `origin` was omitted. Use this field to distinguish a dashboard run from a run started by an integration scenario. The field is absent on runs recorded before it existed.
+          example: Dashboard
+        status:
+          type: string
+          enum:
+          - QUEUED
+          - RUNNING
+          - RESUMABLE
+          - SUCCEEDED
+          - PARTIAL
+          - FAILED
+          - CANCELLED
+          - ABORTED
+          description: "The run status. Possible values:\n\n* `QUEUED` – the run waits to start. Nothing has been read yet, and the run has no per-stream\n  progress. `queueWaitingFor` says what the run waits for.\n* `RUNNING` – the run is executing.\n* `RESUMABLE` – the run was interrupted, for example by a service restart, and resumes automatically\n  from its last checkpoint. It is not a final status.\n* `SUCCEEDED` – the run finished, and every record was processed.\n* `PARTIAL` – the run finished, but not completely: some records failed, a limit skipped records,\n  or a stream was not run. The `message` field and the per-stream progress give the details.\n* `FAILED` – the run stopped because of an error.\n* `CANCELLED` – the run was cancelled.\n* `ABORTED` – the service refused to start the run because of the import configuration, for example\n  mappings that have never been published or a changed target schema. Nothing was read or written."
+          example: SUCCEEDED
+        mode:
+          type: string
+          enum:
+          - FULL
+          - DELTA
+          description: The run mode.
+          example: DELTA
+        startedAt:
+          type: string
+          format: date-time
+          description: When the run was requested. If the run was queued first, it began executing later, at `executionStartedAt`.
+          example: '2026-07-27T02:00:00.000Z'
+        executionStartedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: When the run began executing. Equal to `startedAt`, or later by the time the run spent in the queue. `null` while the run is `QUEUED`, and on runs recorded before the field existed.
+          example: '2026-07-27T02:00:03.000Z'
+        finishedAt:
+          type: string
+          format: date-time
+          description: When the run finished.
+          example: '2026-07-27T02:04:12.000Z'
+        queuePosition:
+          type: integer
+          minimum: 1
+          description: '`QUEUED` runs only. The run''s position among the queued runs that can start, where `1` starts next. Runs of all tenants share the queue, and a tenant with fewer runs executing goes first. The value is approximate, because the queue changes while you read it. The field is absent when the run is not queued, when it waits for something other than a worker, or when the service has not yet calculated it.'
+          example: 2
+        queueWaitingFor:
+          type: string
+          enum:
+          - WORKER
+          - PREVIOUS_RUN
+          - TENANT_LIMIT
+          description: "`QUEUED` runs only. What the run waits for. Possible values:\n\n* `WORKER` – the run waits for a free worker. `queuePosition` gives its place in the queue.\n* `PREVIOUS_RUN` – the run waits for the configuration's current run to finish.\n* `TENANT_LIMIT` – the run waits for one of the tenant's runs to finish, because\n  `maxConcurrentImports` runs are already executing.\n\nThe field is absent when the run is not queued, or when the service has not yet calculated it."
+          example: WORKER
+        supersededRequests:
+          type: integer
+          description: The number of later scheduled run requests that were added to this run while it was queued. A configuration has at most one queued run, so a scheduled request that arrives while a real run of the whole configuration is queued does not queue a second run.
+          example: 0
+        lastRequestedAt:
+          type: string
+          format: date-time
+          description: When the latest scheduled run request counted in `supersededRequests` was made. Absent when `supersededRequests` is `0`.
+          example: '2026-07-27T03:00:00.000Z'
+        recordsRead:
+          type: integer
+          description: Records read (created + updated + skipped + deleted + failed).
+          example: 1250
+        created:
+          type: integer
+          description: Records created.
+          example: 40
+        updated:
+          type: integer
+          description: Records updated.
+          example: 1180
+        skipped:
+          type: integer
+          description: Records skipped because they were unchanged.
+          example: 25
+        failed:
+          type: integer
+          description: Records that failed.
+          example: 5
+        deleted:
+          type: integer
+          description: Records deleted.
+          example: 0
+        duplicateKeys:
+          type: integer
+          description: Source rows that repeat a key already imported in this run. The import keeps the last row of each repeated key and discards earlier rows. Duplicate keys do not fail the run; they mean the source feed is not unique on the key the stream imports by.
+          example: 25907
+        unresolvedParents:
+          type: integer
+          description: Child records that were not imported because their parent could not be found. Counted separately from `skipped`, which counts records that were already up to date.
+          example: 25370
+        message:
+          type: string
+          description: A terminal status message, typically set on failure.
+          example: Import completed with 5 record failures.
+        retryOfRunId:
+          type: string
+          format: uuid
+          description: When the run retries another run's failed records, the identifier of that original run.
+          example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+        force:
+          type: boolean
+          description: Whether the run rewrote every record, bypassing the skip-if-unchanged check.
+          example: false
+        dryRun:
+          type: boolean
+          description: Whether the run only extracted, mapped, and validated, writing nothing to the target. A dry run legitimately reports zero for every counter, so this distinguishes it from a run that wrote nothing because it failed.
+          example: false
+        cancelRequested:
+          type: boolean
+          description: Whether cancellation has been requested for a run that is still finishing.
+          example: false
+        dryRunSampleSize:
+          type: integer
+          description: For a dry run, how many mapped records were kept as a sample.
+          example: 10
+        dryRunPublished:
+          type: boolean
+          description: Dry-run only. Whether the dry run used the published mappings (`true`) or the draft mappings (`false`).
+          example: true
+        mappingVersions:
+          type: array
+          description: The published mapping version each stream uses in this run, fixed when the run starts executing. Version `0` means that the stream has no published mappings. The field is absent while the run is `QUEUED`, on a dry run of the draft mappings, and on runs recorded before it existed.
+          items:
+            type: object
+            properties:
+              streamId:
+                type: string
+                format: uuid
+                description: The stream identifier.
+                example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              version:
+                type: integer
+                description: The published mapping version the stream uses.
+                example: 3
+    DiagnosticRecord:
+      type: object
+      description: One row behind a feed-quality counter.
+      properties:
+        id:
+          type: string
+          format: uuid
+        runId:
+          type: string
+          format: uuid
+        streamId:
+          type: string
+          format: uuid
+        streamName:
+          type: string
+          description: The stream that recorded the row.
+        kind:
+          type: string
+          enum:
+          - UNRESOLVED_PARENT
+          - REPEATED_KEY
+          description: '`UNRESOLVED_PARENT`: a child line whose parent instance did not exist when it was written.
+
+            `REPEATED_KEY`: a source row whose natural key this run had already imported.'
+        naturalKey:
+          type: string
+          description: The record's own natural key in the source.
+        linkingField:
+          type: string
+          description: '`UNRESOLVED_PARENT` only. The field that points at the parent.'
+        linkingValue:
+          type: string
+          description: '`UNRESOLVED_PARENT` only. The parent key the line pointed at — the value to look up in the
+
+            source system.'
+        targetType:
+          type: string
+          description: The target type the row was headed for.
+        waitingLines:
+          type: integer
+          description: '`UNRESOLVED_PARENT` only. The number of child lines waiting for this parent.'
+        occurrence:
+          type: integer
+          description: '`REPEATED_KEY` only. How many times this key had already been seen in this run.'
+        createdAt:
+          type: string
+          format: date-time
+    CancelResult:
+      title: Cancellation result
+      type: object
+      description: The outcome of a cancellation request.
+      properties:
+        runId:
+          type: string
+          format: uuid
+          description: The run the cancellation targeted.
+          example: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
+        force:
+          type: boolean
+          description: Whether a hard stop was requested.
+          example: false
+        accepted:
+          type: boolean
+          description: Whether the cancellation was accepted. `false` when the run is unknown or already finished.
+          example: true
+    Page:
+      title: Page
+      type: object
+      description: Pagination metadata for a page of results.
+      properties:
+        totalElements:
+          type: integer
+          description: The total number of elements across all pages.
+          example: 1250
+        totalPages:
+          type: integer
+          description: The total number of pages.
+          example: 63
+        number:
+          type: integer
+          description: The current zero-based page number.
+          example: 0
+        size:
+          type: integer
+          description: The page size.
+          example: 20
+  parameters:
+    trait_diagnosticsStreamId:
+      name: streamId
+      in: query
+      required: false
+      description: Restrict the rows to those recorded for this stream.
+      schema:
+        type: string
+        format: uuid
+    trait_configId:
+      name: configId
+      in: path
+      required: true
+      description: The configuration identifier.
+      schema:
+        type: string
+        format: uuid
+        example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+    trait_diagnosticsKind:
+      name: kind
+      in: query
+      required: false
+      description: Restrict the rows to this kind.
+      schema:
+        type: string
+        enum:
+        - UNRESOLVED_PARENT
+        - REPEATED_KEY
+    trait_size:
+      name: size
+      in: query
+      required: false
+      description: The page size.
+      schema:
+        type: integer
+        example: 20
+    trait_runId:
+      name: runId
+      in: path
+      required: true
+      description: The run identifier.
+      schema:
+        type: string
+        format: uuid
+        example: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
+    trait_tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'The tenant you want to access.
+
+        '
+      schema:
+        type: string
+        example: mytenant
+    trait_page:
+      name: page
+      in: query
+      required: false
+      description: The zero-based page number.
+      schema:
+        type: integer
+        default: 0
+        example: 0
+  examples:
+    InternalServiceError500_Example:
+      value:
+        status: internal_service_error
+        code: 500
+        message: A server-side exception occurred that prevented the system from correctly returning the result.
+        details:
+        - https://pattern.yaas.io/errortypes.html
+    Conflict409_Example:
+      value:
+        status: conflict
+        code: 409
+        message: An import run is already active for this configuration.
+    ErrorRecordPage_Example:
+      value:
+        totalElements: 5
+        totalPages: 1
+        number: 0
+        size: 50
+        content:
+        - id: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
+          runId: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
+          streamId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          naturalKey: SKU-1001
+          targetEntity: emporix.customEntity
+          stage: MAPPING
+          errorCode: REQUIRED_FIELD_MISSING
+          message: Required field 'name' is missing for natural key SKU-1001.
+          createdAt: '2026-07-27T02:03:41.000Z'
+    CancelResult_Example:
+      value:
+        runId: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
+        force: false
+        accepted: true
+    RunDetail_Example:
+      value:
+        run:
+          id: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
+          configId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+          tenant: mytenant
+          trigger: MANUAL
+          origin: Dashboard
+          status: SUCCEEDED
+          mode: DELTA
+          startedAt: '2026-07-27T02:00:00.000Z'
+          executionStartedAt: '2026-07-27T02:00:03.000Z'
+          finishedAt: '2026-07-27T02:04:12.000Z'
+          recordsRead: 1250
+          created: 40
+          updated: 1180
+          skipped: 25
+          failed: 5
+          deleted: 0
+          message: Import completed with 5 record failures.
+        streams:
+        - id: c56a4180-65aa-42ec-a945-5fd21dec0538
+          runId: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
+          streamId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          streamName: Products
+          status: PARTIAL
+          recordsRead: 1250
+          created: 40
+          updated: 1180
+          skipped: 25
+          failed: 5
+          deleted: 0
+          message: 5 records failed validation.
+    ImportRunPage_Example:
+      value:
+        totalElements: 3
+        totalPages: 1
+        number: 0
+        size: 20
+        content:
+        - id: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
+          configId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+          tenant: mytenant
+          trigger: MANUAL
+          origin: Dashboard
+          status: SUCCEEDED
+          mode: DELTA
+          startedAt: '2026-07-27T02:00:00.000Z'
+          executionStartedAt: '2026-07-27T02:00:03.000Z'
+          finishedAt: '2026-07-27T02:04:12.000Z'
+          recordsRead: 1250
+          created: 40
+          updated: 1180
+          skipped: 25
+          failed: 5
+          deleted: 0
+          message: Import completed with 5 record failures.
+    ImportRun_Example:
+      value:
+        id: 9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d
+        configId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+        tenant: mytenant
+        trigger: MANUAL
+        origin: Dashboard
+        status: QUEUED
+        mode: FULL
+        startedAt: '2026-07-27T02:00:00.000Z'
+        executionStartedAt: null
+        finishedAt: null
+        recordsRead: 0
+        created: 0
+        updated: 0
+        skipped: 0
+        failed: 0
+        deleted: 0
+        supersededRequests: 0
+        message: null
+    NotFound404_Example:
+      value:
+        status: element_resource_non_existing
+        code: 404
+        message: The requested resource does not exist.
+    Forbidden403_Example:
+      value:
+        status: forbidden
+        code: 403
+        message: The access to the requested resource has been forbidden.
+        details:
+        - Missing required scopes
+  responses:
+    NotFound_404:
+      description: The requested resource does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Resource not found:
+              $ref: '#/components/examples/NotFound404_Example'
+    InternalServiceError_500:
+      description: Internal Service Error occurred.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Internal service error:
+              $ref: '#/components/examples/InternalServiceError500_Example'
+    Forbidden_403:
+      description: Given authorization scopes are not sufficient and do not match scopes required by the endpoint.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Access to resource is forbidden:
+              $ref: '#/components/examples/Forbidden403_Example'
+    Unauthorized_401:
+      description: Given request is unauthorized - the authorization token is invalid or has expired. Details will be provided in the response payload.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            Access token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+    Conflict_409:
+      description: The request conflicts with the current state of the resource.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Run already active:
+              $ref: '#/components/examples/Conflict409_Example'
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            importtool.import_trigger: Needed to trigger, schedule, monitor, and cancel import runs and to read configurations, streams, schedules, runs, and imported data.
+x-refined-from:
+- emporix-import-service-openapi.yml
+- emporix-import-service-openapi.yml

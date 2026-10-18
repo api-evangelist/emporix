@@ -1,0 +1,926 @@
+openapi: 3.2.0
+info:
+  title: Emporix Prices assigned to price lists API
+  version: ''
+  contact:
+    email: documentation@emporix.com
+  description: 'Operations tagged Prices assigned to price lists across 2 of this provider''s published API definitions: emporix-price-service-openapi.yml, emporix-price-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+tags:
+- name: Prices assigned to price lists
+paths:
+  /price/{tenant}/price-lists/{priceListId}/prices:
+    parameters:
+    - $ref: '#/components/parameters/trait_tenant'
+    - $ref: '#/components/parameters/path_priceListId'
+    get:
+      tags:
+      - Prices assigned to price lists
+      operationId: GET-price-list-prices-in-price-list
+      summary: Retrieving all prices assigned to a price list
+      description: Retrieves all prices assigned to a specified price list. You can filter the results with query parameters.
+      security:
+      - OAuth2:
+        - price.pricelist_read
+      parameters:
+      - $ref: '#/components/parameters/trait_qParam'
+      - $ref: '#/components/parameters/header_acceptLanguage'
+      - $ref: '#/components/parameters/trait_paged_pageNumber'
+      - $ref: '#/components/parameters/trait_paged_pageSize'
+      - $ref: '#/components/parameters/trait_sort'
+      - $ref: '#/components/parameters/trait_XTotalCount_header'
+      - $ref: '#/components/parameters/query_priceListPrices_priceModelId'
+      - schema:
+          type: string
+        in: query
+        name: itemId
+        description: 'ID of product for which prices should be retrieved.
+
+          '
+      - schema:
+          type: string
+        in: query
+        name: itemType
+        description: "Item types for which prices should be retrieved. Possible values:\n* `PRODUCT`\n* `SKU`\n\n  **The `SKU` value is in preview mode** - the system does not fully operate on the SKU concept yet.\n"
+      responses:
+        '200':
+          description: The request was successful. A list of prices is returned.
+          headers:
+            X-Total-Count:
+              schema:
+                type: integer
+              description: Total number of retrieved prices.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                  - $ref: '#/components/schemas/priceListPrice'
+              examples:
+                List of price list's prices:
+                  $ref: '#/components/examples/priceLists_priceListId_prices_get_200'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+    post:
+      tags:
+      - Prices assigned to price lists
+      description: Creates a new price for a specified price list.
+      security:
+      - OAuth2:
+        - price.pricelist_manage
+      summary: Adding a new price to a price list
+      operationId: POST-price-create-price-in-price-list
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/priceListPriceCreation'
+            examples:
+              Create Price List's Price:
+                $ref: '#/components/examples/priceLists_priceListId_prices_post_requestBody'
+      responses:
+        '201':
+          description: The request was successful. The price has been created and added to the price list.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: Unique identifier of the price.
+              examples:
+                Price list created:
+                  value:
+                    id: 6245a8f578a8576e338fa9c2
+        '400':
+          description: The request was incorrect. Details are provided in the response payload.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+              examples:
+                Price list does not exist:
+                  value:
+                    code: 400
+                    errorCode: PRICE-LIST-PRICE-CREATION-1
+                    status: Bad Request
+                    message: 'The price list with id: 6245a8f578a8576e338fa9c2 and tenant: testtenant is not existing. Please provide a valid price list id.'
+                Price model does not exist:
+                  value:
+                    code: 400
+                    errorCode: PRICE-LIST-PRICE-CREATION-2
+                    status: Bad Request
+                    message: 'The price model with id: 6245a8f578a8576e338fa9c2 and tenant: testtenant is not existing. Please provide a valid price model id.'
+                Price model is incompliant with the price:
+                  value:
+                    code: 400
+                    errorCode: PRICE-LIST-PRICE-CREATION-3
+                    status: Bad Request
+                    message: 'Tier values not valid with price model: 6245a8f578a8576e338fa9c2 for tenant: testtenant.'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+    servers:
+    - url: https://api.emporix.io
+  /price/{tenant}/price-lists/{priceListId}/prices/bulk:
+    parameters:
+    - $ref: '#/components/parameters/trait_tenant'
+    - $ref: '#/components/parameters/path_priceListId'
+    delete:
+      summary: Deleting multiple prices from a price list
+      operationId: DELETE-price-remove-multiple-prices-from-price-list
+      tags:
+      - Prices assigned to price lists
+      description: 'Deletes multiple prices from a specified price list. The maximum batch size is 200.
+
+
+        To indicate which prices should be deleted from the price list, you need to put their IDs in an array of strings and send it through the request body. The request body should look like this: `["exampleID1", "exampleID2"]`'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+            examples:
+              Example:
+                value:
+                - exampleID1
+                - exampleID2
+        required: true
+      security:
+      - OAuth2:
+        - price.pricelist_manage
+      responses:
+        '204':
+          description: Price list's prices have successfully been deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+    post:
+      summary: Creating multiple prices for a price list
+      operationId: POST-price-create-multiple-prices-for-price-list
+      tags:
+      - Prices assigned to price lists
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/priceListPriceCreation'
+            examples:
+              Create Price List's Prices:
+                $ref: '#/components/examples/priceLists_priceListId_prices_bulk_post_requestBody'
+      responses:
+        '207':
+          description: Multiple status response. The details are provided in a form of a list of responses within the body.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                  - $ref: '#/components/schemas/priceBulkResponseEntry'
+              examples:
+                Multiple Update Responses:
+                  $ref: '#/components/examples/priceLists_priceListId_prices_bulk_post_responseBody'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+      description: 'Creates multiple prices for a specified price list. The maximum batch size is 200.
+
+
+        Response for a particular price is returned at the same position (index) at which that price is located in the request body.'
+      security:
+      - OAuth2:
+        - price.pricelist_manage
+    put:
+      summary: Upserting multiple prices in a price list
+      operationId: PUT-price-update-multiple-prices-in-price-list
+      tags:
+      - Prices assigned to price lists
+      description: 'Updates or creates multiple prices in a specified price list. The maximum batch size is 200.
+
+
+        Response for a particular price is returned at the same position (index) at which that price is located in the request body.'
+      security:
+      - OAuth2:
+        - price.pricelist_manage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/priceListPriceUpdate'
+            examples:
+              Update Price List's Prices:
+                $ref: '#/components/examples/priceLists_priceListId_prices_bulk_put_requestBody'
+      responses:
+        '207':
+          description: Multiple status response. The details are provided in a form of a list of responses within the body.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                  - $ref: '#/components/schemas/priceBulkResponseEntry'
+              examples:
+                Multiple Update Responses:
+                  $ref: '#/components/examples/priceLists_priceListId_prices_bulk_put_responseBody'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+    servers:
+    - url: https://api.emporix.io
+  /price/{tenant}/price-lists/{priceListId}/prices/search:
+    parameters:
+    - $ref: '#/components/parameters/trait_tenant'
+    - $ref: '#/components/parameters/path_priceListId'
+    post:
+      tags:
+      - Prices assigned to price lists
+      summary: Searching for prices assigned to a price list
+      description: Searches for prices assigned to a specified price list.
+      security:
+      - OAuth2:
+        - price.pricelist_read
+      parameters:
+      - $ref: '#/components/parameters/trait_paged_pageNumber'
+      - $ref: '#/components/parameters/trait_paged_pageSize'
+      - $ref: '#/components/parameters/trait_sort'
+      - $ref: '#/components/parameters/trait_XTotalCount_header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/searchRequest'
+            examples:
+              search for prices:
+                value:
+                  q: itemId.id:53a358901b2e9dd2718b5c4e
+      responses:
+        '200':
+          description: The request was successful. A list of prices is returned.
+          headers:
+            X-Total-Count:
+              schema:
+                type: integer
+              description: Total number of retrieved prices.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  allOf:
+                  - $ref: '#/components/schemas/priceListPrice'
+              examples:
+                List of price list's prices:
+                  $ref: '#/components/examples/priceLists_priceListId_prices_get_200'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+      operationId: POST-price-search-prices-in-price-list
+    servers:
+    - url: https://api.emporix.io
+  /price/{tenant}/price-lists/{priceListId}/prices/{priceId}:
+    parameters:
+    - $ref: '#/components/parameters/trait_tenant'
+    - $ref: '#/components/parameters/path_priceListId'
+    - $ref: '#/components/parameters/path_priceListPriceId'
+    get:
+      tags:
+      - Prices assigned to price lists
+      operationId: GET-price-retrieve-prices-from-price-list
+      summary: Retrieving a price list's price details
+      description: Retrieves details for a specified price that belongs to a price list.
+      security:
+      - OAuth2:
+        - price.pricelist_read
+      parameters:
+      - $ref: '#/components/parameters/header_acceptLanguage'
+      responses:
+        '200':
+          description: The request was successful. The price list's price is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/priceListPrice'
+              examples:
+                Price List's Price:
+                  $ref: '#/components/examples/priceLists_priceListId_prices_priceListPriceId_get_200'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '404':
+          description: The requested price list's price could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+              examples:
+                Price List Not Found:
+                  $ref: '#/components/examples/priceLists_priceListId_prices_priceListPriceId_get_404'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+    put:
+      tags:
+      - Prices assigned to price lists
+      operationId: PUT-price-update-price-in-price-list
+      summary: Upserting a price in a price list
+      description: Updates a specified price list's price, or creates a new price in a price list if a price with the specified ID doesn't exist yet.
+      security:
+      - OAuth2:
+        - price.pricelist_manage
+      parameters:
+      - $ref: '#/components/parameters/header_contentLanguage'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/priceListPriceUpdate'
+            examples:
+              Update Price List's Price:
+                $ref: '#/components/examples/priceLists_prices_priceListPriceId_put_requestBody'
+      responses:
+        '201':
+          $ref: '#/components/responses/Created_201'
+        '204':
+          description: 'The request was successful. The price has been updated.
+
+            '
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '404':
+          description: The requested price list's price could not be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+              examples:
+                Price List Not Found:
+                  $ref: '#/components/examples/priceLists_priceListId_prices_priceListPriceId_put_404'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+    delete:
+      summary: Deleting a price from a price list
+      operationId: DELETE-price-remove-price-from-price-list
+      tags:
+      - Prices assigned to price lists
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+        required: false
+      responses:
+        '204':
+          description: The request was successful. The price has been deleted from the price list.
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+      description: Deletes a specified price list's price.
+      security:
+      - OAuth2:
+        - price.pricelist_manage
+    servers:
+    - url: https://api.emporix.io
+components:
+  examples:
+    priceLists_priceListId_prices_priceListPriceId_put_404:
+      value:
+        priceId: example-priceListPrice-id-1
+        code: 404
+        status: Not Found
+        message: 'Cannot find the price list''s price with an id: example-priceListPrice-id-1 and version: 1. It is possible to update a price list''s price with the latest version only. Fetch the price list''s price to get the latest version.'
+    priceLists_priceListId_prices_priceListPriceId_get_200:
+      value:
+        id: example-priceListPrice-id-1
+        itemId:
+          itemType: PRODUCT
+          id: 53a358901b2e9dd2718b5c4e
+        priceModelId: 6245a8f578a8576e338fa9c3
+        tierValues:
+        - priceValue: 15.99
+        - priceValue: 14.99
+        - priceValue: 13.99
+        metadata:
+          version: 1
+          createdAt: '2022-03-31T13:18:02.379Z'
+          modifiedAt: '2022-03-31T13:18:02.379Z'
+    priceLists_priceListId_prices_bulk_put_requestBody:
+      value:
+      - id: example-priceListPrice-id-1
+        itemId:
+          itemType: PRODUCT
+          id: 53a358901b2e9dd2718b5c4e
+        priceModelId: 6245a8f578a8576e338fa9c3
+        tierValues:
+        - priceValue: 15.99
+        - priceValue: 14.99
+        - priceValue: 13.99
+        metadata:
+          version: 1
+      - id: example-priceListPrice-id-2
+        itemId:
+          itemType: PRODUCT
+          id: 53a358901b2e9dd2718b5c4f
+        priceModelId: 6245a8f578a8576e338fa9c3
+        tierValues:
+        - priceValue: 20.99
+        - priceValue: 18.99
+        - priceValue: 16.99
+        metadata:
+          version: 1
+    priceLists_priceListId_prices_bulk_put_responseBody:
+      value:
+      - index: 0
+        id: 62d65a15088ed94ebf093d7d
+        code: 204
+        status: No Content
+      - index: 1
+        id: 62d65a15088ed94ebf093d8d
+        code: 204
+        status: No Content
+    priceLists_priceListId_prices_post_requestBody:
+      value:
+        itemId:
+          itemType: PRODUCT
+          id: 53a358901b2e9dd2718b5c4e
+        priceModelId: 6245a8f578a8576e338fa9c3
+        tierValues:
+        - priceValue: 15.99
+        - priceValue: 14.99
+        - priceValue: 13.99
+    priceLists_prices_priceListPriceId_put_requestBody:
+      value:
+        id: example-priceListPrice-id-1
+        itemId:
+          itemType: PRODUCT
+          id: 53a358901b2e9dd2718b5c4e
+        priceModelId: 6245a8f578a8576e338fa9c3
+        tierValues:
+        - priceValue: 25.99
+        - priceValue: 24.99
+        - priceValue: 23.99
+        metadata:
+          version: 1
+    priceLists_priceListId_prices_bulk_post_requestBody:
+      value:
+      - itemId:
+          itemType: PRODUCT
+          id: 53a358901b2e9dd2718b5c4e
+        priceModelId: 6245a8f578a8576e338fa9c3
+        tierValues:
+        - priceValue: 15.99
+        - priceValue: 14.99
+        - priceValue: 13.99
+      - itemId:
+          itemType: PRODUCT
+          id: 53a358901b2e9dd2718b5c4f
+        priceModelId: 6245a8f578a8576e338fa9c3
+        tierValues:
+        - priceValue: 20.99
+        - priceValue: 18.99
+        - priceValue: 16.99
+    priceLists_priceListId_prices_bulk_post_responseBody:
+      value:
+      - index: 0
+        id: 62d65a15088ed94ebf093d7d
+        code: 201
+        status: Created
+      - index: 1
+        id: 62d65a15088ed94ebf093d8d
+        code: 201
+        status: Created
+    priceLists_priceListId_prices_priceListPriceId_get_404:
+      value:
+        priceId: example-priceListPrice-id-1
+        code: 404
+        status: Not Found
+        message: Price list with id 'example-priceListPrice-id-1' has not been found.
+    priceLists_priceListId_prices_get_200:
+      value:
+      - id: example-priceListPrice-id-1
+        itemId:
+          itemType: PRODUCT
+          id: 53a358901b2e9dd2718b5c4e
+        priceModelId: 6245a8f578a8576e338fa9c3
+        tierValues:
+        - priceValue: 15.99
+        - priceValue: 14.99
+        - priceValue: 13.99
+        metadata:
+          version: 1
+          createdAt: '2022-03-31T13:18:02.379Z'
+          modifiedAt: '2022-03-31T13:18:02.379Z'
+      - id: example-priceListPrice-id-2
+        itemId:
+          itemType: PRODUCT
+          id: 53a358901b2e9dd2718b5c4f
+        priceModelId: 6245a8f578a8576e338fa9c4
+        tierValues:
+        - priceValue: 20.99
+        - priceValue: 12.99
+        metadata:
+          version: 1
+          createdAt: '2022-03-31T13:18:02.379Z'
+          modifiedAt: '2022-03-31T13:18:02.379Z'
+  schemas:
+    tierValueCreation:
+      description: ''
+      type: object
+      properties:
+        id:
+          type: string
+          description: An identifier of a tier. The ID is required only if the priceModelId is provided. If the price model is the default, the tier value is automatically assigned according to the default price model.
+        priceValue:
+          type: number
+          description: 'Gross price (if the `includesTax` field is set to `true`) or net price (if the `includesTax` field is set to `false`).
+
+
+            This field should contain by a number where the cent part is separated by a dot sign - such as `12.99`.
+
+
+            **Note**: The cent part of the price is not limited to two digits. You can specify the price with any precision.'
+      required:
+      - priceValue
+    searchRequest:
+      type: object
+      properties:
+        q:
+          type: string
+          description: "A standard query parameter is used to search for specific values. \n\nSee: [Standard Practices - Query parameter](https://developer.emporix.io/api-documentation/standard-practices/q-param)\n"
+    priceListPriceUpdate:
+      title: priceListPriceUpdate
+      allOf:
+      - type: object
+        properties:
+          id:
+            type: string
+            description: Unique identifier of the price that belongs to a price list, generated when the price is created and added to the price list.
+      - $ref: '#/components/schemas/priceListPriceCore'
+        required:
+        - itemId
+        - priceModelId
+        - tierValues
+      - type: object
+        properties:
+          metadata:
+            properties:
+              version:
+                type: number
+                description: Current version of the object.
+            required:
+            - version
+      required:
+      - metadata
+      - id
+    metadata:
+      type: object
+      properties:
+        createdAt:
+          description: Date and time when the price was created.
+          type: string
+        modifiedAt:
+          description: Date and time when the price was last modified.
+          type: string
+        version:
+          minimum: 1
+          type: integer
+          description: Version of the price object. If provided optimistic locking will be enabled and it has to match version in the database
+    priceBulkResponseEntry:
+      allOf:
+      - type: object
+        properties:
+          index:
+            type: integer
+          id:
+            type: string
+      - $ref: '#/components/schemas/errorMessage'
+    priceListPriceCore:
+      title: priceListPriceCore
+      properties:
+        itemId:
+          type: object
+          description: Item for which the price is defined.
+          properties:
+            itemType:
+              type: string
+              description: "Type of the referenced item. Possible values:\n* `PRODUCT`\n* `SKU`\n\n  **The `SKU` value is in preview mode** - the system does not fully operate on the SKU concept yet.\n"
+            id:
+              type: string
+              description: 'Product''s unique identifier, generated when the product is created through the Product Service.
+
+                '
+        priceModelId:
+          type: string
+          description: ID of the price model to which the price is assigned. If the ID is not provided, the default price model is used.
+        tierValues:
+          type: array
+          items:
+            allOf:
+            - $ref: '#/components/schemas/tierValueCreation'
+            - type: object
+              properties:
+                priceValue:
+                  type: number
+                  description: 'This field should contain a net price given by a number where the cent part is separated by a dot sign - such as `12.99`.
+
+
+                    **Note**: The cent part of the price is not limited to two digits. You can specify the price with any precision.'
+    errorMessage:
+      type: object
+      title: error
+      description: Schema for API-specific errors.
+      properties:
+        code:
+          minimum: 100
+          maximum: 599
+          description: Original HTTP error code, should be consistent with the response HTTP code.
+          type: integer
+        status:
+          description: Original HTTP error reason.
+          type: string
+        message:
+          description: Descriptive error message for debugging
+          type: string
+        details:
+          description: List of problems causing this error.
+          type: array
+          items:
+            title: errorDetail
+            description: schema for specific error cause
+            type: string
+        errorCode:
+          type: string
+          description: Additional error code.
+    priceListPrice:
+      title: priceListPrice
+      allOf:
+      - type: object
+        properties:
+          id:
+            type: string
+            description: Unique identifier of the price that belongs to a price list, generated when the price is created and added to the price list.
+      - $ref: '#/components/schemas/priceListPriceCore'
+      - type: object
+        properties:
+          metadata:
+            $ref: '#/components/schemas/metadata'
+    priceListPriceCreation:
+      title: priceListPriceCreation
+      allOf:
+      - $ref: '#/components/schemas/priceListPriceCore'
+      - type: object
+        properties:
+          id:
+            type: string
+            description: Custom price identifier. If not provided, it is automatically generated.
+          itemId:
+            type: object
+            required:
+            - id
+            - itemType
+      required:
+      - itemId
+      - priceModelId
+      - tierValues
+  parameters:
+    query_priceListPrices_priceModelId:
+      name: priceModelId
+      in: query
+      description: 'ID of the price model to which the retrieved prices should be assigned.
+
+        '
+      schema:
+        type: string
+    trait_paged_pageNumber:
+      name: pageNumber
+      in: query
+      description: 'Page number to be retrieved. The number of the first page is 1.
+
+
+        **Note:** If the `pageNumber` parameter is passed, size of the pages must be specified in the `pageSize` parameter.
+
+        '
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    header_acceptLanguage:
+      name: Accept-Language
+      in: header
+      required: false
+      schema:
+        type: string
+      description: 'List of language codes acceptable for the response. You can specify factors that indicate which language should be retrieved if the one with a higher factor was not found in the localized fields.
+
+        * If the header is set to a particular language or a list of languages, all localized fields are retrieved as a map of single translation, where the key is a language code and the value is in a respective language.
+
+        * If the header is set to `*`, all localized fields are retrieved as maps of translations, where the keys are language codes and values are the fields in their respective languages.
+
+        * If the header is empty, localized fields are retrieved as maps of single translation, where the key is a language code and the value is in a respective language. The endpoint will asume that the localized fields are provided in the default language defined in the Configuration Service.
+
+        '
+    trait_XTotalCount_header:
+      in: header
+      name: X-Total-Count
+      required: false
+      description: Flag indicating whether the total count of retrieved items should be returned.
+      schema:
+        default: false
+        type: boolean
+    path_priceListId:
+      name: priceListId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Price list's unique identifier, generated when the price list is created.
+    trait_paged_pageSize:
+      name: pageSize
+      in: query
+      description: 'Number of items to be retrieved per page.
+
+        '
+      schema:
+        default: 60
+        minimum: 1
+        type: integer
+    path_priceListPriceId:
+      name: priceId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Price list price's unique identifier, generated when the price list's price is created.
+    header_contentLanguage:
+      name: Content-Language
+      in: header
+      required: false
+      schema:
+        type: string
+      description: 'List of languages in which localized fields in the request body are provided.
+
+
+        * If the `Content-Language` header is set to `*`, the localized fields should be provided as maps of translations, where the keys are language codes and values are the fields in their respective languages.
+
+        * If the `Content-Language` header is set to a specific language, then the localized fields should be provided as a map of single translation, where the key is a language code and the value is in a respective language.
+
+        * If the `Content-Language` header is empty, then the localized fields should be provided as maps of single translation, where the key is a language code and the value is in a respective language. The endpoint will asume that the localized fields are provided in the default language defined in the Configuration Service.
+
+
+        **Note**: You can provide the localized fields only in languages defined in the Configuration Service. In case the fields are provided in languages that are not defined in the Configuration Service, the request will be rejected.
+
+        '
+    trait_sort:
+      in: query
+      name: sort
+      required: false
+      description: "List of properties used to sort the results, separated by colons. The order of properties indicates their priority in sorting.\n\nPossible values:\n* `{fieldName}`\n* `{fieldName}:asc`\n* `{fieldName}:desc`\n\n**Note:** If you want to sort the results by localized properties, the possible values are:\n  * `{fieldName}.{language}`\n  * `{fieldName}.{language}:asc`\n  * `{fieldName}.{language}:desc`\n\nIf the sorting direction is not specified, the fields are sorted in ascending order."
+      schema:
+        type: string
+        example: name,code:desc
+    trait_qParam:
+      in: query
+      name: q
+      description: "A standard query parameter is used to search for specific values. \n\nSee: [Standard Practices - Query parameter](https://developer.emporix.io/api-documentation/standard-practices/q-param)\n"
+      schema:
+        type: string
+    trait_tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'Your Emporix tenant''s name.
+
+
+        **Note**: The tenant should always be written in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+  responses:
+    InternalServiceError_500:
+      description: Some server-side error occurred. Details are provided in the response payload.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Internal service error:
+              value:
+                code: 500
+                status: Internal Server Error
+                message: A server-side exception occurred that prevented the system from correctly returning the result.
+    Created_201:
+      description: The resource has been created.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+                description: Identifier of a newly created item.
+          examples:
+            CreatedExample:
+              value:
+                id: 12345678-1234-1234-1234-123456789012
+    Forbidden_403:
+      description: Given authorization scopes are not sufficient and do not match the scopes required by the endpoint.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Insufficient permissions:
+              value:
+                code: 403
+                status: Forbidden
+                message: The access to the requested resource has been forbidden by the server.
+    Unauthorized_401:
+      description: Given request is unauthorized - the authorization token is invalid or has expired. Details are provided in the response payload.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            Access token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            price.price_manage: Needed to manage prices.
+            price.price_read: Needed to retrieve prices.
+            price.price_own: Needed to calculate product prices (legacy).
+            price.prod_price_calculate: Needed to calculate prices and synchronize sale prices (legacy).
+            price.price_delete_all: Needed to delete all prices at once (legacy).
+            price.price_match_own: Needed to use the price matching functionality based on information from the session context.
+            price.pricemodel_manage: Needed to manage price models.
+            price.pricemodel_read: Needed to retrieve price models.
+            price.price_manage_by_vendor: Needed to manage prices belonging to the vendor.
+    CustomerAccessToken:
+      type: http
+      scheme: bearer
+x-refined-from:
+- emporix-price-service-openapi.yml
+- emporix-price-service-openapi.yml

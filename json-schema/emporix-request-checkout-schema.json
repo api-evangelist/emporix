@@ -1,0 +1,279 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-request-checkout-schema.json",
+  "title": "requestCheckout",
+  "description": "Schema for triggering a checkout.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-checkout-openapi.yml#/components/schemas/requestCheckout",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "cartId": {
+      "type": "string",
+      "description": "Customer cart’s unique identifier generated when a cart is created.",
+      "minLength": 0
+    },
+    "paymentMethods": {
+      "description": "Methods chosen to process the payment for the order.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/requestPaymentMethod.json"
+      }
+    },
+    "currency": {
+      "type": "string",
+      "description": "Three-letter currency code, compliant with the ISO 4217 standard."
+    },
+    "shipping": {
+      "$ref": "#/$defs/shipping.json"
+    },
+    "addresses": {
+      "type": "array",
+      "uniqueItems": true,
+      "minItems": 2,
+      "description": "List of addresses associated with the order. There must be at least one address of type `SHIPPING` and one address of type `BILLING`.",
+      "items": {
+        "$ref": "#/$defs/address.json"
+      }
+    },
+    "customer": {
+      "$ref": "#/$defs/customer.json"
+    }
+  },
+  "required": [
+    "cartId",
+    "customer",
+    "shipping",
+    "addresses",
+    "paymentMethods"
+  ],
+  "$defs": {
+    "address.json": {
+      "type": "object",
+      "description": "Information about the customer's address.",
+      "additionalProperties": false,
+      "properties": {
+        "contactName": {
+          "type": "string",
+          "minLength": 0,
+          "description": "Contact name"
+        },
+        "companyName": {
+          "type": "string",
+          "description": "Company name"
+        },
+        "street": {
+          "type": "string",
+          "minLength": 0,
+          "description": "Street"
+        },
+        "streetNumber": {
+          "type": "string",
+          "description": "Street number"
+        },
+        "streetAppendix": {
+          "type": "string",
+          "description": "Street appendix"
+        },
+        "zipCode": {
+          "type": "string",
+          "maxLength": 11,
+          "minLength": 0,
+          "description": "zip code"
+        },
+        "city": {
+          "type": "string",
+          "minLength": 0,
+          "description": "City"
+        },
+        "country": {
+          "type": "string",
+          "pattern": "[a-zA-Z]{2}",
+          "minLength": 2,
+          "maxLength": 2,
+          "description": "Country"
+        },
+        "state": {
+          "type": "string",
+          "description": "State"
+        },
+        "contactPhone": {
+          "type": "string",
+          "description": "Contact phone"
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of the address data, for example `BILLING` or `SHIPPING`.",
+          "minLength": 0
+        },
+        "metadata": {
+          "$ref": "#/$defs/mixinMetadata.json"
+        },
+        "mixins": {
+          "type": "object",
+          "description": "Mixins object",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "contactName",
+        "street",
+        "zipCode",
+        "city",
+        "country",
+        "type"
+      ]
+    },
+    "customer.json": {
+      "type": "object",
+      "description": "Information about the customer.",
+      "minProperties": 1,
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Customers’s unique identifier generated when a customer’s account is created. Required only when checkout is done by a logged in customer."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title"
+        },
+        "firstName": {
+          "type": "string",
+          "description": "First name. Providing either `firstName` or `lastName` is required."
+        },
+        "middleName": {
+          "type": "string",
+          "description": "Middle name"
+        },
+        "lastName": {
+          "type": "string",
+          "description": "Last name. Providing either `firstName` or `lastName` is required."
+        },
+        "contactPhone": {
+          "type": "string",
+          "description": "Contact phone"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "minLength": 0,
+          "description": "Email"
+        },
+        "company": {
+          "type": "string",
+          "description": "Company name"
+        },
+        "metadata": {
+          "$ref": "#/$defs/mixinMetadata.json"
+        },
+        "mixins": {
+          "type": "object",
+          "description": "Mixins object",
+          "additionalProperties": true
+        },
+        "guest": {
+          "type": "boolean",
+          "description": "Indicates if the checkout is done by an anonymous customer (if true) or logged in customer (if false). Required only for guest checkout."
+        }
+      },
+      "required": [
+        "email"
+      ]
+    },
+    "mixinMetadata.json": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "",
+      "properties": {
+        "mixins": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "requestPaymentMethod.json": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "provider": {
+          "type": "string",
+          "description": "Payment provider, possible values: \n  * `payment-gateway` - When the Emporix Payment-Gateway service is used to handle a payment. For details about custom attributes that are required for a particular payment mode, check https://developer.emporix.io/api-documentation/api-guides/checkout/payment-gateway. \n  * `custom` - When a custom provider is used. In this case the created order has the `IN_CHECKOUT` status.\n  * `none` - For payment by cash or invoice.\n",
+          "minLength": 0
+        },
+        "customAttributes": {
+          "type": "object",
+          "description": "Additional information about the payment method.",
+          "properties": {
+            "token": {
+              "type": "string",
+              "description": "Payment token used for the tokenized credit card flows. The field is used when provider type is `payment-gateway`. For more details, check https://developer.emporix.io/api-documentation/api-guides/checkout/payment-gateway"
+            },
+            "modeId": {
+              "type": "string",
+              "description": "Identifier of a payment mode. The payment mode has to be configured in the Emporix Payment Gateway service beforehand. For more details, check https://developer.emporix.io/api-documentation/api-guides/checkout/payment-gateway"
+            },
+            "paymentType": {
+              "type": "string",
+              "description": "Payment type chosen by the customer, for example `paymentByCredit` or `paymentByDebit`."
+            }
+          }
+        },
+        "method": {
+          "type": "string",
+          "description": "Payment method chosen by the customer, for example `invoice` or `cash-on-delivery`."
+        },
+        "amount": {
+          "type": "number",
+          "description": "Amount to be paid by the customer."
+        }
+      },
+      "required": [
+        "provider"
+      ]
+    },
+    "shipping.json": {
+      "type": "object",
+      "description": "Information about the shipping.",
+      "additionalProperties": false,
+      "properties": {
+        "methodId": {
+          "type": "string",
+          "description": "Shipping method's unique identifier.",
+          "minLength": 0
+        },
+        "zoneId": {
+          "type": "string",
+          "description": "Shipping zone identifier.",
+          "minLength": 0
+        },
+        "methodName": {
+          "type": "string",
+          "description": "Shipping method chosen by the customer.",
+          "minLength": 0
+        },
+        "amount": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Shipping cost. "
+        },
+        "shippingTaxCode": {
+          "type": "string",
+          "description": "The tax code of the shipping"
+        }
+      },
+      "required": [
+        "zoneId",
+        "amount",
+        "methodId",
+        "methodName"
+      ]
+    }
+  }
+}

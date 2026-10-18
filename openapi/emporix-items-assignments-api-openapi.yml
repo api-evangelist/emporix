@@ -1,0 +1,853 @@
+openapi: 3.2.0
+info:
+  title: Emporix Items Assignments API
+  version: ''
+  contact:
+    email: documentation@emporix.com
+  description: 'Operations tagged Items Assignments across 2 of this provider''s published API definitions: emporix-customer-segments-openapi.yml, emporix-customer-segments-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Items Assignments
+  description: Manage item assignments to segments
+paths:
+  /customer-segment/{tenant}/segments/items/category-trees:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    get:
+      summary: Retrieving category trees for a customer segments
+      tags:
+      - Items Assignments
+      description: Retrieves category trees for the customer segments. Category trees are built based on only `active` segments.
+      security:
+      - CustomerAccessToken: []
+      - OAuth2:
+        - customersegment.segment_read_own
+      responses:
+        '200':
+          description: Customer categories assignments were successfully retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryTreeResponse'
+              examples:
+                Item Assignments:
+                  $ref: '#/components/examples/CategoryTreeResponse'
+        '401':
+          $ref: '#/components/responses/Common_response_Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Common_response_Forbidden_403'
+      operationId: GET-customer-segment-retrieve-category-trees
+      parameters:
+      - $ref: '#/components/parameters/acceptLanguage'
+      - $ref: '#/components/parameters/legalEntityId'
+      - $ref: '#/components/parameters/siteCode'
+    servers:
+    - url: https://api.emporix.io
+  /customer-segment/{tenant}/segments/items:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    get:
+      summary: Retrieving all items assignments for all customer segments
+      tags:
+      - Items Assignments
+      description: Retrieves all items assignments for all customer segments.
+      security:
+      - CustomerAccessToken: []
+      - OAuth2:
+        - customersegment.segment_read_own
+        - customersegment.segment_read
+      responses:
+        '200':
+          description: Customer items assignments were successfully retrieved.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ItemAssignmentResponse'
+              examples:
+                Item Assignments:
+                  $ref: '#/components/examples/ItemAssignmentsResponse'
+        '401':
+          $ref: '#/components/responses/Common_response_Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Common_response_Forbidden_403'
+      operationId: GET-customer-segment-retrieve-segments-items
+      parameters:
+      - $ref: '#/components/parameters/qParam'
+      - $ref: '#/components/parameters/pageSize'
+      - $ref: '#/components/parameters/pageNumber'
+      - $ref: '#/components/parameters/sort'
+      - $ref: '#/components/parameters/fields'
+      - $ref: '#/components/parameters/xTotalCount'
+      - $ref: '#/components/parameters/acceptLanguage'
+      - $ref: '#/components/parameters/legalEntityId'
+      - $ref: '#/components/parameters/siteCode'
+      - $ref: '#/components/parameters/onlyActive'
+    servers:
+    - url: https://api.emporix.io
+  /customer-segment/{tenant}/segments/{segmentId}/items:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    - $ref: '#/components/parameters/segmentId'
+    get:
+      summary: Retrieving all item assignments for a customer segment
+      tags:
+      - Items Assignments
+      description: Retrieves all item assignments for a given customer segment.
+      security:
+      - CustomerAccessToken: []
+      - OAuth2:
+        - customersegment.segment_read
+        - customersegment.segment_read_own
+      responses:
+        '200':
+          description: Customer segment assignments were successfully retrieved.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ItemAssignmentResponse'
+              examples:
+                Item Assignments:
+                  $ref: '#/components/examples/ItemAssignmentsResponse'
+        '401':
+          $ref: '#/components/responses/Common_response_Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Common_response_Forbidden_403'
+      operationId: GET-customer-segment-retrieve-segment-items
+      parameters:
+      - $ref: '#/components/parameters/qParam'
+      - $ref: '#/components/parameters/pageSize'
+      - $ref: '#/components/parameters/pageNumber'
+      - $ref: '#/components/parameters/sort'
+      - $ref: '#/components/parameters/fields'
+      - $ref: '#/components/parameters/xTotalCount'
+      - $ref: '#/components/parameters/acceptLanguage'
+      - $ref: '#/components/parameters/legalEntityId'
+    servers:
+    - url: https://api.emporix.io
+  /customer-segment/{tenant}/segments/{segmentId}/items/search:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    - $ref: '#/components/parameters/segmentId'
+    post:
+      summary: Retrieving all item assignments for a customer segment
+      tags:
+      - Items Assignments
+      description: Retrieves all item assignments for a given customer segment.
+      security:
+      - CustomerAccessToken: []
+      - OAuth2:
+        - customersegment.segment_read
+        - customersegment.segment_read_own
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SegmentsSearch'
+            example:
+              q: type:PRODUCT
+      responses:
+        '200':
+          description: Customer segment assignments were successfully retrieved.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ItemAssignmentResponse'
+              examples:
+                Item Assignments:
+                  $ref: '#/components/examples/ItemAssignmentsResponse'
+        '401':
+          $ref: '#/components/responses/Common_response_Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Common_response_Forbidden_403'
+      operationId: POST-customer-segment-search-items
+      parameters:
+      - $ref: '#/components/parameters/pageSize'
+      - $ref: '#/components/parameters/pageNumber'
+      - $ref: '#/components/parameters/sort'
+      - $ref: '#/components/parameters/fields'
+      - $ref: '#/components/parameters/xTotalCount'
+      - $ref: '#/components/parameters/acceptLanguage'
+      - $ref: '#/components/parameters/legalEntityId'
+    servers:
+    - url: https://api.emporix.io
+  /customer-segment/{tenant}/segments/{segmentId}/items/{type}/{itemId}:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    - $ref: '#/components/parameters/segmentId'
+    - $ref: '#/components/parameters/type'
+    - schema:
+        type: string
+      name: itemId
+      in: path
+      description: Unique identifier of an item which will be assigned to a customer segment.
+      required: true
+    get:
+      summary: Retrieving an item assignment
+      tags:
+      - Items Assignments
+      description: Retrieves an item assignment by specified ID for a given customer segment.
+      security:
+      - CustomerAccessToken: []
+      - OAuth2:
+        - customersegment.segment_read
+        - customersegment.segment_read_own
+      responses:
+        '200':
+          description: Customer segment item assignment was successfully retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemAssignmentResponse'
+              examples:
+                Item Assignment Response:
+                  $ref: '#/components/examples/ItemAssignmentResponse'
+        '401':
+          $ref: '#/components/responses/Common_response_Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Common_response_Forbidden_403'
+        '404':
+          $ref: '#/components/responses/Common_response_NotFound_404'
+      operationId: GET-customer-segment-retrieve-item
+      parameters:
+      - $ref: '#/components/parameters/fields'
+      - $ref: '#/components/parameters/acceptLanguage'
+      - $ref: '#/components/parameters/legalEntityId'
+    put:
+      summary: Updating an item assignment
+      tags:
+      - Items Assignments
+      operationId: PUT-customer-segment-update-item
+      description: Performs `UPSERT` operation. Updates an item assignment to a customer segment. A new item assignment is created if it's not present in the system.
+      security:
+      - OAuth2:
+        - customersegment.segment_manage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ItemAssignmentUpsert'
+            examples:
+              Item Assignment Update:
+                $ref: '#/components/examples/ItemAssignmentUpsert'
+      responses:
+        '201':
+          description: A new assignment was successfully created.
+        '204':
+          description: Item assignment was successfully updated.
+        '400':
+          $ref: '#/components/responses/Common_response_BadRequest_400'
+        '401':
+          $ref: '#/components/responses/Common_response_Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Common_response_Forbidden_403'
+        '409':
+          $ref: '#/components/responses/Common_response_Conflict_409'
+    delete:
+      summary: Removing an assignment
+      tags:
+      - Items Assignments
+      operationId: DELETE-customer-segment-remove-item
+      description: Removes an item assignment.
+      security:
+      - OAuth2:
+        - customersegment.segment_manage
+      responses:
+        '204':
+          description: Item assignment was successfully removed.
+        '401':
+          $ref: '#/components/responses/Common_response_Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Common_response_Forbidden_403'
+    servers:
+    - url: https://api.emporix.io
+  /customer-segment/{tenant}/segments/{segmentId}/items/{type}/bulk:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    - $ref: '#/components/parameters/segmentId'
+    - $ref: '#/components/parameters/type'
+    put:
+      summary: Updating item assignments to a customer segment in bulk
+      tags:
+      - Items Assignments
+      operationId: PUT-customer-segment-update-items-bulk
+      description: Performs `UPSERT` operation. Updates multiple item assignments to a customer segments. The maximum batch size is 200.
+      security:
+      - OAuth2:
+        - customersegment.segment_manage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/ItemAssignmentUpsertBulk'
+            examples:
+              Item Assignment Update:
+                $ref: '#/components/examples/ItemAssignmentsUpsert'
+      responses:
+        '207':
+          description: Multi-status response.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BulkAssignmentResponse'
+              examples:
+                Item Assignments Update:
+                  $ref: '#/components/examples/BulkAssignmentUpdateResponse'
+        '400':
+          $ref: '#/components/responses/Common_response_BadRequest_400'
+        '401':
+          $ref: '#/components/responses/Common_response_Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Common_response_Forbidden_403'
+    delete:
+      summary: Deleting item assignments to a customer segment in bulk
+      tags:
+      - Items Assignments
+      operationId: DELETE-customer-segment-remove-items-bulk
+      description: 'Removes multiple customer segments item assignments. The maximum batch size is 200.
+
+
+        * The IDs of items should be defined in the request body as an array of strings.
+
+        Example: `["firstItemId", "secondItemId", "thirdItemId"]`'
+      security:
+      - OAuth2:
+        - customersegment.segment_manage
+      responses:
+        '207':
+          description: Multi-status response.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BulkAssignmentResponse'
+              examples:
+                Customer Assignments Deletion:
+                  $ref: '#/components/examples/BulkAssignmentDeletionResponse'
+        '400':
+          $ref: '#/components/responses/Common_response_BadRequest_400'
+        '401':
+          $ref: '#/components/responses/Common_response_Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Common_response_Forbidden_403'
+    servers:
+    - url: https://api.emporix.io
+components:
+  parameters:
+    qParam:
+      in: query
+      name: q
+      description: "A standard query parameter is used to search for specific values. \n\nSee: [Standard Practices - Query parameter](https://developer.emporix.io/api-documentation/standard-practices/q-param)\n"
+      schema:
+        type: string
+    legalEntityId:
+      schema:
+        type: string
+      in: query
+      name: legalEntityId
+      required: false
+      description: 'The parameter is utilized for searching in relation to the legalEntityId. Parameter is only taken into account when customer is assigned to more than one Legal Entity.
+
+        '
+    sort:
+      schema:
+        type: string
+      in: query
+      name: sort
+      description: List of properties used to sort the results, separated by colons.
+    acceptLanguage:
+      schema:
+        type: string
+      in: header
+      name: Accept-Language
+      description: The Accept-Language request HTTP header defines which languages the client is able to understand, and which locale variant is preferred. If empty, the default system language is assumed. It can be a priority list working as a fallback mechanism.
+    type:
+      name: type
+      in: path
+      required: true
+      description: Determines whether item is a product or category.
+      schema:
+        type: string
+    tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: Always write the tenant name in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+    segmentId:
+      name: segmentId
+      in: path
+      required: true
+      description: Unique identifier of the customer segment.
+      schema:
+        type: string
+    siteCode:
+      schema:
+        type: string
+      in: query
+      name: siteCode
+      required: false
+      description: 'The parameter is utilized for searching in relation to the siteCode. Only items will be returned which are assigned to segment from given siteCode.
+
+        '
+    xTotalCount:
+      schema:
+        type: boolean
+      in: header
+      name: X-Total-Count
+      description: Flag indicating whether the total number of retrieved results should be returned.
+    pageNumber:
+      schema:
+        type: string
+      in: query
+      name: pageNumber
+      description: The page number to be retrieved. The size of the pages should be specified by the pageSize parameter.
+    pageSize:
+      schema:
+        type: string
+      in: query
+      name: pageSize
+      description: The number of documents to be retrieved per page.
+    onlyActive:
+      schema:
+        type: boolean
+        default: false
+      in: query
+      name: onlyActive
+      required: false
+      description: 'The parameter is utilized for filtering items which belong only to `active` segments. The parameter is always `true` for users with `customersegment.segment_read_own` scope.
+
+        '
+    fields:
+      schema:
+        type: string
+      in: query
+      name: fields
+      description: Fields to be returned in the response.
+  schemas:
+    BulkAssignmentResponse:
+      type: object
+      properties:
+        index:
+          type: integer
+          description: 'Index of the processed item, matching the item position in request body.
+
+            '
+        code:
+          type: integer
+          description: HTTP Status Code.
+        status:
+          type: string
+          description: HTTP Status description.
+        message:
+          type: string
+          description: Error message.
+    MetadataUpdate:
+      allOf:
+      - type: object
+        properties:
+          version:
+            type: integer
+            description: The document version number.
+      - $ref: '#/components/schemas/MetadataCreate'
+    ItemAssignmentResponse:
+      allOf:
+      - type: object
+        properties:
+          segmentId:
+            type: string
+            description: Unique identifier of the customer segment.
+          item:
+            properties:
+              id:
+                type: string
+                description: Unique identifier of an existing product/category.
+              code:
+                type: string
+                description: Unique code of an existing product/category.
+              name:
+                type: object
+                description: Localized name of the product/category
+                additionalProperties:
+                  type: string
+          type:
+            type: string
+            description: Determines whether item is a `PRODUCT` or `CATEGORY`
+            enum:
+            - PRODUCT
+            - CATEGORY
+      - $ref: '#/components/schemas/ItemAssignmentUpsert'
+      - type: object
+        properties:
+          metadata:
+            $ref: '#/components/schemas/MetadataResponse'
+    MetadataCreate:
+      type: object
+      properties:
+        mixins:
+          type: object
+          description: A key-value map, where key is a mixin name and value is a link to the mixin schema.
+          additionalProperties: true
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: HTTP Status Code.
+        status:
+          type: string
+          description: HTTP Status.
+        message:
+          type: string
+          description: Error message.
+        resourceId:
+          type: string
+          description: An ID of the resource which caused the error.
+        details:
+          type: object
+          description: Error details
+          properties:
+            field:
+              type: string
+            type:
+              type: string
+            message:
+              type: string
+            moreInfo:
+              type: string
+    SegmentsSearch:
+      type: object
+      properties:
+        q:
+          type: string
+          description: "A standard query parameter is used to search for specific values. \n\nSee: [Standard Practices - Query parameter](https://developer.emporix.io/api-documentation/standard-practices/q-param)\n"
+    ItemAssignmentUpsertBulk:
+      allOf:
+      - $ref: '#/components/schemas/ItemAssignmentUpsert'
+      properties:
+        id:
+          type: string
+          description: Unique identifier of an existing product/category (itemId).
+      required:
+      - id
+    ItemAssignmentUpsert:
+      type: object
+      description: ''
+      allOf:
+      - type: object
+        properties:
+          mixins:
+            type: object
+            description: A key-value map of additional attributes.
+            additionalProperties: true
+      - type: object
+        properties:
+          metadata:
+            $ref: '#/components/schemas/MetadataUpdate'
+    CategoryTreeResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+            description: Unique identifier of an existing category.
+          code:
+            type: string
+            description: Unique code of an existing category.
+          name:
+            type: object
+            description: Localized name of the category.
+            additionalProperties:
+              type: string
+          localizedDescription:
+            type: object
+            description: Localized description of the category.
+            additionalProperties:
+              type: string
+          localizedSlug:
+            type: object
+            description: Localized category name or code without diacritics for the URL.
+            additionalProperties:
+              type: string
+          ecn:
+            type: array
+            description: List of external category numbers (ECNs) unique for every category.
+            items:
+              type: string
+          validity:
+            type: object
+            description: Indicates the time frame in which the category is valid.
+            properties:
+              from:
+                type: string
+                format: date-time
+              to:
+                type: string
+                format: date-time
+          position:
+            type: integer
+            description: Category's position, set in relation to the categories on the same level (sharing the same parent) in the tree.
+          published:
+            type: boolean
+            description: Indicates whether the category has been published or not.
+          isSegmentAssigned:
+            type: boolean
+            description: Indicates if the category is assigned to any segment.
+          subcategories:
+            type: array
+            items:
+              type: object
+              description: Subcategories of this category.
+        required:
+        - id
+        - code
+        - name
+        - isSegmentAssigned
+    MetadataResponse:
+      allOf:
+      - type: object
+        properties:
+          createdAt:
+            description: The creation date.
+            type: string
+            format: date-time
+          modifiedAt:
+            description: The modification date.
+            type: string
+            format: date-time
+      - $ref: '#/components/schemas/MetadataUpdate'
+  examples:
+    Response_BadRequest_400:
+      value:
+        code: 400
+        status: Bad Request
+        message: Validation problem with request body.
+    ItemAssignmentUpsert:
+      value:
+        mixins:
+          segmentAttributes:
+            membershipStatus: PREMIUM
+        metadata:
+          mixins:
+            segmentAttributes: https://res.cloudinary.com/saas-ag/raw/upload/emporix-docs/69537caeb3fd5d378296ae42_segmentAttributes.json
+    Response_Forbidden_403:
+      value:
+        code: 403
+        status: Forbidden
+        message: The access to the requested resource has been forbidden by the server.
+    ItemAssignmentResponse:
+      value:
+        segmentId: segmentId
+        item:
+          id: '12468504'
+          code: '123'
+          name:
+            en: Hammer
+        type: PRODUCT
+        metadata:
+          createdAt: 2024-10-12 12:00:00+00:00
+          modifiedAt: 2024-10-12 12:00:00+00:00
+          version: 1
+    Response_Conflict_409_changed:
+      value:
+        code: 409
+        status: Conflict
+        message: The resource you are attempting to access has changed.
+    BulkAssignmentUpdateResponse:
+      value:
+      - index: 1
+        code: 204
+        status: OK
+      - index: 2
+        code: 400
+        status: Bad Request
+        message: Validation problem with request body.
+    ItemAssignmentsUpsert:
+      value:
+      - id: '12468504'
+        mixins:
+          segmentAttributes:
+            membershipStatus: PREMIUM
+        metadata:
+          mixins:
+            segmentAttributes: https://res.cloudinary.com/saas-ag/raw/upload/emporix-docs/69537caeb3fd5d378296ae42_segmentAttributes.json
+      - id: '12849186'
+        metadata:
+          version: 2
+    Response_Conflict_409_exists:
+      value:
+        code: 409
+        status: Conflict
+        message: The resource already exists.
+    BulkAssignmentDeletionResponse:
+      value:
+      - index: 1
+        code: 204
+        status: OK
+      - index: 2
+        code: 204
+        status: OK
+    CategoryTreeResponse:
+      value:
+      - id: '12468504'
+        code: '123'
+        name:
+          en: Tools
+        position: 0
+        published: true
+        isSegmentAssigned: false
+        subcategories:
+        - id: '12468505'
+          parentId: '12468504'
+          code: '234'
+          name:
+            en: Hammer
+          localizedDescription:
+            en: Basic and professional-grade hammers for construction and home improvement tasks.
+          validity:
+            from: 2024-04-17 08:00:00+00:00
+            to: 2026-04-17 08:00:00+00:00
+          position: 1
+          published: true
+          isSegmentAssigned: true
+          subcategories:
+          - id: '12468506'
+            parentId: '12468505'
+            code: '345'
+            name:
+              en: Sledgehammers
+            position: 2
+            published: true
+            isSegmentAssigned: true
+    ItemAssignmentsResponse:
+      value:
+      - segmentId: segmentId
+        item:
+          id: '12468504'
+          code: '123'
+          name:
+            en: Hammer
+        type: PRODUCT
+        metadata:
+          createdAt: 2024-10-12 12:00:00+00:00
+          modifiedAt: 2024-10-12 12:00:00+00:00
+          version: 1
+      - segmentId: segmentId
+        item:
+          id: '12849186'
+          code: '456'
+          name:
+            en: Screwdriver
+        type: PRODUCT
+        metadata:
+          createdAt: 2024-10-12 12:00:00+00:00
+          modifiedAt: 2024-10-12 12:00:00+00:00
+          version: 1
+    Response_NotFound_404:
+      value:
+        code: 404
+        status: Not Found
+        message: The resource with id 628cd20c6e8b2432b6346ca6 has not been found.
+  responses:
+    Common_response_Unauthorized_401:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+    Common_response_Conflict_409:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            Conflict - resource exists:
+              $ref: '#/components/examples/Response_Conflict_409_exists'
+            Conflict - resource has changed:
+              $ref: '#/components/examples/Response_Conflict_409_changed'
+    Common_response_Forbidden_403:
+      description: Access forbidden. The caller is not allowed to access this resource.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            Forbidden:
+              $ref: '#/components/examples/Response_Forbidden_403'
+    Common_response_BadRequest_400:
+      description: Bad request due to validation, incorrect parameters, etc.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            Validation Error:
+              $ref: '#/components/examples/Response_BadRequest_400'
+    Common_response_NotFound_404:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            Not Found:
+              $ref: '#/components/examples/Response_NotFound_404'
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            customersegment.segment_manage: Needed to create or update customer segments.
+            customersegment.segment_read: Needed to read customer segments.
+            customersegment.segment_read_own: Needed to read own customer segments.
+    CustomerAccessToken:
+      type: http
+      scheme: bearer
+      description: To generate a customer access token, go to the [Logging in a customer](https://developer.emporix.io/api-documentation/api-guides/companies-and-customers/customer-management/api-reference/authentication-and-authorization#post-customer-tenant-login) endpoint.
+x-refined-from:
+- emporix-customer-segments-openapi.yml
+- emporix-customer-segments-openapi.yml

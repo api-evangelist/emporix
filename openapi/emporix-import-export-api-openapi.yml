@@ -1,0 +1,373 @@
+openapi: 3.2.0
+info:
+  title: Emporix Import/Export API
+  version: ''
+  contact:
+    name: Emporix
+    url: https://emporix.com
+    email: documentation@emporix.com
+  description: 'Operations tagged Import/Export across 2 of this provider''s published API definitions: emporix-ai-service-openapi.yml, emporix-ai-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+tags:
+- name: Import Export
+  description: Import & Export Agents
+paths:
+  /ai-service/{tenant}/agentic/agents/export:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    post:
+      summary: Exporting agents
+      operationId: POST-ai-export-agents
+      requestBody:
+        $ref: '#/components/requestBodies/exportRequestBody'
+      responses:
+        '200':
+          description: The exported agents with components.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExportResponse'
+              examples:
+                Import Response:
+                  $ref: '#/components/examples/ExportResponse'
+        '400':
+          $ref: '#/components/responses/400_resp_common'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_resp_common'
+      description: Exports the agents by IDs.
+      security:
+      - OAuth2:
+        - ai.agent_read
+      tags:
+      - Import Export
+    servers:
+    - url: https://api.emporix.io
+  /ai-service/{tenant}/agentic/agents/import:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    post:
+      summary: Importing agents
+      operationId: POST-ai-import-agents
+      requestBody:
+        $ref: '#/components/requestBodies/importRequestBody'
+      responses:
+        '200':
+          description: A single agent.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportResponse'
+              examples:
+                Import Response:
+                  $ref: '#/components/examples/ImportResponse'
+        '400':
+          $ref: '#/components/responses/400_resp_common'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_resp_common'
+      description: Imports the agents from the base64 encoded data.
+      security:
+      - OAuth2:
+        - ai.agent_manage
+      tags:
+      - Import Export
+    servers:
+    - url: https://api.emporix.io
+components:
+  examples:
+    ExportRequest:
+      value:
+        agentIds:
+        - complaint-agent-id
+    ExportResponse:
+      value:
+        jobId: job-id-of-export-job
+        exportedAt: '2025-11-04T11:15:25.903913Z'
+        checksum: de56cd0c62c234033eced948645c7b458962eaa11611bd1066ef52a61e1b4cb2
+        data: ewogICJhZ2VudHMiIDogWyB7CiAgICAiaWQiIDogInByb2R1Y3QtY3JlYXRlZCIsCiAgICAibmFtZSIgOiB7CiAgICAgICJlbiIgOiAicHJvZHVjdC1jcmVhdGVkIgogICAgfSwKICAgICJkZXNjcmlwdGlvbiIgOiB7CiAgICAgICJlbiIgOiAicHJvZHVjdC1jcmVhdGVkIgogICAgfSwKICAgICJyZXF1aXJlZFNjb3BlcyIgOiBbIF0sCiAgICAidXNlclByb21wdCIgOiAiWW91IGFyZSBhbiBhZ2VudCB3aGljaCBoYW5kbGUgcHJvZHVjdCBjcmVhdGlvbiBwcm9jZXNzLlxuQXQgZmlyc3QgZ2V0IHRoZSB3aG9sZSBwcm9kdWN0IG9iamVjdCBmcm9tIHRoZSBhcGkgYW5kIHJldHVybiBpdCBhcyBhIEpTT04iLAogICAgInRyaWdnZXJzIiA6IFsgewogICAgICAidHlwZSIgOiAiZW5kcG9pbnQiCiAgICB9IF0sCiAgICAibGxtQ29uZmlnIiA6IHsKICAgICAgIm1vZGVsIiA6ICJjbGF1ZGUtMy01LWhhaWt1LTIwMjQxMDIyIiwKICAgICAgInRlbXBlcmF0dXJlIiA6IDAuMSwKICAgICAgIm1heFRva2VucyIgOiA0MDAwLAogICAgICAicHJvdmlkZXIiIDogImFudGhyb3BpYyIsCiAgICAgICJ0b2tlbiIgOiB7CiAgICAgICAgImlkIiA6ICJhbnRocm9waWMtdG9rZW4iCiAgICAgIH0KICAgIH0sCiAgICAibWNwU2VydmVycyIgOiBbIHsKICAgICAgInR5cGUiIDogInByZWRlZmluZWQiLAogICAgICAiZG9tYWluIiA6ICJwcm9kdWN0IiwKICAgICAgInRvb2xzIiA6IFsgImdldC1wcm9kdWN0IiBdCiAgICB9IF0sCiAgICAibmF0aXZlVG9vbHMiIDogWyBdLAogICAgImFnZW50Q29sbGFib3JhdGlvbnMiIDogWyBdLAogICAgIm1heFJlY3Vyc2lvbkxpbWl0IiA6IDIwLAogICAgImVuYWJsZU1lbW9yeSIgOiB0cnVlLAogICAgImljb24iIDogInJvYm90IiwKICAgICJ0YWdzIiA6IFsgXSwKICAgICJ0eXBlIiA6ICJnZW5lcmljIgogIH0gXQp9
+    ImportRequest:
+      value:
+        checksum: de56cd0c62c234033eced948645c7b458962eaa11611bd1066ef52a61e1b4cb2
+        data: ewogICJhZ2VudHMiIDogWyB7CiAgICAiaWQiIDogInByb2R1Y3QtY3JlYXRlZCIsCiAgICAibmFtZSIgOiB7CiAgICAgICJlbiIgOiAicHJvZHVjdC1jcmVhdGVkIgogICAgfSwKICAgICJkZXNjcmlwdGlvbiIgOiB7CiAgICAgICJlbiIgOiAicHJvZHVjdC1jcmVhdGVkIgogICAgfSwKICAgICJyZXF1aXJlZFNjb3BlcyIgOiBbIF0sCiAgICAidXNlclByb21wdCIgOiAiWW91IGFyZSBhbiBhZ2VudCB3aGljaCBoYW5kbGUgcHJvZHVjdCBjcmVhdGlvbiBwcm9jZXNzLlxuQXQgZmlyc3QgZ2V0IHRoZSB3aG9sZSBwcm9kdWN0IG9iamVjdCBmcm9tIHRoZSBhcGkgYW5kIHJldHVybiBpdCBhcyBhIEpTT04iLAogICAgInRyaWdnZXJzIiA6IFsgewogICAgICAidHlwZSIgOiAiZW5kcG9pbnQiCiAgICB9IF0sCiAgICAibGxtQ29uZmlnIiA6IHsKICAgICAgIm1vZGVsIiA6ICJjbGF1ZGUtMy01LWhhaWt1LTIwMjQxMDIyIiwKICAgICAgInRlbXBlcmF0dXJlIiA6IDAuMSwKICAgICAgIm1heFRva2VucyIgOiA0MDAwLAogICAgICAicHJvdmlkZXIiIDogImFudGhyb3BpYyIsCiAgICAgICJ0b2tlbiIgOiB7CiAgICAgICAgImlkIiA6ICJhbnRocm9waWMtdG9rZW4iCiAgICAgIH0KICAgIH0sCiAgICAibWNwU2VydmVycyIgOiBbIHsKICAgICAgInR5cGUiIDogInByZWRlZmluZWQiLAogICAgICAiZG9tYWluIiA6ICJwcm9kdWN0IiwKICAgICAgInRvb2xzIiA6IFsgImdldC1wcm9kdWN0IiBdCiAgICB9IF0sCiAgICAibmF0aXZlVG9vbHMiIDogWyBdLAogICAgImFnZW50Q29sbGFib3JhdGlvbnMiIDogWyBdLAogICAgIm1heFJlY3Vyc2lvbkxpbWl0IiA6IDIwLAogICAgImVuYWJsZU1lbW9yeSIgOiB0cnVlLAogICAgImljb24iIDogInJvYm90IiwKICAgICJ0YWdzIiA6IFsgXSwKICAgICJ0eXBlIiA6ICJnZW5lcmljIgogIH0gXQp9
+    ImportResponse:
+      value:
+        importedAt: '2025-11-04T11:56:55.296335Z'
+        summary:
+          agents:
+          - id: 346cefda-19be-4603-a471-5d2e990566ba--import-1762257415296
+            name: complaint-demo
+            state: DISABLED
+            details:
+            - code: AGENT_IMPORTED_DISABLED
+              objectId: 346cefda-19be-4603-a471-5d2e990566ba--import-1762257415296
+              objectName: complaint-demo
+              message: Imported agents start disabled.
+          tools:
+          - id: 80171fb9-a3cc-4441-8235-ced7edd0635d2
+            name: Slack Tool
+            state: TO_CREATE
+            details:
+            - code: NOT_IMPORTABLE
+              objectId: 80171fb9-a3cc-4441-8235-ced7edd0635d2
+              objectName: Slack Tool
+              message: Slack/Teams tools cannot be imported. Create them on this tenant.
+          mcpServers:
+          - id: 80171fb9-a3cc-4441-8235-ced7edd0635d3
+            name: Custom MCP Server
+            state: ENABLED
+            details: []
+        message: Successfully imported 1 agents, 0 tools, and 1 MCP servers.
+        jobId: 6909ea07e0527f327fdead3e
+  schemas:
+    ErrorMessage:
+      type: object
+      properties:
+        code:
+          type: integer
+        type:
+          type: string
+        message:
+          type: string
+        moreInfo:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              type:
+                type: string
+              message:
+                type: string
+              moreInfo:
+                type: string
+      description: ''
+    ExportResponse:
+      allOf:
+      - $ref: '#/components/schemas/DataWithChecksum'
+      - type: object
+        properties:
+          exportedAt:
+            description: Date of the export process.
+            type: string
+            format: date-time
+          jobId:
+            description: ID of the job.
+            type: string
+    ImportedEntity:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID of the imported entity.
+        name:
+          type: string
+          description: Name of the imported entity.
+        state:
+          type: string
+          description: State of the imported entity.
+          enum:
+          - TO_CREATE
+          - ENABLED
+          - DISABLED
+          - EXISTS
+          - FAILED
+        details:
+          type: array
+          description: Reasons the entity was skipped, disabled, or failed during import.
+          items:
+            $ref: '#/components/schemas/ImportDetails'
+    ExportRequest:
+      type: object
+      required:
+      - agentIds
+      properties:
+        agentIds:
+          description: List of the agents IDs.
+          type: array
+          minimum: 0
+          maximum: 100
+          items:
+            type: string
+    DataWithChecksum:
+      type: object
+      properties:
+        data:
+          description: The base64 encoded JSON value of the exported agents with related tools and MCP servers.
+          type: string
+        checksum:
+          description: Checksum calculated based on decoded `data` value. Validates if importing JSON is exactly the same as the exported one.
+          type: string
+    ErrorMessageFault:
+      type: object
+      properties:
+        fault:
+          type: object
+          properties:
+            faultstring:
+              type: string
+            detail:
+              type: object
+              properties:
+                errorcode:
+                  type: string
+    ImportResponse:
+      allOf:
+      - $ref: '#/components/schemas/ImportResult'
+      - type: object
+        properties:
+          importedAt:
+            description: Date of the import process.
+            type: string
+            format: date-time
+          jobId:
+            description: ID of the job.
+            type: string
+    ImportResult:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Short summary of the import.
+        summary:
+          type: object
+          description: Summary of the import.
+          properties:
+            agents:
+              type: array
+              items:
+                $ref: '#/components/schemas/ImportedEntity'
+            tools:
+              type: array
+              items:
+                $ref: '#/components/schemas/ImportedEntity'
+            mcpServers:
+              type: array
+              items:
+                $ref: '#/components/schemas/ImportedEntity'
+    ImportRequest:
+      allOf:
+      - $ref: '#/components/schemas/DataWithChecksum'
+      required:
+      - data
+      - checksum
+    ImportDetails:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Machine-readable reason code for UI localization.
+          enum:
+          - MISSING_FUNCTION
+          - MISSING_TOKEN
+          - NOT_IMPORTABLE
+          - ALREADY_EXISTS
+          - AGENT_IMPORTED_DISABLED
+          - IMPORT_FAILED
+        objectId:
+          type: string
+          description: ID of the related object, such as a function ID or token ID.
+        objectName:
+          type: string
+          description: Display name of the related object, such as a tool name.
+        message:
+          type: string
+          description: English fallback message when a localized string is not available.
+  responses:
+    403_resp_common:
+      description: Authorization scopes of the access token are not sufficient and do not match the scopes required by the endpoint.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Access forbidden:
+              value:
+                code: 403
+                status: Forbidden
+                message: The access to the requested resource has been forbidden by the server.
+    400_resp_common:
+      description: The request was syntactically incorrect.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Code must not be null:
+              value:
+                code: 400
+                status: Bad Request
+                message: Validation problem with request body.
+                details:
+                - message: code must not be null nor blank
+    401_resp_common:
+      description: The authorization token is invalid or has expired.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessageFault'
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            Access token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+  parameters:
+    path_tenant:
+      name: tenant
+      in: path
+      required: true
+      schema:
+        type: string
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: The tenant name should always be provided in lowercase.
+
+        '
+  requestBodies:
+    importRequestBody:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ImportRequest'
+          examples:
+            Export Agent:
+              $ref: '#/components/examples/ImportRequest'
+    exportRequestBody:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ExportRequest'
+          examples:
+            Export Agent:
+              $ref: '#/components/examples/ExportRequest'
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes:
+            ai.text_manage: Needed to execute actions related to the text generation.
+            ai.completion_manage: Needed to execute actions related to the AI completions.
+            ai.agentexecution_manage: Needed to execute agentic chat.
+            ai.agentexecution_manage_own: Needed to execute agentic chat by customers.
+            ai.agent_read: Needed to read AI agents.
+            ai.agent_manage: Needed to manage AI agents.
+          tokenUrl: https://api.emporix.io/oauth/token
+x-refined-from:
+- emporix-ai-service-openapi.yml
+- emporix-ai-service-openapi.yml

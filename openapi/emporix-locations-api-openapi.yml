@@ -1,0 +1,2242 @@
+openapi: 3.2.0
+info:
+  title: Emporix Locations API
+  version: ''
+  contact:
+    name: Emporix
+    url: https://emporix.com
+    email: documentation@emporix.com
+  description: 'Operations tagged Locations across 6 of this provider''s published API definitions: emporix-availability-openapi.yml, emporix-client-management-openapi.yml, emporix-vendor-service-openapi.yml, emporix-availability-openapi.yml, emporix-client-management-openapi.yml, emporix-vendor-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+tags:
+- name: Locations
+paths:
+  /availability/{tenant}/locations/{site}:
+    parameters:
+    - $ref: '#/components/parameters/tenant-path'
+    - $ref: '#/components/parameters/site-path'
+    get:
+      tags:
+      - Locations
+      deprecated: true
+      summary: Retrieving all locations for a site
+      description: Retrieves all locations for a specified site.
+      security:
+      - OAuth2:
+        - availability.availability_view
+      responses:
+        '200':
+          description: The request was successful. A list of locations is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocationList'
+              examples:
+                Response example:
+                  $ref: '#/components/examples/LocationList'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse400'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse401'
+        '403':
+          $ref: '#/components/responses/ForbiddenResponse403'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse404'
+        '500':
+          $ref: '#/components/responses/ServerErrorResponse500'
+      operationId: GET-availability-retrieve-locations-site
+    post:
+      tags:
+      - Locations
+      deprecated: true
+      summary: Adding a new location to a site
+      description: Adds a new location to a specified site.
+      security:
+      - OAuth2:
+        - availability.availability_manage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Location'
+            examples:
+              Request example:
+                $ref: '#/components/examples/Location'
+      responses:
+        '201':
+          description: ' The request was successful. The location has been added to the site.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+              example:
+                message: 'Successfully created location with id: shop1:1234'
+                code: 201
+        '400':
+          $ref: '#/components/responses/BadRequestResponse400'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse401'
+        '403':
+          $ref: '#/components/responses/ForbiddenResponse403'
+        '409':
+          $ref: '#/components/responses/ConflictResponse409'
+        '500':
+          $ref: '#/components/responses/ServerErrorResponse500'
+      operationId: POST-availability-add-locations-site
+    put:
+      tags:
+      - Locations
+      deprecated: true
+      summary: Updating locations
+      description: Updates locations for a specified site.
+      security:
+      - OAuth2:
+        - availability.availability_manage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationOrderList'
+            examples:
+              Request example:
+                $ref: '#/components/examples/LocationOrderList'
+      responses:
+        '200':
+          description: ' The request was successful. The locations have been updated.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+              example:
+                message: Successfully modified 5 location(s)
+                code: 200
+        '400':
+          $ref: '#/components/responses/BadRequestResponse400'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse401'
+        '403':
+          $ref: '#/components/responses/ForbiddenResponse403'
+        '500':
+          $ref: '#/components/responses/ServerErrorResponse500'
+      operationId: PUT-availability-update-locations-site
+    servers:
+    - url: https://api.emporix.io
+  /availability/{tenant}/locations/{location}:
+    description: Availability service
+    parameters:
+    - $ref: '#/components/parameters/tenant-path'
+    delete:
+      tags:
+      - Locations
+      deprecated: true
+      summary: Deleting a location
+      description: Deletes a specified location.
+      security:
+      - OAuth2:
+        - availability.availability_manage
+      parameters:
+      - $ref: '#/components/parameters/tenant-path'
+      - $ref: '#/components/parameters/location-path'
+      responses:
+        '200':
+          description: ' The request was successful. The location has been deleted.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+              example:
+                message: Successfully deleted 5 location(s)
+                code: 200
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse401'
+        '403':
+          $ref: '#/components/responses/ForbiddenResponse403'
+        '500':
+          $ref: '#/components/responses/ServerErrorResponse500'
+      operationId: DELETE-availability-remove-location
+    servers:
+    - url: https://api.emporix.io
+  /availability/{tenant}/search/locations:
+    description: Availability service
+    parameters:
+    - $ref: '#/components/parameters/tenant-path'
+    post:
+      deprecated: true
+      summary: Retrieving product locations
+      description: Retrieves locations of specified products.
+      security:
+      - OAuth2:
+        - availability.availability_view
+      parameters:
+      - $ref: '#/components/parameters/tenant-path'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationSearch'
+            examples:
+              Request example:
+                $ref: '#/components/examples/LocationSearch'
+      responses:
+        '200':
+          description: The request was successful. A list of locations is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductLocationList'
+              examples:
+                Response example:
+                  $ref: '#/components/examples/ProductLocationList'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse400'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse401'
+        '403':
+          $ref: '#/components/responses/ForbiddenResponse403'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse404'
+        '500':
+          $ref: '#/components/responses/ServerErrorResponse500'
+      operationId: POST-availability-search-locations
+      tags:
+      - Locations
+    servers:
+    - url: https://api.emporix.io
+  /customer-management/{tenant}/locations:
+    parameters:
+    - $ref: '#/components/parameters/trait_tenant'
+    post:
+      summary: Creating location
+      description: Creates a new location for the tenant. A location represents address information about a legal entity of the Company.
+      security:
+      - OAuth2:
+        - customermanagement.location_manage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/locationCreate'
+            examples:
+              Create a location:
+                value:
+                  name: Main HQ
+                  type: HEADQUARTER
+                  contactDetails:
+                    emails:
+                    - jon.doe@example.com
+                    - adam.smith@sample.org
+                    phones:
+                    - '1234567890'
+                    - '123456789'
+                    addressLine1: W Sample St
+                    addressLine2: 3601-3799
+                    city: South Bend
+                    state: Indiana
+                    postcode: '46619'
+                    countryCode: US
+                    tags:
+                    - shipping
+      responses:
+        '201':
+          description: The request was successful. The location has been created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+              examples:
+                Location created:
+                  value:
+                    id: 53ac81fd0cce8b26b36f1234
+        '400':
+          $ref: '#/components/responses/BadRequest_400'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '409':
+          $ref: '#/components/responses/Conflict_409'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+      operationId: POST-customer-mgmt-create-location
+      tags:
+      - Locations
+    get:
+      summary: Retrieving all locations
+      description: Retrieves all locations assigned to the tenant. You can filter, sort and paginate the results with query parameters.
+      security:
+      - OAuth2:
+        - customermanagement.location_read
+      parameters:
+      - $ref: '#/components/parameters/trait_paged_pageNumber'
+      - $ref: '#/components/parameters/trait_paged_pageSize'
+      - $ref: '#/components/parameters/trait_XTotalCount_header'
+      - $ref: '#/components/parameters/trait_sort'
+      - $ref: '#/components/parameters/trait_q_param'
+      - $ref: '#/components/parameters/trait_fields'
+      - $ref: '#/components/parameters/trait_location_name_query_param'
+      - $ref: '#/components/parameters/trait_location_type_query_param'
+      - $ref: '#/components/parameters/trait_location_contactDetails_email_query_param'
+      - $ref: '#/components/parameters/trait_location_contactDetails_phone_query_param'
+      - $ref: '#/components/parameters/trait_location_contactDetails_address_query_param'
+      - $ref: '#/components/parameters/trait_location_contactDetails_city_query_param'
+      - $ref: '#/components/parameters/trait_location_contactDetails_state_query_param'
+      - $ref: '#/components/parameters/trait_location_contactDetails_postcode_query_param'
+      - $ref: '#/components/parameters/trait_location_contactDetails_countryCode_query_param'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetLocations'
+        '400':
+          $ref: '#/components/responses/BadRequest_400'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+      operationId: GET-customer-mgmt-list-all-locations
+      tags:
+      - Locations
+    servers:
+    - url: https://api.emporix.io
+  /customer-management/{tenant}/locations/{locationId}:
+    parameters:
+    - $ref: '#/components/parameters/trait_tenant'
+    - $ref: '#/components/parameters/trait_location_id_path'
+    get:
+      parameters:
+      - $ref: '#/components/parameters/trait_fields'
+      summary: Retrieving a location
+      description: Retrieves a location by the specified unique identifier.
+      security:
+      - OAuth2:
+        - customermanagement.location_read
+      responses:
+        '200':
+          $ref: '#/components/responses/GetLocation'
+        '400':
+          $ref: '#/components/responses/BadRequest_400'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '404':
+          $ref: '#/components/responses/NotFound_404'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+      operationId: GET-customer-mgmt-retrieve-location
+      tags:
+      - Locations
+    put:
+      summary: Upserting a location
+      description: Updates or creates a location with given location id. You can omit the `metadata.version`, but then optimistic locking is not enabled.
+      security:
+      - OAuth2:
+        - customermanagement.location_manage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/locationUpdate'
+            examples:
+              Update the location:
+                value:
+                  name: Main Warehouse
+                  type: WAREHOUSE
+                  contactDetails:
+                    emails:
+                    - jon.doe@example.com
+                    - adam.smith@sample.org
+                    phones:
+                    - '1234567890'
+                    - '123456789'
+                    addressLine1: W Sample St
+                    addressLine2: 3601-3799
+                    city: South Bend
+                    state: Indiana
+                    postcode: '46619'
+                    countryCode: US
+                    tags:
+                    - shipping
+                  metadata:
+                    version: 1
+      responses:
+        '201':
+          description: The request was successful. The location has been created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+              examples:
+                Location created:
+                  value:
+                    id: 53ac81fd0cce8b26b36f3492
+        '204':
+          description: The location has been updated successfully.
+        '400':
+          $ref: '#/components/responses/BadRequest_400_Update'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '404':
+          $ref: '#/components/responses/NotFound_404'
+        '409':
+          $ref: '#/components/responses/Conflict_409'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+      operationId: PUT-customer-mgmt-update-location
+      tags:
+      - Locations
+    delete:
+      summary: Delete a location
+      description: Deletes a location.
+      security:
+      - OAuth2:
+        - customermanagement.location_manage
+      responses:
+        '204':
+          description: The location has been deleted successfully.
+        '400':
+          $ref: '#/components/responses/BadRequest_400'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '404':
+          $ref: '#/components/responses/NotFound_404'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+      operationId: DELETE-customer-mgmt-remove-location
+      tags:
+      - Locations
+    servers:
+    - url: https://api.emporix.io
+  /vendor/{tenant}/locations:
+    parameters:
+    - $ref: '#/components/parameters/trait_tenant'
+    post:
+      summary: Creating a location
+      description: Creates a new location for the tenant. A location represents address information for a vendor.
+      security:
+      - OAuth2:
+        - vendor.vendor_manage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/locationCreate_2'
+            examples:
+              Create a location:
+                value:
+                  name: Main HQ
+                  type: HEADQUARTER
+                  contactDetails:
+                    emails:
+                    - jon.doe@example.com
+                    - adam.smith@sample.org
+                    phones:
+                    - '1234567890'
+                    - '123456789'
+                    addressLine1: W Sample St
+                    addressLine2: 3601-3799
+                    city: South Bend
+                    state: Indiana
+                    postcode: '46619'
+                    countryCode: US
+                    tags:
+                    - shipping
+      responses:
+        '201':
+          description: The request was successful. The location has been created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+              examples:
+                Location created:
+                  value:
+                    id: 53ac81fd0cce8b26b36f1234
+        '400':
+          $ref: '#/components/responses/BadRequest_400_2'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401_2'
+        '403':
+          $ref: '#/components/responses/Forbidden_403_2'
+        '409':
+          $ref: '#/components/responses/Conflict_409_2'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500_2'
+      operationId: POST-vendor-mgmt-create-location
+      tags:
+      - Locations
+    get:
+      summary: Retrieving all locations
+      description: Retrieves all locations assigned to the tenant. You can filter, sort and paginate the results with query parameters.
+      security:
+      - OAuth2:
+        - vendor.vendor_read
+        - vendor.vendor_manage
+      parameters:
+      - $ref: '#/components/parameters/trait_paged_pageNumber'
+      - $ref: '#/components/parameters/trait_paged_pageSize'
+      - $ref: '#/components/parameters/trait_XTotalCount_header_2'
+      - $ref: '#/components/parameters/trait_sort_2'
+      - $ref: '#/components/parameters/trait_q_param_2'
+      - $ref: '#/components/parameters/trait_fields'
+      - $ref: '#/components/parameters/trait_location_name_query_param_2'
+      - $ref: '#/components/parameters/trait_location_type_query_param_2'
+      - $ref: '#/components/parameters/trait_location_contactDetails_email_query_param_2'
+      - $ref: '#/components/parameters/trait_location_contactDetails_phone_query_param_2'
+      - $ref: '#/components/parameters/trait_location_contactDetails_address_query_param_2'
+      - $ref: '#/components/parameters/trait_location_contactDetails_city_query_param_2'
+      - $ref: '#/components/parameters/trait_location_contactDetails_state_query_param_2'
+      - $ref: '#/components/parameters/trait_location_contactDetails_postcode_query_param_2'
+      - $ref: '#/components/parameters/trait_location_contactDetails_countryCode_query_param_2'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetLocations_2'
+        '400':
+          $ref: '#/components/responses/BadRequest_400_2'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401_2'
+        '403':
+          $ref: '#/components/responses/Forbidden_403_2'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500_2'
+      operationId: GET-vendor-mgmt-list-all-locations
+      tags:
+      - Locations
+    servers:
+    - url: https://api.emporix.io
+  /vendor/{tenant}/locations/{locationId}:
+    parameters:
+    - $ref: '#/components/parameters/trait_tenant'
+    - $ref: '#/components/parameters/trait_location_id_path'
+    get:
+      parameters:
+      - $ref: '#/components/parameters/trait_fields'
+      summary: Retrieving a location
+      description: Retrieves a location by the specified unique identifier.
+      security:
+      - OAuth2:
+        - vendor.vendor_read
+        - vendor.vendor_manage
+      responses:
+        '200':
+          $ref: '#/components/responses/GetLocation_2'
+        '400':
+          $ref: '#/components/responses/BadRequest_400_2'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401_2'
+        '403':
+          $ref: '#/components/responses/Forbidden_403_2'
+        '404':
+          $ref: '#/components/responses/NotFound_404_2'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500_2'
+      operationId: GET-vendor-mgmt-retrieve-location
+      tags:
+      - Locations
+    put:
+      summary: Upserting a location
+      description: Updates or creates a location with a given location ID. You can omit the `metadata.version`, but then optimistic locking is not enabled.
+      security:
+      - OAuth2:
+        - vendor.vendor_manage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/locationUpdate_2'
+            examples:
+              Update the location:
+                value:
+                  name: Main Warehouse
+                  type: WAREHOUSE
+                  contactDetails:
+                    emails:
+                    - jon.doe@example.com
+                    - adam.smith@sample.org
+                    phones:
+                    - '1234567890'
+                    - '123456789'
+                    addressLine1: W Sample St
+                    addressLine2: 3601-3799
+                    city: South Bend
+                    state: Indiana
+                    postcode: '46619'
+                    countryCode: US
+                    tags:
+                    - shipping
+                  metadata:
+                    version: 1
+      responses:
+        '201':
+          description: The request was successful. The location has been created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+              examples:
+                Location created:
+                  value:
+                    id: 53ac81fd0cce8b26b36f3492
+        '204':
+          description: The location has been updated successfully.
+        '400':
+          $ref: '#/components/responses/BadRequest_400_Update_2'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401_2'
+        '403':
+          $ref: '#/components/responses/Forbidden_403_2'
+        '404':
+          $ref: '#/components/responses/NotFound_404_2'
+        '409':
+          $ref: '#/components/responses/Conflict_409_2'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500_2'
+      operationId: PUT-vendor-mgmt-update-location
+      tags:
+      - Locations
+    delete:
+      summary: Delete a location
+      description: Deletes a location.
+      security:
+      - OAuth2:
+        - vendor.vendor_manage
+      responses:
+        '204':
+          description: The location has been deleted successfully.
+        '400':
+          $ref: '#/components/responses/BadRequest_400_2'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401_2'
+        '403':
+          $ref: '#/components/responses/Forbidden_403_2'
+        '404':
+          $ref: '#/components/responses/NotFound_404_2'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500_2'
+      operationId: DELETE-vendor-mgmt-remove-location
+      tags:
+      - Locations
+    servers:
+    - url: https://api.emporix.io
+components:
+  parameters:
+    tenant-path:
+      in: path
+      name: tenant
+      required: true
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: The tenant name should always be provided in lowercase.
+
+        '
+      schema:
+        type: string
+        example: testtenant
+    site-path:
+      in: path
+      name: site
+      required: true
+      description: Site code, defined when the site is created.
+      schema:
+        type: string
+        example: shop1
+    location-path:
+      in: path
+      name: location
+      required: true
+      description: Location unique identifier.
+      schema:
+        type: string
+        example: shop1:1234
+    trait_fields:
+      in: query
+      name: fields
+      required: false
+      description: Comma-separated list of fields to return in the response. If not specified, all fields are returned.
+      schema:
+        type: string
+        example: name,type
+    trait_paged_pageNumber:
+      name: pageNumber
+      in: query
+      description: 'The page number to be retrieved where the size of the pages must be specified by the pageSize parameter.
+
+        The number of the first page is 1.
+
+        '
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    trait_location_name_query_param:
+      name: name
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 'Location name. When specified, only locations containing the specified name will be returned.
+
+
+        **Note**: When filtering the results with this field, the `contains` operator is used. The operator is case-insensitive.
+
+        '
+    trait_location_contactDetails_email_query_param:
+      name: contactDetails.email
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 'The email of the contact details of the location. When specified, only locations with contact details containing the specified email will be returned.
+
+
+        **Note**: When filtering the results with this field, the `contains` operator is used. The operator is case-insensitive.
+
+        '
+    trait_location_contactDetails_city_query_param:
+      name: contactDetails.city
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 'The address of the contact details of the location. When specified, only locations with contact details containing the specified city will be returned.
+
+
+        **Note**: When filtering the results with this field, the `contains` operator is used. The operator is case-insensitive.
+
+        '
+    trait_location_contactDetails_postcode_query_param:
+      name: contactDetails.postcode
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 'The postcode of the contact details of the location. When specified, only locations with contact details containing the specified postcode will be returned.
+
+
+        **Note**: When filtering the results with this field, the `contains` operator is used. The operator is case-insensitive.
+
+        '
+    trait_location_contactDetails_state_query_param:
+      name: contactDetails.state
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 'The address of the contact details of the location. When specified, only locations with contact details containing the specified state will be returned.
+
+
+        **Note**: When filtering the results with this field, the `contains` operator is used. The operator is case-insensitive.
+
+        '
+    trait_XTotalCount_header:
+      in: header
+      name: X-Total-Count
+      required: false
+      description: In order to get information how many entities meet a filter requirements, X-Total-Count header has been introduced. The header is optional and its default value is false. It the header is provided and it is true then total count is returned in the X-Total-Count response header. In both cases (X-Total-Count true, false or not provided), the response body has the same format (array of entities). In other words, the information about total count is returned on demand, depending of an existence of X-Total-Count header in a request. Therefore, the X-Total-Count header is not returned if an API consumer didn't ask for it.
+      schema:
+        default: false
+        type: boolean
+    trait_location_id_path:
+      name: locationId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: The location unique identifier.
+    trait_location_type_query_param:
+      name: type
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+        - HEADQUARTER
+        - WAREHOUSE
+        - OFFICE
+      description: 'The type of the location. When specified, only locations of the specified type will be returned.
+
+
+        **Note**: When filtering the results with this field, the `equals` operator is used.
+
+        '
+    trait_q_param:
+      in: query
+      name: q
+      required: false
+      description: "Query param for filtering entities by specified type. Examples of query params which are supported:\n\n| Q Param                                                                            | Description                                                                                                                          |\n|------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|\n| `name:\"Exact match\"`                                                               | find an entity with `name` field with `Exact match` value                                                                            |\n| `name:~John`                                                                       | find an entity with `name` field containing `John` value                                                                             |\n| `locDescription.fr:\"Description traduction française 02\"`                          | find an entity with localized `locDescription` field with `Description traduction française 02` value in french language             |      \n| `primary:true`                                                                     | find an entity with `primary` field with `true` value                                                                                |\n| `metadata.createdAt:(>\"2019-01-06T10:29:30.602Z\" AND <\"2020-01-07T10:29:30.602Z\")` | find an entity with `metadata.createdAt` field with value between `2019-01-06T10:29:30.602Z` and `2020-01-07T10:29:30.602Z`          |\n| `name:exists`                                                                      | find an entity with existing `name` field                                                                                            |\n| `name:null`                                                                        | find an entity with non-existing `name` field                                                                                        |\n| `name:missing`                                                                     | find an entity with non-existing `name` field                                                                                        |\n| `name:\"John\" surname:~Smith`                                                       | find an entity with `name` exactly equals to `John` and surname containing `Smith` value                                             |\n| `name:(\"John\",\"Jack\",\"James\")`                                                     | find an entity with `name` field with one of the following value: `John` or `Jack` or `James`                                        |\n"
+      schema:
+        type: string
+        example: name:~john
+    trait_location_contactDetails_address_query_param:
+      name: contactDetails.address
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 'The address of the contact details of the location. When specified, only locations with contact details containing the specified address will be returned.
+
+
+        **Note**: When filtering the results with this field, the `contains` operator is used. The operator is case-insensitive.
+
+        '
+    trait_paged_pageSize:
+      name: pageSize
+      in: query
+      description: 'The number of documents being retrieved on the page.
+
+        '
+      schema:
+        default: 16
+        minimum: 1
+        type: integer
+    trait_sort:
+      in: query
+      name: sort
+      required: false
+      description: Fields to sort the response data by following order of the parameters from left to right. Can contain multiple fields in format: field name:sort direction separated by a comma. The colon with sort direction parameter is redundant and descending order is taken only if it is equal to desc or DESC. Ascending order is considered in any other case.
+      schema:
+        type: string
+        example: name,metadata.createdAt:desc
+    trait_location_contactDetails_phone_query_param:
+      name: contactDetails.phone
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 'The phone number of the contact details of the location. When specified, only locations with contact details containing the specified phone number will be returned.
+
+
+        **Note**: When filtering the results with this field, the `contains` operator is used. The operator is case-insensitive.
+
+        '
+    trait_tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'The tenant that the caller is acting upon.
+
+
+        Please note that this value is always lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+    trait_location_contactDetails_countryCode_query_param:
+      name: contactDetails.countryCode
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 'The country code of the contact details of the location. When specified, only locations with contact details having the specified country code will be returned.
+
+
+        **Note**: When filtering the results with this field, the `equals` operator is used.
+
+        '
+    trait_location_name_query_param_2:
+      name: name
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 'Location name. When specified, only locations containing the specified name will be returned.
+
+        '
+    trait_location_contactDetails_email_query_param_2:
+      name: contactDetails.email
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 'The email of the contact details of the location. When specified, only locations with contact details containing the specified email will be returned.
+
+        '
+    trait_location_contactDetails_city_query_param_2:
+      name: contactDetails.city
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 'The city of the contact details of the location.
+
+        '
+    trait_location_contactDetails_postcode_query_param_2:
+      name: contactDetails.postcode
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 'The postcode of the contact details of the location.
+
+        '
+    trait_location_contactDetails_state_query_param_2:
+      name: contactDetails.state
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 'The state of the contact details of the location.
+
+        '
+    trait_XTotalCount_header_2:
+      in: header
+      name: X-Total-Count
+      required: false
+      description: In order to get information how many entities meet a filter requirements, X-Total-Count header has been introduced. The header is optional and its default value is false. If the header is provided and it is true then total count is returned in the X-Total-Count response header.
+      schema:
+        default: false
+        type: boolean
+    trait_location_type_query_param_2:
+      name: type
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+        - HEADQUARTER
+        - WAREHOUSE
+        - OFFICE
+      description: 'The type of the location. When specified, only locations of the specified type will be returned.
+
+        '
+    trait_q_param_2:
+      in: query
+      name: q
+      required: false
+      description: 'Query param for filtering entities by specified type. Examples of query params which are supported:
+
+
+        | Q Param                                                                            | Description                                                                                                                          |
+
+        |------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
+
+        | `name:"Exact match"`                                                               | find an entity with `name` field with `Exact match` value                                                                            |
+
+        | `name:~Supplier`                                                                   | find an entity with `name` field containing `Supplier` value                                                                        |
+
+        | `type:COMPANY`                                                                     | find an entity with `type` field with `COMPANY` value                                                                               |
+
+        | `metadata.createdAt:(>"2019-01-06T10:29:30.602Z" AND <"2020-01-07T10:29:30.602Z")` | find an entity with `metadata.createdAt` field with value between `2019-01-06T10:29:30.602Z` and `2020-01-07T10:29:30.602Z`      |
+
+        | `name:exists`                                                                      | find an entity with existing `name` field                                                                                            |
+
+        | `name:null`                                                                        | find an entity with non-existing `name` field                                                                                        |
+
+        '
+      schema:
+        type: string
+        example: name:~supplier
+    trait_location_contactDetails_address_query_param_2:
+      name: contactDetails.address
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 'The address of the contact details of the location.
+
+        '
+    trait_sort_2:
+      in: query
+      name: sort
+      required: false
+      description: 'Fields to sort the response data by following order of the parameters from left to right. Can contain multiple fields in format: field name:sort direction separated by a comma. The colon with sort direction parameter is redundant and descending order is taken only if it is equal to desc or DESC. Ascending order is considered in any other case.'
+      schema:
+        type: string
+        example: name,metadata.createdAt:desc
+    trait_location_contactDetails_phone_query_param_2:
+      name: contactDetails.phone
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 'The phone number of the contact details of the location.
+
+        '
+    trait_location_contactDetails_countryCode_query_param_2:
+      name: contactDetails.countryCode
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 'The country code of the contact details of the location.
+
+        '
+    trait_location_name_query_param_3:
+      name: name
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 'Location name. When specified, only locations containing the specified name will be returned.
+
+        '
+    trait_location_contactDetails_email_query_param_3:
+      name: contactDetails.email
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 'The email of the contact details of the location. When specified, only locations with contact details containing the specified email will be returned.
+
+        '
+    trait_location_contactDetails_city_query_param_3:
+      name: contactDetails.city
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 'The city of the contact details of the location.
+
+        '
+    trait_location_contactDetails_postcode_query_param_3:
+      name: contactDetails.postcode
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 'The postcode of the contact details of the location.
+
+        '
+    trait_location_contactDetails_state_query_param_3:
+      name: contactDetails.state
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 'The state of the contact details of the location.
+
+        '
+    trait_XTotalCount_header_3:
+      in: header
+      name: X-Total-Count
+      required: false
+      description: In order to get information how many entities meet a filter requirements, X-Total-Count header has been introduced. The header is optional and its default value is false. If the header is provided and it is true then total count is returned in the X-Total-Count response header.
+      schema:
+        default: false
+        type: boolean
+    trait_location_type_query_param_3:
+      name: type
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+        - HEADQUARTER
+        - WAREHOUSE
+        - OFFICE
+      description: 'The type of the location. When specified, only locations of the specified type will be returned.
+
+        '
+    trait_q_param_3:
+      in: query
+      name: q
+      required: false
+      description: 'Query param for filtering entities by specified type. Examples of query params which are supported:
+
+
+        | Q Param                                                                            | Description                                                                                                                          |
+
+        |------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
+
+        | `name:"Exact match"`                                                               | find an entity with `name` field with `Exact match` value                                                                            |
+
+        | `name:~Supplier`                                                                   | find an entity with `name` field containing `Supplier` value                                                                        |
+
+        | `type:COMPANY`                                                                     | find an entity with `type` field with `COMPANY` value                                                                               |
+
+        | `metadata.createdAt:(>"2019-01-06T10:29:30.602Z" AND <"2020-01-07T10:29:30.602Z")` | find an entity with `metadata.createdAt` field with value between `2019-01-06T10:29:30.602Z` and `2020-01-07T10:29:30.602Z`      |
+
+        | `name:exists`                                                                      | find an entity with existing `name` field                                                                                            |
+
+        | `name:null`                                                                        | find an entity with non-existing `name` field                                                                                        |
+
+        '
+      schema:
+        type: string
+        example: name:~supplier
+    trait_location_contactDetails_address_query_param_3:
+      name: contactDetails.address
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 'The address of the contact details of the location.
+
+        '
+    trait_sort_3:
+      in: query
+      name: sort
+      required: false
+      description: 'Fields to sort the response data by following order of the parameters from left to right. Can contain multiple fields in format: field name:sort direction separated by a comma. The colon with sort direction parameter is redundant and descending order is taken only if it is equal to desc or DESC. Ascending order is considered in any other case.'
+      schema:
+        type: string
+        example: name,metadata.createdAt:desc
+    trait_location_contactDetails_phone_query_param_3:
+      name: contactDetails.phone
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 'The phone number of the contact details of the location.
+
+        '
+    trait_location_contactDetails_countryCode_query_param_3:
+      name: contactDetails.countryCode
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 'The country code of the contact details of the location.
+
+        '
+  examples:
+    LocationList:
+      value:
+      - id: shop1:1234
+        site: shop1
+        rack: '1234'
+        rackName: Tools
+        order: 1
+    AvailabilityNotFound404:
+      value:
+        message: 'There is no availability for productId: 5f7c996173fc281cdd412345 and site: shop1'
+        code: 404
+    LocationSearch:
+      value:
+        site: shop1
+        productIds:
+        - 5f7c996173fc281cdd412345
+        - 5f7c996173fc281cdd412345
+    Location:
+      value:
+        id: shop1:1234
+        site: shop1
+        rack: '1234'
+        rackName: Tools
+        order: 1
+    ProductLocationList:
+      value:
+      - productId: 5f7c996173fc281cdd412345
+        locations:
+        - site: shop1
+          zone: zone1
+          rack: '1'
+          rackName: Tools
+          shelf: shelf1
+          section: section1
+          bin: bin1
+          order: 1
+    LocationOrderList:
+      value:
+      - id: shop1:1234
+        order: 1
+      - id: secondary:4321
+        order: 10
+    InternalServiceError500_Example:
+      value:
+        code: 500
+        status: Internal Server Error
+        message: A server-side exception occurred that prevented the system from correctly returning the result.
+    Conflict409_Example:
+      value:
+        code: 409
+        status: Conflict
+        message: Given resource already exists.
+    BadRequest400_AmbiguousTenant:
+      value:
+        code: 400
+        status: Bad Request
+        message: Tenant in the header is not matching with the one provided in the URI.
+    NotFound404_LegalEntityNotFound:
+      value:
+        code: 404
+        status: Not Found
+        message: The legal entity with the requested code does not exist.
+    Forbidden403_Example:
+      value:
+        code: 403
+        status: Forbidden
+        message: The access to the given resource is forbidden.
+    BadRequest400_VersionNotSpecified:
+      value:
+        code: 400
+        status: Bad Request
+        message: The document version has to be provided on update operations.
+  schemas:
+    Conflict409:
+      properties:
+        code:
+          type: integer
+          description: HTTP Status Code.
+          example: 409
+        message:
+          type: string
+          description: Detailed error message.
+          example: There is already availability for product.
+    LocationList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Location'
+    UnexpectedError:
+      properties:
+        code:
+          type: integer
+          description: HTTP Status Code.
+          example: 500
+        status:
+          type: string
+          description: HTTP Status.
+          example: Internal server error.
+        message:
+          type: string
+          description: Detailed error message
+          example: There is internal server error.
+    NotFound404:
+      properties:
+        code:
+          type: integer
+          description: HTTP Status Code.
+          example: 404
+        message:
+          type: string
+          description: Detailed error message.
+          example: The unit with code g has not been found.
+    GenericLocation:
+      type: object
+      properties:
+        site:
+          type: string
+          description: Site code, defined when the site is created.
+          example: shop1
+        zone:
+          type: string
+          description: Unique identifier of the zone.
+          example: zone1
+        rack:
+          type: string
+          description: Rack number.
+          example: '1'
+        rackName:
+          type: string
+          description: Name of the rack.
+          example: Tools
+        shelf:
+          type: string
+          description: Unique identifier of the shelf.
+          example: shelf1
+        section:
+          type: string
+          description: Unique identifier of the section.
+          example: section1
+        bin:
+          type: string
+          description: Unique identifier of the bin.
+          example: bin1
+        order:
+          type: number
+          description: Order of the location, expressed as a number.
+          example: 1
+    SuccessResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: The response message of the operation.
+          example: 'Successfully created location with id: shop1:1234'
+        code:
+          type: number
+          description: The result code of the operation.
+          example: 201
+    ProductLocationList:
+      type: array
+      items:
+        $ref: '#/components/schemas/ProductLocation'
+      description: ''
+    LocationSearch:
+      type: object
+      properties:
+        site:
+          type: string
+          description: Site code, defined when the site is created.
+          example: shop1
+        productIds:
+          type: array
+          description: List of product IDs. A product IDs is generated when the product is created through the Product Service.
+          example:
+          - 5f7c996173fc281cdd412345
+          - 5f7c996173fc281cdd412345
+          items:
+            type: string
+    Location:
+      description: Physical location of the product.
+      type: object
+      properties:
+        id:
+          type: string
+          description: "Unique identifier of the location. \n\n**Note**: The value should be provided in the `site`:`rack` format."
+          example: shop1:1234
+        site:
+          type: string
+          description: Site code, defined when the site is created. The value should match the `site` query/path parameter value.
+          example: shop1
+        rack:
+          type: string
+          description: Rack number.
+          example: '1234'
+        rackName:
+          type: string
+          description: Name of the rack.
+          example: Tools
+        order:
+          type: number
+          description: Order of the location, expressed as a number.
+          example: 1
+          minimum: 0
+      required:
+      - id
+      - site
+      - order
+    BadRequest400:
+      properties:
+        code:
+          type: integer
+          description: HTTP Status Code.
+          example: 400
+        status:
+          type: string
+          description: HTTP Status Description.
+          example: Bad Request
+        message:
+          type: string
+          description: Error message.
+          example: There is a validation error. Please check the details.
+        _embedded:
+          type: object
+          properties:
+            errors:
+              type: array
+              items:
+                type: object
+                properties:
+                  message:
+                    description: Detailed message of the exception.
+                    type: string
+    ProductLocation:
+      type: object
+      properties:
+        productId:
+          type: string
+          description: Unique identifier of the product, generated when the product is created through the Product Service.
+          example: 5f7c996173fc281cdd412345
+        locations:
+          type: array
+          description: List of product physical locations.
+          items:
+            $ref: '#/components/schemas/GenericLocation'
+    Forbidden403:
+      properties:
+        code:
+          type: integer
+          description: HTTP Status Code.
+          example: 403
+        status:
+          type: string
+          description: HTTP Status Description.
+          example: Forbidden
+        message:
+          type: string
+          description: Error message.
+          example: User not authorized.
+    Unauthorized401:
+      properties:
+        fault:
+          type: object
+          properties:
+            faultstring:
+              type: string
+              example: Invalid access token
+            detail:
+              type: object
+              properties:
+                errorcode:
+                  type: string
+                  example: oauth.v2.InvalidAccessToken
+    LocationOrderList:
+      type: array
+      items:
+        $ref: '#/components/schemas/LocationOrder'
+    LocationOrder:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the location.
+          example: shop1:1234
+        order:
+          type: number
+          description: Order of the location, expressed as a number.
+          example: 1
+    metadataUpdate:
+      type: object
+      properties:
+        version:
+          minimum: 1
+          type: integer
+          description: Version of the document.
+        mixins:
+          type: object
+          description: Links to the mixin schemas. A map where the keys represent mixins set attributes and the values represent url to a schema for a particular set.
+          additionalProperties: true
+    locationCreate:
+      title: Location create payload
+      type: object
+      properties:
+        id:
+          type: string
+          description: Custom location identifier. If not provided, it is automatically generated.
+          minLength: 1
+          maxLength: 66
+          pattern: ^[a-zA-Z0-9_-]$
+        name:
+          type: string
+          description: The name of the location,
+        type:
+          type: string
+          enum:
+          - HEADQUARTER
+          - WAREHOUSE
+          - OFFICE
+          description: The type of the location.
+        contactDetails:
+          $ref: '#/components/schemas/contactDetails'
+        metadata:
+          $ref: '#/components/schemas/metadata_create'
+        mixins:
+          type: object
+          description: Mixins request. A map where a key represent mixins set name and a value represent a map with key-value pairs.
+          additionalProperties: true
+      required:
+      - type
+      - contactDetails
+    metadata:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/metadataUpdate'
+      - type: object
+        properties:
+          createdAt:
+            description: Date and time when the document was created.
+            type: string
+          modifiedAt:
+            description: Date and time when the document was last modified.
+            type: string
+    contactDetails:
+      title: Contact Details
+      type: object
+      properties:
+        emails:
+          type: array
+          items:
+            type: string
+          description: The list of contact emails.
+        phones:
+          type: array
+          items:
+            type: string
+          description: The list of contact phone numbers.
+        addressLine1:
+          type: string
+          description: The first address line of the contact.
+        addressLine2:
+          type: string
+          description: The second address line of the contact.
+        city:
+          type: string
+          description: The city of the contact.
+        state:
+          type: string
+          description: The state of the contact.
+        postcode:
+          type: string
+          description: The post code of the contact.
+        countryCode:
+          type: string
+          description: The country code of the contact.
+        tags:
+          type: array
+          items:
+            type: string
+          description: Allows to tag the location.
+    locationUpdate:
+      title: Location update payload
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the location
+        type:
+          type: string
+          enum:
+          - HEADQUARTER
+          - WAREHOUSE
+          - OFFICE
+          description: The type of the location.
+        contactDetails:
+          $ref: '#/components/schemas/contactDetails'
+        metadata:
+          $ref: '#/components/schemas/metadataUpdate'
+        mixins:
+          type: object
+          description: Mixins request. A map where a key represent mixins set name and a value represent a map with key-value pairs.
+          additionalProperties: true
+      required:
+      - type
+      - contactDetails
+    errorMessage:
+      title: Error
+      description: Schema for API specified errors.
+      type: object
+      properties:
+        code:
+          minimum: 100
+          maximum: 599
+          description: Original HTTP error code, should be consistent with the response HTTP code.
+          type: integer
+        status:
+          description: Original HTTP error name.
+          type: string
+        message:
+          description: Descriptive error message for debugging.
+          type: string
+        resourceId:
+          type: string
+          description: Id of the resource.
+        details:
+          description: List of problems causing this error.
+          type: array
+          items:
+            description: Details for specific error cause.
+            type: string
+      required:
+      - status
+      - code
+    metadata_create:
+      title: metadata_create
+      type: object
+      description: Metadata request.
+      properties:
+        mixins:
+          type: object
+          description: Links to the mixin schemas. A map where the keys represent mixins set attributes and the values represent url to a schema for a particular set.
+          additionalProperties: true
+    location:
+      title: Location
+      type: object
+      properties:
+        id:
+          type: string
+          description: The location unique identifier.
+        name:
+          type: string
+          description: The name of the location
+        type:
+          type: string
+          enum:
+          - HEADQUARTER
+          - WAREHOUSE
+          - OFFICE
+          description: The type of the location.
+        contactDetails:
+          $ref: '#/components/schemas/contactDetails'
+        metadata:
+          $ref: '#/components/schemas/metadata'
+        mixins:
+          type: object
+          description: Mixins request. A map where a key represent mixins set name and a value represent a map with key-value pairs.
+          additionalProperties: true
+    locationCreate_2:
+      title: Location create payload
+      type: object
+      properties:
+        id:
+          type: string
+          description: Custom location identifier. If not provided, it is automatically generated.
+          minLength: 1
+          maxLength: 66
+          pattern: ^[a-zA-Z0-9_-]+$
+        name:
+          type: string
+          description: The name of the location
+        type:
+          type: string
+          enum:
+          - HEADQUARTER
+          - WAREHOUSE
+          - OFFICE
+          description: The type of the location.
+        contactDetails:
+          $ref: '#/components/schemas/contactDetails_2'
+        mixins:
+          type: object
+          description: Mixins request. A map where a key represent mixins set name and a value represent a map with key-value pairs.
+          additionalProperties: true
+      required:
+      - type
+      - contactDetails
+    contactDetails_2:
+      title: Contact Details
+      type: object
+      properties:
+        emails:
+          type: array
+          items:
+            type: string
+            format: email
+          description: The list of contact emails.
+          example:
+          - contact@vendorcompany.com
+        phones:
+          type: array
+          items:
+            type: string
+          description: The list of contact phone numbers.
+          example:
+          - +1-555-0123
+        addressLine1:
+          type: string
+          description: The first address line of the contact.
+          example: 123 Industrial Rd
+        city:
+          type: string
+          description: The city of the contact.
+          example: South Bend
+        state:
+          type: string
+          description: The state of the contact.
+          example: Indiana
+        postcode:
+          type: string
+          description: The post code of the contact.
+          example: '46619'
+        countryCode:
+          type: string
+          description: The country code of the contact.
+          example: US
+        tags:
+          type: array
+          items:
+            type: string
+          description: Allows to tag the location.
+    locationUpdate_2:
+      title: Location update payload
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the location.
+        type:
+          type: string
+          enum:
+          - HEADQUARTER
+          - WAREHOUSE
+          - OFFICE
+          description: The type of the location.
+        contactDetails:
+          $ref: '#/components/schemas/contactDetails_2'
+        metadata:
+          $ref: '#/components/schemas/metadataUpdate'
+        mixins:
+          type: object
+          description: Mixins request. A map where a key represent mixins set name and a value represent a map with key-value pairs.
+          additionalProperties: true
+      required:
+      - type
+      - contactDetails
+    location_2:
+      title: Location
+      type: object
+      properties:
+        id:
+          type: string
+          description: The location unique identifier.
+          example: LOC001
+        name:
+          type: string
+          description: The name of the location.
+          example: Main HQ
+        type:
+          type: string
+          enum:
+          - HEADQUARTER
+          - WAREHOUSE
+          - OFFICE
+          description: The type of the location.
+          example: HEADQUARTER
+        contactDetails:
+          $ref: '#/components/schemas/contactDetails_2'
+        metadata:
+          $ref: '#/components/schemas/metadata'
+        mixins:
+          type: object
+          description: Mixins request. A map where a key represent mixins set name and a value represent a map with key-value pairs.
+          additionalProperties: true
+    locationCreate_3:
+      title: Location create payload
+      type: object
+      properties:
+        id:
+          type: string
+          description: Custom location identifier. If not provided, it is automatically generated.
+          minLength: 1
+          maxLength: 66
+          pattern: ^[a-zA-Z0-9_-]+$
+        name:
+          type: string
+          description: The name of the location
+        type:
+          type: string
+          enum:
+          - HEADQUARTER
+          - WAREHOUSE
+          - OFFICE
+          description: The type of the location.
+        contactDetails:
+          $ref: '#/components/schemas/contactDetails_3'
+        mixins:
+          type: object
+          description: Mixins request. A map where a key represent mixins set name and a value represent a map with key-value pairs.
+          additionalProperties: true
+      required:
+      - type
+      - contactDetails
+    contactDetails_3:
+      title: Contact Details
+      type: object
+      properties:
+        emails:
+          type: array
+          items:
+            type: string
+            format: email
+          description: The list of contact emails.
+          example:
+          - contact@vendorcompany.com
+        phones:
+          type: array
+          items:
+            type: string
+          description: The list of contact phone numbers.
+          example:
+          - +1-555-0123
+        addressLine1:
+          type: string
+          description: The first address line of the contact.
+          example: 123 Industrial Rd
+        city:
+          type: string
+          description: The city of the contact.
+          example: South Bend
+        state:
+          type: string
+          description: The state of the contact.
+          example: Indiana
+        postcode:
+          type: string
+          description: The post code of the contact.
+          example: '46619'
+        countryCode:
+          type: string
+          description: The country code of the contact.
+          example: US
+        tags:
+          type: array
+          items:
+            type: string
+          description: Allows to tag the location.
+    locationUpdate_3:
+      title: Location update payload
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the location.
+        type:
+          type: string
+          enum:
+          - HEADQUARTER
+          - WAREHOUSE
+          - OFFICE
+          description: The type of the location.
+        contactDetails:
+          $ref: '#/components/schemas/contactDetails_3'
+        metadata:
+          $ref: '#/components/schemas/metadataUpdate'
+        mixins:
+          type: object
+          description: Mixins request. A map where a key represent mixins set name and a value represent a map with key-value pairs.
+          additionalProperties: true
+      required:
+      - type
+      - contactDetails
+    location_3:
+      title: Location
+      type: object
+      properties:
+        id:
+          type: string
+          description: The location unique identifier.
+          example: LOC001
+        name:
+          type: string
+          description: The name of the location.
+          example: Main HQ
+        type:
+          type: string
+          enum:
+          - HEADQUARTER
+          - WAREHOUSE
+          - OFFICE
+          description: The type of the location.
+          example: HEADQUARTER
+        contactDetails:
+          $ref: '#/components/schemas/contactDetails_3'
+        metadata:
+          $ref: '#/components/schemas/metadata'
+        mixins:
+          type: object
+          description: Mixins request. A map where a key represent mixins set name and a value represent a map with key-value pairs.
+          additionalProperties: true
+  responses:
+    BadRequestResponse400:
+      description: The request was syntactically incorrect. Details are provided in the response.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BadRequest400'
+          example:
+            code: 400
+            status: Bad Request
+            message: There is a validation error. Please check the details.
+            _embedded:
+              errors:
+              - message: Required field missing. Check API documentation.
+    UnauthorizedResponse401:
+      description: The authorization token is invalid or has expired. Details are provided in the response.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Unauthorized401'
+          examples:
+            Expired access token:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+    ForbiddenResponse403:
+      description: Provided authorization scopes are not sufficient and do not match scopes required by the endpoint.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Forbidden403'
+          examples:
+            insufficient_permissions:
+              value:
+                type: insufficient_permissions
+                status: '403'
+                message: User not authorized.
+    NotFoundResponse404:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotFound404'
+          examples:
+            Availability not found:
+              $ref: '#/components/examples/AvailabilityNotFound404'
+    ConflictResponse409:
+      description: Resource already exists.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Conflict409'
+          examples:
+            Conflict:
+              value:
+                status: '409'
+                message: Resource already exists.
+    ServerErrorResponse500:
+      description: Some server-side error occurred. Details are provided in the response.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnexpectedError'
+    BadRequest_400:
+      description: Request was syntactically incorrect. Details will be provided in the response payload.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Ambiguous tenant:
+              $ref: '#/components/examples/BadRequest400_AmbiguousTenant'
+    NotFound_404:
+      description: The requested resource does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Legal Entity not found:
+              $ref: '#/components/examples/NotFound404_LegalEntityNotFound'
+    InternalServiceError_500:
+      description: Internal Service Error occurred.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Internal service error:
+              $ref: '#/components/examples/InternalServiceError500_Example'
+    Forbidden_403:
+      description: Given authorization scopes are not sufficient and do not match scopes required by the endpoint.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Access to resource is forbidden:
+              $ref: '#/components/examples/Forbidden403_Example'
+    BadRequest_400_Update:
+      description: Request was syntactically incorrect. Details will be provided in the response payload.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Ambiguous tenant:
+              $ref: '#/components/examples/BadRequest400_AmbiguousTenant'
+            Document version not specified:
+              $ref: '#/components/examples/BadRequest400_VersionNotSpecified'
+    GetLocations:
+      description: The request was successful. A list of locations is returned.
+      headers:
+        X-Total-Count:
+          description: Total amount of locations.
+          schema:
+            type: integer
+            format: int32
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/location'
+          examples:
+            List of locations:
+              value:
+              - id: 627e06ecf0452c2d6c0b81391
+                name: Main HQ
+                type: HEADQUARTER
+                contactDetails:
+                  emails:
+                  - jon.doe@example.com
+                  - adam.smith@sample.org
+                  phones:
+                  - '1234567890'
+                  - '123456789'
+                  addressLine1: W Sample St
+                  addressLine2: 3601-3799
+                  city: South Bend
+                  state: Indiana
+                  postcode: '46619'
+                  countryCode: US
+                  tags:
+                  - shipping
+                metadata:
+                  createdAt: '2022-03-31T13:18:02.379Z'
+                  modifiedAt: '2022-03-31T13:18:02.379Z'
+                  version: 1
+              - id: 627e06ecf0452c2d6c0b81311
+                name: Main Warehouse
+                type: WAREHOUSE
+                contactDetails:
+                  emails:
+                  - adam.klein@email.com
+                  - dirk.davis@mail.org
+                  phones:
+                  - '6475837467'
+                  - '987654321'
+                  addressLine1: Dircksenstraße
+                  addressLine2: '136'
+                  city: Berlin
+                  state: Berlin
+                  postcode: '10178'
+                  countryCode: DE
+                  tags:
+                  - billing
+                metadata:
+                  createdAt: '2022-04-31T13:18:02.379Z'
+                  modifiedAt: '2022-05-31T13:18:02.379Z'
+                  version: 2
+    GetLocation:
+      description: The request was successful. The requested location is returned.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/location'
+          examples:
+            Requested location:
+              value:
+                id: 627e06ecf0452c2d6c0b81391
+                name: Main HQ
+                type: HEADQUARTER
+                contactDetails:
+                  emails:
+                  - jon.doe@example.com
+                  - adam.smith@sample.org
+                  phones:
+                  - '1234567890'
+                  - '123456789'
+                  addressLine1: W Sample St
+                  addressLine2: 3601-3799
+                  city: South Bend
+                  state: Indiana
+                  postcode: '46619'
+                  countryCode: US
+                  tags:
+                  - shipping
+                metadata:
+                  createdAt: '2022-03-31T13:18:02.379Z'
+                  modifiedAt: '2022-03-31T13:18:02.379Z'
+                  version: 1
+    Unauthorized_401:
+      description: Given request is unauthorized - the authorization token is invalid or has expired. Details will be provided in the response payload.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            Access token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+    Conflict_409:
+      description: Given resource already exists
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Access to resource is forbidden:
+              $ref: '#/components/examples/Conflict409_Example'
+    BadRequest_400_2:
+      description: Request was syntactically incorrect. Details will be provided in the response payload.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+    NotFound_404_2:
+      description: The requested resource does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+    InternalServiceError_500_2:
+      description: Internal Service Error occurred.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+    Forbidden_403_2:
+      description: Given authorization scopes are not sufficient and do not match scopes required by the endpoint.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+    BadRequest_400_Update_2:
+      description: Request was syntactically incorrect. Details will be provided in the response payload.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+    GetLocations_2:
+      description: The request was successful. A list of locations is returned.
+      headers:
+        X-Total-Count:
+          description: Total amount of locations.
+          schema:
+            type: integer
+            format: int32
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/location_2'
+    GetLocation_2:
+      description: The request was successful. The requested location is returned.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/location_2'
+    Unauthorized_401_2:
+      description: Given request is unauthorized - the authorization token is invalid or has expired.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+    Conflict_409_2:
+      description: Given resource already exists
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+    BadRequest_400_3:
+      description: Request was syntactically incorrect. Details will be provided in the response payload.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+    NotFound_404_3:
+      description: The requested resource does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+    InternalServiceError_500_3:
+      description: Internal Service Error occurred.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+    Forbidden_403_3:
+      description: Given authorization scopes are not sufficient and do not match scopes required by the endpoint.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+    BadRequest_400_Update_3:
+      description: Request was syntactically incorrect. Details will be provided in the response payload.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+    GetLocations_3:
+      description: The request was successful. A list of locations is returned.
+      headers:
+        X-Total-Count:
+          description: Total amount of locations.
+          schema:
+            type: integer
+            format: int32
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/location_3'
+    GetLocation_3:
+      description: The request was successful. The requested location is returned.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/location_3'
+    Unauthorized_401_3:
+      description: Given request is unauthorized - the authorization token is invalid or has expired.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+    Conflict_409_3:
+      description: Given resource already exists
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            availability.availability_view: Needed to view availabilities.
+            availability.availability_manage: Needed to manage availabilities.
+            availability.availability_view_by_vendor: Needed to view availabilities belonging to the vendor.
+            availability.availability_manage_by_vendor: Needed to manage availabilities belonging to the vendor.
+x-refined-from:
+- emporix-availability-openapi.yml
+- emporix-client-management-openapi.yml
+- emporix-vendor-service-openapi.yml
+- emporix-availability-openapi.yml
+- emporix-client-management-openapi.yml
+- emporix-vendor-service-openapi.yml

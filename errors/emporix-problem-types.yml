@@ -1,0 +1,88 @@
+generated: '2026-10-18'
+method: derived
+generator: derive-problem-types.py
+source:
+- openapi/emporix-ai-rag-indexer-openapi.yml
+- openapi/emporix-ai-service-openapi.yml
+- openapi/emporix-approval-service-openapi.yml
+- openapi/emporix-audit-logs-changelog-openapi.yml
+- openapi/emporix-availability-openapi.yml
+- openapi/emporix-brand-service-openapi.yml
+- openapi/emporix-cart-openapi.yml
+- openapi/emporix-catalog-openapi.yml
+- openapi/emporix-category-tree-openapi.yml
+- openapi/emporix-checkout-openapi.yml
+- openapi/emporix-client-management-openapi.yml
+- openapi/emporix-configuration-service-openapi.yml
+format: custom
+envelope:
+  media_type: application/json
+  schema: errorMessage
+coverage:
+  operations: 670
+  statuses_declared: 9
+problems:
+- status: 400
+  title: Bad Request
+  description: Request was syntactically incorrect. Details will be provided in the response payload.
+  operations: 458
+  media_types:
+  - application/json
+  schema: ErrorMessage
+- status: 401
+  title: Unauthorized
+  description: Unauthorized
+  operations: 563
+  media_types:
+  - application/json
+  schema: ErrorMessageFault
+- status: 403
+  title: Forbidden
+  description: Given authorization scopes are not sufficient and do not match scopes required by the endpoint.
+  operations: 594
+  media_types:
+  - application/json
+  schema: ErrorMessage
+- status: 404
+  title: Not Found
+  description: The requested resource does not exist.
+  operations: 309
+  media_types:
+  - application/json
+  schema: ErrorMessage
+- status: 409
+  title: Conflict
+  description: Creation failed because there was a conflict with another resource. Details of the error are included
+    in the response payload.
+  operations: 115
+  media_types:
+  - application/json
+  schema: errorMessage
+- status: 413
+  title: Content Too Large
+  description: Media request is too large.
+  operations: 3
+  media_types:
+  - application/json
+  schema: errorMessage
+- status: 422
+  title: Unprocessable Content
+  description: Unprocessable Entity. The payment action is not supported.
+  operations: 6
+  media_types:
+  - application/json
+  schema: coreErrorMessage
+- status: 500
+  title: Internal Server Error
+  description: Some server side error occurred.
+  operations: 362
+  media_types:
+  - application/json
+  schema: errorMessage
+- status: 502
+  title: Bad Gateway
+  description: Upstream dependency was unavailable. Details will be provided in the response payload.
+  operations: 5
+  media_types:
+  - application/json
+  schema: errorMessage

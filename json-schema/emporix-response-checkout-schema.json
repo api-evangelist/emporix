@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-response-checkout-schema.json",
+  "title": "responseCheckout",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-checkout-openapi.yml#/components/schemas/responseCheckout",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "orderId": {
+      "type": "string",
+      "description": "Order’s unique identifier generated when a checkout is triggered."
+    },
+    "paymentDetails": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "checkoutId": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

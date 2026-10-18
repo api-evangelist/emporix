@@ -1,0 +1,273 @@
+openapi: 3.2.0
+info:
+  title: Emporix Double opt-in API
+  version: ''
+  contact:
+    name: Emporix
+    url: https://emporix.com
+    email: documentation@emporix.com
+  description: 'Operations tagged Double opt-in across 2 of this provider''s published API definitions: emporix-customer-management-openapi.yml, emporix-customer-management-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+tags:
+- name: Double opt-in
+  description: Allow option for double opt-in.
+paths:
+  /customer/{tenant}/signup/optin/{token}:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    get:
+      operationId: GET-customer-signup-customer-optin
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerToken'
+              examples:
+                Customer has been automatically logged in:
+                  value:
+                    access_token: HzcnecB5l6STzXhRqU0Zp6hxS0Ay
+                    saas_token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI4NzQxMzI1MCIsImV4cCI6MTYzMjA1NDEzN30.p6g_G5ZbhjlvnObVC2OWGslLWWktxBw8onionfFvm4c
+                    expires_in: 2591999
+                    refresh_token: tMhLYc8pfAqb1g10Z1o7BxABArxXe3db
+                    refresh_token_expires_in: 86399
+                    token_type: Bearer
+        '400':
+          $ref: '#/components/responses/400_bad_request'
+        '401':
+          $ref: '#/components/responses/401_unauthorized'
+      description: 'Creates a customer account using the token obtained through double opt-in.
+
+
+        **Note**: The request needs to be authorized with an anonymous access token.'
+      security:
+      - AnonymousAccessToken: []
+      parameters:
+      - name: token
+        in: path
+        required: true
+        description: 'The token sent in email to customer during account creation.
+
+          '
+        schema:
+          type: string
+      summary: Creating a customer account with double opt-in
+      tags:
+      - Double opt-in
+    servers:
+    - url: https://api.emporix.io
+  /customer/{tenant}/signup/optin/refresh_token:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    post:
+      operationId: POST-customer-refresh-token
+      responses:
+        '202':
+          description: Accepted
+        '400':
+          $ref: '#/components/responses/400_bad_request'
+        '401':
+          $ref: '#/components/responses/401_unauthorized'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshToken'
+            examples:
+              Request example:
+                value:
+                  email: example@customer.com
+        required: true
+      description: 'Resends an account activation link to the customer.
+
+
+        **Note**: The request needs to be authorized with an anonymous access token.'
+      security:
+      - AnonymousAccessToken: []
+      summary: Resending an account activation link to a customer
+      tags:
+      - Double opt-in
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    CustomerToken:
+      description: ''
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/RefreshCustomerToken'
+      properties:
+        saasToken:
+          type: string
+          minLength: 1
+          deprecated: true
+        saas_token:
+          type: string
+          minLength: 1
+        initialPassword:
+          type: string
+          description: Indicates if login was performed with password created by an employee
+    ErrorMessage:
+      title: ''
+      description: Schema for API-specific errors.
+      type: object
+      properties:
+        status:
+          minimum: 100
+          maximum: 599
+          description: Original HTTP error code. It should be consistent with the HTTP response code.
+          type: integer
+        type:
+          pattern: '[a-z]+[a-z_]*[a-z]+'
+          description: 'Classification of the error type.
+
+            **Note:** The error type should be written in lowercase and include underscores, for example `validation_failure`.'
+          type: string
+        message:
+          description: Descriptive error message for debugging purposes.
+          type: string
+        moreInfo:
+          type: string
+          description: More information (such as a link to the documentation) for investigating further and getting support.
+        details:
+          description: List of problems causing the error.
+          type: array
+          items:
+            title: errorDetail
+            description: Specific error cause.
+            type: object
+            properties:
+              field:
+                description: 'Element in request data which is causing the error, for example `category.name`.
+
+                  If the violation was not field-specific, this field will be empty.'
+                type: string
+              type:
+                pattern: '[a-z]+[a-z_]*[a-z]+'
+                description: 'Classification of the specific error cause. This value should always be interpreted within the context of the general error type.
+
+                  **Note:** The error type should be written in lowercase and include underscores, for example `missing_value`.'
+                type: string
+              message:
+                description: Descriptive error message for debugging purposes.
+                type: string
+              moreInfo:
+                type: string
+                description: More information (such as a link to the documentation) for investigating further and getting support.
+    RefreshCustomerToken:
+      description: ''
+      type: object
+      properties:
+        accessToken:
+          type: string
+          minLength: 1
+          deprecated: true
+        expiresIn:
+          type: number
+          format: int32
+          deprecated: true
+        refreshToken:
+          type: string
+          minLength: 1
+          deprecated: true
+        refreshTokenExpiresIn:
+          type: number
+          format: int32
+          deprecated: true
+        access_token:
+          type: string
+          minLength: 1
+        expires_in:
+          type: number
+          format: int32
+        refresh_token:
+          type: string
+          minLength: 1
+        refresh_token_expires_in:
+          type: number
+          format: int32
+        token_type:
+          type: string
+        session_id:
+          type: string
+    RefreshToken:
+      type: object
+      properties:
+        email:
+          type: string
+          description: Customer email address.
+      required:
+      - email
+  responses:
+    400_bad_request:
+      description: Request was syntactically incorrect. Details will be provided in the response payload.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Invalid tenant:
+              value:
+                type: bad_request
+                status: 400
+                message: The tenant information provided with the request is not valid.
+    401_unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            Access token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+  parameters:
+    tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: The tenant should always be written in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+  securitySchemes:
+    CustomerAccessToken:
+      type: http
+      scheme: bearer
+      description: To generate a customer access token, go to the [Logging in a customer](https://developer.emporix.io/api-documentation/api-guides/companies-and-customers/customer-management/api-reference/authentication-and-authorization#post-customer-tenant-login) endpoint.
+    AnonymousAccessToken:
+      type: http
+      scheme: bearer
+      description: To generate an anonymous token, check out the [Requesting an anonymous token](https://developer.emporix.io/api-documentation/api-guides/companies-and-customers/customer-management/api-reference/authentication-and-authorization#get-customerlogin-auth-anonymous-login) endpoint.
+x-refined-from:
+- emporix-customer-management-openapi.yml
+- emporix-customer-management-openapi.yml

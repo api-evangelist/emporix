@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-job-request-schema.json",
+  "title": "JobRequest",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-invoice-openapi.yml#/components/schemas/JobRequest",
+  "type": "object",
+  "properties": {
+    "orderIds": {
+      "type": "array",
+      "description": "A list of order IDs for which the invoices should be created.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "jobType": {
+      "enum": [
+        "AUTOMATIC",
+        "MANUAL"
+      ],
+      "type": "string",
+      "description": "A job type determines if the orders are searched automatically based on parameters configured in configuration service or are manually provided in orderIds array."
+    }
+  },
+  "required": [
+    "jobType"
+  ]
+}

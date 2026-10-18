@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-category-tree-response-schema.json",
+  "title": "CategoryTreeResponse",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-customer-segments-openapi.yml#/components/schemas/CategoryTreeResponse",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string",
+        "description": "Unique identifier of an existing category."
+      },
+      "code": {
+        "type": "string",
+        "description": "Unique code of an existing category."
+      },
+      "name": {
+        "type": "object",
+        "description": "Localized name of the category.",
+        "additionalProperties": {
+          "type": "string"
+        }
+      },
+      "localizedDescription": {
+        "type": "object",
+        "description": "Localized description of the category.",
+        "additionalProperties": {
+          "type": "string"
+        }
+      },
+      "localizedSlug": {
+        "type": "object",
+        "description": "Localized category name or code without diacritics for the URL.",
+        "additionalProperties": {
+          "type": "string"
+        }
+      },
+      "ecn": {
+        "type": "array",
+        "description": "List of external category numbers (ECNs) unique for every category.",
+        "items": {
+          "type": "string"
+        }
+      },
+      "validity": {
+        "type": "object",
+        "description": "Indicates the time frame in which the category is valid.",
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "to": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "position": {
+        "type": "integer",
+        "description": "Category's position, set in relation to the categories on the same level (sharing the same parent) in the tree."
+      },
+      "published": {
+        "type": "boolean",
+        "description": "Indicates whether the category has been published or not."
+      },
+      "isSegmentAssigned": {
+        "type": "boolean",
+        "description": "Indicates if the category is assigned to any segment."
+      },
+      "subcategories": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "description": "Subcategories of this category."
+        }
+      }
+    },
+    "required": [
+      "id",
+      "code",
+      "name",
+      "isSegmentAssigned"
+    ]
+  }
+}

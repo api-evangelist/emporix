@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-vendor-create-schema.json",
+  "title": "Vendor create payload",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-vendor-service-openapi.yml#/components/schemas/vendorCreate",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Custom vendor identifier. If not provided, it is automatically generated.",
+      "minLength": 1,
+      "maxLength": 66,
+      "pattern": "^[a-zA-Z0-9_-]+$"
+    },
+    "name": {
+      "type": "string",
+      "description": "The name of the vendor."
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "COMPANY",
+        "SUBSIDIARY"
+      ],
+      "description": "The type of the vendor. If not provided, the default value is: `COMPANY`."
+    },
+    "parentId": {
+      "type": "string",
+      "description": "The ID of the parent vendor."
+    },
+    "legalInfo": {
+      "$ref": "#/$defs/legalInfo"
+    },
+    "contactDetails": {
+      "type": "array",
+      "description": "The list of contact details for the vendor.",
+      "items": {
+        "$ref": "#/$defs/vendorContactDetails"
+      }
+    },
+    "locations": {
+      "type": "array",
+      "description": "The list of location IDs assigned to the vendor.",
+      "items": {
+        "$ref": "#/$defs/resourceId"
+      }
+    },
+    "mixins": {
+      "type": "object",
+      "description": "Mixins request. A map where a key represent mixins set name and a value represent a map with key-value pairs.",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "$defs": {
+    "legalInfo": {
+      "title": "Vendor Legal Information",
+      "type": "object",
+      "properties": {
+        "legalName": {
+          "type": "string",
+          "description": "The legal name of the vendor."
+        },
+        "registrationDate": {
+          "type": "string",
+          "description": "The registration date of the vendor in the ISO 8601 format."
+        },
+        "countryOfRegistration": {
+          "type": "string",
+          "description": "The country in which the vendor has been registered."
+        },
+        "taxRegistrationNumber": {
+          "type": "string",
+          "description": "The tax registration number of the vendor."
+        }
+      }
+    },
+    "resourceId": {
+      "title": "Resource",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Id of a resource."
+        }
+      }
+    },
+    "vendorContactDetails": {
+      "title": "Contact Details",
+      "type": "object",
+      "properties": {
+        "emails": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "email"
+          },
+          "description": "The list of contact emails."
+        },
+        "phones": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The list of contact phone numbers."
+        },
+        "addressLine1": {
+          "type": "string",
+          "description": "The first address line of the contact."
+        },
+        "city": {
+          "type": "string",
+          "description": "The city of the contact."
+        },
+        "state": {
+          "type": "string",
+          "description": "The state of the contact."
+        },
+        "postcode": {
+          "type": "string",
+          "description": "The post code of the contact."
+        },
+        "countryCode": {
+          "type": "string",
+          "description": "The country code of the contact."
+        }
+      },
+      "required": [
+        "email"
+      ]
+    }
+  }
+}

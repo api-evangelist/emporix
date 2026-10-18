@@ -1,0 +1,323 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-match-response-schema.json",
+  "title": "matchResponse",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-price-service-openapi.yml#/components/schemas/matchResponse",
+  "type": "object",
+  "properties": {
+    "priceId": {
+      "type": "string",
+      "description": "Price's unique identifier, generated when the price is created.\n"
+    },
+    "priceListId": {
+      "type": "string",
+      "description": "Price list's unique identifier. The property is populated only in case when the return price belongs to any price list.\n"
+    },
+    "itemRef": {
+      "type": "object",
+      "description": "Item (product or price) for which the price was matched.",
+      "properties": {
+        "itemType": {
+          "type": "string",
+          "description": "Type of the retrieved item. Possible values:\n* `PRODUCT`\n* `SKU`\n\n  **The `SKU` value is in preview mode** - the system does not fully operate on the SKU concept yet."
+        },
+        "id": {
+          "type": "string",
+          "description": "Item's unique identifier, generated when the item is created.\n"
+        }
+      }
+    },
+    "site": {
+      "type": "object",
+      "description": "Site to which the matched price applies.",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Code of the site to which the matched price applies."
+        },
+        "includesTax": {
+          "type": "boolean",
+          "description": "Flag indicating whether prices assigned to the site are expressed as net or gross.\n\n| Value | Description |\n| --- | --- |\n| `true` | Prices are expressed as gross values. |\n| `false` | Prices are expressed as net values. |\n\n**Note**: If not specified, the retrieved price is net or gross depending on the `includesTax` field in the price's model."
+        }
+      }
+    },
+    "currency": {
+      "type": "string",
+      "description": "Currency related to the price."
+    },
+    "location": {
+      "type": "object",
+      "description": "Location for which the matched price is defined.",
+      "properties": {
+        "countryCode": {
+          "type": "string",
+          "description": "Code of the country to which the matched price applies."
+        }
+      }
+    },
+    "originalValue": {
+      "type": "number",
+      "description": "Represents an original value without any discounts for a single unit of the requested item (PRODUCT or SKU). The value is a gross price (if includesTax is true) or net price (if includesTax is false).\n\nIt's worth to mention that the cent part is not limited just to two digits. For example, if the price is for one piece of screw, it could look like this: 0.0000317"
+    },
+    "effectiveValue": {
+      "type": "number",
+      "description": "Represents a value with a discount (if applicable) for a single unit of the requested item (PRODUCT or SKU). The value is a gross price (if includesTax is true) or net price (if includesTax is false).\n\nIt's worth to mention that the cent part is not limited just to two digits. For example, if the price is for one piece of screw, it could look like this: 0.0000317"
+    },
+    "totalValue": {
+      "type": "number",
+      "description": "Represents a total value with a discount (if applicable) for all units of the requested item (PRODUCT or SKU). The value is a gross price (if includesTax is true) or net price (if includesTax is false).\n\nIt's worth to mention that the cent part is not limited just to two digits. For example, if the price is for one piece of screw, it could look like this: 0.0000317"
+    },
+    "quantity": {
+      "$ref": "#/$defs/measurementUnit"
+    },
+    "salePrice": {
+      "$ref": "#/$defs/salePrice"
+    },
+    "includesTax": {
+      "type": "boolean",
+      "description": "Flag indicating whether prices assigned to the price model are expressed as net or gross.\n\n| Value | Description |\n| --- | --- |\n| `true` | Prices are expressed as gross values. |\n| `false` | Prices are expressed as net values. |"
+    },
+    "priceModel": {
+      "$ref": "#/$defs/priceModelRetrieval"
+    },
+    "tax": {
+      "type": "object",
+      "description": "Sales tax applicable to the product.",
+      "properties": {
+        "taxClass": {
+          "type": "string",
+          "description": "Tax class's code, as defined in the Tax Service.\n"
+        },
+        "taxRate": {
+          "type": "number",
+          "description": "Tax rate expressed as a number."
+        },
+        "prices": {
+          "type": "object",
+          "description": "Tax details containing all prices with tax.",
+          "properties": {
+            "originalValue": {
+              "type": "object",
+              "description": "Original price with taxes.",
+              "properties": {
+                "netValue": {
+                  "type": "number"
+                },
+                "grossValue": {
+                  "type": "number"
+                },
+                "taxValue": {
+                  "type": "number"
+                }
+              }
+            },
+            "effectiveValue": {
+              "type": "object",
+              "description": "Effective price with taxes.",
+              "properties": {
+                "netValue": {
+                  "type": "number"
+                },
+                "grossValue": {
+                  "type": "number"
+                },
+                "taxValue": {
+                  "type": "number"
+                }
+              }
+            },
+            "totalValue": {
+              "type": "object",
+              "description": "Total price with taxes.",
+              "properties": {
+                "netValue": {
+                  "type": "number"
+                },
+                "grossValue": {
+                  "type": "number"
+                },
+                "taxValue": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "mixins": {
+      "type": "object",
+      "description": "Custom price attributes.",
+      "additionalProperties": true
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "string",
+          "description": "Version of the price object."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Date and time when the matched price was created."
+        },
+        "modifiedAt": {
+          "type": "string",
+          "description": "Date and time when the matched price was last modified."
+        }
+      }
+    },
+    "tierValues": {
+      "type": "array",
+      "description": "A price tiers values for a matched price",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Identifier of a tier"
+          },
+          "priceValue": {
+            "type": "number",
+            "description": "A price value for a particular tier"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "measurementUnit": {
+      "type": "object",
+      "description": "Measurement unit for which the price is defined.",
+      "properties": {
+        "quantity": {
+          "minimum": 0,
+          "description": "Quantity of the measurement unit.",
+          "type": "number"
+        },
+        "unitCode": {
+          "description": "Code of the measurement unit, as defined in the Unit Handling Service.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "quantity",
+        "unitCode"
+      ],
+      "title": ""
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "createdAt": {
+          "description": "Date and time when the price was created.",
+          "type": "string"
+        },
+        "modifiedAt": {
+          "description": "Date and time when the price was last modified.",
+          "type": "string"
+        },
+        "version": {
+          "minimum": 1,
+          "type": "integer",
+          "description": "Version of the price object. If provided optimistic locking will be enabled and it has to match version in the database"
+        }
+      }
+    },
+    "priceModelRetrieval": {
+      "description": "Price model holds additional attributes that are extending price. For example it's possible to define a price which will be specific for a given customer or customer group.\n",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Price model's unique identifier, generated when the price model is created.\n"
+        },
+        "name": {
+          "oneOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "description": {
+          "oneOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "includesTax": {
+          "type": "boolean",
+          "description": "Flag indicating whether prices assigned to the price model are expressed as net or gross.\n\n| Value | Description |\n| --- | --- |\n| `true` | Prices are expressed as gross values. |\n| `false` | Prices are expressed as net values. |\n"
+        },
+        "includesMarkup": {
+          "type": "boolean",
+          "description": "Flag indicating whether prices assigned to the price model include markup.\n\n**The `includesMarkup` field is in preview mode** - some of the features may not be fully operational yet.\n"
+        },
+        "measurementUnit": {
+          "$ref": "#/$defs/measurementUnit"
+        },
+        "tierDefinition": {
+          "type": "object",
+          "properties": {
+            "tierType": {
+              "type": "string",
+              "description": "If the price is created based on a price model (the `priceModelId` is provided, the field should stay null. Otherwise the provided value will override a value from price model.\n\nPossible values:\n* `BASIC`\n* `VOLUME`\n* `TIERED`\n\n`BASIC`: Used to offer the same price per unit, regardless of the ordered quantity.\n\n  **Note**: When using basic pricing, you need to define a single tier and set its `minQuantity` field to `0`.\n\n`VOLUME`: Used to offer a lower price per unit depending on the total ordered quantity.\n\n`TIERED`: Used to offer a lower price per unit based on the tiers that the total ordered quantity falls into.\n\n  **Example**: You defined three tiers, starting at 5, 10, and 15 pieces respectively. A customer orders 16 pieces. In this pricing model, the first 5 pieces will be priced according to the first tier, the next 5 according to the second tier, and the 16th piece will be priced according to the third tier."
+            },
+            "tiers": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "minQuantity": {
+                    "$ref": "#/$defs/measurementUnit"
+                  },
+                  "id": {
+                    "type": "string",
+                    "description": "Identifier of a given tier."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "isDefault": {
+          "type": "boolean",
+          "description": "Indicates if the price model is a default price model."
+        },
+        "metadata": {
+          "$ref": "#/$defs/metadata"
+        }
+      }
+    },
+    "salePrice": {
+      "type": "object",
+      "properties": {
+        "discountAmount": {
+          "minimum": 0,
+          "description": "Discount expressed as a fixed amount.",
+          "type": "number"
+        },
+        "discountRate": {
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Discount expressed as a percentage of the original price.",
+          "type": "number"
+        },
+        "description": {
+          "description": "Additional information about the discount.",
+          "type": "string"
+        }
+      }
+    }
+  }
+}

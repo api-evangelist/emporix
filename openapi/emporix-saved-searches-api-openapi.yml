@@ -1,0 +1,879 @@
+openapi: 3.2.0
+info:
+  title: Emporix Saved Searches API
+  version: ''
+  contact:
+    name: Emporix
+    url: https://www.emporix.com/contact-us
+  description: 'Operations tagged Saved Searches across 2 of this provider''s published API definitions: emporix-search-service-openapi.yml, emporix-search-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Saved Searches
+paths:
+  /search/{tenant}/search/queries:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    get:
+      summary: Retrieving all saved searches
+      operationId: GET-search-tenant-queries
+      tags:
+      - Saved Searches
+      description: '!Preview
+
+
+        {% hint style="danger" %}
+
+        This functionality is in preview mode - some of the features may not be fully operational yet.
+
+        {% endhint %}
+
+
+        Retrieves the saved searches for every custom schema type on the tenant. Each item includes `type`.'
+      security:
+      - OAuth2:
+        - search.search_read
+      parameters:
+      - $ref: '#/components/parameters/query_pageNumber'
+      - $ref: '#/components/parameters/query_pageSize'
+      - $ref: '#/components/parameters/query_sort_createdAt'
+      - $ref: '#/components/parameters/query_q'
+      - $ref: '#/components/parameters/query_fields_query'
+      - $ref: '#/components/parameters/header_Accept-Language'
+      - $ref: '#/components/parameters/header_X-Total-Count'
+      responses:
+        '200':
+          description: The request succeeded. The body is the current page of saved searches.
+          headers:
+            X-Total-Count:
+              description: Number of saved searches. Present only when the request `X-Total-Count` header is `true`.
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SavedQuery'
+              examples:
+                Saved searches for a tenant:
+                  value:
+                  - id: red-cars
+                    type: VEHICLE
+                    name:
+                      en: Red cars
+                    description:
+                      en: Vehicles whose name contains red
+                    indexId: vehicles
+                    queries:
+                      type: TEXT
+                      query: red
+                      field: name.en
+                    metadata:
+                      version: 1
+                      createdAt: '2026-03-12T10:00:00.000Z'
+                      modifiedAt: '2026-03-12T10:00:00.000Z'
+                  - id: city-bikes
+                    type: BIKE
+                    name:
+                      en: City bikes
+                    description:
+                      en: Bikes whose name contains city
+                    indexId: bikes
+                    queries:
+                      type: TEXT
+                      query: city
+                      field: name.en
+                    metadata:
+                      version: 1
+                      createdAt: '2026-03-13T10:00:00.000Z'
+                      modifiedAt: '2026-03-13T10:00:00.000Z'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_search_read'
+        '500':
+          $ref: '#/components/responses/500_resp_common'
+    servers:
+    - url: https://api.emporix.io
+  /search/{tenant}/search/{type}/queries:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    - $ref: '#/components/parameters/path_type'
+    get:
+      summary: Retrieving saved searches
+      operationId: GET-search-tenant-type-queries
+      tags:
+      - Saved Searches
+      description: '!Preview
+
+
+        {% hint style="danger" %}
+
+        This functionality is in preview mode - some of the features may not be fully operational yet.
+
+        {% endhint %}
+
+
+        Retrieves the saved searches for one custom schema type.
+
+
+        When `sort` is omitted, saved searches are ordered by `metadata.createdAt` descending. When the `X-Total-Count` request header is `true`, the response includes the `X-Total-Count` header with the number of saved searches. The response body stays an array.'
+      security:
+      - OAuth2:
+        - search.search_read
+      parameters:
+      - $ref: '#/components/parameters/query_pageNumber'
+      - $ref: '#/components/parameters/query_pageSize'
+      - $ref: '#/components/parameters/query_sort_createdAt'
+      - $ref: '#/components/parameters/query_q'
+      - $ref: '#/components/parameters/query_fields_query'
+      - $ref: '#/components/parameters/header_Accept-Language'
+      - $ref: '#/components/parameters/header_X-Total-Count'
+      responses:
+        '200':
+          description: The request succeeded. The body is the current page of saved searches.
+          headers:
+            X-Total-Count:
+              description: Number of saved searches. Present only when the request `X-Total-Count` header is `true`.
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SavedQuery'
+              examples:
+                Saved searches for a type:
+                  value:
+                  - id: red-cars
+                    type: VEHICLE
+                    name:
+                      en: Red cars
+                    description:
+                      en: Vehicles whose name contains red
+                    indexId: vehicles
+                    queries:
+                      type: TEXT
+                      query: red
+                      field: name.en
+                    metadata:
+                      version: 1
+                      createdAt: '2026-03-12T10:00:00.000Z'
+                      modifiedAt: '2026-03-12T10:00:00.000Z'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_search_read'
+        '500':
+          $ref: '#/components/responses/500_resp_common'
+    servers:
+    - url: https://api.emporix.io
+  /search/{tenant}/search/{type}/queries/{id}:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    - $ref: '#/components/parameters/path_type'
+    - $ref: '#/components/parameters/path_query_id'
+    put:
+      summary: Upserting a saved search
+      operationId: PUT-search-tenant-type-queries-id
+      tags:
+      - Saved Searches
+      description: '!Preview
+
+
+        {% hint style="danger" %}
+
+        This functionality is in preview mode - some of the features may not be fully operational yet.
+
+        {% endhint %}
+
+
+        Creates or replaces the saved search identified by `{id}` for one custom schema type. Unknown properties in the body are ignored. Saving does not start an index build.
+
+
+        A new saved search returns `201 Created` and the saved search id. Replacing an existing saved search returns `204 No Content`. `index` must already exist for this type. The body must include `queries`, `filters`, or both.
+
+
+        `metadata` can be omitted when the saved search is created. An update requires `metadata.version`.'
+      security:
+      - OAuth2:
+        - search.search_manage
+      parameters:
+      - $ref: '#/components/parameters/header_Content-Language'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SavedQueryRequest'
+            examples:
+              Create a saved search:
+                value:
+                  name:
+                    en: Red cars
+                  description:
+                    en: Vehicles whose name contains red
+                  index: vehicles
+                  queries:
+                    type: TEXT
+                    query: red
+                    field: name.en
+                    boost: 2
+      responses:
+        '201':
+          description: The saved search was created. The body is the saved search id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavedQueryId'
+              examples:
+                Saved search created:
+                  value:
+                    id: red-cars
+        '204':
+          description: The saved search was replaced. The response has no body.
+        '400':
+          description: The saved search id, criteria, or metadata version is invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+              examples:
+                Index is required:
+                  value:
+                    code: 400
+                    status: '400'
+                    message: Index is required.
+                Queries or filters are required:
+                  value:
+                    code: 400
+                    status: '400'
+                    message: Queries or filters are required.
+                Version is required:
+                  value:
+                    code: 400
+                    status: '400'
+                    message: metadata.version is required to update a query.
+                Query id does not match the path:
+                  value:
+                    code: 400
+                    status: '400'
+                    message: Query id must match the path.
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_search_manage'
+        '404':
+          description: No index with the id in `index` exists for this type.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+              examples:
+                Index not found:
+                  value:
+                    code: 404
+                    status: '404'
+                    message: The index with id='vehicles' has not been found on tenant='acme'.
+        '409':
+          description: '`metadata.version` does not match the stored saved search.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+              examples:
+                Version does not match:
+                  value:
+                    code: 409
+                    status: '409'
+                    message: 'Cannot find the entity with an id: red-cars--VEHICLE and version: 2. It is possible to update an entity with the latest version only. Fetch the entity to get the latest version.'
+        '500':
+          $ref: '#/components/responses/500_resp_common'
+    get:
+      summary: Retrieving a saved search
+      operationId: GET-search-tenant-type-queries-id
+      tags:
+      - Saved Searches
+      description: '!Preview
+
+
+        {% hint style="danger" %}
+
+        This functionality is in preview mode - some of the features may not be fully operational yet.
+
+        {% endhint %}
+
+
+        Retrieves one saved search.'
+      security:
+      - OAuth2:
+        - search.search_read
+      parameters:
+      - $ref: '#/components/parameters/query_fields_query'
+      - $ref: '#/components/parameters/header_Accept-Language'
+      responses:
+        '200':
+          description: The request succeeded. The body is the saved search.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavedQuery'
+              examples:
+                One saved search:
+                  value:
+                    id: red-cars
+                    type: VEHICLE
+                    name:
+                      en: Red cars
+                    description:
+                      en: Vehicles whose name contains red
+                    indexId: vehicles
+                    queries:
+                      type: TEXT
+                      query: red
+                      field: name.en
+                      boost: 2
+                    metadata:
+                      version: 1
+                      createdAt: '2026-03-12T10:00:00.000Z'
+                      modifiedAt: '2026-03-12T10:00:00.000Z'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_search_read'
+        '404':
+          description: No saved search with this id exists for the type.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+              examples:
+                Saved search not found:
+                  value:
+                    code: 404
+                    status: '404'
+                    message: The search query with id='red-cars' has not been found on tenant='acme'.
+        '500':
+          $ref: '#/components/responses/500_resp_common'
+    delete:
+      summary: Deleting a saved search
+      operationId: DELETE-search-tenant-type-queries-id
+      tags:
+      - Saved Searches
+      description: '!Preview
+
+
+        {% hint style="danger" %}
+
+        This functionality is in preview mode - some of the features may not be fully operational yet.
+
+        {% endhint %}
+
+
+        Deletes one saved search. Deleting does not start an index build.'
+      security:
+      - OAuth2:
+        - search.search_manage
+      responses:
+        '204':
+          description: The saved search was deleted. The response has no body.
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_search_manage'
+        '404':
+          description: No saved search with this id exists for the type.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+              examples:
+                Saved search not found:
+                  value:
+                    code: 404
+                    status: '404'
+                    message: The search query with id='red-cars' has not been found on tenant='acme'.
+        '500':
+          $ref: '#/components/responses/500_resp_common'
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    ErrorMessage:
+      type: object
+      description: Error returned for a failed request.
+      properties:
+        code:
+          type: integer
+          description: HTTP status code.
+        status:
+          type: string
+          description: HTTP status code as text.
+        message:
+          type: string
+          description: Explanation of the failure.
+        details:
+          type: array
+          description: Field-level or scope-level messages, when the failure has more than one part.
+          items:
+            type: object
+            properties:
+              message:
+                type: string
+                description: One part of the failure.
+    ResourceMetadata:
+      type: object
+      description: Version and timestamps for a stored resource.
+      properties:
+        version:
+          type: integer
+          description: Stored version. The first version is 1.
+          example: 1
+        createdAt:
+          type: string
+          format: date-time
+          description: Time when the resource was created.
+          example: '2026-03-12T10:00:00.000Z'
+        modifiedAt:
+          type: string
+          format: date-time
+          description: Time when the resource was last modified.
+          example: '2026-03-12T10:04:00.000Z'
+    SearchType:
+      type: string
+      description: 'Match mode.
+
+
+        * `TEXT` matches the query tokens.
+
+        * `PHRASE` matches the query as adjacent words in order.
+
+        * `AUTOCOMPLETE` matches the index field''s autocomplete mode. `PREFIX` matches the start of a word. `NGRAM` matches a character sequence inside a word.
+
+        * `WILDCARD` matches a pattern. `*` matches any number of characters. `?` matches one character. Fuzzy matching is not supported.'
+      enum:
+      - TEXT
+      - PHRASE
+      - AUTOCOMPLETE
+      - WILDCARD
+    SavedQueryRequest:
+      type: object
+      description: Definition of a saved search. Unknown properties are ignored. The body must include `queries`, `filters`, or both. `index` must already exist for the schema type.
+      properties:
+        id:
+          type: string
+          description: Saved search id. Optional. When it is present, it must equal the `{id}` path parameter.
+          example: red-cars
+        name:
+          type: object
+          additionalProperties:
+            type: string
+          description: Localized name of the saved search.
+          example:
+            en: Red cars
+        description:
+          type: object
+          additionalProperties:
+            type: string
+          description: Localized description of the saved search.
+          example:
+            en: Vehicles whose name contains red
+        index:
+          type: string
+          description: Id of the search index this saved search uses.
+          example: vehicles
+        queries:
+          description: Queries stored with the saved search. A list is stored as one `or` group. A single query object is stored unchanged.
+          oneOf:
+          - type: array
+            items:
+              $ref: '#/components/schemas/QueryNode'
+          - $ref: '#/components/schemas/QueryNode'
+        filters:
+          $ref: '#/components/schemas/FilterNode'
+        metadata:
+          $ref: '#/components/schemas/QueryMetadataRequest'
+      required:
+      - index
+      anyOf:
+      - required:
+        - queries
+      - required:
+        - filters
+    Fuzzy:
+      type: object
+      description: Edit-distance matching. Supported only when `type` is `TEXT` and `enabled` is `true`.
+      properties:
+        enabled:
+          type: boolean
+          description: When `true`, matches that are one or two edits from the query are included.
+        maxEdits:
+          type: integer
+          description: Maximum edit distance. Required when `enabled` is `true`. Allowed values are 1 and 2.
+          enum:
+          - 1
+          - 2
+    FilterNode:
+      type: object
+      description: 'One filter node. A node is an `and` group, an `or` group, or a comparison. Do not combine those forms in the same object.
+
+
+        Comparison fields must be indexed on the index named by `index`.'
+      properties:
+        and:
+          type: array
+          minItems: 1
+          description: Every child must match. The group must not be empty.
+          items:
+            $ref: '#/components/schemas/FilterNode'
+        or:
+          type: array
+          minItems: 1
+          description: At least one child must match. The group must not be empty.
+          items:
+            $ref: '#/components/schemas/FilterNode'
+        field:
+          type: string
+          description: Document field to compare. `id` is stored as `_id`.
+          example: status
+        operator:
+          $ref: '#/components/schemas/FilterOperator'
+        value:
+          description: 'Comparison value. The shape depends on `operator`.
+
+
+            * `EQ`, `NEQ`, `GT`, `GTE`, `LT`, and `LTE` require one value.
+
+            * `BETWEEN` requires an array of two values. The range is inclusive.
+
+            * `IN` and `NOT_IN` require a non-empty array.
+
+            * `EXISTS` requires a boolean. `true` matches documents where the field is present. `false` matches documents where the field is absent.
+
+            * `CONTAINS` requires a non-blank string. The field must have `text: true` in the index.'
+    SavedQueryId:
+      type: object
+      description: Identifier of a created saved search.
+      properties:
+        id:
+          type: string
+          description: Saved search id.
+          example: red-cars
+      required:
+      - id
+    ErrorMessageFault:
+      type: object
+      description: Authorization error returned by the API gateway.
+      properties:
+        fault:
+          type: object
+          properties:
+            faultstring:
+              type: string
+              description: Authorization failure.
+            detail:
+              type: object
+              properties:
+                errorcode:
+                  type: string
+                  description: Gateway error code.
+    FilterOperator:
+      type: string
+      description: 'Comparison applied to `field` and `value`.
+
+
+        `CONTAINS` performs a case- and diacritic-insensitive substring match. The service wraps the value in `*` and escapes `\`, `*`, and `?` within it. Spaces remain part of the value.'
+      enum:
+      - EQ
+      - NEQ
+      - GT
+      - GTE
+      - LT
+      - LTE
+      - BETWEEN
+      - IN
+      - NOT_IN
+      - EXISTS
+      - CONTAINS
+    SavedQuery:
+      type: object
+      description: One stored saved search. The request field `index` is returned as `indexId`. `queries` is one query node. A list sent on save is returned as one `or` group.
+      properties:
+        id:
+          type: string
+          description: Saved search id.
+          example: red-cars
+        name:
+          type: object
+          additionalProperties:
+            type: string
+          description: Localized name of the saved search.
+          example:
+            en: Red cars
+        description:
+          type: object
+          additionalProperties:
+            type: string
+          description: Localized description of the saved search.
+          example:
+            en: Vehicles whose name contains red
+        type:
+          type: string
+          description: Custom schema type this saved search belongs to.
+          example: VEHICLE
+        indexId:
+          type: string
+          description: Id of the search index this saved search uses.
+          example: vehicles
+        queries:
+          $ref: '#/components/schemas/QueryNode'
+        filters:
+          $ref: '#/components/schemas/FilterNode'
+        metadata:
+          $ref: '#/components/schemas/ResourceMetadata'
+    QueryMetadataRequest:
+      type: object
+      description: Optimistic lock for a saved search update. Required when the saved search already exists.
+      properties:
+        version:
+          type: integer
+          minimum: 1
+          description: Current stored version. Required on update. A missing version on update returns 400. A version that does not match the stored saved search returns 409.
+          example: 1
+      required:
+      - version
+    QueryNode:
+      type: object
+      description: One query node. A node is an `and` group, an `or` group, or one query. Do not combine those forms in the same object.
+      properties:
+        and:
+          type: array
+          description: Every child must match.
+          items:
+            $ref: '#/components/schemas/QueryNode'
+        or:
+          type: array
+          description: Any child must match.
+          items:
+            $ref: '#/components/schemas/QueryNode'
+        type:
+          $ref: '#/components/schemas/SearchType'
+        query:
+          type: string
+          description: Text or pattern to match.
+          example: diesel engine
+        field:
+          type: string
+          description: Document field to match. `id` is stored as `_id`.
+          example: name.en
+        boost:
+          type: number
+          default: 1
+          description: Score multiplier for matches on this field. The default is 1.
+          example: 2
+          exclusiveMinimum: 0
+        fuzzy:
+          $ref: '#/components/schemas/Fuzzy'
+  parameters:
+    header_X-Total-Count:
+      name: X-Total-Count
+      in: header
+      required: false
+      description: Flag indicating whether the total count of retrieved items should be returned.
+      schema:
+        default: false
+        type: boolean
+    query_q:
+      name: q
+      in: query
+      description: 'A standard query parameter is used to search for specific values.
+
+
+        See: [Standard practises - Query parameter](https://developer.emporix.io/api-documentation/standard-practices/q-param)'
+      schema:
+        type: string
+    header_Accept-Language:
+      name: Accept-Language
+      in: header
+      required: false
+      schema:
+        type: string
+      description: 'List of language codes acceptable for the response.
+
+
+        * If the header is set to a language or a list of languages, the service returns the first requested language that has a translation. Localized fields are maps with that language code as the key.
+
+        * If the header is set to `*`, localized fields are retrieved as maps of translations, where the keys are language codes and values are the fields in their respective languages.
+
+        * If the header is empty, localized fields are retrieved as maps containing a single translation, where the key is a language code and the value is the field in the specified language. The endpoint assumes that localized fields are to be retrieved in the tenant''s default language defined in the Configuration Service.
+
+        * If none of the requested languages has a translation, the localized fields are omitted from the response.
+
+        '
+    query_sort_createdAt:
+      name: sort
+      in: query
+      description: 'Comma-separated list of properties used to sort the results. The order of properties indicates their priority.
+
+
+        Possible values:
+
+
+        * `{fieldName}`
+
+        * `{fieldName}:ASC`
+
+        * `{fieldName}:DESC`
+
+
+        When the direction is omitted, the field is sorted in ascending order. When `sort` is omitted, results are ordered by `metadata.createdAt` descending.'
+      schema:
+        type: string
+        example: name:ASC
+    path_tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'Your Emporix tenant''s name.
+
+        **Note**: The tenant should always be written in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+    path_type:
+      name: type
+      in: path
+      required: true
+      description: 'Type of documents to search.
+
+
+        For now, only custom schema types are supported.
+
+        '
+      schema:
+        type: string
+        example: VEHICLE
+    query_pageNumber:
+      name: pageNumber
+      in: query
+      description: 'Page number to be retrieved. The number of the first page is 1.
+
+        '
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    query_pageSize:
+      name: pageSize
+      in: query
+      description: Number of items to be retrieved per page.
+      schema:
+        default: 60
+        minimum: 1
+        maximum: 2000
+        type: integer
+    header_Content-Language:
+      name: Content-Language
+      in: header
+      required: false
+      description: Language of the localized `name` and `description` in the request body. Each language key in those maps must be configured for the tenant.
+      schema:
+        type: string
+        example: en
+    path_query_id:
+      name: id
+      in: path
+      required: true
+      description: Saved search id. Use 1 to 66 characters. Allowed characters are letters, digits, underscore, and hyphen.
+      schema:
+        type: string
+        pattern: ^[\w-]{1,66}$
+        example: red-cars
+    query_fields_query:
+      name: fields
+      in: query
+      description: Comma-separated list of saved search properties to return. When the parameter is omitted, the saved search is returned in full.
+      schema:
+        type: string
+        example: id,name,indexId
+  responses:
+    403_search_manage:
+      description: The access token does not include `search.search_manage`.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Missing manage scope:
+              value:
+                code: 403
+                status: '403'
+                message: User not authorized.
+                details:
+                - message: Missing one of required scopes '[search.search_manage]'
+    500_resp_common:
+      description: A server-side error occurred.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Internal Server Error:
+              value:
+                code: 500
+                status: '500'
+                message: The server has encountered an error during processing the request data while trying to connect to the database.
+    401_resp_common:
+      description: The authorization token is invalid or has expired.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessageFault'
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            Access token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+    403_search_read:
+      description: The access token does not include `search.search_read`.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Missing search scope:
+              value:
+                code: 403
+                status: '403'
+                message: User not authorized.
+                details:
+                - message: Missing one of required scopes '[search.search_read]'
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            search.search_read: Needed to search documents, to read saved searches, and to read search indexes and index jobs.
+            search.search_manage: Needed to create, update, and delete saved searches and search indexes.
+            schema.custominstance_read: Needed to read every custom entity instance. When this scope is absent, `custom.{type}_read` or `custom.{type}_read_own` can still allow the search.
+x-refined-from:
+- emporix-search-service-openapi.yml
+- emporix-search-service-openapi.yml

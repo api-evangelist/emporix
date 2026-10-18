@@ -1,0 +1,5 @@
+generated: '2026-10-18'
+method: none
+source: https://developer.emporix.io/api-documentation/
+decline_codes: []
+note: "Emporix integrates with third-party payment providers (PayPal, Saferpay, Spreedly, Unzer) but does not publish its own decline codes."

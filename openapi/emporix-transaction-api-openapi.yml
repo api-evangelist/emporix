@@ -1,0 +1,463 @@
+openapi: 3.2.0
+info:
+  title: Emporix Transaction API
+  version: ''
+  contact:
+    email: documentation@emporix.com
+  description: 'Operations tagged Transaction across 2 of this provider''s published API definitions: emporix-payment-gateway-openapi.yml, emporix-payment-gateway-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Transaction
+paths:
+  /payment-gateway/{tenant}/transactions:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    get:
+      summary: Retrieving many transactions
+      tags:
+      - Transaction
+      responses:
+        '200':
+          $ref: '#/components/responses/paymentTransactionsResponse'
+        '401':
+          $ref: '#/components/responses/common_response_Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/common_response_Forbidden_403'
+        '500':
+          $ref: '#/components/responses/common_response_InternalServerError_500'
+      operationId: GET-payment-gateway-list-transactions
+      description: Retrieves many payment transactions. A particular transaction contains all transactions' events attached as an entries of the response body.
+      security:
+      - OAuth2:
+        - payment-gateway.paymenttransactions_read
+      parameters:
+      - $ref: '#/components/parameters/page_number_query_param'
+      - $ref: '#/components/parameters/page_size_query_param'
+      - $ref: '#/components/parameters/sort_query_param'
+      - $ref: '#/components/parameters/x_total_count_header'
+    servers:
+    - url: https://api.emporix.io
+  /payment-gateway/{tenant}/transactions/{transactionId}:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    - $ref: '#/components/parameters/path_transaction_id'
+    get:
+      summary: Retrieving a single transaction
+      tags:
+      - Transaction
+      responses:
+        '200':
+          $ref: '#/components/responses/paymentTransactionResponse'
+        '401':
+          $ref: '#/components/responses/common_response_Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/common_response_Forbidden_403'
+        '404':
+          $ref: '#/components/responses/common_response_NotFound_404'
+        '500':
+          $ref: '#/components/responses/common_response_InternalServerError_500'
+      operationId: GET-payment-gateway-retrieve-transaction-by-transactionId
+      security:
+      - OAuth2:
+        - payment-gateway.paymenttransactions_read
+      description: Retrieves a single payment transaction. The transaction contains all the transaction's events attached as an entries of the response body.
+    servers:
+    - url: https://api.emporix.io
+components:
+  parameters:
+    x_total_count_header:
+      name: X-Total-Count
+      in: header
+      required: false
+      schema:
+        type: boolean
+      description: To get information how many entities meet the filtering requirements, the `X-Total-Count` header has been introduced. The header is optional and its default value is `false`. If the header is provided and it is set to `true`, then the total count is returned in the `X-Total-Count` response header. In both cases (X-Total-Count `true`, `false` or not provided), the response body has the same format (array of entities). This means that the information about the total count is returned only on demand, provided that the X-Total-Count header is present in a request.
+    path_tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'Your Emporix tenant''s name.
+
+        **Note**: The tenant name should always be written in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+    page_size_query_param:
+      name: pageSize
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 50
+        minimum: 1
+        maximum: 50
+      description: The number of documents being retrieved on one page.
+    sort_query_param:
+      name: sort
+      in: query
+      required: false
+      schema:
+        type: string
+        example: sort=name,metadata.createdAt:desc
+      description: 'Fields to sort the response data by following the order of the parameters from left to right. Can contain multiple fields in the following format: `field name:sort direction`, separated by a comma. The colon preceding the `sort direction` parameter is optional, and the descending order is taken only if it is equal to `desc` or `DESC`. The ascending order is assumed in any other case.'
+    path_transaction_id:
+      name: transactionId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Unique identifier of a payment transaction.
+    page_number_query_param:
+      name: pageNumber
+      in: query
+      schema:
+        type: integer
+        default: 1
+        minimum: 1
+      description: The page number to be retrieved, where the size of the pages is specified by the `pageSize` parameter. The number of the first page is 1.
+  schemas:
+    paymentTransactionResponse:
+      title: paymentTransactionResponse
+      type: object
+      properties:
+        id:
+          type: string
+          description: A unique identifier of a payment transaction.
+        provider:
+          $ref: '#/components/schemas/provider'
+          description: Indicates which provider should be used.
+        paymentInformation:
+          type: object
+          description: Information related to a payment mode.
+          properties:
+            paymentMode:
+              type: string
+              description: A unique identifier of a payment mode configured for the tenant.
+            creditCardToken:
+              type: string
+              description: Token of the credit card.
+            cardHolderName:
+              type: string
+              description: Name of the card holder.
+            payByLinkURL:
+              type: string
+              description: URL for pay-by-link payment flow.
+            iban:
+              type: string
+              description: International Bank Account Number.
+            bic:
+              type: string
+              description: Bank Identifier Code (SWIFT).
+            sepaMandateReference:
+              type: string
+              description: SEPA mandate reference.
+        entries:
+          type: array
+          description: List of transaction entries representing payment events.
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: Unique identifier of a payment transaction entry.
+              createdDate:
+                type: string
+                format: date-time
+                description: Timestamp when the event happened.
+                example: '2023-07-04T22:08:05.465Z'
+              type:
+                type: string
+                description: Event type.
+                enum:
+                - INITIALIZATION
+                - AUTHORIZATION
+                - CAPTURE
+                - REFUND
+                - CANCEL
+                - AUTHORIZATION_START
+                - AUTHORIZATION_CALLBACK
+              successful:
+                type: boolean
+                description: Indicates if the event completed successfully.
+              amount:
+                type: object
+                properties:
+                  amount:
+                    type: number
+                    description: Amount related to the event.
+                  currency:
+                    type: string
+                    description: ISO currency code.
+                    example: EUR
+              summary:
+                type: string
+                description: Summary of the event.
+              remoteRequest:
+                type: string
+                description: Serialized request body sent to payment provider.
+              remoteResponse:
+                type: string
+                description: Serialized response body from payment provider.
+              remoteToken:
+                type: string
+                description: Remote token returned by payment provider.
+              additionalInfo:
+                type: object
+                description: Additional info about the transaction.
+                additionalProperties: true
+    provider:
+      type: string
+      enum:
+      - INVOICE
+      - CASH_ON_DELIVERY
+      - SPREEDLY
+      - SPREEDLY_SAFERPAY
+      - UNZER
+    coreErrorMessage:
+      anyOf:
+      - type: object
+        properties:
+          code:
+            type: integer
+            description: HTTP Status code.
+          timestamp:
+            type: string
+            description: Indicates a timestamp when the error occurred.
+          message:
+            type: string
+            description: Error message.
+      - type: object
+        properties:
+          type:
+            type: string
+            description: HTTP error type.
+          status:
+            type: integer
+            description: HTTP Status code.
+          message:
+            type: string
+            description: Error message.
+          moreInfo:
+            type: string
+            description: URL which additional information.
+          details:
+            type: array
+            items:
+              type: object
+              properties:
+                message:
+                  type: string
+                  description: Detailed message.
+  responses:
+    paymentTransactionResponse:
+      description: Payment transaction response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/paymentTransactionResponse'
+          examples:
+            Payment transaction:
+              value:
+                id: d8abfb12-0266-43dc-905e-415158029d45
+                provider: SPREEDLY
+                paymentInformation:
+                  paymentMode: 92d77b2b-9385-43ad-a859-55176fbcbd2f
+                  creditCardToken: FrHVCFtcshQ8gkOR8t5RlneLy02
+                entries:
+                - id: 5ab6f875-5414-4845-afe9-8976531a2573
+                  createdDate: '2023-07-02T09:19:42.170Z'
+                  type: AUTHORIZATION
+                  successful: true
+                  amount:
+                    amount: 36.63
+                    currency: EUR
+                  summary: Succeeded!
+                  remoteRequest: "{\n  \"transaction\" : {\n    \"amount\" : 3663,\n    \"payment_method_token\" : \"O7z9EVXYwzzxgQO78nobou22ET1\",\n    \"currency_code\" : \"EUR\",\n    \"order_id\" : \"EON1562\",\n    \"retain_on_success\" : false\n  }\n}"
+                  remoteResponse: "{\n  \"transaction\" : {\n    \"token\" : \"FrHVCFtcshQ8gkOR8t5RlneLy02\",\n    \"succeeded\" : true,\n    \"message\" : \"Succeeded!\",\n    \"response\" : {\n      \"success\" : true,\n      \"message\" : \"Successful authorize\",\n      \"pending\" : false,\n      \"cancelled\" : false,\n      \"result_unknown\" : false,\n      \"created_at\" : \"2023-07-02T09:19:42Z\",\n      \"updated_at\" : \"2023-07-02T09:19:42Z\"\n    },\n    \"state\" : \"succeeded\",\n    \"retained\" : false,\n    \"amount\" : \"3663\",\n    \"gateway_transaction_id\" : \"48\",\n    \"created_at\" : \"2023-07-02T09:19:42Z\",\n    \"updated_at\" : \"2023-07-02T09:19:42Z\",\n    \"transaction_type\" : \"Authorization\",\n    \"order_id\" : \"EON1562\",\n    \"gateway_token\" : \"5xGx9vcZlMe1AVuHQk00CZTS8YM\",\n    \"currency_code\" : \"EUR\",\n    \"shipping_address\" : {\n      \"name\" : \"John Smith\"\n    },\n    \"payment_method\" : {\n      \"token\" : \"O7z9EVXYwzzxgQO78nobou22ET1\",\n      \"test\" : true,\n      \"month\" : 9,\n      \"year\" : 2023,\n      \"number\" : \"XXXX-XXXX-XXXX-1111\",\n      \"fingerprint\" : \"78250e7a0b53b34f526fbf99be66982e1127\",\n      \"created_at\" : \"2023-07-02T09:19:39Z\",\n      \"updated_at\" : \"2023-07-02T09:19:39Z\",\n      \"storage_state\" : \"cached\",\n      \"last_four_digits\" : \"1111\",\n      \"first_name\" : \"John\",\n      \"last_name\" : \"Smith\",\n      \"full_name\" : \"John Smith\",\n      \"eligible_for_card_updater\" : true,\n      \"issuer_identification_number\" : \"41111111\",\n      \"payment_method_type\" : \"credit_card\",\n      \"verification_value\" : \"XXX\"\n    }\n  }\n}"
+                - id: b5c995f9-0ae8-455d-af0a-68f6995305bd
+                  createdDate: '2023-07-02T09:20:17.333Z'
+                  type: CAPTURE
+                  successful: true
+                  amount:
+                    amount: 36.63
+                    currency: EUR
+                  summary: Succeeded!
+                  remoteRequest: "{\n  \"amount\" : 3663,\n  \"currency_code\" : \"EUR\"\n}"
+                  remoteResponse: "{\n  \"transaction\" : {\n    \"token\" : \"ReaQQuCxWIhL1h1gyfE0VAuKQlI\",\n    \"succeeded\" : true,\n    \"message\" : \"Succeeded!\",\n    \"response\" : {\n      \"success\" : true,\n      \"message\" : \"Successful capture\",\n      \"pending\" : false,\n      \"cancelled\" : false,\n      \"result_unknown\" : false,\n      \"created_at\" : \"2023-07-02T09:20:17Z\",\n      \"updated_at\" : \"2023-07-02T09:20:17Z\"\n    },\n    \"gateway_transaction_id\" : \"51\"\n  }\n}"
+                - id: a080a8e1-c48f-410d-bd5a-7b921f5ce549
+                  createdDate: '2023-07-02T09:20:28.650Z'
+                  type: REFUND
+                  successful: true
+                  amount:
+                    amount: 1
+                    currency: EUR
+                  summary: Succeeded!
+                  remoteRequest: "{\n  \"amount\" : 100,\n  \"currency_code\" : \"EUR\"\n}"
+                  remoteResponse: "{\n  \"transaction\" : {\n    \"token\" : \"Xn8g3ZiTFJ1Sbd3AOlvr2aZtdaW\",\n    \"succeeded\" : true,\n    \"message\" : \"Succeeded!\",\n    \"response\" : {\n      \"success\" : true,\n      \"message\" : \"Successful credit\",\n      \"pending\" : false,\n      \"cancelled\" : false,\n      \"result_unknown\" : false,\n      \"created_at\" : \"2023-07-02T09:20:28Z\",\n      \"updated_at\" : \"2023-07-02T09:20:28Z\"\n    },\n    \"gateway_transaction_id\" : \"59\"\n  }\n}"
+                - id: e7d19c09-322b-4596-9206-4b45a532bff1
+                  createdDate: '2023-07-02T09:20:38.441Z'
+                  type: REFUND
+                  successful: true
+                  amount:
+                    amount: 2
+                    currency: EUR
+                  summary: Succeeded!
+                  remoteRequest: "{\n  \"amount\" : 200,\n  \"currency_code\" : \"EUR\"\n}"
+                  remoteResponse: "{\n  \"transaction\" : {\n    \"token\" : \"CfcdzCUsXFlkNYNrnQsYoAquNAn\",\n    \"succeeded\" : true,\n    \"message\" : \"Succeeded!\",\n    \"response\" : {\n      \"success\" : true,\n      \"message\" : \"Successful credit\",\n      \"pending\" : false,\n      \"cancelled\" : false,\n      \"result_unknown\" : false,\n      \"created_at\" : \"2023-07-02T09:20:38Z\",\n      \"updated_at\" : \"2023-07-02T09:20:38Z\"\n    },\n    \"gateway_transaction_id\" : \"68\"\n  }\n}"
+    common_response_Unauthorized_401:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            Access token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+    paymentTransactionsResponse:
+      description: Payment transactions response
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/paymentTransactionResponse'
+          examples:
+            Payment transactions response:
+              value:
+              - id: d8abfb12-0266-43dc-905e-415158029d45
+                provider: SPREEDLY
+                paymentInformation:
+                  paymentMode: 92d77b2b-9385-43ad-a859-55176fbcbd2f
+                  creditCardToken: FrHVCFtcshQ8gkOR8t5RlneLy02
+                entries:
+                - id: 5ab6f875-5414-4845-afe9-8976531a2573
+                  createdDate: '2023-07-02T09:19:42.170Z'
+                  type: AUTHORIZATION
+                  successful: true
+                  amount:
+                    amount: 36.63
+                    currency: EUR
+                  summary: Succeeded!
+                  remoteRequest: "{\n  \"transaction\" : {\n    \"amount\" : 3663,\n    \"payment_method_token\" : \"O7z9EVXYwzzxgQO78nobou22ET1\",\n    \"currency_code\" : \"EUR\",\n    \"order_id\" : \"EON1562\",\n    \"retain_on_success\" : false\n  }\n}"
+                  remoteResponse: "{\n  \"transaction\" : {\n    \"token\" : \"FrHVCFtcshQ8gkOR8t5RlneLy02\",\n    \"succeeded\" : true,\n    \"message\" : \"Succeeded!\",\n    \"response\" : {\n      \"success\" : true,\n      \"message\" : \"Successful authorize\",\n      \"pending\" : false,\n      \"cancelled\" : false,\n      \"result_unknown\" : false,\n      \"created_at\" : \"2023-07-02T09:19:42Z\",\n      \"updated_at\" : \"2023-07-02T09:19:42Z\"\n    },\n    \"state\" : \"succeeded\",\n    \"retained\" : false,\n    \"amount\" : \"3663\",\n    \"gateway_transaction_id\" : \"48\",\n    \"created_at\" : \"2023-07-02T09:19:42Z\",\n    \"updated_at\" : \"2023-07-02T09:19:42Z\",\n    \"transaction_type\" : \"Authorization\",\n    \"order_id\" : \"EON1562\",\n    \"gateway_token\" : \"5xGx9vcZlMe1AVuHQk00CZTS8YM\",\n    \"currency_code\" : \"EUR\",\n    \"shipping_address\" : {\n      \"name\" : \"John Smith\"\n    },\n    \"payment_method\" : {\n      \"token\" : \"O7z9EVXYwzzxgQO78nobou22ET1\",\n      \"test\" : true,\n      \"month\" : 9,\n      \"year\" : 2023,\n      \"number\" : \"XXXX-XXXX-XXXX-1111\",\n      \"fingerprint\" : \"78250e7a0b53b34f526fbf99be66982e1127\",\n      \"created_at\" : \"2023-07-02T09:19:39Z\",\n      \"updated_at\" : \"2023-07-02T09:19:39Z\",\n      \"storage_state\" : \"cached\",\n      \"last_four_digits\" : \"1111\",\n      \"first_name\" : \"John\",\n      \"last_name\" : \"Smith\",\n      \"full_name\" : \"John Smith\",\n      \"eligible_for_card_updater\" : true,\n      \"issuer_identification_number\" : \"41111111\",\n      \"payment_method_type\" : \"credit_card\",\n      \"verification_value\" : \"XXX\"\n    }\n  }\n}"
+                - id: b5c995f9-0ae8-455d-af0a-68f6995305bd
+                  createdDate: '2023-07-02T09:20:17.333Z'
+                  type: CAPTURE
+                  successful: true
+                  amount:
+                    amount: 36.63
+                    currency: EUR
+                  summary: Succeeded!
+                  remoteRequest: "{\n  \"amount\" : 3663,\n  \"currency_code\" : \"EUR\"\n}"
+                  remoteResponse: "{\n  \"transaction\" : {\n    \"token\" : \"ReaQQuCxWIhL1h1gyfE0VAuKQlI\",\n    \"succeeded\" : true,\n    \"message\" : \"Succeeded!\",\n    \"response\" : {\n      \"success\" : true,\n      \"message\" : \"Successful capture\",\n      \"pending\" : false,\n      \"cancelled\" : false,\n      \"result_unknown\" : false,\n      \"created_at\" : \"2023-07-02T09:20:17Z\",\n      \"updated_at\" : \"2023-07-02T09:20:17Z\"\n    },\n    \"gateway_transaction_id\" : \"51\"\n  }\n}"
+                - id: a080a8e1-c48f-410d-bd5a-7b921f5ce549
+                  createdDate: '2023-07-02T09:20:28.650Z'
+                  type: REFUND
+                  successful: true
+                  amount:
+                    amount: 1
+                    currency: EUR
+                  summary: Succeeded!
+                  remoteRequest: "{\n  \"amount\" : 100,\n  \"currency_code\" : \"EUR\"\n}"
+                  remoteResponse: "{\n  \"transaction\" : {\n    \"token\" : \"Xn8g3ZiTFJ1Sbd3AOlvr2aZtdaW\",\n    \"succeeded\" : true,\n    \"message\" : \"Succeeded!\",\n    \"response\" : {\n      \"success\" : true,\n      \"message\" : \"Successful credit\",\n      \"pending\" : false,\n      \"cancelled\" : false,\n      \"result_unknown\" : false,\n      \"created_at\" : \"2023-07-02T09:20:28Z\",\n      \"updated_at\" : \"2023-07-02T09:20:28Z\"\n    },\n    \"gateway_transaction_id\" : \"59\"\n  }\n}"
+                - id: e7d19c09-322b-4596-9206-4b45a532bff1
+                  createdDate: '2023-07-02T09:20:38.441Z'
+                  type: REFUND
+                  successful: true
+                  amount:
+                    amount: 2
+                    currency: EUR
+                  summary: Succeeded!
+                  remoteRequest: "{\n  \"amount\" : 200,\n  \"currency_code\" : \"EUR\"\n}"
+                  remoteResponse: "{\n  \"transaction\" : {\n    \"token\" : \"CfcdzCUsXFlkNYNrnQsYoAquNAn\",\n    \"succeeded\" : true,\n    \"message\" : \"Succeeded!\",\n    \"response\" : {\n      \"success\" : true,\n      \"message\" : \"Successful credit\",\n      \"pending\" : false,\n      \"cancelled\" : false,\n      \"result_unknown\" : false,\n      \"created_at\" : \"2023-07-02T09:20:38Z\",\n      \"updated_at\" : \"2023-07-02T09:20:38Z\"\n    },\n    \"gateway_transaction_id\" : \"68\"\n  }\n}"
+      headers:
+        X-Total-Count:
+          description: '''The total number of entities in the database matching the specified query criteria.
+
+            Returned if request X-Total-Count header has been set to true.'''
+          schema:
+            type: number
+            example: 100
+    common_response_Forbidden_403:
+      description: Access forbidden. The caller is not allowed to access this resource.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/coreErrorMessage'
+          examples:
+            Forbidden:
+              value:
+                status: 403
+                type: Forbidden
+                message: The access to the requested resource has been forbidden by the server.
+                details:
+                - message: Missing required scopes '[payment-gateway.authorize_manage]'
+    common_response_InternalServerError_500:
+      description: Internal Server Error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/coreErrorMessage'
+          examples:
+            Internal Server Error:
+              value:
+                code: 500
+                timestamp: '2023-10-03T12:23:31.485306Z'
+                message: Problem encountered while trying to connect to the database.
+    common_response_NotFound_404:
+      description: Not found. The resource does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/coreErrorMessage'
+          examples:
+            NotFound:
+              value:
+                code: 404
+                timestamp: '2023-10-03T12:23:31.485306Z'
+                message: The resource does not exist.
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            payment-gateway.paymentmodes_read: Needed for reading payment modes by a tenant employee.
+            payment-gateway.paymentmodes_manage: Needed to manage payment modes by a tenant employee.
+            payment-gateway.authorize_manage: Needed to perform a payment authorization flow by a tenant employee.
+            payment-gateway.capture_manage: Needed to perform a payment capture flow by a tenant employee.
+            payment-gateway.refund_manage: Needed to perform a payment refund flow by a tenant employee.
+            payment-gateway.cancel_manage: Needed to perform a payment cancel flow by a tenant employee.
+            payment-gateway.paymenttransactions_read: Needed to read all transaction details by a tenant employee.
+x-refined-from:
+- emporix-payment-gateway-openapi.yml
+- emporix-payment-gateway-openapi.yml

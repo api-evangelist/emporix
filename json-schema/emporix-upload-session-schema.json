@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-upload-session-schema.json",
+  "title": "Upload Session",
+  "description": "Instruction for sending a file directly to storage.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-media-openapi.yml#/components/schemas/UploadSession",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier of the asset, generated when the upload session is created."
+    },
+    "provider": {
+      "type": "string",
+      "enum": [
+        "GCS",
+        "CLOUDINARY"
+      ],
+      "description": "Storage that receives the file.\n* `GCS` — private asset. Upload with the returned `PUT` headers or multipart `POST` fields.\n* `CLOUDINARY` — public asset. Upload with `POST` and the returned multipart form fields.\n"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "PENDING"
+      ],
+      "description": "The asset stays `PENDING` until the file is stored."
+    },
+    "expiresAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date and time when the unused upload session expires. Returned as an ISO-8601 string."
+    },
+    "upload": {
+      "type": "object",
+      "description": "The request the caller sends to storage.",
+      "properties": {
+        "method": {
+          "type": "string",
+          "enum": [
+            "PUT",
+            "POST"
+          ],
+          "description": "HTTP method of the storage request."
+        },
+        "url": {
+          "type": "string",
+          "description": "Storage URL that receives the file."
+        },
+        "headers": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Headers required by a private Google Cloud Storage `PUT` upload. Send every returned header unchanged with the file.\nReturned only for the Google Cloud Storage `PUT` flow.\n"
+        },
+        "fields": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Fields required by a Google Cloud Storage or Cloudinary multipart `POST`. Send every returned field unchanged, then append the file part last.\nGoogle Cloud Storage fields do not include `x-goog-if-generation-match`. Cloudinary fields include `api_key` and `signature` but never include the API secret.\n"
+        }
+      },
+      "required": [
+        "method",
+        "url"
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "provider",
+    "status",
+    "expiresAt",
+    "upload"
+  ]
+}

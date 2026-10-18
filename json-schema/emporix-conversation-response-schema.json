@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-conversation-response-schema.json",
+  "title": "ConversationResponse",
+  "description": "Represents an active agent conversation context (MS Teams channel or group chat).",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-ai-service-openapi.yml#/components/schemas/ConversationResponse",
+  "type": "object",
+  "properties": {
+    "conversationId": {
+      "type": "string",
+      "description": "Provider-side conversation identifier (Teams conversation ID)."
+    },
+    "conversationName": {
+      "type": "string",
+      "description": "Human-readable name of the conversation channel or group chat."
+    },
+    "contextRef": {
+      "type": "string",
+      "description": "Caller-supplied reference key used to reuse an existing conversation."
+    },
+    "channelId": {
+      "type": "string",
+      "description": "Teams channel or chat identifier."
+    },
+    "agentId": {
+      "type": "string",
+      "description": "Identifier of the agent that owns this conversation."
+    },
+    "sessionId": {
+      "type": "string",
+      "description": "LangGraph session (checkpointer) ID for agent continuity."
+    },
+    "lastMessageAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp of the last message activity in this conversation."
+    }
+  }
+}

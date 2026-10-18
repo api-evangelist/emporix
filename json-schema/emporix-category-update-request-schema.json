@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-category-update-request-schema.json",
+  "title": "CategoryUpdateRequest",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-category-tree-openapi.yml#/components/schemas/CategoryUpdateRequest",
+  "required": [
+    "localizedName",
+    "published"
+  ],
+  "type": "object",
+  "properties": {
+    "localizedName": {
+      "minItems": 1,
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Localized category name in a form of a map of translations."
+    },
+    "localizedDescription": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Localized category description in a form of a map of translations."
+    },
+    "parentId": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Unique identifier of the parent category. No parentId in the body indicates that this is a root category."
+    },
+    "localizedSlug": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Provides localized category name or code without diacritics for the URL."
+    },
+    "ecn": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "description": "List of external category numbers (ECNs) unique for every category.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "code": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Unique category identifier, defined by the tenant. Required for category of type `CLASSIFICATION`."
+    },
+    "validity": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "description": "Category validity."
+    },
+    "position": {
+      "minimum": 0,
+      "type": [
+        "integer",
+        "null"
+      ],
+      "description": "Category position, set in relation to the categories on the same level (sharing the same parent) in the tree.",
+      "format": "int32"
+    },
+    "published": {
+      "type": "boolean",
+      "description": "Flag indicating whether the category has been published or not."
+    },
+    "mixins": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Custom category attributes that need to be included directly in the mixins object."
+    },
+    "metadata": {
+      "$ref": "#/$defs/MetadataUpdate"
+    }
+  },
+  "$defs": {
+    "MetadataCreate": {
+      "type": "object",
+      "properties": {
+        "mixins": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "A key-value map, where key is a mixin name and value is a link to the mixin schema."
+        }
+      }
+    },
+    "MetadataUpdate": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "integer",
+              "description": "Category version.",
+              "format": "int32"
+            }
+          }
+        },
+        {
+          "$ref": "#/$defs/MetadataCreate"
+        }
+      ]
+    }
+  }
+}

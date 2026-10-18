@@ -1,0 +1,484 @@
+openapi: 3.2.0
+info:
+  title: Emporix Shipping Groups API
+  version: ''
+  contact:
+    name: Emporix
+    url: https://emporix.com
+    email: documentation@emporix.com
+  description: 'Operations tagged Shipping Groups across 2 of this provider''s published API definitions: emporix-shipping-openapi.yml, emporix-shipping-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- oAuth2: []
+tags:
+- name: Shipping Groups
+  description: Manage shipping groups
+paths:
+  /shipping/{tenant}/{site}/groups:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    - $ref: '#/components/parameters/site'
+    post:
+      tags:
+      - Shipping Groups
+      summary: Creating a shipping group
+      operationId: POST-shipping-create-shipping-group
+      description: Creates a new shipping group for the specified site.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Group'
+            examples:
+              Group create payload with description as a map:
+                $ref: '#/components/examples/GroupCreateMap'
+              Group create payload with description as a string:
+                $ref: '#/components/examples/GroupCreateString'
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/site'
+      - $ref: '#/components/parameters/content-language'
+      responses:
+        '201':
+          description: Resource successfully created.
+          content:
+            application/json:
+              examples:
+                Group creation response:
+                  $ref: '#/components/examples/GroupCreationResponse'
+              schema:
+                $ref: '#/components/schemas/ResourceCreatedResponse'
+        '400':
+          $ref: '#/components/responses/group_400'
+        '401':
+          $ref: '#/components/responses/unauthorized_401'
+        '403':
+          $ref: '#/components/responses/yaasAware_403'
+        '409':
+          $ref: '#/components/responses/resourceConflict_409'
+        '500':
+          $ref: '#/components/responses/internalError_500'
+      security:
+      - oAuth2:
+        - shipping.shipping_manage
+    get:
+      tags:
+      - Shipping Groups
+      summary: Retrieving shipping groups
+      operationId: GET-shipping-list-shipping-groups
+      description: Retrieves a list of shipping groups for a specified site.
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/site'
+      - $ref: '#/components/parameters/accept-language'
+      responses:
+        '200':
+          description: Resource successfully retrieved.
+          content:
+            application/json:
+              examples:
+                Groups list:
+                  $ref: '#/components/examples/GroupList'
+              schema:
+                $ref: '#/components/schemas/GroupList'
+        '400':
+          $ref: '#/components/responses/group_400'
+        '401':
+          $ref: '#/components/responses/unauthorized_401'
+        '500':
+          $ref: '#/components/responses/internalError_500'
+      security:
+      - oAuth2: []
+    servers:
+    - url: https://api.emporix.io
+  /shipping/{tenant}/{site}/groups/{groupId}:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    - $ref: '#/components/parameters/site'
+    - $ref: '#/components/parameters/groupId'
+    get:
+      tags:
+      - Shipping Groups
+      summary: Retrieving a shipping group
+      operationId: GET-shipping-retrieve-shipping-group
+      description: Retrieves the specified shipping group details.
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/site'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/accept-language'
+      responses:
+        '200':
+          description: Resource successfully retrieved.
+          content:
+            application/json:
+              examples:
+                Group:
+                  $ref: '#/components/examples/Group'
+              schema:
+                $ref: '#/components/schemas/Group'
+        '400':
+          $ref: '#/components/responses/group_400'
+        '401':
+          $ref: '#/components/responses/unauthorized_401'
+        '404':
+          $ref: '#/components/responses/group_notFound_404'
+        '500':
+          $ref: '#/components/responses/internalError_500'
+      security:
+      - oAuth2: []
+    put:
+      tags:
+      - Shipping Groups
+      summary: Updating a shipping group
+      operationId: PUT-shipping-update-shipping-group
+      description: Fully updates the specified shipping group.
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/site'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/content-language'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Group'
+            examples:
+              Group update payload with description as a map:
+                $ref: '#/components/examples/GroupCreateMap'
+              Group update payload with description as a string:
+                $ref: '#/components/examples/GroupCreateString'
+      responses:
+        '200':
+          description: Resource successfully updated.
+        '400':
+          $ref: '#/components/responses/group_400'
+        '401':
+          $ref: '#/components/responses/unauthorized_401'
+        '403':
+          $ref: '#/components/responses/yaasAware_403'
+        '404':
+          $ref: '#/components/responses/group_notFound_404'
+        '500':
+          $ref: '#/components/responses/internalError_500'
+      security:
+      - oAuth2:
+        - shipping.shipping_manage
+    delete:
+      tags:
+      - Shipping Groups
+      summary: Deleting a shipping group
+      operationId: DELETE-shipping-remove-shipping-group
+      description: Deletes the specified shipping group.
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/site'
+      - $ref: '#/components/parameters/groupId'
+      responses:
+        '204':
+          description: Resource successfully deleted.
+        '401':
+          $ref: '#/components/responses/unauthorized_401'
+        '403':
+          $ref: '#/components/responses/yaasAware_403'
+        '500':
+          $ref: '#/components/responses/internalError_500'
+      security:
+      - oAuth2:
+        - shipping.shipping_manage
+    servers:
+    - url: https://api.emporix.io
+components:
+  parameters:
+    groupId:
+      description: Delivery group unique identifier.
+      name: groupId
+      in: path
+      required: true
+      schema:
+        type: string
+    content-language:
+      in: header
+      name: Content-Language
+      required: false
+      description: 'The Content-Language request HTTP header defines language of the payload.
+
+        When the Content-Language header is empty, all localized fields in a payload should be in a map format,
+
+        where the key is a language code and the value is a translation.'
+      schema:
+        type: string
+        example: fr
+    site:
+      description: 'Site unique identifier. A site is a specific shop.
+
+
+        If the tenant owns only one shop, the value should be set to `main`.
+
+        '
+      name: site
+      in: path
+      required: true
+      schema:
+        type: string
+    tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: The tenant should always be written in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+    accept-language:
+      in: header
+      name: Accept-Language
+      required: false
+      description: 'The Accept-Language request HTTP header defines which languages the client is able to understand, and which locale variant is preferred.
+
+        It can be a priority list working as a fallback mechanism.
+
+        If the Accept-Language header is empty, all languages for localized fields are returned in a map format where the key is language code and the value is a translation.'
+      schema:
+        type: string
+        example: fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7
+  examples:
+    GroupCreateString:
+      value:
+        id: group1
+        description: This is the description for the group group1.
+    Group:
+      value:
+        id: group1
+        description:
+          en: This is the description for the group group1.
+          de: Dies ist die Beschreibung für die Gruppe group1.
+    GroupList:
+      value:
+      - id: group1
+        description:
+          en: This is the description for the group group1.
+          de: Dies ist die Beschreibung für die Gruppe group1.
+      - id: group2
+        description:
+          en: This is the description for the group group2.
+          de: Dies ist die Beschreibung für die Gruppe group2.
+    GroupCreateMap:
+      value:
+        id: group1
+        description:
+          en: This is the description for the group group1.
+          de: Dies ist die Beschreibung für die Gruppe group1.
+    GroupCreationResponse:
+      value:
+        id: group1
+  schemas:
+    Group:
+      title: Group
+      type: object
+      description: Shipping groups can be used for customer grouping with use customer group relations.
+      properties:
+        id:
+          description: Delivery group unique identifier.
+          type: string
+        description:
+          $ref: '#/components/schemas/LocalizedValue'
+      required:
+      - id
+    LocalizedValue:
+      oneOf:
+      - type: string
+        description: String value in the specified language.
+        example: FedEx 2Day
+      - type: object
+        additionalProperties:
+          type: string
+        description: 'Map of translations in form of language:translation pairs.
+
+          The keys (languages) should be ISO language codes.'
+        example:
+          en: FedEx 2Day
+    ResourceCreatedResponse:
+      title: Resource created
+      description: Link to created resource with unique resource identifier.
+      type: object
+      properties:
+        id:
+          type: string
+          description: Created resource’s unique identifier.
+    errorMessage:
+      title: error
+      description: Schema for API specified errors.
+      type: object
+      properties:
+        status:
+          minimum: 100
+          maximum: 599
+          description: original HTTP error code, should be consistent with the response HTTP code
+          type: integer
+        type:
+          pattern: '[a-z]+[a-z_]*[a-z]+'
+          description: classification of the error type, lower case with underscore eg validation_failure
+          type: string
+        message:
+          description: descriptive error message for debugging
+          type: string
+        moreInfo:
+          type: string
+          description: link to documentation to investigate further and finding support
+        errorCode:
+          type: string
+          description: The error code which specify the problem
+        details:
+          description: list of problems causing this error
+          type: array
+          items:
+            title: errorDetail
+            description: schema for specific error cause
+            anyOf:
+            - type: string
+            - type: object
+              properties:
+                field:
+                  description: a bean notation expression specifying the element in request data causing the error, eg shipTo[0].country, this can be empty if violation was not field specific
+                  type: string
+                type:
+                  pattern: '[a-z]+[a-z_]*[a-z]+'
+                  description: classification of the error detail type, lower case with underscore eg missing_value, this value must be always interpreted in context of the general error type.
+                  type: string
+                message:
+                  description: descriptive error detail message for debugging
+                  type: string
+                moreInfo:
+                  type: string
+                  description: link to documentation to investigate further and finding support for error detail
+      required:
+      - status
+      - type
+    GroupList:
+      title: Collection of groups
+      description: Collection of shipping groups.
+      type: array
+      items:
+        $ref: '#/components/schemas/Group'
+  responses:
+    yaasAware_403:
+      description: 'Given authorization scopes are not sufficient and do not match required scopes.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Forbidden:
+              value:
+                status: 403
+                message: User not authorized.
+                type: Forbidden
+                details:
+                - Missing required scopes
+    group_notFound_404:
+      description: 'The requested resource does not exist.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Not Found:
+              value:
+                status: 404
+                message: A group with id 'group1' does not exist.
+                type: resource_not_found
+    unauthorized_401:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+    group_400:
+      description: Request syntactically incorrect. Details of the error are included in the response payload.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Bad request:
+              value:
+                status: 400
+                message: The request violates validation constraints.
+                type: validation_violation
+                details:
+                - field: description
+                  message: Cannot specify multiple localizations when 'Content-Language' header is set.
+                  type: invalid_field
+    resourceConflict_409:
+      description: 'Creation failed because there was a conflict with another resource. Details of the error are included in the response payload.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Conflict:
+              value:
+                status: 409
+                message: The requested resource could not be updated due to server-side validation.
+                moreInfo: ''
+                type: conflict_resource
+    internalError_500:
+      description: 'Some server side error occurred.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Internal Server Error:
+              value:
+                status: 500
+                message: Something went wrong while processing the request. Please contact the administrator.
+                errorCode: ENTITY-500001
+                moreInfo: ''
+                type: internal_service_error
+  securitySchemes:
+    oAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            shipping.shipping_manage: Needed to manage shipping settings.
+            shipping.shipping_read: Needed to read shipping settings.
+x-refined-from:
+- emporix-shipping-openapi.yml
+- emporix-shipping-openapi.yml

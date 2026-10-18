@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-search-prices-schema.json",
+  "title": "searchPrices",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-price-service-openapi.yml#/components/schemas/searchPrices",
+  "type": "object",
+  "properties": {
+    "itemIds": {
+      "type": "array",
+      "description": "List of item IDs for which the prices should be retrieved.",
+      "maxItems": 100,
+      "minItems": 1,
+      "items": {
+        "description": "Identifier of the item.",
+        "type": "string"
+      }
+    },
+    "currency": {
+      "type": "string",
+      "pattern": "[A-Z]{3}",
+      "description": "Currency in which the prices should be retrieved, as defined in the Currency Service."
+    },
+    "siteCode": {
+      "description": "Code of the site for which the prices should be retrieved.",
+      "type": "string"
+    },
+    "siteCodes": {
+      "description": "List of site codes for which the prices should be retrieved. If siteCode is specified, this field is ignored.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "principalId": {
+      "description": "IDs of customers for whom the retrieved prices should be valid.",
+      "type": "string"
+    },
+    "effectiveDate": {
+      "description": "Date on which retrieved prices should be valid, compliant with the ISO 8601 standard.\n\nFormat:\n```date-fullyear \"-\" date-month \"-\" date-mday \"T\" partial-time time-offset```",
+      "type": "string"
+    },
+    "includesTax": {
+      "description": "Flag indicating whether the prices should be retrieved as net or a gross values.",
+      "type": "boolean"
+    },
+    "useFallback": {
+      "type": "boolean",
+      "description": "If no price that matches the criteria is found for the specified site, the price searching functionality will try to find the best price for the `main` site. To enable this option, this field needs to be set to `true`.\n\n**Note**: Using the fallback mechanism may impact the performance as the price searching has to run a second time. If the fallback mechanism is used, the response's `siteCode` field will be set to `main`.\n",
+      "default": false
+    },
+    "searchMode": {
+      "type": "string",
+      "description": "Search mode indicating which prices should be taken into account regarding their principal-related restrictions.\n\nPossible values:\n* `ALL_PRICES`  - all prices should be taken into account regardless of their principal restrictions.\n* `COMMON_PRICES` -  only the prices with no principal restrictions should be taken into account.\n* `USER_SPECIFIC_PRICES` - only the prices applicable for a given `principalId` should be taken into account.\n",
+      "enum": [
+        "ALL_PRICES",
+        "COMMON_PRICES",
+        "USER_SPECIFIC_PRICES"
+      ],
+      "default": "ALL_PRICES"
+    }
+  },
+  "required": [
+    "itemIds"
+  ]
+}

@@ -1,0 +1,49 @@
+generated: '2026-10-18'
+method: searched
+source: https://developer.emporix.io/api-documentation/standard-practices/general-info.md
+standards:
+- id: ISO 3166-1 alpha-2
+  conforms: true
+  evidence: Countries are indicated through two-letter codes compliant with the ISO 3166-1 alpha-2 standard
+- id: ISO 4217
+  conforms: true
+  evidence: Currencies are indicated through three-letter codes compliant with the ISO 4217 standard
+- id: ISO 8601
+  conforms: true
+  evidence: All dates and times are stored as instantaneous moments in the UTC timezone, compliant with the ISO 8601 standard
+- id: IETF BCP-47
+  conforms: true
+  evidence: Languages (including regional variants) are indicated through codes compliant with the IETF BCP-47 standard
+- id: OAuth 2.0
+  conforms: true
+  evidence: The Emporix API incorporates OAuth 2.0 token-based authorization
+- id: RFC 9457
+  conforms: false
+  evidence: No evidence of Problem Details for HTTP APIs (RFC 9457) implementation found in documentation
+- id: JSON:API
+  conforms: false
+  evidence: No evidence of JSON:API specification implementation found in documentation
+- id: SCIM
+  conforms: false
+  evidence: No evidence of SCIM implementation found in documentation
+- id: OpenID Connect
+  conforms: false
+  evidence: No evidence of OpenID Connect implementation found in documentation
+- id: openapi-3.0
+  conforms: true
+  evidence: the document declares 3.0.0
+- id: openapi-3.0
+  conforms: true
+  evidence: the document declares 3.0.1
+- id: oauth2
+  conforms: true
+  evidence: 'securitySchemes: AnonymousAccessToken (http), CustomerAccessToken (http), OAuth2 (oauth2), oAuth2 (oauth2)'
+- id: rfc9457
+  conforms: false
+  evidence: no response declares application/problem+json
+- id: idempotency
+  conforms: false
+  evidence: no idempotency key parameter on mutating operations
+- id: pagination
+  conforms: true
+  evidence: list operations take limit, page

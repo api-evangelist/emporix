@@ -1,0 +1,367 @@
+openapi: 3.2.0
+info:
+  title: Emporix Coupon Validation API
+  version: ''
+  contact:
+    email: documentation@emporix.com
+  description: 'Operations tagged Coupon Validation across 2 of this provider''s published API definitions: emporix-coupon-openapi.yml, emporix-coupon-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Coupon Validation
+paths:
+  /coupon/{tenant}/coupons/{code}/validation:
+    parameters:
+    - $ref: '#/components/parameters/coupon_code'
+    - $ref: '#/components/parameters/trait_tenant'
+    post:
+      summary: Validating redeemability of a coupon
+      tags:
+      - Coupon Validation
+      responses:
+        '200':
+          description: 'The coupon can be successfully redeemed.
+
+            '
+        '400':
+          $ref: '#/components/responses/trait_queryable_400'
+        '401':
+          $ref: '#/components/responses/trait_unauthorized_401'
+        '403':
+          $ref: '#/components/responses/trait_restricted_403'
+        '404':
+          $ref: '#/components/responses/trait_notFound_404'
+        '500':
+          $ref: '#/components/responses/trait_internal_500'
+      description: 'Checks whether the coupon can be successfully redeemed. Performs all checks that are executed during actual
+
+        redemption, but does not result in a redeemed coupon. Only the status of the validation is reported.
+
+        ***
+
+
+        ### Additional scopes info
+
+        * The `coupon.coupon_redeem_on_behalf` scope is only required if the service should use the customer identification
+
+        specified in the request body (`customerNumber` attribute) instead of the one associated with current
+
+        authentication token.'
+      operationId: POST-coupon-validate-coupon
+      requestBody:
+        content:
+          application/json:
+            examples:
+              CouponValidation:
+                $ref: '#/components/examples/couponRedemption'
+            schema:
+              $ref: '#/components/schemas/redemption-creation'
+        required: true
+      security:
+      - OAuth2:
+        - coupon.coupon_redeem_on_behalf
+    servers:
+    - url: https://api.emporix.io
+components:
+  examples:
+    couponRedemption:
+      value:
+        customerNumber: CustomerId
+        orderTotal:
+          amount: 1090
+          currency: EUR
+        discount:
+          amount: 5
+          currency: EUR
+  parameters:
+    coupon_code:
+      name: code
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Code of a coupon.
+    trait_tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'The tenant that the caller is acting upon.
+
+
+        Please note that this value is always lowercase.
+
+        '
+      schema:
+        minLength: 3
+        maxLength: 16
+        type: string
+  responses:
+    trait_internal_500:
+      description: 'Some server side error occurred.
+
+        '
+      content:
+        application/json:
+          schema:
+            title: error
+            description: Schema for API specified errors.
+            example:
+              status: 500
+              message: Something went wrong while processing the request. Please contact the administrator.
+              type: internal_service_error
+            type: object
+            properties:
+              status:
+                minimum: 100
+                maximum: 599
+                description: Original HTTP error code, should be consistent with the response HTTP code.
+                type: integer
+              type:
+                pattern: '[a-z]+[a-z_]*[a-z]+'
+                description: Classification of the error type, lower case with underscore eg validation_failure.
+                type: string
+              message:
+                description: Descriptive error message for debugging.
+                type: string
+              details:
+                description: List of problems causing this error.
+                type: array
+                items:
+                  title: errorDetail
+                  description: Schema for specific error cause.
+                  type: object
+                  properties:
+                    field:
+                      description: A bean notation expression specifying the element in request data causing the error, eg product.variants[3].name, this can be empty if violation was not field specific.
+                      type: string
+                    type:
+                      pattern: '[a-z]+[a-z_]*[a-z]+'
+                      description: Classification of the error detail type, lower case with underscore eg missing_value, this value must be always interpreted in context of the general error type.
+                      type: string
+                    message:
+                      description: Descriptive error detail message for debugging.
+                      type: string
+                    moreInfo:
+                      type: string
+                      description: Link to documentation to investigate further and finding support for error detail.
+                  required:
+                  - type
+            required:
+            - status
+            - type
+    trait_restricted_403:
+      description: Access forbidden. The caller is not allowed to access this resource.
+      content:
+        application/json:
+          schema:
+            title: error
+            description: Schema for API specified errors.
+            example:
+              status: 403
+              message: Not allowed to access this resource
+              type: insufficient_permissions
+            type: object
+            properties:
+              status:
+                minimum: 100
+                maximum: 599
+                description: Original HTTP error code, should be consistent with the response HTTP code.
+                type: integer
+              type:
+                pattern: '[a-z]+[a-z_]*[a-z]+'
+                description: Classification of the error type, lower case with underscore eg validation_failure.
+                type: string
+              message:
+                description: Descriptive error message for debugging.
+                type: string
+            required:
+            - status
+            - type
+          examples:
+            Example 1:
+              value:
+                type: insufficient_permissions
+                status: 403
+                message: Insufficient permissions to retrieve the coupon with Id MW2023_7
+    trait_notFound_404:
+      description: 'The requested resource does not exist.
+
+        '
+      content:
+        application/json:
+          schema:
+            title: error
+            description: Schema for API specified errors.
+            example:
+              status: 404
+              message: The requested URI does not map to a single element resource.
+              type: element_resource_non_existing
+            type: object
+            properties:
+              status:
+                minimum: 100
+                maximum: 599
+                description: Original HTTP error code, should be consistent with the response HTTP code.
+                type: integer
+              type:
+                pattern: '[a-z]+[a-z_]*[a-z]+'
+                description: Classification of the error type, lower case with underscore eg validation_failure.
+                type: string
+              message:
+                description: Descriptive error message for debugging.
+                type: string
+            required:
+            - status
+            - type
+          examples:
+            Not found:
+              value:
+                type: resource_not_found
+                status: 404
+                message: Coupon with code MW2023_72 not found.
+    trait_unauthorized_401:
+      description: Example response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Unauthorized:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+    trait_queryable_400:
+      description: Request syntactically incorrect. Details of the error are included in the response payload.
+      content:
+        application/json:
+          schema:
+            title: error
+            description: Schema for API specified errors.
+            example:
+              status: 400
+              message: There are validation problems, see details section for more information.
+              type: validation_violation
+              details:
+              - field: q
+                message: not a valid query
+                type: invalid_query_parameter
+            type: object
+            properties:
+              status:
+                minimum: 100
+                maximum: 599
+                description: Original HTTP error code, should be consistent with the response HTTP code.
+                type: integer
+              type:
+                pattern: '[a-z]+[a-z_]*[a-z]+'
+                description: Classification of the error type, lower case with underscore eg validation_failure.
+                type: string
+              message:
+                description: Descriptive error message for debugging.
+                type: string
+              details:
+                description: List of problems causing this error.
+                type: array
+                items:
+                  title: errorDetail
+                  description: Schema for specific error cause.
+                  type: object
+                  properties:
+                    field:
+                      description: A bean notation expression specifying the element in request data causing the error, eg product.variants[3].name, this can be empty if violation was not field specific.
+                      type: string
+                    type:
+                      pattern: '[a-z]+[a-z_]*[a-z]+'
+                      description: Classification of the error detail type, lower case with underscore eg missing_value, this value must be always interpreted in context of the general error type.
+                      type: string
+                    message:
+                      description: Descriptive error detail message for debugging.
+                      type: string
+                    moreInfo:
+                      type: string
+                      description: Link to documentation to investigate further and finding support for error detail.
+                  required:
+                  - type
+            required:
+            - status
+            - type
+          examples:
+            Bad request:
+              value:
+                type: validation_violation
+                status: 400
+                message: The request violates validation constraints.
+                details:
+                - type: missing_payload
+                  message: Empty payload was sent
+                  moreInfo: ''
+  schemas:
+    redemption-creation:
+      type: object
+      title: Coupon Redemption Request
+      description: Defines a coupon redemption request payload that affects a coupon instance.
+      properties:
+        orderCode:
+          description: Code of the associated order.
+          type: string
+        customerNumber:
+          type: string
+          description: The customer Id of the user, e.g. C0123456789. Can be specified only if coupon.coupon_redeem_on_behalf scope is present.
+        legalEntityId:
+          type: string
+          description: The id of the legal entity to which customer is assigned. When customer is assigned to many legal entities then he can redeem the same coupon separately for each legal entity.
+        orderTotal:
+          allOf:
+          - $ref: '#/components/schemas/currency-amount'
+          - description: The amount of the purchase.
+        discount:
+          allOf:
+          - $ref: '#/components/schemas/currency-amount'
+          - description: The absolute amount of the granted discount.
+      required:
+      - orderTotal
+      - discount
+    currency-amount:
+      type: object
+      title: Money amount
+      description: Defines an amount in a specific currency.
+      properties:
+        amount:
+          type: number
+          default: 0
+          minimum: 0
+          description: Total amount in the specified currency.
+        currency:
+          type: string
+          default: USD
+          pattern: ^[A-Z]{3}$
+          description: 'ISO 4217 currency code, e.g.: USD, EUR, CHF.'
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            coupon.coupon_read: Needed to read coupons.
+            coupon.coupon_manage: Needed to manage coupons.
+            coupon.coupon_redeem: Needed to redeem coupons.
+            coupon.coupon_redeem_on_behalf: Needed to redeem coupons on behalf of another customer.
+x-refined-from:
+- emporix-coupon-openapi.yml
+- emporix-coupon-openapi.yml

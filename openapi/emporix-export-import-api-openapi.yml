@@ -1,0 +1,629 @@
+openapi: 3.2.0
+info:
+  title: Emporix Export / Import API
+  version: ''
+  description: 'Operations tagged Export / Import across 4 of this provider''s published API definitions: emporix-schema-openapi.yml, emporix-search-service-openapi.yml, emporix-schema-openapi.yml, emporix-search-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Export / Import
+paths:
+  /schema/{tenant}/custom-entities/export:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    post:
+      tags:
+      - Export / Import
+      summary: Exporting Custom Entities
+      description: Exports custom entities with corresponding schemas.
+      operationId: POST-schema-export-custom-entities
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+            example:
+            - CUSTOM_PRODUCT
+            - MANUFACTURER
+            - CAR
+      responses:
+        '200':
+          description: The request was successful.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExportImportResponse'
+              example:
+                exportedAt: '2026-04-29T07:05:18.857291343Z'
+                data: MQUlOVF9BR0VOVF9DT05URVhUIl19XX1dfQ==
+        '400':
+          $ref: '#/components/responses/Bad_request_400_cl'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          description: Permission denied due to insufficient rights. This may happen when the request does not contain sufficient scopes for the given query values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                Forbidden:
+                  value:
+                    code: 403
+                    status: Forbidden
+                    message: You need to choose the required scope to complete this action.
+                    details:
+                    - message: 'Required scope(s): schema.schema_manage'
+      security:
+      - OAuth2:
+        - schema.schema_manage
+    servers:
+    - url: https://api.emporix.io
+  /schema/{tenant}/custom-entities/import:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    post:
+      tags:
+      - Export / Import
+      summary: Importing Custom Entities
+      description: 'Imports custom entities with corresponding schemas.
+
+
+        **Note**: If given `Custom Entity Type` or `Schema` already exists then it will be created with `_COPY` suffix. For example, `CUSTOM_PRODUCT` will be created as `CUSTOM_PRODUCT_COPY`.'
+      operationId: POST-schema-import-custom-entites
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExportImportRequest'
+            example:
+              data: MQUlOVF9BR0VOVF9DT05URVhUIl19XX1dfQ==
+      responses:
+        '204':
+          description: No content
+        '400':
+          $ref: '#/components/responses/Bad_request_400_cl'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          description: Permission denied due to insufficient rights. This may happen when the request does not contain sufficient scopes for the given query values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                Forbidden:
+                  value:
+                    code: 403
+                    status: Forbidden
+                    message: You need to choose the required scope to complete this action.
+                    details:
+                    - message: 'Required scope(s): schema.schema_manage'
+      security:
+      - OAuth2:
+        - schema.schema_manage
+    servers:
+    - url: https://api.emporix.io
+  /search/{tenant}/search/indexes/export:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    post:
+      summary: Exporting search indexes
+      operationId: POST-search-tenant-indexes-export
+      tags:
+      - Export / Import
+      description: '!Preview
+
+
+        {% hint style="danger" %}
+
+        This functionality is in preview mode - some of the features may not be fully operational yet.
+
+        {% endhint %}
+
+
+        Exports the configuration of the selected search indexes as one package. The package can be imported on another tenant.
+
+
+        `data` is a base64-encoded JSON array. Each decoded item has `id`, `type`, and `fields`. `name` and `description` are optional localized maps. The array does not include `status` or `metadata`. Unknown properties in the request are ignored.
+
+
+        A selection that names an index that does not exist returns `404 Not Found`. An empty selection, a null item, or an item without `type` or `id` returns `400 Bad Request`.'
+      security:
+      - OAuth2:
+        - search.search_manage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              minItems: 1
+              items:
+                $ref: '#/components/schemas/IndexSelection'
+            examples:
+              Two indexes:
+                value:
+                - type: VEHICLE
+                  id: vehicles
+                - type: BIKE
+                  id: bikes
+      responses:
+        '200':
+          description: The request succeeded. The body is the export package.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IndexExportPackage'
+              examples:
+                Exported indexes:
+                  value:
+                    exportedAt: '2026-03-12T10:00:00.000Z'
+                    data: W3siaWQiOiJ2ZWhpY2xlcyIsInR5cGUiOiJWRUhJQ0xFIiwibmFtZSI6eyJlbiI6IlZlaGljbGVzIn0sImRlc2NyaXB0aW9uIjp7ImVuIjoiU2VhcmNoIHZlaGljbGVzIGJ5IG5hbWUgYW5kIHBvd2VyIn0sImZpZWxkcyI6W3sicGF0aCI6Im5hbWUuZW4iLCJ0ZXh0Ijp0cnVlLCJhdXRvY29tcGxldGUiOiJQUkVGSVgifSx7InBhdGgiOiJjb2RlIiwidGV4dCI6dHJ1ZSwiZXhhY3QiOnRydWV9XX0seyJpZCI6ImJpa2VzIiwidHlwZSI6IkJJS0UiLCJuYW1lIjp7ImVuIjoiQmlrZXMifSwiZGVzY3JpcHRpb24iOnsiZW4iOiJTZWFyY2ggYmlrZXMgYnkgbmFtZSJ9LCJmaWVsZHMiOlt7InBhdGgiOiJuYW1lLmVuIiwidGV4dCI6dHJ1ZX1dfV0=
+        '400':
+          description: The selection is empty, an item is null, or an item is missing `type` or `id`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+              examples:
+                Empty selection:
+                  value:
+                    code: 400
+                    status: Bad Request
+                    message: There is a validation error. Please check the details.
+                    details:
+                    - field: exportIndexes.selections
+                      message: 'selections: must not be empty'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_search_manage'
+        '404':
+          description: No index exists for one of the selected type and id pairs.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+              examples:
+                Index not found:
+                  value:
+                    code: 404
+                    status: '404'
+                    message: The index with id='vehicles' has not been found on tenant='acme'.
+        '500':
+          $ref: '#/components/responses/500_resp_common'
+    servers:
+    - url: https://api.emporix.io
+  /search/{tenant}/search/indexes/import:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    post:
+      summary: Importing search indexes
+      operationId: POST-search-tenant-indexes-import
+      tags:
+      - Export / Import
+      description: '!Preview
+
+
+        {% hint style="danger" %}
+
+        This functionality is in preview mode - some of the features may not be fully operational yet.
+
+        {% endhint %}
+
+
+        Creates or updates each index in the package. Each index uses the same checks as saving an index. The type must be a custom schema type, and each field must be allowed on that type.
+
+
+        `data` is a base64-encoded JSON array of index configurations. `metadata` can be omitted. When `metadata.version` is present, it is the optimistic lock. A missing version still updates an index that already exists. Unknown properties in a decoded item are ignored.
+
+
+        The response has one item per index, in the same order as the package. `jobId` and `jobType` are present when a build job starts. They are omitted when the index is already ready and its field definition is unchanged. `create_index` means the index was created. `update_index` means an existing index''s field definition changed.
+
+
+        Indexes earlier in the package stay created or updated when a later index fails. The response is then the error for the index that failed.'
+      security:
+      - OAuth2:
+        - search.search_manage
+      parameters:
+      - $ref: '#/components/parameters/header_Content-Language'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IndexExportPackage'
+            examples:
+              Import a package:
+                value:
+                  exportedAt: '2026-03-12T10:00:00.000Z'
+                  data: W3siaWQiOiJ2ZWhpY2xlcyIsInR5cGUiOiJWRUhJQ0xFIiwibmFtZSI6eyJlbiI6IlZlaGljbGVzIn0sImRlc2NyaXB0aW9uIjp7ImVuIjoiU2VhcmNoIHZlaGljbGVzIGJ5IG5hbWUgYW5kIHBvd2VyIn0sImZpZWxkcyI6W3sicGF0aCI6Im5hbWUuZW4iLCJ0ZXh0Ijp0cnVlLCJhdXRvY29tcGxldGUiOiJQUkVGSVgifSx7InBhdGgiOiJjb2RlIiwidGV4dCI6dHJ1ZSwiZXhhY3QiOnRydWV9XX0seyJpZCI6ImJpa2VzIiwidHlwZSI6IkJJS0UiLCJuYW1lIjp7ImVuIjoiQmlrZXMifSwiZGVzY3JpcHRpb24iOnsiZW4iOiJTZWFyY2ggYmlrZXMgYnkgbmFtZSJ9LCJmaWVsZHMiOlt7InBhdGgiOiJuYW1lLmVuIiwidGV4dCI6dHJ1ZX1dfV0=
+      responses:
+        '200':
+          description: The request succeeded. The body lists one result for each index in the package.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IndexImportResult'
+              examples:
+                Created and unchanged indexes:
+                  value:
+                  - id: vehicles
+                    type: VEHICLE
+                    jobId: 66f1a2b3c4d5e6f708192a3b
+                    jobType: create_index
+                  - id: bikes
+                    type: BIKE
+        '400':
+          description: The package cannot be read, or an index in the package fails validation or field checks.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+              examples:
+                Invalid package:
+                  value:
+                    code: 400
+                    status: '400'
+                    message: Provided data to import is invalid
+                Field does not exist:
+                  value:
+                    code: 400
+                    status: '400'
+                    message: Field 'nope' does not exist.
+                Index fields are required:
+                  value:
+                    details:
+                    - field: fields
+                      message: 'fields: Index fields are required.'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_search_manage'
+        '409':
+          description: An index job is already in progress, or `metadata.version` does not match the stored index.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+              examples:
+                Job already in progress:
+                  value:
+                    code: 409
+                    status: '409'
+                    message: An index job is already in progress.
+        '500':
+          $ref: '#/components/responses/500_resp_common'
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    ExportImportResponse:
+      allOf:
+      - $ref: '#/components/schemas/ExportImportRequest'
+      type: object
+      properties:
+        exportedAt:
+          type: string
+          description: 'Date and time when the object was created, compliant with the ISO 8601 standard. For example: `2022-03-31T09:52:15.423Z`'
+      required:
+      - data
+    ErrorResponse:
+      required:
+      - code
+      - message
+      - status
+      type: object
+      properties:
+        id:
+          type:
+          - string
+          - 'null'
+        code:
+          type: integer
+          format: int32
+        status:
+          type: string
+        message:
+          type: string
+        errorCode:
+          type:
+          - string
+          - 'null'
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              type:
+                type: string
+              message:
+                type: string
+              moreInfo:
+                type: string
+    ExportImportRequest:
+      type: object
+      properties:
+        data:
+          type: string
+          format: byte
+          description: Base64 representation of custom entities with corresponding schemas.
+      required:
+      - data
+    IndexExportPackage:
+      type: object
+      description: 'Package of search index configuration. `data` is the base64 encoding of a JSON array.
+
+
+        Each decoded item has `id`, `type`, and `fields`. `name` and `description` are optional localized maps. Export omits `status` and `metadata`. Import accepts `metadata.version` when the caller sends it.'
+      properties:
+        exportedAt:
+          type: string
+          format: date-time
+          description: Date and time when the package was exported.
+          example: '2026-03-12T10:00:00.000Z'
+        data:
+          type: string
+          description: Base64-encoded JSON array of index configurations.
+          example: W3siaWQiOiJ2ZWhpY2xlcyIsInR5cGUiOiJWRUhJQ0xFIiwibmFtZSI6eyJlbiI6IlZlaGljbGVzIn0sImRlc2NyaXB0aW9uIjp7ImVuIjoiU2VhcmNoIHZlaGljbGVzIGJ5IG5hbWUgYW5kIHBvd2VyIn0sImZpZWxkcyI6W3sicGF0aCI6Im5hbWUuZW4iLCJ0ZXh0Ijp0cnVlLCJhdXRvY29tcGxldGUiOiJQUkVGSVgifSx7InBhdGgiOiJjb2RlIiwidGV4dCI6dHJ1ZSwiZXhhY3QiOnRydWV9XX0seyJpZCI6ImJpa2VzIiwidHlwZSI6IkJJS0UiLCJuYW1lIjp7ImVuIjoiQmlrZXMifSwiZGVzY3JpcHRpb24iOnsiZW4iOiJTZWFyY2ggYmlrZXMgYnkgbmFtZSJ9LCJmaWVsZHMiOlt7InBhdGgiOiJuYW1lLmVuIiwidGV4dCI6dHJ1ZX1dfV0=
+      required:
+      - exportedAt
+      - data
+    ErrorMessage:
+      type: object
+      description: Error returned for a failed request.
+      properties:
+        code:
+          type: integer
+          description: HTTP status code.
+        status:
+          type: string
+          description: HTTP status code as text.
+        message:
+          type: string
+          description: Explanation of the failure.
+        details:
+          type: array
+          description: Field-level or scope-level messages, when the failure has more than one part.
+          items:
+            type: object
+            properties:
+              message:
+                type: string
+                description: One part of the failure.
+    IndexSelection:
+      type: object
+      description: One index to export. Unknown properties are ignored.
+      properties:
+        type:
+          type: string
+          description: Custom schema type this index belongs to.
+          example: VEHICLE
+        id:
+          type: string
+          description: Index id. Use 1 to 66 characters. Allowed characters are letters, digits, underscore, and hyphen.
+          example: vehicles
+      required:
+      - type
+      - id
+    ErrorMessageFault:
+      type: object
+      description: Authorization error returned by the API gateway.
+      properties:
+        fault:
+          type: object
+          properties:
+            faultstring:
+              type: string
+              description: Authorization failure.
+            detail:
+              type: object
+              properties:
+                errorcode:
+                  type: string
+                  description: Gateway error code.
+    IndexImportResult:
+      type: object
+      description: Result of importing one index. `jobId` and `jobType` are omitted when the ready index is unchanged.
+      properties:
+        id:
+          type: string
+          description: Index id.
+          example: vehicles
+        type:
+          type: string
+          description: Custom schema type this index belongs to.
+          example: VEHICLE
+        jobId:
+          type: string
+          description: Identifier of the job that builds the index. Present when a job starts.
+          example: 66f1a2b3c4d5e6f708192a3b
+        jobType:
+          type: string
+          description: 'Kind of index change. Present when a job starts.
+
+            * `create_index` – the index was created.
+
+            * `update_index` – an existing index''s field definition changed.'
+          enum:
+          - create_index
+          - update_index
+          example: create_index
+      required:
+      - id
+      - type
+  responses:
+    Unauthorized_401:
+      description: Given request is unauthorized - the authorization token is invalid or has expired. It usually means that the tenant from the token does not match tenant from path.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid Access Token:
+              value:
+                fault:
+                  faultstring: Invalid Access Token
+                  detail:
+                    errorcode: keymanagement.service.invalid_access_token
+            Unauthorized:
+              value: {}
+    Bad_request_400_cl:
+      description: Unsupported content language provided.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              status:
+                type: string
+              message:
+                type: string
+              errorCode:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    field:
+                      type: string
+                    type:
+                      type: string
+                    message:
+                      type: string
+                    moreInfo:
+                      type: string
+          examples:
+            Bad request:
+              value:
+                code: 400
+                status: Bad Request
+                message: Language header validation failed.
+                details:
+                - message: 'Following languages are not supported: ''ru'''
+    401_resp_common:
+      description: The authorization token is invalid or has expired.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessageFault'
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            Access token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+    403_search_manage:
+      description: The access token does not include `search.search_manage`.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Missing manage scope:
+              value:
+                code: 403
+                status: '403'
+                message: User not authorized.
+                details:
+                - message: Missing one of required scopes '[search.search_manage]'
+    500_resp_common:
+      description: A server-side error occurred.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Internal Server Error:
+              value:
+                code: 500
+                status: '500'
+                message: The server has encountered an error during processing the request data while trying to connect to the database.
+  parameters:
+    tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: Always write the tenant name in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+    header_Content-Language:
+      name: Content-Language
+      in: header
+      required: false
+      description: Language of the localized `name` and `description` in the request body. Each language key in those maps must be configured for the tenant.
+      schema:
+        type: string
+        example: en
+    path_tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'Your Emporix tenant''s name.
+
+        **Note**: The tenant should always be written in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            schema.schema_manage: Required for managing schemas.
+            schema.schema_read: Required for reading schemas.
+            schema.custominstance_read: Read custom instances of any custom schema type.
+            schema.custominstance_manage: Manage custom instances of any custom schema type.
+            custom.{lowerCaseType}_manage: Manage custom instances of a given type. For example, for type `DOCUMENT` → `custom.document_manage`.
+            custom.{lowerCaseType}_manage_own: Allows to manage only your own custom instances of a given type. For example, for type `DOCUMENT` → `custom.document_manage_own`.
+            custom.{lowerCaseType}_read: Read custom instances of a given type. For example, for type `DOCUMENT` → `custom.document_read`.
+            custom.{lowerCaseType}_read_own: Allows to read only your own custom instances of a given type. For example, for type `DOCUMENT` → `custom.document_read_own`.
+x-refined-from:
+- emporix-schema-openapi.yml
+- emporix-search-service-openapi.yml
+- emporix-schema-openapi.yml
+- emporix-search-service-openapi.yml

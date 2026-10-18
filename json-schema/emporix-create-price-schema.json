@@ -1,0 +1,229 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-create-price-schema.json",
+  "title": "Price",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-price-service-openapi.yml#/components/schemas/createPrice",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Custom price identifier. If not provided, it is automatically generated."
+    },
+    "itemId": {
+      "type": "object",
+      "description": "Item for which the price is defined.",
+      "required": [
+        "itemType",
+        "id"
+      ],
+      "properties": {
+        "itemType": {
+          "type": "string",
+          "description": "Type of the referenced item. Possible values:\n* `PRODUCT`\n* `SKU`\n\n  **The `SKU` value is in preview mode** - the system does not fully operate on the SKU concept yet.\n"
+        },
+        "id": {
+          "type": "string",
+          "description": "Product's unique identifier - ID or SKU.\n\n**The `SKU` value is in preview mode** - the system does not fully operate on the SKU concept yet.\n"
+        }
+      }
+    },
+    "itemYrn": {
+      "description": "Product's uniform resource name.",
+      "type": "string"
+    },
+    "currency": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/currency"
+        }
+      ]
+    },
+    "location": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/location"
+        }
+      ]
+    },
+    "salePrice": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/salePrice"
+        }
+      ]
+    },
+    "restrictions": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/restrictions"
+        }
+      ]
+    },
+    "priceModelId": {
+      "type": "string",
+      "description": "ID of the price model to which the price should assigned. If the ID is not provided, the default price model is used."
+    },
+    "tierValues": {
+      "type": "array",
+      "description": "Prices for tiers specified in the price model. The prices will be assigned to tiers based on the entered order (the first value will be assigned to the first tier, the second value to second tier).\n\n**Note**: If this field does not contain values for all tiers defined in the price model, the endpoint responds with an error.\n",
+      "items": {
+        "allOf": [
+          {
+            "$ref": "#/$defs/tierValueCreation"
+          }
+        ]
+      }
+    },
+    "mixins": {
+      "type": "object",
+      "description": "Map of custom price attributes.",
+      "additionalProperties": true
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "mixins": {
+          "type": "object",
+          "description": "Schemas for custom price attributes.",
+          "additionalProperties": true
+        }
+      }
+    }
+  },
+  "required": [
+    "itemId",
+    "currency",
+    "location",
+    "tierValues"
+  ],
+  "$defs": {
+    "currency": {
+      "type": "string",
+      "title": "currency",
+      "pattern": "[A-Z]{3}",
+      "description": "Currency code, compliant with the ISO 4217 standard."
+    },
+    "dateValidity": {
+      "type": "object",
+      "description": "Date range in which the object is valid.",
+      "properties": {
+        "from": {
+          "type": "string",
+          "description": "Date from which the object is valid, compliant with the ISO 8601 standard."
+        },
+        "to": {
+          "type": "string",
+          "description": "Date to which the object is valid, compliant with the ISO 8601 standard."
+        }
+      }
+    },
+    "location": {
+      "type": "object",
+      "properties": {
+        "countryCode": {
+          "type": "string",
+          "description": "Code of the country to which the price applies, as defined in the Country Service."
+        }
+      },
+      "required": [
+        "countryCode"
+      ]
+    },
+    "principal": {
+      "description": "Customers or customer groups for whom the price is valid.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Customer or customer group for whom the price is valid. Possible values:\n* `CUSTOMER`\n* `GROUP`\n\n  **The `GROUP` value is in preview mode** - the system does not fully operate on the customer groups concept yet."
+        },
+        "id": {
+          "type": "string",
+          "description": "Unique identifier of the customer or customer group."
+        }
+      },
+      "required": [
+        "type",
+        "id"
+      ]
+    },
+    "restrictions": {
+      "type": "object",
+      "description": "Restrictions that limit the validity of the price model and prices assigned to it.\n",
+      "properties": {
+        "principals": {
+          "type": "array",
+          "description": "List of customers and customer groups for whom the price is valid.\n\n**The `GROUP` principals are in preview mode** - the system does not fully operate on the customer groups concept yet.",
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/$defs/principal"
+              }
+            ]
+          }
+        },
+        "validity": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/dateValidity"
+            }
+          ]
+        },
+        "siteCodes": {
+          "type": "array",
+          "description": "Codes of sites to which the price applies.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "priceListId": {
+          "type": "string",
+          "description": "Unique identifier of the price list to which the price should be assigned.\n\n**The `priceListId` field is in preview mode** - some of the features may not be fully operational yet."
+        }
+      },
+      "required": [
+        "siteCodes"
+      ]
+    },
+    "salePrice": {
+      "type": "object",
+      "properties": {
+        "discountAmount": {
+          "minimum": 0,
+          "description": "Discount expressed as a fixed amount.",
+          "type": "number"
+        },
+        "discountRate": {
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Discount expressed as a percentage of the original price.",
+          "type": "number"
+        },
+        "description": {
+          "description": "Additional information about the discount.",
+          "type": "string"
+        }
+      }
+    },
+    "tierValueCreation": {
+      "description": "",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "An identifier of a tier. The ID is required only if the priceModelId is provided. If the price model is the default, the tier value is automatically assigned according to the default price model."
+        },
+        "priceValue": {
+          "type": "number",
+          "description": "Gross price (if the `includesTax` field is set to `true`) or net price (if the `includesTax` field is set to `false`).\n\nThis field should contain by a number where the cent part is separated by a dot sign - such as `12.99`.\n\n**Note**: The cent part of the price is not limited to two digits. You can specify the price with any precision."
+        }
+      },
+      "required": [
+        "priceValue"
+      ]
+    }
+  }
+}

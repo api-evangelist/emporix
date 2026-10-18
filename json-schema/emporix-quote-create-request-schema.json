@@ -1,0 +1,285 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-quote-create-request-schema.json",
+  "title": "QuoteCreateRequest",
+  "description": "The schema specifies the attributes that must be provided when creating a quote manually.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-quote-openapi.yml#/components/schemas/QuoteCreateRequest",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "The ID for a quote can either be manually provided at the time of the quote creation, or is automatically generated if not provided."
+    },
+    "customerId": {
+      "type": "string",
+      "description": "The customer ID for which the new quote is created. Either this attribute or the `customerEmail` attribute is required for the quote creation"
+    },
+    "employeeId": {
+      "type": "string",
+      "description": "The employee ID for which the new quote is created. By default, the employeeId is taken from session token, but in case the session token is not provided, employeeId is taken from the payload. Default employee from the configuration will be assigned to the quote in case session token nor 'employeeId' is not provided."
+    },
+    "companyName": {
+      "type": "string",
+      "deprecated": true,
+      "description": "**This field is deprecated**. Use `legalEntityId` instead. When `legalEntityId` is omitted and exactly one legal entity assigned to the billing address has this name, the quote is linked to that legal entity. When several legal entities share the name, the quote stores the name only."
+    },
+    "legalEntityId": {
+      "type": "string",
+      "description": "Identifier of the legal entity assigned to `billingAddressId`. When present, this value is used instead of `companyName`."
+    },
+    "siteCode": {
+      "type": "string",
+      "description": "The site code for which the quote is created."
+    },
+    "currency": {
+      "type": "string",
+      "description": "The currency for which the quote is created."
+    },
+    "billingAddressId": {
+      "type": "string",
+      "description": "For B2B customers, it represents the location which should specify the billing address. For B2C customers, it represents identifier of customer's billing address."
+    },
+    "shippingAddressId": {
+      "type": "string",
+      "description": "For B2B customers, it represents the location which should specify the shipping address. For B2C customers, it represents identifier of customer's shipping address."
+    },
+    "validTo": {
+      "type": "string",
+      "format": "date-time",
+      "description": "The date until which the quote is valid for the customer. After this date, the quote cannot be approved and transformed into order by the customer."
+    },
+    "shipping": {
+      "$ref": "#/$defs/QuoteShipping"
+    },
+    "items": {
+      "type": "array",
+      "description": "Quote items.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "itemId": {
+            "type": "string",
+            "description": "ID of the item. It's generated automatically when it's not provided."
+          },
+          "quantity": {
+            "type": "object",
+            "description": "The quantity of the quote item in a given unit.",
+            "properties": {
+              "quantity": {
+                "type": "number",
+                "description": "The quantity of quote items."
+              },
+              "unitCode": {
+                "type": "string",
+                "description": "The unit of the quantity as defined in the Unit Handling Service."
+              }
+            },
+            "required": [
+              "quantity",
+              "unitCode"
+            ]
+          },
+          "product": {
+            "type": "object",
+            "description": "Product reference.",
+            "required": [
+              "productId"
+            ],
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "Defines if product is external or internal. If the product is internal, it's taken from the Emporix Product Service. If the price is external, it's a custom product from external system.",
+                "enum": [
+                  "INTERNAL",
+                  "EXTERNAL"
+                ]
+              },
+              "productId": {
+                "type": "string",
+                "description": "Product or variant ID."
+              },
+              "name": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "description": "Localized name of a product. Used for the `EXTERNAL` products as the `INTERNAL` ones are populated from the product catalog data."
+              },
+              "media": {
+                "type": "object",
+                "description": "Media object that can be provided for an `EXTERNAL` product. `INTERNAL` products have media populated automatically and override the given value.",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "ID of the media."
+                  },
+                  "contentType": {
+                    "type": "string",
+                    "description": "The content type of the media. For example: `image/jpg`."
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "The url to the product media."
+                  }
+                }
+              },
+              "mixins": {
+                "type": "object",
+                "description": "Mixins request.",
+                "additionalProperties": true
+              },
+              "metadata": {
+                "type": "object",
+                "description": "Metadata request.",
+                "properties": {
+                  "mixins": {
+                    "type": "object",
+                    "description": "Links to the mixin schemas.",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          },
+          "price": {
+            "type": "object",
+            "description": "Matched price of the product.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "Defines if price is internal or external. If the price is internal, it's taken from the Emporix Price Service. If the price is external, it's a custom price from external system.",
+                "enum": [
+                  "INTERNAL",
+                  "EXTERNAL"
+                ]
+              },
+              "priceId": {
+                "type": "string",
+                "description": "ID of the matched price. Required only for type=`INTERNAL`."
+              },
+              "priceListId": {
+                "type": "string",
+                "description": "Identifier of price list. The field should be populated only in case when the price belongs to any price list."
+              },
+              "unitPrice": {
+                "type": "number",
+                "description": "Effective unit price of the product."
+              },
+              "totalNetValue": {
+                "type": "number",
+                "description": "Total net value for the entire quantity of the item."
+              },
+              "tax": {
+                "type": "object",
+                "description": "Tax information of the item.",
+                "required": [
+                  "taxClass",
+                  "taxRate"
+                ],
+                "properties": {
+                  "taxClass": {
+                    "type": "string",
+                    "description": "Matched tax class of the item."
+                  },
+                  "taxRate": {
+                    "type": "number",
+                    "description": "Tax rate of the item."
+                  }
+                }
+              }
+            },
+            "required": [
+              "priceId",
+              "unitPrice",
+              "totalNetValue",
+              "tax"
+            ]
+          },
+          "mixins": {
+            "type": "object",
+            "description": "Mixins request.",
+            "additionalProperties": true
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Metadata request.",
+            "properties": {
+              "mixins": {
+                "type": "object",
+                "description": "Links to the mixin schemas.",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "required": [
+          "product"
+        ]
+      }
+    },
+    "restriction": {
+      "$ref": "#/$defs/Restriction"
+    },
+    "mixins": {
+      "type": "object",
+      "description": "Mixins request.",
+      "additionalProperties": true
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Metadata request.",
+      "properties": {
+        "mixins": {
+          "type": "object",
+          "description": "Links to the mixin schemas.",
+          "additionalProperties": true
+        }
+      }
+    },
+    "customerEmail": {
+      "type": "string",
+      "description": "The contact email that identifies the customer. Either this attribute or the `customerId` attribute is mandatory for the quote creation request."
+    }
+  },
+  "required": [
+    "customerId",
+    "siteCode",
+    "currency",
+    "billingAddressId",
+    "shippingAddressId"
+  ],
+  "$defs": {
+    "QuoteShipping": {
+      "type": "object",
+      "description": "The shipping cost of the quote.",
+      "properties": {
+        "value": {
+          "type": "number",
+          "description": "Net value of the shipping cost."
+        },
+        "methodId": {
+          "type": "string",
+          "description": "Shipping method's unique identifier."
+        },
+        "zoneId": {
+          "type": "string",
+          "description": "Shipping zone identifier."
+        },
+        "shippingTaxCode": {
+          "type": "string",
+          "description": "Tax code of the shipping method."
+        }
+      }
+    },
+    "Restriction": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Access control identifier that determines who can view or manage the quotes.\n\n**Purpose**: Restricts quote visibility based on scope permissions. Only users/applications \nwith matching restriction scopes can access quotes with a specific restriction value.\n\n**Access Control**:\n- *Reading*: Users can only query and view quotes with the `restriction` value that matches one of their authorized restrictions.\n\n**Validation**: The value must exist in the tenant's configured list of valid restrictions.\n\n**Restriction Synchronization**:\n- If quote is created by a customer (based on a cart) and `restriction` property is not set, the `restriction` value of quote is inherited from customer's restriction.\n- If a quote is created by an employee and the `restriction` property is not set with tenant configuration property `enableSyncBetweenRestrictionsAndSiteCodes` set to `true`, the `restriction` field automatically syncs with quote's siteCode property.\n"
+    }
+  }
+}

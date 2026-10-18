@@ -1,0 +1,592 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-dynamic-variant-product-with-id-schema.json",
+  "title": "dynamicVariantProductWithId",
+  "description": "Response schema for products of the DYNAMIC_VARIANT type.\n\n- **`sellable`** — not inherited from parents; must be set explicitly on each product. Root and intermediate variants are typically `false`; leaf variants are typically `true`.\n- **Root products** include a `variants` map containing all descendants with accumulated attributes.\n- **Child products** include `ownVariantAttributes` (attributes defined on this product) and `inheritedVariantAttributes` (read-only, merged from ancestors).\n- `parentVariantPath` is an ordered array of ancestor IDs from direct parent (index 0) to root (last index). Empty for root products.\n- `metadata.dynamicVariantInfo` is present only when a hierarchy integrity issue is detected.\n",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-product-service-openapi.yml#/components/schemas/dynamicVariantProductWithId",
+  "type": "object",
+  "properties": {
+    "id": {
+      "$ref": "#/$defs/id"
+    },
+    "yrn": {
+      "$ref": "#/$defs/YRN"
+    },
+    "code": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique product identifier, defined by the user."
+    },
+    "name": {
+      "$ref": "#/$defs/localizedValue"
+    },
+    "description": {
+      "$ref": "#/$defs/localizedValue"
+    },
+    "productType": {
+      "$ref": "#/$defs/productType"
+    },
+    "published": {
+      "$ref": "#/$defs/published"
+    },
+    "sellable": {
+      "type": "boolean",
+      "description": "Indicates whether this variant can be sold directly (i.e. it is a leaf in the hierarchy that a customer can add to a cart). This value is **not inherited** from parent variants — it must be set explicitly on each product. Root products and intermediate-level variants are typically `false`; leaf variants are typically `true`.\n"
+    },
+    "parentVariantId": {
+      "type": "string",
+      "description": "Identifier of the immediate parent product in the variant hierarchy. Absent for root-level products."
+    },
+    "parentVariantPath": {
+      "type": "array",
+      "description": "Ordered array of ancestor product identifiers, from the direct parent (index 0) to the root (last index). Empty for root-level products.\n",
+      "items": {
+        "type": "string"
+      }
+    },
+    "dynamicVariantType": {
+      "type": "string",
+      "description": "Optional label identifying the variant level or kind within the hierarchy (for example, `\"H1_L1\"`)."
+    },
+    "ownVariantAttributes": {
+      "$ref": "#/$defs/ownVariantAttributes"
+    },
+    "inheritedVariantAttributes": {
+      "$ref": "#/$defs/inheritedVariantAttributes"
+    },
+    "variants": {
+      "$ref": "#/$defs/variantsMap"
+    },
+    "taxClasses": {
+      "$ref": "#/$defs/taxClasses"
+    },
+    "vendor": {
+      "$ref": "#/$defs/vendor"
+    },
+    "brandId": {
+      "type": "string",
+      "description": "ID of brand."
+    },
+    "brand": {
+      "$ref": "#/$defs/brand"
+    },
+    "labelIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Collection of label IDs."
+    },
+    "labels": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/label"
+      }
+    },
+    "categoryIds": {
+      "type": "array",
+      "description": "Category IDs assigned to the product.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "customerSegmentIds": {
+      "type": "array",
+      "description": "Customer segment IDs assigned to the product.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "relatedItems": {
+      "type": "array",
+      "description": "List of items in a relationship with this product.",
+      "items": {
+        "$ref": "#/$defs/relatedItem"
+      }
+    },
+    "weightDependent": {
+      "type": "boolean",
+      "description": "Mark the product as weight-dependent if the line item price could change after packaging."
+    },
+    "mixins": {
+      "$ref": "#/$defs/productMixins"
+    },
+    "media": {
+      "$ref": "#/$defs/productMedia"
+    },
+    "metadata": {
+      "$ref": "#/$defs/dynamicVariantProductMetadataGet"
+    }
+  },
+  "required": [
+    "id",
+    "code",
+    "name",
+    "productType"
+  ],
+  "$defs": {
+    "YRN": {
+      "title": "YRN (attribute)",
+      "type": "string",
+      "description": "In YaaS, a global resource identifier is a Uniform Resource Name (URN) with a custom YaaS schema and is called a YaaS Resource Name, or YRN.\n\nIt is a unique identifier, which stores information about a resource, such as its type, ID or name of the tenant."
+    },
+    "brand": {
+      "type": "object",
+      "description": "Brand data expanded from `brandId`.",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "localizedName": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "localizedDescription": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "image": {
+          "type": "string",
+          "format": "uri"
+        },
+        "cloudinaryUrl": {
+          "type": "string",
+          "format": "uri"
+        },
+        "mediaId": {
+          "type": "string"
+        }
+      }
+    },
+    "dynamicVariantAttribute": {
+      "type": "object",
+      "description": "A single dynamic variant attribute. Combines a localized display name for the attribute itself with a typed, optionally localized value.\n",
+      "required": [
+        "value"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/localizedValue"
+        },
+        "value": {
+          "$ref": "#/$defs/dynamicVariantAttributeValue"
+        }
+      }
+    },
+    "dynamicVariantAttributeValue": {
+      "type": "object",
+      "description": "The value part of a dynamic variant attribute. Holds the canonical qualifier used for matching, an optional localized display label, and an optional unit code for measurement attributes.\n",
+      "required": [
+        "type",
+        "qualifier"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Data type of the qualifier value.\n",
+          "enum": [
+            "STRING",
+            "NUMBER",
+            "DECIMAL",
+            "BOOLEAN"
+          ]
+        },
+        "qualifier": {
+          "description": "The canonical value used for variant matching. The JSON type must match `type`: a string for `STRING`, a number for `NUMBER` or `DECIMAL`, or a boolean for `BOOLEAN`.\n",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            }
+          ]
+        },
+        "name": {
+          "$ref": "#/$defs/localizedValue"
+        },
+        "unit": {
+          "type": "string",
+          "description": "Optional unit code for measurement attributes (for example, `\"MMT\"` for millimetres, `\"PCE\"` for pieces). Unit translations are resolved by the frontend from a separate dictionary.\n"
+        }
+      }
+    },
+    "dynamicVariantInfo": {
+      "type": "object",
+      "description": "Hierarchy integrity information populated when the variant tree has structural problems. Present only when an issue is detected.\n",
+      "properties": {
+        "missingAncestorId": {
+          "type": "string",
+          "description": "Identifier of an ancestor product that could not be found, indicating a broken hierarchy chain."
+        },
+        "cycleDetected": {
+          "type": "boolean",
+          "description": "Indicates that a circular reference was detected in the `parentVariantId` chain."
+        }
+      }
+    },
+    "dynamicVariantProductMetadataGet": {
+      "type": "object",
+      "description": "Metadata for GET responses on DYNAMIC_VARIANT products. Extends the standard product metadata with hierarchy integrity information.",
+      "allOf": [
+        {
+          "$ref": "#/$defs/productMetadataGet"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "dynamicVariantInfo": {
+              "$ref": "#/$defs/dynamicVariantInfo"
+            }
+          }
+        }
+      ]
+    },
+    "id": {
+      "type": "string",
+      "description": "Unique resource identifier."
+    },
+    "inheritedVariantAttributes": {
+      "type": "object",
+      "description": "Read-only map of variant attributes inherited from ancestor products in the hierarchy. These cannot be modified on this product — to change an inherited attribute, update the ancestor that owns it.\n",
+      "additionalProperties": {
+        "$ref": "#/$defs/dynamicVariantAttribute"
+      }
+    },
+    "label": {
+      "type": "object",
+      "description": "Label data expanded from `labelIds`.",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "$ref": "#/$defs/localizedValue"
+        },
+        "image": {
+          "type": "string",
+          "format": "uri"
+        },
+        "cloudinaryUrl": {
+          "type": "string",
+          "format": "uri"
+        },
+        "mediaId": {
+          "type": "string"
+        },
+        "overlay": {
+          "$ref": "#/$defs/labelOverlay"
+        }
+      }
+    },
+    "labelOverlay": {
+      "type": "object",
+      "description": "Overlay metadata for a label.",
+      "additionalProperties": false,
+      "properties": {
+        "isTrue": {
+          "type": "boolean"
+        },
+        "position": {
+          "type": "number"
+        }
+      }
+    },
+    "localizedValue": {
+      "description": "Localized value which can have different structure which depends on provided `Content-Language` header.",
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "ownVariantAttributes": {
+      "type": "object",
+      "description": "Map of variant attributes defined directly on this product. Keys are attribute identifiers (for example, `storageCapacity`). These are the attributes the caller can set by create/update requests. On responses they represent what is stored on this specific product.\n",
+      "additionalProperties": {
+        "$ref": "#/$defs/dynamicVariantAttribute"
+      }
+    },
+    "productMedia": {
+      "type": "array",
+      "uniqueItems": false,
+      "description": "Media files attached to the product.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "yrn": {
+            "$ref": "#/$defs/YRN"
+          },
+          "contentType": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "uploadLink": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "cloudinaryUrl": {
+            "type": "string"
+          },
+          "uncommittedMedia": {
+            "type": "boolean"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "customAttributes": {
+            "type": "object"
+          },
+          "mixins": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Custom media attributes."
+          }
+        }
+      }
+    },
+    "productMetadataCore": {
+      "type": "object",
+      "description": "Metadata request.",
+      "additionalProperties": false,
+      "properties": {
+        "mixins": {
+          "type": "object",
+          "description": "Links to the mixin schemas.",
+          "additionalProperties": true
+        }
+      }
+    },
+    "productMetadataGet": {
+      "type": "object",
+      "description": "Metadata for GET requests.",
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "$ref": "#/$defs/productMetadataWithVersion"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "classificationMixins": {
+              "type": "array",
+              "description": "List of mixin schemas used for classification.",
+              "items": {
+                "type": "object",
+                "description": "Mixin schema.",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Name of the mixin",
+                    "pattern": "^[a-zA-Z0-9_]\\S*$"
+                  },
+                  "mixinPath": {
+                    "type": "string",
+                    "description": "The mixins path that should be used when defining attributes on a product. It's built based on the following pattern - `class_<sourceCategory.code>_<name>`."
+                  },
+                  "schemaUrl": {
+                    "type": "string",
+                    "description": "URL of the mixin schema defined on the category level.",
+                    "pattern": "^https?://[^\\s/$.?#].\\S*$"
+                  },
+                  "usedSchemaUrl": {
+                    "type": "string",
+                    "description": "If given mixin has been already used in the product, then this field contains the URL of the used mixin schema.",
+                    "pattern": "^https?://[^\\s/$.?#].\\S*$"
+                  },
+                  "obsoleteSchemaUrlUsed": {
+                    "type": "boolean",
+                    "description": "Indicates whether the used mixin schema is obsolete - `usedSchemaUrl` differs from `schemaUrl`."
+                  },
+                  "required": {
+                    "type": "boolean",
+                    "description": "Indicates whether the mixin is required."
+                  },
+                  "sourceCategoryId": {
+                    "type": "string",
+                    "description": "Unique identifier of the category from which the mixin comes from. Can be this category ID or one of the parent categories IDs."
+                  }
+                }
+              }
+            },
+            "createdAt": {
+              "type": "string",
+              "description": "Creation date in the ISO 8601 standard."
+            },
+            "modifiedAt": {
+              "type": "string",
+              "description": "Modification date in the ISO 8601 standard."
+            }
+          }
+        }
+      ]
+    },
+    "productMetadataWithVersion": {
+      "type": "object",
+      "description": "Metadata with the version information.",
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "$ref": "#/$defs/productMetadataCore"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "number",
+              "description": "Version of the document"
+            }
+          }
+        }
+      ]
+    },
+    "productMixins": {
+      "type": "object",
+      "description": "Custom product attributes, keyed by mixin name.\n\nOn a partial update, omitted mixin names remain on the product. Sent fields are merged recursively. A `null` value does not remove a mixin. To remove a mixin, send a full product replacement and omit the mixin name.",
+      "additionalProperties": true
+    },
+    "productType": {
+      "type": "string",
+      "description": "Indicates the product type, which is immutable. Once the product type is set, it cannot be updated.\n",
+      "default": "BASIC",
+      "enum": [
+        "BASIC",
+        "BUNDLE",
+        "PARENT_VARIANT",
+        "VARIANT",
+        "DYNAMIC_VARIANT"
+      ]
+    },
+    "published": {
+      "type": "boolean",
+      "description": "Flag indicating whether the product has been published or not.",
+      "default": false
+    },
+    "relatedItem": {
+      "title": "relatedItem",
+      "type": "object",
+      "properties": {
+        "refId": {
+          "type": "string",
+          "description": "Identifier of a product which is in the relationship with the main product. The product identifier has to exist. "
+        },
+        "type": {
+          "type": "string",
+          "description": "A relation type. The type has to exist in the system. All relation types are defined in configuration service under `relation_types` key."
+        }
+      },
+      "required": [
+        "refId",
+        "type"
+      ]
+    },
+    "taxClasses": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Map of key-value pairs that associates tax classes with locations (countries). The key of the map should be specified as the existing location/country identifier (see the country-service). The value of the map entry should contain a tax class code (see the tax-service).\nInformation about the association is required for price matching mechanism (see the price-service#MatchPrice)."
+    },
+    "variantMapEntry": {
+      "type": "object",
+      "description": "A single entry in the root product's `variants` map. In API responses the `variantAttributes` field contains **accumulated** attributes — the entry's own delta attributes merged with all ancestor attributes up the chain, so storefront clients receive a ready-to-use combination without additional API calls. The `published` flag is included only when the caller has the `product.product_read_unpublished` scope.\n",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "description": "Version of the source variant product at the time of the last recalculation."
+        },
+        "code": {
+          "type": "string",
+          "description": "Code of the source variant product."
+        },
+        "name": {
+          "$ref": "#/$defs/localizedValue"
+        },
+        "parentVariantId": {
+          "type": "string",
+          "description": "Identifier of the immediate parent product in the variant hierarchy."
+        },
+        "sellable": {
+          "type": "boolean",
+          "description": "Indicates whether this variant can be sold directly."
+        },
+        "published": {
+          "type": "boolean",
+          "description": "Publication state of this variant. Only included in responses when the caller has the `product.product_read_unpublished` scope; entries with `published: false` are otherwise omitted from the map.\n"
+        },
+        "dynamicVariantType": {
+          "type": "string",
+          "description": "Optional label identifying the variant level or kind (for example, `\"H1_L1\"`)."
+        },
+        "variantAttributes": {
+          "type": "object",
+          "description": "Accumulated variant attributes for this entry. For leaf variants this includes all ancestor attributes merged with the entry's own delta. Keys are attribute identifiers.\n",
+          "additionalProperties": {
+            "$ref": "#/$defs/dynamicVariantAttribute"
+          }
+        }
+      }
+    },
+    "variantsMap": {
+      "type": "object",
+      "description": "Denormalized flat map of all descendant variants stored on the root product. Keys are variant product identifiers. In API responses each entry's `variantAttributes` contains accumulated attributes.\n",
+      "additionalProperties": {
+        "$ref": "#/$defs/variantMapEntry"
+      }
+    },
+    "vendor": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "An identifier of a vendor to whom the product belongs."
+        },
+        "name": {
+          "type": "string",
+          "description": "Vendor name."
+        }
+      },
+      "required": [
+        "id"
+      ]
+    }
+  }
+}

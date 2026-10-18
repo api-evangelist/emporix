@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-payment-method-update-request-schema.json",
+  "title": "paymentMethodUpdateRequest",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-payment-gateway-openapi.yml#/components/schemas/paymentMethodUpdateRequest",
+  "type": "object",
+  "properties": {
+    "active": {
+      "type": "boolean",
+      "description": "Indicates whether a give mode is active."
+    },
+    "configuration": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Map of configuration values for a particular gateway. Supported and required values for Spreedly: \n* `Spreedly/GatewayToken` - Indicates Spreedly gateway. \n* `Spreedly/EnvironmentKey` - Indicates Spreedly environment key.\n* `Spreedly/AccessSecret` - Indicates Spreedly access secret.\n* `Spreedly/PaymentMethodType` - Indicates payment method type, for example: paypal.\n* `Spreedly/RedirectURL` - Indicates a redirect URL where an end user should be redirected when a payment flow is finished. Usually it's a storefront URL.\n* `Spreedly/SignatureSecret` - Indicates a signature secret. The value is needed  for an offsite flow, when a confirmation callback is used.\n* `Spreedly/SCAProviderToken` - Indicates the Spreedly SCA (Strong Customer Authentication) provider token (3DS credit cart).\n  requestBodies: { }"
+    }
+  }
+}

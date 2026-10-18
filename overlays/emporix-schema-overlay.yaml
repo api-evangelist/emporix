@@ -1,0 +1,52 @@
+overlay: 1.0.0
+info:
+  title: Emporix Schema Service overlay
+  version: 1.0.0
+  x-generated: '2026-10-18'
+  x-method: generated
+  x-source: mcp/emporix-tool-crosswalk.yml
+extends: ../openapi/_original/emporix-schema-openapi.yml
+actions:
+- target: $.info
+  update:
+    x-provider: Emporix
+    x-documentation: https://developer.emporix.io/api-references
+    x-llms-txt: https://developer.emporix.io/llms.txt
+    x-docs-mcp: https://developer.emporix.io/~gitbook/mcp
+  description: Provider metadata and agent-facing entry points.
+- target: $.paths['/schema/{tenant}/custom-entities'].get
+  update:
+    x-mcp-tools:
+    - extensibility/get-custom-types
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: GET-schema-retrieve-custom-schema-types backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/schema/{tenant}/custom-entities/{id}'].get
+  update:
+    x-mcp-tools:
+    - extensibility/get-custom-type-schema
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: GET-schema-retrieve-custom-schema-type backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/schema/{tenant}/custom-entities/{type}/instances'].get
+  update:
+    x-mcp-tools:
+    - extensibility/get-custom-type-instances
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: GET-schema-retrieve-custom-instances backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/schema/{tenant}/custom-entities/{type}/instances/{id}'].get
+  update:
+    x-mcp-tools:
+    - extensibility/get-custom-type-instance
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: GET-schema-retrieve-custom-instance backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/schema/{tenant}/custom-entities/{type}/instances/{id}'].put
+  update:
+    x-mcp-tools:
+    - extensibility/upsert-custom-type-instance
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: PUT-schema-upsert-custom-instance backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/schema/{tenant}/custom-entities/{type}/instances/{id}'].patch
+  update:
+    x-mcp-tools:
+    - extensibility/partial-update-custom-type-instance
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: PATCH-schema-patch-custom-instance backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).

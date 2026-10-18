@@ -1,0 +1,335 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-category-schema.json",
+  "title": "Category",
+  "description": "Definition of category",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-category-tree-openapi.yml#/components/schemas/Category",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Category unique identifier generated when the category is created."
+    },
+    "parentId": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Unique identifier of the parent category. No parentId in the body indicates that this is a root category."
+    },
+    "localizedName": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Localized category name as a map of translations."
+    },
+    "localizedDescription": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Localized category description as a map of translations."
+    },
+    "localizedSlug": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Provides localized category name or code without diacritics for the URL."
+    },
+    "name": {
+      "type": "string",
+      "description": "Category name in tenant default language.",
+      "deprecated": true
+    },
+    "description": {
+      "type": "string",
+      "description": "Description in tenant default language.",
+      "deprecated": true
+    },
+    "code": {
+      "type": "string",
+      "description": "Unique category identifier defined by the tenant."
+    },
+    "ecn": {
+      "type": "array",
+      "description": "List of external category numbers (ECNs) unique for each category.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "validity": {
+      "$ref": "#/$defs/Validity",
+      "description": "Category validity."
+    },
+    "position": {
+      "type": "integer",
+      "format": "int32",
+      "description": "Category position relative to sibling categories."
+    },
+    "published": {
+      "type": "boolean",
+      "description": "Flag indicating whether the category has been published."
+    },
+    "supercategoriesIds": {
+      "type": "array",
+      "description": "IDs of supercategories.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "ownClassificationMixins": {
+      "type": "array",
+      "description": "List of classification mixins defined for this category.",
+      "items": {
+        "$ref": "#/$defs/OwnClassificationMixin"
+      }
+    },
+    "classificationMixins": {
+      "type": "array",
+      "description": "Combined list of classification mixins from parent categories and category's ownClassification mixins.",
+      "items": {
+        "$ref": "#/$defs/ClassificationMixin"
+      }
+    },
+    "mixins": {
+      "type": "object",
+      "description": "Custom category attributes included directly in the mixins object."
+    },
+    "metadata": {
+      "$ref": "#/$defs/MetadataResponse"
+    },
+    "media": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Media"
+      }
+    }
+  },
+  "required": [
+    "id",
+    "localizedName",
+    "position",
+    "published",
+    "metadata",
+    "media"
+  ],
+  "$defs": {
+    "ClassificationMixin": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the mixin",
+          "pattern": "^[a-zA-Z0-9_]\\S*$"
+        },
+        "mixinPath": {
+          "type": "string",
+          "description": "The mixins path that should be used when defining attributes on a product. It's built based on the following pattern - `class_<sourceCategory.code>_<name>`."
+        },
+        "schemaUrl": {
+          "type": "string",
+          "description": "URL of the mixin schema.",
+          "pattern": "^https?://[^\\s/$.?#].\\S*$"
+        },
+        "required": {
+          "type": "boolean",
+          "description": "Indicates whether the mixin is required."
+        },
+        "sourceCategoryId": {
+          "type": "string",
+          "description": "Unique identifier of the category from which the mixin comes from. Can be this category ID or one of the parent categories IDs."
+        }
+      },
+      "required": [
+        "name",
+        "schemaUrl"
+      ],
+      "description": "Classification mixin with source category information."
+    },
+    "Media": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier of media."
+        },
+        "url": {
+          "type": "string",
+          "description": "Url of the file."
+        },
+        "contentType": {
+          "type": "string",
+          "description": "Content type of the file."
+        },
+        "metadata": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/MediaMetadataQueryDocument"
+            },
+            {
+              "description": "Metadata of the file."
+            }
+          ]
+        },
+        "customAttributes": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/MediaCustomAttributesQueryDocument"
+            },
+            {
+              "description": "Custom attributes of the file."
+            }
+          ]
+        },
+        "mixins": {
+          "type": "object",
+          "description": "Custom media attributes."
+        }
+      }
+    },
+    "MediaCustomAttributesQueryDocument": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier of media's custom attributes."
+        },
+        "height": {
+          "type": "integer",
+          "description": "Height of the media image.",
+          "format": "int32"
+        },
+        "width": {
+          "type": "integer",
+          "description": "Width of the media image.",
+          "format": "int32"
+        },
+        "sizeKB": {
+          "type": "number",
+          "description": "Size in kilobytes of the file.",
+          "format": "double"
+        },
+        "type": {
+          "type": "string",
+          "description": "Mime type of the file."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the file."
+        }
+      },
+      "description": "Custom attributes of the file."
+    },
+    "MediaMetadataQueryDocument": {
+      "type": "object",
+      "properties": {
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the media was created compliant with the ISO 8601 standard.",
+          "format": "date-time"
+        },
+        "modifiedAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the media was modified compliant with the ISO 8601 standard.",
+          "format": "date-time"
+        }
+      },
+      "description": "Metadata of the file."
+    },
+    "MetadataCreate": {
+      "type": "object",
+      "properties": {
+        "mixins": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "A key-value map, where key is a mixin name and value is a link to the mixin schema."
+        }
+      }
+    },
+    "MetadataResponse": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "createdAt": {
+              "type": "string",
+              "description": "Timestamp indicating when the category was created compliant with the ISO 8601 standard.",
+              "format": "date-time"
+            },
+            "modifiedAt": {
+              "type": "string",
+              "description": "Timestamp indicating when the category was last modified compliant with the ISO 8601 standard.",
+              "format": "date-time"
+            }
+          }
+        },
+        {
+          "$ref": "#/$defs/MetadataUpdate"
+        }
+      ]
+    },
+    "MetadataUpdate": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "integer",
+              "description": "Category version.",
+              "format": "int32"
+            }
+          }
+        },
+        {
+          "$ref": "#/$defs/MetadataCreate"
+        }
+      ]
+    },
+    "OwnClassificationMixin": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the mixin.",
+          "pattern": "^[a-zA-Z0-9_]\\S*$"
+        },
+        "schemaUrl": {
+          "type": "string",
+          "description": "URL of the mixin schema.",
+          "pattern": "^https?://[^\\s/$.?#].\\S*$"
+        },
+        "required": {
+          "type": "boolean",
+          "description": "Indicates whether the mixin is required."
+        }
+      },
+      "required": [
+        "name",
+        "schemaUrl"
+      ],
+      "description": "Classification mixin defined for a given category."
+    },
+    "Validity": {
+      "type": "object",
+      "properties": {
+        "from": {
+          "type": "string",
+          "description": "Date and time from which the category is valid compliant with the ISO 8601 standard.",
+          "format": "date-time"
+        },
+        "to": {
+          "type": "string",
+          "description": "Date and time to which the category is valid compliant with the ISO 8601 standard.",
+          "format": "date-time"
+        }
+      }
+    }
+  }
+}

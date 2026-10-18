@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-bulk-response-schema.json",
+  "title": "BulkResponse",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-availability-openapi.yml#/components/schemas/BulkResponse",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "ID of the affected availability (in the format <site>:&lt;<productId>)."
+    },
+    "index": {
+      "type": "integer",
+      "description": "Index of the processed item, matching the item position in request body."
+    },
+    "code": {
+      "type": "integer",
+      "description": "HTTP Status Code."
+    },
+    "status": {
+      "type": "string",
+      "description": "HTTP Status description."
+    },
+    "message": {
+      "type": "string",
+      "description": "Error message. Present only when an error occurs (HTTP status code from groups `4xx` or `5xx`)"
+    }
+  }
+}

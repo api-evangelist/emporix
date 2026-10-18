@@ -1,0 +1,471 @@
+openapi: 3.2.0
+info:
+  title: Emporix Payment API
+  version: ''
+  contact:
+    email: documentation@emporix.com
+  description: 'Operations tagged Payment across 2 of this provider''s published API definitions: emporix-payment-gateway-openapi.yml, emporix-payment-gateway-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Payment
+paths:
+  /payment-gateway/{tenant}/payment/authorize:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    post:
+      summary: Authorizing a payment
+      operationId: POST-payment-gateway-authorize-payment
+      responses:
+        '200':
+          $ref: '#/components/responses/paymentAuthorizeResponse'
+        '401':
+          $ref: '#/components/responses/common_response_Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/common_response_Forbidden_403'
+        '422':
+          $ref: '#/components/responses/common_response_Unprocessable_Entity_422'
+        '500':
+          $ref: '#/components/responses/common_response_InternalServerError_500'
+      tags:
+      - Payment
+      description: Authorizes a given payment.
+      security:
+      - OAuth2:
+        - payment-gateway.authorize_manage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/authorizePaymentRequest'
+    servers:
+    - url: https://api.emporix.io
+  /payment-gateway/{tenant}/payment/{transactionId}/capture:
+    parameters:
+    - name: tenant
+      in: path
+      required: true
+      description: 'Your Emporix tenant''s name.
+
+        **Note**: The tenant name should always be written in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+    - $ref: '#/components/parameters/path_transaction_id'
+    post:
+      summary: Capturing a payment
+      operationId: POST-payment-gateway-capture-payment
+      responses:
+        '200':
+          $ref: '#/components/responses/paymentCaptureResponse'
+        '401':
+          $ref: '#/components/responses/common_response_Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/common_response_Forbidden_403'
+        '404':
+          $ref: '#/components/responses/common_response_NotFound_404'
+        '422':
+          $ref: '#/components/responses/common_response_Unprocessable_Entity_422'
+        '500':
+          $ref: '#/components/responses/common_response_InternalServerError_500'
+      tags:
+      - Payment
+      description: Creates a flow to capture a given payment transaction. The capture operation requires transactionId, thus it can be invoked only if the payment had been previously authorized.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/captureRequest'
+            examples:
+              Capture request:
+                value:
+                  amount: 3.99
+                  currency: EUR
+      security:
+      - OAuth2:
+        - payment-gateway.capture_manage
+    servers:
+    - url: https://api.emporix.io
+  /payment-gateway/{tenant}/payment/{transactionId}/refund:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    - $ref: '#/components/parameters/path_transaction_id'
+    post:
+      summary: Refunding a payment
+      operationId: POST-payment-gateway-refund-payment
+      responses:
+        '200':
+          $ref: '#/components/responses/commonPaymentResponse'
+        '401':
+          $ref: '#/components/responses/common_response_Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/common_response_Forbidden_403'
+        '404':
+          $ref: '#/components/responses/common_response_NotFound_404'
+        '422':
+          $ref: '#/components/responses/common_response_Unprocessable_Entity_422'
+        '500':
+          $ref: '#/components/responses/common_response_InternalServerError_500'
+      tags:
+      - Payment
+      description: Creates a flow to return a given payment. The refund operation requires transactionId, thus it can be invoked only if the payment has been authorized and captured previously.
+      security:
+      - OAuth2:
+        - payment-gateway.refund_manage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/refundRequest'
+            examples:
+              Refund example:
+                value:
+                  amount: 3.99
+                  currency: EUR
+    servers:
+    - url: https://api.emporix.io
+  /payment-gateway/{tenant}/payment/{transactionId}/cancel:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    - $ref: '#/components/parameters/path_transaction_id'
+    post:
+      summary: Cancelling a payment
+      operationId: POST-payment-gateway-cancel-payment
+      responses:
+        '200':
+          $ref: '#/components/responses/commonPaymentResponse'
+        '401':
+          $ref: '#/components/responses/common_response_Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/common_response_Forbidden_403'
+        '404':
+          $ref: '#/components/responses/common_response_NotFound_404'
+        '422':
+          $ref: '#/components/responses/common_response_Unprocessable_Entity_422'
+        '500':
+          $ref: '#/components/responses/common_response_InternalServerError_500'
+      tags:
+      - Payment
+      description: Creates a flow to cancel a given payment transaction. The cancel operation requires transactionId, thus it can be invoked only if the payment has been authorized previously.
+      security:
+      - OAuth2:
+        - payment-gateway.cancel_manage
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    initializePaymentRequest:
+      title: initializePaymentRequest
+      type: object
+      properties:
+        order:
+          type: object
+          properties:
+            id:
+              type: string
+              description: Identifier of an order for which the payment should be authorized.
+        paymentModeId:
+          type: string
+          description: Identifier of a payment mode configured in the payment-gateway service for a given tenant.
+        creditCardToken:
+          type: string
+          description: Indicates a payment method token, usually generated on a frontend site, when an user provides a credit card information.
+    captureRequest:
+      title: captureRequest
+      type: object
+      properties:
+        amount:
+          type: number
+          description: Amount that should be captured. The amount should not be greater than amount that was authorized.
+        currency:
+          type: string
+          description: Currency for the amount that should be captured.
+    commonPaymentResponse:
+      title: commonPaymentResponse
+      type: object
+      properties:
+        successful:
+          type: boolean
+          description: Indicates if the operation finished with success or not.
+        message:
+          type: string
+          description: In case of failed operation, the field provides error details.
+    authorizePaymentRequest:
+      title: authorizePaymentRequest
+      allOf:
+      - $ref: '#/components/schemas/authorizeFrontendPaymentRequest'
+      - type: object
+        properties:
+          amountToAuthorize:
+            type: number
+            description: Amount that should be authorized.
+          currency:
+            type: string
+            description: Currency for the amount that should be authorized.
+    refundRequest:
+      title: refundRequest
+      type: object
+      properties:
+        amount:
+          type: number
+          description: Amount that should be refunded. The amount should not be greater than amount that was captured.
+        currency:
+          type: string
+          description: Currency for the amount that should be refunded.
+        captureId:
+          type: string
+          description: Capture identifier. The value is mandatory only if there were more captures for a payment and the refund should be related to a specific capture. In another case the value can be skipped and the capture related to the payment will be chosen automatically.
+    initializePaymentResponse:
+      title: initializePaymentResponse
+      type: object
+      properties:
+        successful:
+          type: boolean
+          description: Indicates if the authorization process finished with success.
+        paymentTransactionId:
+          type: string
+          description: 'Unique payment transaction identifier. '
+        authorizationToken:
+          type: string
+          description: Authorization token
+        externalPaymentRedirectURL:
+          type: string
+          description: Indicates a URL address where a user should be redirected in order to finish the authorization process.
+        externalPaymentHttpMethod:
+          type: string
+          description: Indicates a HTTP Method which should be used in order to finish the authorization process.
+        externalPaymentParameters:
+          type: object
+          additionalProperties:
+            type: string
+          description: 'Map of additional parameters that may be needed in order to complete the authorization flow. '
+    coreErrorMessage:
+      anyOf:
+      - type: object
+        properties:
+          code:
+            type: integer
+            description: HTTP Status code.
+          timestamp:
+            type: string
+            description: Indicates a timestamp when the error occurred.
+          message:
+            type: string
+            description: Error message.
+      - type: object
+        properties:
+          type:
+            type: string
+            description: HTTP error type.
+          status:
+            type: integer
+            description: HTTP Status code.
+          message:
+            type: string
+            description: Error message.
+          moreInfo:
+            type: string
+            description: URL which additional information.
+          details:
+            type: array
+            items:
+              type: object
+              properties:
+                message:
+                  type: string
+                  description: Detailed message.
+    authorizeFrontendPaymentRequest:
+      title: authorizeFrontendPaymentRequest
+      allOf:
+      - $ref: '#/components/schemas/initializePaymentRequest'
+      - type: object
+        properties:
+          threeDSToken:
+            type: string
+            description: Contains a token generated during the 3DS authentication process.
+          browserInfo:
+            type: string
+            description: Holds information related to the user's web browser.
+          clientIP:
+            type: string
+            description: Stores the IP address of the client or user making the request.
+    authorizePaymentResponse:
+      title: authorizePaymentResponse
+      allOf:
+      - $ref: '#/components/schemas/initializePaymentResponse'
+      - type: object
+        properties:
+          requiresExternalPayment:
+            type: boolean
+            description: Indicates if a redirect to an external site is required in order to finish the authorization flow.
+  responses:
+    common_response_Unauthorized_401:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            Access token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+    common_response_Forbidden_403:
+      description: Access forbidden. The caller is not allowed to access this resource.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/coreErrorMessage'
+          examples:
+            Forbidden:
+              value:
+                status: 403
+                type: Forbidden
+                message: The access to the requested resource has been forbidden by the server.
+                details:
+                - message: Missing required scopes '[payment-gateway.authorize_manage]'
+    commonPaymentResponse:
+      description: Payment transaction response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/commonPaymentResponse'
+          examples:
+            Successful operation:
+              value:
+                successful: true
+                message: Success!
+    common_response_InternalServerError_500:
+      description: Internal Server Error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/coreErrorMessage'
+          examples:
+            Internal Server Error:
+              value:
+                code: 500
+                timestamp: '2023-10-03T12:23:31.485306Z'
+                message: Problem encountered while trying to connect to the database.
+    common_response_Unprocessable_Entity_422:
+      description: Unprocessable Entity. The payment action is not supported.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/coreErrorMessage'
+          examples:
+            Unprocessable Entity:
+              value:
+                code: 422
+                timestamp: '2023-10-03T12:23:31.485306Z'
+                message: The payment action is not supported.
+    common_response_NotFound_404:
+      description: Not found. The resource does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/coreErrorMessage'
+          examples:
+            NotFound:
+              value:
+                code: 404
+                timestamp: '2023-10-03T12:23:31.485306Z'
+                message: The resource does not exist.
+    paymentAuthorizeResponse:
+      description: Payment authorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/authorizePaymentResponse'
+          examples:
+            Authorize response:
+              value:
+                successful: true
+                paymentTransactionId: FTrjO4SrNF0Had7yBCeVU5ziqwL
+                requiresExternalPayment: true
+                externalPaymentRedirectURL: https://www.sandbox.paypal.com/checkoutnow?token=0SC35196GX656501J
+                externalPaymentParameters: {}
+    paymentCaptureResponse:
+      description: Payment capture response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              successful:
+                type: boolean
+                description: 'Indicates if the operation finished with success or not.
+
+                  '
+              message:
+                type: string
+                description: 'In case of failed operation, the field provides error details.
+
+                  '
+              captureId:
+                type: string
+                description: Identifier of a capture operation that is returned by a payment provider.
+  parameters:
+    path_transaction_id:
+      name: transactionId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Unique identifier of a payment transaction.
+    path_tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'Your Emporix tenant''s name.
+
+        **Note**: The tenant name should always be written in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            payment-gateway.paymentmodes_read: Needed for reading payment modes by a tenant employee.
+            payment-gateway.paymentmodes_manage: Needed to manage payment modes by a tenant employee.
+            payment-gateway.authorize_manage: Needed to perform a payment authorization flow by a tenant employee.
+            payment-gateway.capture_manage: Needed to perform a payment capture flow by a tenant employee.
+            payment-gateway.refund_manage: Needed to perform a payment refund flow by a tenant employee.
+            payment-gateway.cancel_manage: Needed to perform a payment cancel flow by a tenant employee.
+            payment-gateway.paymenttransactions_read: Needed to read all transaction details by a tenant employee.
+x-refined-from:
+- emporix-payment-gateway-openapi.yml
+- emporix-payment-gateway-openapi.yml

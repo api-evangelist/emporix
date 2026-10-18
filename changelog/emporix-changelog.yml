@@ -1,0 +1,13 @@
+generated: '2026-10-18'
+method: searched
+source: https://developer.emporix.io/changelog/2026/readme.md
+scheme: product_changelog
+current_version: unknown
+entries:
+  - version: '2026-10-14'
+    date: '2026-10-14'
+    breaking: false
+    highlights:
+      - "Coupon, Cart, and Order Services: Added vendor-restricted coupons that apply only to products from selected vendors"
+      - "Import Service: Import runs now wait in a queue shared by all workers, with runs reporting QUEUED status instead of RUNNING when waiting"
+note: "Emporix maintains a comprehensive changelog with entries dating back to 2022. Recent changes focus on vendor restrictions, import queue improvements, and AI service enhancements."

@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-historical-transitions-response-schema.json",
+  "title": "Historical Transitions Response",
+  "description": "Historical order status transitions with metadata.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-order-openapi.yml#/components/schemas/historicalTransitionsResponse",
+  "type": "object",
+  "properties": {
+    "transitions": {
+      "type": "array",
+      "description": "Ordered list of historical status transitions.",
+      "items": {
+        "$ref": "#/$defs/historicalTransition"
+      }
+    },
+    "metadata": {
+      "$ref": "#/$defs/historicalTransitionsMetadata"
+    }
+  },
+  "required": [
+    "transitions",
+    "metadata"
+  ],
+  "$defs": {
+    "historicalTransition": {
+      "title": "Historical Transition",
+      "description": "A historical order status transition entry.",
+      "type": "object",
+      "properties": {
+        "status": {
+          "$ref": "#/$defs/orderStatus"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the status transition happened."
+        }
+      },
+      "required": [
+        "status",
+        "timestamp"
+      ]
+    },
+    "historicalTransitionsMetadata": {
+      "title": "Historical Transitions Metadata",
+      "description": "Metadata related to historical order status transitions.",
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Version of the transition history record."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the transition history record was created."
+        },
+        "modifiedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the transition history record was last modified."
+        }
+      },
+      "required": [
+        "version",
+        "createdAt",
+        "modifiedAt"
+      ]
+    },
+    "orderStatus": {
+      "type": "string",
+      "enum": [
+        "IN_CHECKOUT",
+        "CREATED",
+        "CONFIRMED",
+        "DECLINED",
+        "SHIPPED",
+        "COMPLETED"
+      ],
+      "description": "Status of the order. Supported order statuses are `IN_CHECKOUT`, `CREATED`, `CONFIRMED`, `DECLINED`, `SHIPPED`, `COMPLETED`'. Customers can only change the order status from `CREATED` to `DECLINED`."
+    }
+  }
+}

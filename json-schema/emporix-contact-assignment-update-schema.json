@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-contact-assignment-update-schema.json",
+  "title": "Contact Assignment update payload",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-client-management-openapi.yml#/components/schemas/contactAssignmentUpdate",
+  "type": "object",
+  "properties": {
+    "legalEntity": {
+      "type": "object",
+      "description": "The legal entity unique identifier.",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The unique identifier of the legal entity."
+        }
+      }
+    },
+    "customer": {
+      "type": "object",
+      "description": "The customer unique identifier.",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The unique identifier of the customer."
+        }
+      }
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "PRIMARY",
+        "BILLING",
+        "LOGISTICS",
+        "CONTACT"
+      ],
+      "description": "The type of the customer assignment."
+    },
+    "primary": {
+      "type": "boolean",
+      "default": false,
+      "description": "Indicates whether the customer is primary."
+    },
+    "metadata": {
+      "$ref": "#/$defs/metadataUpdate"
+    },
+    "mixins": {
+      "type": "object",
+      "description": "Mixins request. A map where a key represent mixins set name and a value represent a map with key-value pairs.",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "legalEntity",
+    "customer",
+    "type"
+  ],
+  "$defs": {
+    "metadataUpdate": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "minimum": 1,
+          "type": "integer",
+          "description": "Version of the document."
+        },
+        "mixins": {
+          "type": "object",
+          "description": "Links to the mixin schemas. A map where the keys represent mixins set attributes and the values represent url to a schema for a particular set.",
+          "additionalProperties": true
+        }
+      }
+    }
+  }
+}

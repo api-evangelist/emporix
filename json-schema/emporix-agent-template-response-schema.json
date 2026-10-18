@@ -1,0 +1,1001 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-agent-template-response-schema.json",
+  "title": "AgentTemplateResponse",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-ai-service-openapi.yml#/components/schemas/AgentTemplateResponse",
+  "allOf": [
+    {
+      "$ref": "#/$defs/BaseForAgentAndTemplate"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "templatePrompt": {
+          "type": "string",
+          "description": "Immutable LLM base prompt which is concatenated with the `userPrompt`."
+        },
+        "id": {
+          "type": "string",
+          "description": "Identifier of the agent."
+        },
+        "nativeTools": {
+          "$ref": "#/$defs/NativeToolsResponse"
+        },
+        "mcpServers": {
+          "$ref": "#/$defs/AgentMcpServersResponse"
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "AgentMcpServerResponse": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "$ref": "#/$defs/McpServerType"
+        },
+        "mcpServer": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/McpServerResponse"
+            },
+            {
+              "description": "Present for `custom` and `dynamic` attachments. If `expand=mcpServer` is **not** used, then only the `id` field is returned, otherwise all fields are returned."
+            }
+          ]
+        },
+        "domain": {
+          "enum": [
+            "customer",
+            "extensibility",
+            "order",
+            "product",
+            "frontend"
+          ],
+          "description": "Present for `predefined` attachments."
+        },
+        "tools": {
+          "type": "array",
+          "description": "Tool-name allow-list. Present for `predefined` attachments and for `dynamic` attachments when a subset is configured. Omitted on `dynamic` means all enabled tools on the MCP server.",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "AgentMcpServersResponse": {
+      "type": "array",
+      "description": "List of MCP servers which agents should have access to.",
+      "items": {
+        "$ref": "#/$defs/AgentMcpServerResponse"
+      }
+    },
+    "BaseForAgentAndTemplate": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseForAgentAndTemplateAndHandOff"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "requiredScopes": {
+              "type": "array",
+              "description": "Defines which caller types are allowed to execute the agent.\nAuthorization is evaluated with OR semantics: access is granted if the caller\nmatches at least one configured value.\nIf this field is missing or empty, no scope-based restriction is applied.\n\nMatching rules:\n- anonymous: always grants access.\n- customer: requires scope `ai.agentexecution_manage_own`.\n- employee: requires scope `ai.agentexecution_manage`.\n- integration: requires scope `ai.agentexecution_manage`.\n\nIf no configured value matches, request is rejected with 403 Forbidden.\n",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "anonymous",
+                  "customer",
+                  "employee",
+                  "integration"
+                ]
+              }
+            },
+            "userPrompt": {
+              "type": "string",
+              "description": "LLM Prompt which describes how agent should work in a detailed way, which tools it could use to solve problems etc; it can contain examples and step by step guidance."
+            },
+            "icon": {
+              "type": "string",
+              "description": "The fa class of react icon."
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "description": "Markers that allow you to categorize the agent."
+              }
+            },
+            "outputFormat": {
+              "type": "string",
+              "description": "Optional JSON Schema (provided as a JSON string) that constrains the structure of the agent's generated output. Use this when you need predictable, machine-readable output instead of free-form text.\n"
+            },
+            "enabled": {
+              "type": "boolean",
+              "description": "Indicates whether the agent is enabled.",
+              "default": false
+            }
+          },
+          "required": [
+            "name"
+          ]
+        }
+      ]
+    },
+    "BaseForAgentAndTemplateAndHandOff": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "object",
+          "description": "Localized name of the agent.",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "description": {
+          "type": "object",
+          "description": "Description of the agent.",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "BaseManagedMcpServer": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the MCP server."
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "An indicator whether the MCP server is enabled.",
+          "default": false
+        },
+        "transport": {
+          "$ref": "#/$defs/CustomMcpServerTransportType"
+        }
+      }
+    },
+    "BaseNativeTool": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "$ref": "#/$defs/NativeToolType"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the tool."
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "An indicator whether the tool is enabled.",
+          "default": false
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ]
+    },
+    "CustomMcpServerResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseManagedMcpServer"
+        },
+        {
+          "type": "object",
+          "description": "An object representing customer's own implementation of the MCP server.",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Unique identifier of the MCP server."
+            },
+            "type": {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/ManagedMcpServerType"
+                }
+              ],
+              "description": "Type of the managed MCP server resource."
+            },
+            "config": {
+              "$ref": "#/$defs/McpServerConfigResponse"
+            },
+            "metadata": {
+              "$ref": "#/$defs/MetadataResponse"
+            }
+          }
+        }
+      ]
+    },
+    "CustomMcpServerTransportType": {
+      "type": "string",
+      "enum": [
+        "streamable_http",
+        "sse"
+      ],
+      "description": "Type of the communication between the agent and the MCP server. The `streamable_http` protocol is recommended, since the `sse` protocol is deprecated as transport for custom MCP servers."
+    },
+    "DynamicMcpServerResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseManagedMcpServer"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Unique identifier of the MCP server."
+            },
+            "type": {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/ManagedMcpServerType"
+                }
+              ],
+              "description": "For dynamic MCP servers it has to be set to `dynamic`."
+            },
+            "tools": {
+              "type": "array",
+              "description": "List of tools exposed by this MCP server.\n\n**The `tools` field is in preview mode** - some of the features may not be fully operational yet.",
+              "items": {
+                "$ref": "#/$defs/McpToolResponse"
+              }
+            },
+            "metadata": {
+              "$ref": "#/$defs/MetadataResponse"
+            }
+          }
+        }
+      ]
+    },
+    "EmporixOpenAiRagEmporixEmbeddingNativeToolConfig": {
+      "type": "object",
+      "properties": {
+        "provider": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RagLlmProvider"
+            }
+          ],
+          "description": "For this type, it should be set to 'emporix_openai'."
+        }
+      },
+      "required": [
+        "provider"
+      ]
+    },
+    "ExpandableTokenResponse": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/IdResponse"
+        },
+        {
+          "$ref": "#/$defs/ExpandedTokenResponse"
+        }
+      ],
+      "description": "The full response representing token. If the `expand=token` is **not** used, then only `id` field is returned, otherwise all fields are returned."
+    },
+    "ExpandedTokenResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/IdResponse"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the token."
+            },
+            "metadata": {
+              "$ref": "#/$defs/MetadataResponse"
+            }
+          }
+        }
+      ]
+    },
+    "IdResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Identifier of the resource."
+        }
+      }
+    },
+    "ManagedMcpServerType": {
+      "type": "string",
+      "enum": [
+        "custom",
+        "dynamic"
+      ],
+      "description": "Type of the managed MCP server resource. Possible values:\n* `custom`\n* `dynamic`\n\n  **The `dynamic` value is in preview mode** - some of the features may not be fully operational yet."
+    },
+    "McpServerConfig": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "URL of the MCP server."
+        },
+        "authorizationHeaderName": {
+          "type": "string",
+          "description": "Name of the header required for authorization, e.g. `Authorization`."
+        }
+      },
+      "required": [
+        "url"
+      ]
+    },
+    "McpServerConfigResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/McpServerConfig"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "authorizationHeaderToken": {
+              "$ref": "#/$defs/ExpandableTokenResponse"
+            }
+          }
+        }
+      ]
+    },
+    "McpServerResponse": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CustomMcpServerResponse"
+        },
+        {
+          "$ref": "#/$defs/DynamicMcpServerResponse"
+        }
+      ]
+    },
+    "McpServerType": {
+      "type": "string",
+      "enum": [
+        "custom",
+        "predefined",
+        "dynamic"
+      ],
+      "description": "Type of the MCP server attachment on an agent. The `custom` type references a tenant-managed MCP server with a URL. The `predefined` type references an Emporix domain MCP server. The `dynamic` type references a tenant-managed dynamic MCP server and may include an optional tool-name allow-list."
+    },
+    "McpToolConfigResponse": {
+      "type": "object",
+      "properties": {
+        "requiredScopes": {
+          "type": "array",
+          "description": "OAuth scopes required to invoke the tool.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "inputSchema": {
+          "type": "string",
+          "description": "JSON Schema document describing the tool input, provided as a JSON string."
+        },
+        "invocation": {
+          "$ref": "#/$defs/McpToolInvocationResponse"
+        }
+      }
+    },
+    "McpToolInvocationArgsLocation": {
+      "type": "string",
+      "enum": [
+        "body",
+        "query"
+      ],
+      "description": "Location of the tool arguments in the HTTP request. Defaults to `body` when omitted."
+    },
+    "McpToolInvocationMethod": {
+      "type": "string",
+      "enum": [
+        "GET",
+        "POST",
+        "PUT",
+        "PATCH",
+        "DELETE"
+      ],
+      "description": "HTTP method used to invoke the Automation function."
+    },
+    "McpToolInvocationResponse": {
+      "type": "object",
+      "properties": {
+        "functionId": {
+          "type": "string",
+          "description": "Identifier of the Automation function to invoke when the tool is called."
+        },
+        "method": {
+          "$ref": "#/$defs/McpToolInvocationMethod"
+        },
+        "argsLocation": {
+          "$ref": "#/$defs/McpToolInvocationArgsLocation"
+        }
+      }
+    },
+    "McpToolResponse": {
+      "type": "object",
+      "description": "Tool definition for a dynamic MCP server.\n\n**Dynamic MCP tools are in preview mode** - some of the features may not be fully operational yet.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Unique name of the tool. Contains only letters, numbers, and underscores."
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of the tool."
+        },
+        "prompt": {
+          "type": "string",
+          "description": "Prompt that defines when and why the agent should call this tool."
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "An indicator whether the tool is enabled."
+        },
+        "config": {
+          "$ref": "#/$defs/McpToolConfigResponse"
+        }
+      }
+    },
+    "MetadataRequest": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "minimum": 1,
+          "type": "integer",
+          "description": "Version of the object. The version is required during the update operation because of the optimistic locking mechanism."
+        }
+      },
+      "required": [
+        "version"
+      ]
+    },
+    "MetadataResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/MetadataRequest"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "createdAt": {
+              "description": "Date and time when the object was created. The value is approved as an ISO-8601 representation of an Instant. For example: `2022-04-30T13:18:02.379Z`",
+              "type": "string"
+            },
+            "modifiedAt": {
+              "description": "Date and time when the object was last modified. The value is approved as an ISO-8601 representation of an Instant. For example: `2022-04-30T13:18:02.379Z`",
+              "type": "string"
+            }
+          },
+          "required": [
+            "version",
+            "createdAt",
+            "modifiedAt"
+          ]
+        }
+      ]
+    },
+    "NativeToolType": {
+      "type": "string",
+      "enum": [
+        "slack",
+        "rag_custom",
+        "rag_emporix",
+        "teams"
+      ],
+      "description": "Type of the native tool. Possible values:\n* `slack`\n* `rag_custom`\n* `rag_emporix`\n* `teams`"
+    },
+    "NativeToolsResponse": {
+      "type": "array",
+      "description": "List of native tools which agents should have access to.",
+      "items": {
+        "oneOf": [
+          {
+            "$ref": "#/$defs/SlackNativeToolResponse"
+          },
+          {
+            "$ref": "#/$defs/RagCustomNativeToolResponse"
+          },
+          {
+            "$ref": "#/$defs/RagEmporixNativeToolResponse"
+          },
+          {
+            "$ref": "#/$defs/TeamsNativeToolResponse"
+          }
+        ]
+      }
+    },
+    "OpenAiRagEmporixEmbeddingNativeToolConfig": {
+      "type": "object",
+      "properties": {
+        "provider": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RagLlmProvider"
+            }
+          ],
+          "description": "For this type, it should be set to 'emporix_openai'."
+        },
+        "model": {
+          "type": "string",
+          "description": "OpenAI LLM model to be used for generating embeddings for indexed products and user's input query."
+        },
+        "dimensions": {
+          "type": "integer",
+          "description": "Number of dimensions of embedding.",
+          "minimum": 128,
+          "maximum": 4096
+        }
+      },
+      "required": [
+        "provider",
+        "model",
+        "dimensions"
+      ]
+    },
+    "OpenAiRagEmporixEmbeddingNativeToolConfigResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/OpenAiRagEmporixEmbeddingNativeToolConfig"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "token": {
+              "$ref": "#/$defs/ExpandableTokenResponse"
+            }
+          }
+        }
+      ]
+    },
+    "RagCustomDatabaseNativeToolConfig": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "URL of the database."
+        },
+        "type": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RagCustomDatabaseType"
+            }
+          ]
+        },
+        "entityType": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RagEntityType"
+            }
+          ]
+        },
+        "collectionName": {
+          "type": "string",
+          "description": "Name of the database collection."
+        }
+      },
+      "required": [
+        "url",
+        "type",
+        "entityType",
+        "collectionName"
+      ]
+    },
+    "RagCustomDatabaseNativeToolConfigResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RagCustomDatabaseNativeToolConfig"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "token": {
+              "$ref": "#/$defs/ExpandableTokenResponse"
+            }
+          }
+        }
+      ]
+    },
+    "RagCustomDatabaseType": {
+      "type": "string",
+      "enum": [
+        "qdrant"
+      ],
+      "description": "Type of the database."
+    },
+    "RagCustomEmbeddingNativeToolConfig": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string",
+          "description": "Name of the OpenAI LLM model which should be used to create embedding of user's input in order to perform search operation."
+        }
+      },
+      "required": [
+        "model"
+      ]
+    },
+    "RagCustomEmbeddingNativeToolConfigResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RagCustomEmbeddingNativeToolConfig"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "token": {
+              "$ref": "#/$defs/ExpandableTokenResponse"
+            }
+          }
+        }
+      ]
+    },
+    "RagCustomNativeToolConfig": {
+      "type": "object",
+      "properties": {
+        "prompt": {
+          "type": "string",
+          "description": "The prompt for an agent. It should define when and why this tool is to be called."
+        },
+        "maxResults": {
+          "type": "integer",
+          "default": 5,
+          "description": "The maximum number of results found in the Vector Database."
+        }
+      },
+      "required": [
+        "prompt"
+      ]
+    },
+    "RagCustomNativeToolConfigResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RagCustomNativeToolConfig"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "databaseConfig": {
+              "$ref": "#/$defs/RagCustomDatabaseNativeToolConfigResponse"
+            },
+            "embeddingConfig": {
+              "$ref": "#/$defs/RagCustomEmbeddingNativeToolConfigResponse"
+            }
+          }
+        }
+      ]
+    },
+    "RagCustomNativeToolResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseNativeTool"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Unique identifier of the tool."
+            },
+            "type": {
+              "description": "For `RagCustomNativeTool`, it has to be set to `rag_custom`."
+            },
+            "config": {
+              "$ref": "#/$defs/RagCustomNativeToolConfigResponse"
+            },
+            "metadata": {
+              "$ref": "#/$defs/MetadataResponse"
+            }
+          }
+        }
+      ]
+    },
+    "RagEmporixNativeToolConfig": {
+      "type": "object",
+      "properties": {
+        "prompt": {
+          "type": "string",
+          "description": "The prompt for an agent. It should define when and why this tool is to be called."
+        },
+        "entityType": {
+          "type": "string",
+          "description": "Type of the entity which is stored in the given collection. Supported predefined types: [ORDER, PRODUCT] and custom entity types."
+        },
+        "indexedFields": {
+          "type": "array",
+          "description": "This field specifies the fields of the given entityType that are used for generating embeddings. The provided values are then concatenated and converted to embeddings.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "It can act as an alias for the field key. For example, if the 'name.en' key is provided then its alias could be 'English Name' and that value is used in embedding input."
+              },
+              "key": {
+                "type": "string",
+                "description": "Unique value representing the entityType key."
+              }
+            },
+            "required": [
+              "key"
+            ]
+          }
+        },
+        "filterFields": {
+          "type": "array",
+          "description": "This field specifies the fields of the given entityType that are used for filtering the data before performing actual search.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "description": {
+                "type": "string",
+                "description": "It should contain the description of the field, so LLM is able to know when to use this field in order to filter the data. For enums, possible values should be specified here."
+              },
+              "key": {
+                "type": "string",
+                "description": "Unique value representing the entityType key."
+              }
+            },
+            "required": [
+              "key"
+            ]
+          }
+        }
+      },
+      "required": [
+        "prompt",
+        "entityType",
+        "indexedFields"
+      ]
+    },
+    "RagEmporixNativeToolConfigResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RagEmporixNativeToolConfig"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "embeddingConfig": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/EmporixOpenAiRagEmporixEmbeddingNativeToolConfig"
+                },
+                {
+                  "$ref": "#/$defs/OpenAiRagEmporixEmbeddingNativeToolConfigResponse"
+                },
+                {
+                  "$ref": "#/$defs/SelfHostedOllamaRagEmporixEmbeddingNativeToolConfigResponse"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "RagEmporixNativeToolResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseNativeTool"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Unique identifier of the tool."
+            },
+            "type": {
+              "description": "For `RagEmporixNativeTool`, it has to be set to `rag_emporix`."
+            },
+            "config": {
+              "$ref": "#/$defs/RagEmporixNativeToolConfigResponse"
+            },
+            "metadata": {
+              "$ref": "#/$defs/MetadataResponse"
+            }
+          }
+        }
+      ]
+    },
+    "RagEntityType": {
+      "type": "string",
+      "enum": [
+        "product"
+      ],
+      "description": "Type of the entity which is stored in the given collection."
+    },
+    "RagLlmProvider": {
+      "type": "string",
+      "enum": [
+        "emporix_openai",
+        "openai",
+        "self_hosted_ollama"
+      ]
+    },
+    "SelfHostedOllamaRagEmporixEmbeddingNativeToolConfig": {
+      "type": "object",
+      "properties": {
+        "provider": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/RagLlmProvider"
+            }
+          ],
+          "description": "For this type, it should be set to 'self_hosted_ollama'."
+        },
+        "model": {
+          "type": "string",
+          "description": "Ollama LLM model to be used for generating embeddings for indexed products and user's input query."
+        },
+        "dimensions": {
+          "type": "integer",
+          "description": "Number of dimensions of embedding.",
+          "minimum": 128,
+          "maximum": 4096
+        },
+        "url": {
+          "type": "string",
+          "description": "Base URL where Ollama is hosted."
+        }
+      },
+      "required": [
+        "provider",
+        "model",
+        "dimensions",
+        "url"
+      ]
+    },
+    "SelfHostedOllamaRagEmporixEmbeddingNativeToolConfigResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/SelfHostedOllamaRagEmporixEmbeddingNativeToolConfig"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "token": {
+              "$ref": "#/$defs/ExpandableTokenResponse"
+            }
+          }
+        }
+      ]
+    },
+    "SlackAllowedOperations": {
+      "type": "string",
+      "enum": [
+        "sendMessage",
+        "createChannel",
+        "inviteParticipants",
+        "collaborateOnChannel"
+      ],
+      "description": "Slack native tool operation identifier."
+    },
+    "SlackNativeToolConfigResponse": {
+      "type": "object",
+      "description": "Configuration of a Slack native tool instance.",
+      "properties": {
+        "teamId": {
+          "type": "string",
+          "description": "Unique identifier of the Slack workspace (team) associated with the request. Used to distinguish the source Slack environment when handling events or API calls."
+        },
+        "defaultInboundAgentId": {
+          "type": "string",
+          "description": "Agent ID that handles inbound Slack replies when no conversation-specific routing context exists yet."
+        },
+        "allowedOperations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SlackAllowedOperations"
+          },
+          "description": "Operations the tool instance exposes to assigned agents. At least one value is required when the tool is enabled."
+        }
+      },
+      "required": [
+        "teamId"
+      ]
+    },
+    "SlackNativeToolResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseNativeTool"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Unique identifier of the tool."
+            },
+            "type": {
+              "description": "For SlackNativeTool it has to be set to `slack`."
+            },
+            "config": {
+              "$ref": "#/$defs/SlackNativeToolConfigResponse"
+            },
+            "metadata": {
+              "$ref": "#/$defs/MetadataResponse"
+            }
+          }
+        }
+      ]
+    },
+    "TeamsAllowedOperations": {
+      "type": "string",
+      "enum": [
+        "sendMessage",
+        "createChat",
+        "createChannel",
+        "inviteParticipants",
+        "collaborateOnChannel",
+        "collaborateOnChat"
+      ],
+      "description": "MS Teams native tool operation identifier."
+    },
+    "TeamsNativeToolConfigResponse": {
+      "type": "object",
+      "description": "Configuration of an MS Teams native tool instance.",
+      "properties": {
+        "teamId": {
+          "type": "string",
+          "description": "Microsoft Teams team ID the tool is bound to."
+        },
+        "tenantId": {
+          "type": "string",
+          "description": "Customer Azure AD tenant ID for the Teams workspace."
+        },
+        "defaultInboundAgentId": {
+          "type": "string",
+          "description": "Agent ID that handles inbound Teams replies when no conversation-specific owner is set."
+        },
+        "allowedOperations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TeamsAllowedOperations"
+          },
+          "description": "Operations the tool instance exposes to assigned agents. At least one value is required when the tool is enabled."
+        }
+      },
+      "required": [
+        "teamId"
+      ]
+    },
+    "TeamsNativeToolResponse": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseNativeTool"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Unique identifier of the tool."
+            },
+            "type": {
+              "description": "For TeamsNativeTool it has to be set to `teams`."
+            },
+            "config": {
+              "$ref": "#/$defs/TeamsNativeToolConfigResponse"
+            },
+            "metadata": {
+              "$ref": "#/$defs/MetadataResponse"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-exchange-rate-retrieval-schema.json",
+  "title": "exchangeRateRetrieval",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-currency-service-openapi.yml#/components/schemas/exchangeRateRetrieval",
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string",
+      "description": "Identifier of the exchange rate. The identifier consists of the source currency and the target currency separated by an underscore."
+    },
+    "sourceCurrency": {
+      "type": "string",
+      "description": "Source currency code. The currency symbol must consist of three capital letters and must be a valid ISO-4217 code (https://www.iso.org/iso-4217-currency-codes.html) defined in the system."
+    },
+    "targetCurrency": {
+      "type": "string",
+      "description": "Target currency code. The currency symbol must consist of three capital letters and must be a valid ISO-4217 code (https://www.iso.org/iso-4217-currency-codes.html) defined in the system."
+    },
+    "rate": {
+      "type": "string",
+      "description": "Represents the exchange rate.\n\nThe value of the field is represented by a number where the cent part is separated by a dot. For example `1.09`. The cent part is not limited just to two digits. A rate with any precision can be returned. For example: `1.091934212`"
+    },
+    "metadata": {
+      "$ref": "#/$defs/metadata"
+    }
+  },
+  "$defs": {
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "createdAt": {
+          "description": "Time of document creation.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "modifiedAt": {
+          "description": "Time of document modification.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "version": {
+          "minimum": 1,
+          "type": "integer",
+          "description": "Document version."
+        }
+      }
+    }
+  }
+}

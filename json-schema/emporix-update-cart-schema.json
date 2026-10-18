@@ -1,0 +1,259 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-update-cart-schema.json",
+  "title": "updateCart",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-cart-openapi.yml#/components/schemas/updateCart",
+  "type": "object",
+  "properties": {
+    "customerId": {
+      "type": "string",
+      "description": "Customer unique identifier generated when a customer account is created through the Customer Service."
+    },
+    "restriction": {
+      "$ref": "#/$defs/restriction"
+    },
+    "currency": {
+      "type": "string",
+      "description": "Three-letter currency code, compliant with the ISO 4217 standard.",
+      "minLength": 3,
+      "maxLength": 3,
+      "pattern": "[A-Z]{3}"
+    },
+    "legalEntityId": {
+      "type": "string",
+      "description": "ID of the legal entity to which customer is assigned."
+    },
+    "deliveryWindowId": {
+      "type": "string",
+      "description": "Delivery window unique identifier, as defined in the Shipping Service."
+    },
+    "deliveryWindow": {
+      "$ref": "#/$defs/deliveryWindow"
+    },
+    "type": {
+      "type": "string",
+      "description": "Cart type. You can use this field if your store offers different types of carts, such as shopping carts and wishlists."
+    },
+    "zipCode": {
+      "maxLength": 9,
+      "type": "string",
+      "description": "Customer address - zip code."
+    },
+    "countryCode": {
+      "type": "string",
+      "pattern": "[a-zA-Z]{2}",
+      "description": "Two-letter country code, compliant with the ISO 3166 standard.",
+      "minLength": 2,
+      "maxLength": 2
+    },
+    "orderId": {
+      "type": "string",
+      "description": "Order unique identifier generated when a checkout is triggered through the Checkout Service."
+    },
+    "quoteId": {
+      "type": "string",
+      "description": "Quote unique identifier generated when a quote is created through the Quote Service out of a cart."
+    },
+    "status": {
+      "type": "string",
+      "description": "Cart status.",
+      "enum": [
+        "OPEN",
+        "CLOSED"
+      ]
+    },
+    "channel": {
+      "$ref": "#/$defs/channel"
+    },
+    "externalDiscounts": {
+      "type": "array",
+      "description": "External discounts that should be applied to this cart. Requires `cart.cart_manage_external_prices` scope",
+      "items": {
+        "$ref": "#/$defs/externalCartDiscount"
+      }
+    },
+    "addresses": {
+      "type": "array",
+      "description": "List of addresses that should be associated with the cart and used for tax determination and shipping cost. There can be one address of type `BILLING` and one of type `SHIPPING` - others are ignored. These addresses are returned with the origin `REQUEST` in the cart response.",
+      "items": {
+        "$ref": "#/$defs/addressRequest"
+      }
+    },
+    "metadata": {
+      "$ref": "#/$defs/metadataRequest"
+    },
+    "mixins": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "addressRequest": {
+      "type": "object",
+      "description": "Information about the cart address that can be provided in the request.",
+      "additionalProperties": false,
+      "properties": {
+        "contactName": {
+          "type": "string",
+          "minLength": 0,
+          "description": "Contact name."
+        },
+        "companyName": {
+          "type": "string",
+          "description": "Company name."
+        },
+        "street": {
+          "type": "string",
+          "minLength": 0,
+          "description": "Street."
+        },
+        "streetNumber": {
+          "type": "string",
+          "description": "Street number."
+        },
+        "streetAppendix": {
+          "type": "string",
+          "description": "Street appendix."
+        },
+        "zipCode": {
+          "type": "string",
+          "maxLength": 11,
+          "minLength": 0,
+          "description": "Zip code."
+        },
+        "city": {
+          "type": "string",
+          "minLength": 0,
+          "description": "City."
+        },
+        "country": {
+          "type": "string",
+          "pattern": "[a-zA-Z]{2}",
+          "minLength": 2,
+          "maxLength": 2,
+          "description": "Country."
+        },
+        "state": {
+          "type": "string",
+          "description": "State."
+        },
+        "contactPhone": {
+          "type": "string",
+          "description": "Contact phone."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "BILLING",
+            "SHIPPING"
+          ],
+          "description": "Type of the address data",
+          "minLength": 0
+        },
+        "metadata": {
+          "$ref": "#/$defs/metadataRequest"
+        },
+        "mixins": {
+          "type": "object",
+          "description": "Mixins object.",
+          "additionalProperties": true
+        }
+      }
+    },
+    "channel": {
+      "type": "object",
+      "description": "Channel through which the cart was created.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": ""
+        },
+        "source": {
+          "type": "string"
+        }
+      }
+    },
+    "deliveryWindow": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "ID of the delivery window."
+        },
+        "slotId": {
+          "type": "string",
+          "description": "ID of the delivery time slot."
+        },
+        "deliveryDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Delivery date. It has to be of \"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'\" format."
+        }
+      }
+    },
+    "externalCartDiscount": {
+      "type": "object",
+      "description": "External discount that can be applied to cart items.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier of the external discount."
+        },
+        "discountType": {
+          "type": "string",
+          "enum": [
+            "PERCENT",
+            "ABSOLUTE",
+            "FREE_SHIPPING"
+          ],
+          "description": "Indicates the type of discount applied:\n* `PERCENT` — a percentage-based discount\n* `ABSOLUTE` — a fixed monetary amount\n* `FREE_SHIPPING` — shipping is fully discounted"
+        },
+        "value": {
+          "type": "number",
+          "format": "double",
+          "minimum": 0.0,
+          "maximum": 100.0,
+          "description": "Value of the discount (percentage e.g 15.00 -> 15% or absolute amount e.g 10.00 -> 10 EUR depending on the discountType)."
+        },
+        "discountCalculationType": {
+          "type": "string",
+          "enum": [
+            "TOTAL",
+            "SUBTOTAL"
+          ],
+          "description": "Determines whether the discount is applied to the total or subtotal value of the order.\n* `TOTAL` - discount is spread across products with product fees and shipping cost.\n* `SUBTOTAL` - discount is spread across products without fees"
+        },
+        "sequence": {
+          "type": "integer",
+          "description": "Sequence number determining the order in which discounts are applied. The lowest sequence number is applied first."
+        }
+      },
+      "required": [
+        "id",
+        "discountType",
+        "value"
+      ]
+    },
+    "metadataRequest": {
+      "type": "object",
+      "description": "",
+      "properties": {
+        "mixins": {
+          "type": "object",
+          "description": "Links to mixin schemas.",
+          "additionalProperties": true
+        }
+      }
+    },
+    "restriction": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Access control identifier that determines who can view or manage the cart.\n\n**Purpose**: Restricts cart visibility based on scope permissions. Only users/applications \nwith matching restriction scopes can access carts with a specific restriction value.\n\n**Access Control**:\n- *Reading*: Users can only query and view carts with the `restriction` value that matches one of their authorized restrictions.\n\n**Validation**: The value must exist in the tenant's configured list of valid restrictions.\n\n**Restriction Synchronization**: \n- If cart is created by customer and `restriction` is not set, the `restriction` will be inherited from customer's restriction'.\n- If the `restriction` property is not set with tenant configuration property `enableSyncBetweenRestrictionsAndSiteCodes` set to `true`, the `restriction` field automatically syncs with cart's siteCode property.\n"
+    }
+  }
+}

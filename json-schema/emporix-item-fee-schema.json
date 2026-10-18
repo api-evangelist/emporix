@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-item-fee-schema.json",
+  "title": "ItemFee",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-fee-openapi.yml#/components/schemas/ItemFee",
+  "type": "object",
+  "properties": {
+    "id": {
+      "description": "Unique identifier of the item fee.",
+      "type": "string"
+    },
+    "siteCode": {
+      "description": "The SiteCode this fee belongs to.",
+      "type": "string"
+    },
+    "itemYrn": {
+      "description": "YRN of the item to assign fees to.",
+      "type": "string"
+    },
+    "feeIds": {
+      "description": "List of unique identifiers of fees to assign to the item.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "itemYrn",
+    "feeIds",
+    "siteCode"
+  ]
+}

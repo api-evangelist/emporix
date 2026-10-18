@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-user-response-schema.json",
+  "title": "UserResponse",
+  "description": "User response schema",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-iam-openapi.yml#/components/schemas/UserResponse",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "User unique identifier generated when the group is created."
+    },
+    "firstName": {
+      "type": "string",
+      "description": "User first name."
+    },
+    "lastName": {
+      "type": "string",
+      "description": "User last name."
+    },
+    "backofficeUserNumber": {
+      "type": "string",
+      "description": "For a new user, the value is the same as Id. For an existing user, the value is an internal number. This field should be used when retrieving user details and for user update and deletion."
+    },
+    "preferredSite": {
+      "type": "string",
+      "description": "User preferred site"
+    },
+    "preferredCurrency": {
+      "type": "string",
+      "description": "User preferred currency"
+    },
+    "preferredLanguage": {
+      "type": "string",
+      "description": "User preferred language"
+    },
+    "department": {
+      "type": "string",
+      "description": "User department"
+    },
+    "validFrom": {
+      "type": "string",
+      "description": "Account creation date"
+    },
+    "isAccountLocked": {
+      "type": "boolean",
+      "description": "Indicates whether user is able to log in to Management Dashboard."
+    },
+    "contactEmail": {
+      "type": "string",
+      "description": "User contact email"
+    },
+    "status": {
+      "type": "string",
+      "description": "Indicates user status. May be 'Active' or 'Provisioned' in case user does not confirm their email."
+    },
+    "groupIds": {
+      "type": "array",
+      "description": "Group ids where user is assigned to.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "groups": {
+      "type": "array",
+      "description": "Group extended definition, may be fetched when `extend` param is used",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Group unique identifier generated when the group is created."
+          },
+          "name": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Localized group name in the form of a map of translations."
+          },
+          "description": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Localized group description in the form of a map of translations."
+          },
+          "code": {
+            "type": "string",
+            "description": "Internal code of a group."
+          },
+          "userType": {
+            "type": "string",
+            "description": "The group type determines if the group can consist of users of the `CUSTOMER` or the `EMPLOYEE` type."
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "id",
+    "firstName",
+    "lastName",
+    "backofficeUserNumber",
+    "preferredSite",
+    "preferredCurrency",
+    "preferredLanguage",
+    "department",
+    "validFrom",
+    "isAccountLocked",
+    "contactEmail",
+    "status",
+    "groupIds"
+  ]
+}

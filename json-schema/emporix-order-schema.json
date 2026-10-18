@@ -1,0 +1,2720 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-order-schema.json",
+  "title": "Order",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-order-openapi.yml#/components/schemas/order",
+  "allOf": [
+    {
+      "type": "object",
+      "description": "The order visible for a customer, which includes all ordered items, customer addresses, information about ordered products etc.",
+      "properties": {
+        "id": {
+          "description": "Order's unique identifier.",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/orderStatus"
+        },
+        "created": {
+          "description": "Order's creation date.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "completed": {
+          "description": "Order's completion date.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "lastStatusChange": {
+          "description": "Order last status change date.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "shipments": {
+          "description": "Shipment list.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/shipment"
+          }
+        }
+      }
+    },
+    {
+      "$ref": "#/$defs/orderCommonDto"
+    }
+  ],
+  "$defs": {
+    "YRN": {
+      "type": "string",
+      "title": "YRN",
+      "description": "In YaaS, a global resource identifier is a Uniform Resource Name (URN) with a custom YaaS schema and is called a YaaS Resource Name, or YRN.\n\nIt is a unique identifier, which stores information about a resource, such as its type, ID or name of the tenant.",
+      "minLength": 1
+    },
+    "address": {
+      "title": "Address",
+      "description": "Customer's address.",
+      "type": "object",
+      "properties": {
+        "contactName": {
+          "description": "Customer's name.",
+          "type": "string"
+        },
+        "companyName": {
+          "description": "Company name.",
+          "type": "string"
+        },
+        "street": {
+          "description": "Street name.",
+          "type": "string"
+        },
+        "streetNumber": {
+          "description": "Street number.",
+          "type": "string"
+        },
+        "streetAppendix": {
+          "description": "Street appendix.",
+          "type": "string"
+        },
+        "extraLine1": {
+          "description": "Additional address information.",
+          "type": "string"
+        },
+        "extraLine2": {
+          "description": "Additional address information.",
+          "type": "string"
+        },
+        "extraLine3": {
+          "description": "Additional address information.",
+          "type": "string"
+        },
+        "extraLine4": {
+          "description": "Additional address information.",
+          "type": "string"
+        },
+        "zipCode": {
+          "description": "Customer's address - zip code.",
+          "type": "string"
+        },
+        "city": {
+          "description": "City name.",
+          "type": "string"
+        },
+        "state": {
+          "description": "State name.",
+          "type": "string"
+        },
+        "country": {
+          "description": "Country name.",
+          "type": "string"
+        },
+        "contactPhone": {
+          "description": "Customer's contact phone.",
+          "type": "string"
+        },
+        "metadata": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/mixinsMetadata"
+            },
+            {
+              "type": "object",
+              "description": "Metadata."
+            }
+          ]
+        },
+        "mixins": {
+          "description": "Additional address information.",
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "contactName",
+        "street",
+        "city",
+        "zipCode",
+        "country"
+      ]
+    },
+    "aggregateFee": {
+      "type": "object",
+      "title": "Aggregate Fee",
+      "properties": {
+        "total": {
+          "type": "object",
+          "properties": {
+            "subTotal": {
+              "type": "number"
+            },
+            "totalTax": {
+              "type": "number"
+            },
+            "total": {
+              "type": "number"
+            }
+          }
+        },
+        "elements": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "allOf": [
+                  {
+                    "$ref": "#/$defs/localizedValue"
+                  },
+                  {
+                    "type": "object",
+                    "description": "Fee name."
+                  }
+                ]
+              },
+              "yrn": {
+                "type": "string",
+                "description": "Unique identifier of the fee."
+              },
+              "taxCode": {
+                "type": "string",
+                "description": "Tax code of the fee."
+              },
+              "total": {
+                "type": "object",
+                "properties": {
+                  "subTotal": {
+                    "type": "number"
+                  },
+                  "totalTax": {
+                    "type": "number"
+                  },
+                  "total": {
+                    "type": "number"
+                  }
+                }
+              },
+              "taxValues": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Name of the tax."
+                    },
+                    "value": {
+                      "type": "number",
+                      "description": "Value of the tax."
+                    },
+                    "rate": {
+                      "type": "number",
+                      "description": "Rate of the tax."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "required": [
+        "total"
+      ]
+    },
+    "bundleProduct": {
+      "title": "Bundle Product",
+      "description": "Represents the product used in a bundle.",
+      "type": "object",
+      "properties": {
+        "amount": {
+          "description": "The number of given products assigned to the bundle.",
+          "type": "number"
+        },
+        "productId": {
+          "description": "Id of the product assigned to the bundle.",
+          "type": "string"
+        }
+      }
+    },
+    "calculatedAppliedDiscount": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The ID of the applied discount."
+        },
+        "value": {
+          "type": "number",
+          "format": "double",
+          "description": "The calculated value of the discount."
+        },
+        "price": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/calculatedPrice"
+            },
+            {
+              "type": "object",
+              "description": "Applied discount's price. When discount is applied before tax the value equals `price.netValue` and `price.grossValue` for discount applied after tax."
+            }
+          ]
+        },
+        "discountType": {
+          "type": "string",
+          "enum": [
+            "PERCENT",
+            "ABSOLUTE",
+            "FREE_SHIPPING"
+          ],
+          "description": "The discount type which shows how the discount was calculated."
+        },
+        "origin": {
+          "type": "string",
+          "enum": [
+            "INTERNAL",
+            "EXTERNAL"
+          ],
+          "description": "Indicates whether the discount is from internal coupon (INTERNAL) or external discount (EXTERNAL)."
+        }
+      }
+    },
+    "calculatedFee": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier of the fee."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "PERCENT",
+            "ABSOLUTE",
+            "ABSOLUTE_MULTIPLY_ITEMQUANTITY"
+          ],
+          "description": "Type of the fee."
+        },
+        "name": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Localized names of the fee."
+        },
+        "origin": {
+          "enum": [
+            "INTERNAL",
+            "EXTERNAL"
+          ],
+          "description": "origin of the fee, `INTERNAL` defined in commerce engine, `EXTERNAL` specified when item is added to the cart."
+        },
+        "price": {
+          "$ref": "#/$defs/calculatedPrice"
+        },
+        "discountedPrice": {
+          "$ref": "#/$defs/calculatedPriceWithDiscounts"
+        }
+      }
+    },
+    "calculatedPaymentFee": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier of the fee."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "PERCENT",
+            "ABSOLUTE",
+            "ABSOLUTE_MULTIPLY_ITEMQUANTITY"
+          ],
+          "description": "Type of the fee."
+        },
+        "name": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Localized names of the fee."
+        },
+        "price": {
+          "$ref": "#/$defs/calculatedPrice"
+        }
+      },
+      "title": "calculatedPaymentFee"
+    },
+    "calculatedPrice": {
+      "type": "object",
+      "properties": {
+        "netValue": {
+          "type": "number",
+          "format": "double",
+          "description": "Net value of the price."
+        },
+        "grossValue": {
+          "type": "number",
+          "format": "double",
+          "description": "Gross value of the price."
+        },
+        "taxValue": {
+          "type": "number",
+          "format": "double",
+          "description": "Tax value of the price."
+        },
+        "taxCode": {
+          "type": "string",
+          "description": "Tax code applied to the price."
+        },
+        "taxRate": {
+          "type": "number",
+          "format": "double",
+          "description": "Tax rate applied to the price."
+        }
+      },
+      "description": "A price calculation model containing net and gross amounts along with their associated tax details.",
+      "required": [
+        "netValue",
+        "grossValue",
+        "taxValue"
+      ]
+    },
+    "calculatedPriceWithDiscounts": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/calculatedPrice"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "appliedDiscounts": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/calculatedAppliedDiscount"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "calculatedPriceWithTaxAggregate": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/calculatedPrice"
+        },
+        {
+          "type": "object",
+          "description": "A price calculation model that includes tax aggregate information.",
+          "properties": {
+            "taxAggregate": {
+              "$ref": "#/$defs/calculatedTaxAggregate"
+            }
+          }
+        }
+      ]
+    },
+    "calculatedTaxAggregate": {
+      "type": "object",
+      "properties": {
+        "lines": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/calculatedPrice"
+          },
+          "description": "List of tax calculations grouped by taxCode and taxRate"
+        }
+      },
+      "description": "Aggregated tax information showing detailed tax calculations"
+    },
+    "calculatedTotalDiscount": {
+      "type": "object",
+      "description": "The total combined value of all applied discounts.",
+      "properties": {
+        "calculationType": {
+          "type": "string",
+          "enum": [
+            "ApplyDiscountBeforeTax",
+            "ApplyDiscountAfterTax"
+          ],
+          "description": "Indicates whether discounts were calculated using net or gross price values."
+        },
+        "value": {
+          "type": "number",
+          "format": "double",
+          "description": "The calculated amount of all discounts."
+        },
+        "price": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/calculatedPrice"
+            },
+            {
+              "type": "object",
+              "description": "Total discounts price. When discounts are applied before tax the value equals `price.netValue` and `price.grossValue` for discounts applied after tax."
+            }
+          ]
+        },
+        "appliedDiscounts": {
+          "type": "array",
+          "description": "All applied discounts that are parts of the sum.",
+          "items": {
+            "$ref": "#/$defs/calculatedAppliedDiscount"
+          }
+        }
+      }
+    },
+    "customer": {
+      "title": "Customer",
+      "description": "Customer data. \n\nOne of these properties needs to be provided:\n- `name` for business customers (B2B)\n- `firstName` and `lastName` for individual customers (B2C)\n",
+      "properties": {
+        "id": {
+          "description": "Customer's unique identifier.",
+          "type": "string",
+          "default": "ANONYMOUS"
+        },
+        "name": {
+          "description": "Customer's name.",
+          "type": "string"
+        },
+        "title": {
+          "description": "Customer's title.",
+          "type": "string"
+        },
+        "firstName": {
+          "description": "Customer's first name.",
+          "type": "string"
+        },
+        "middleName": {
+          "description": "Customer's middle name.",
+          "type": "string"
+        },
+        "lastName": {
+          "description": "Customer's last name.",
+          "type": "string"
+        },
+        "company": {
+          "description": "Company name.",
+          "type": "string"
+        },
+        "email": {
+          "description": "Customer's email address.",
+          "type": "string"
+        },
+        "metadata": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/mixinsMetadata"
+            },
+            {
+              "type": "object",
+              "description": "Metadata."
+            }
+          ]
+        },
+        "mixins": {
+          "description": "Customer additional information.",
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "email"
+      ]
+    },
+    "deliveryTimeRange": {
+      "title": "Delivery Time Range",
+      "type": "object",
+      "properties": {
+        "timeFrom": {
+          "type": "string",
+          "format": "time",
+          "description": "Start Time"
+        },
+        "timeTo": {
+          "type": "string",
+          "format": "time",
+          "description": "End Time"
+        }
+      }
+    },
+    "deliveryWindow": {
+      "title": "Delivery Window",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Id of the delivery window"
+        },
+        "deliveryDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Delivery date."
+        },
+        "slotId": {
+          "type": "string",
+          "description": "ID of the delivery slot"
+        },
+        "deliveryTimeRange": {
+          "$ref": "#/$defs/deliveryTimeRange"
+        },
+        "deliveryCycle": {
+          "type": "string",
+          "description": "Delivery cycle to which the order is assigned (containing date)"
+        },
+        "deliveryCycleName": {
+          "type": "string",
+          "description": "Delivery cycle name to which the order is assigned"
+        }
+      }
+    },
+    "discount": {
+      "title": "Discount",
+      "properties": {
+        "code": {
+          "description": "Discount's code.",
+          "type": "string"
+        },
+        "amount": {
+          "description": "Amount of discount.",
+          "type": "number"
+        },
+        "currency": {
+          "description": "Three-letter currency code, compliant with the ISO 4217 standard.",
+          "type": "string"
+        },
+        "name": {
+          "description": "Discount's name.",
+          "type": "string"
+        },
+        "discountRate": {
+          "description": "Discount's rate.",
+          "type": "number"
+        },
+        "calculationType": {
+          "description": "Discount's code.calculation type.",
+          "type": "string"
+        },
+        "discountCalculationType": {
+          "description": "Determines whether the coupon is applied to the total or subtotal value of the order.",
+          "type": "string",
+          "enum": [
+            "SUBTOTAL",
+            "TOTAL"
+          ]
+        },
+        "discountType": {
+          "description": "Discount's type.",
+          "type": "string"
+        },
+        "sequenceId": {
+          "description": "Discount's unique sequence ID identifier.",
+          "type": "integer"
+        },
+        "link": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/reference"
+            },
+            {
+              "type": "object",
+              "description": "Link to discount."
+            }
+          ]
+        },
+        "categoryRestricted": {
+          "description": "This flag indicates if discount is category restricted.",
+          "type": "boolean"
+        },
+        "vendorRestricted": {
+          "description": "Indicates whether the discount is limited to the vendors in `restrictions.vendors`.",
+          "type": "boolean"
+        },
+        "restrictions": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/discountRestrictions"
+            },
+            {
+              "type": "object",
+              "description": "The restrictions based on which the discount can be applied."
+            }
+          ]
+        }
+      },
+      "required": [
+        "code",
+        "currency"
+      ]
+    },
+    "discountRestrictions": {
+      "title": "Discount Restrictions",
+      "properties": {
+        "validFrom": {
+          "description": "The date from which the discount restriction is valid.",
+          "type": "string"
+        },
+        "validUntil": {
+          "description": "The date from which the discount restriction is valid.",
+          "type": "string"
+        },
+        "minOrderValue": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/discountRestrictionsPrice"
+            },
+            {
+              "type": "object",
+              "description": "The minimum order price for which the discount is valid. When `vendorRestricted` is `true`, this value is checked against the total of the matching vendor items."
+            }
+          ]
+        },
+        "includedCategories": {
+          "description": "List of included categories.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "excludedCategories": {
+          "description": "List of excluded categories.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "vendors": {
+          "description": "Vendor identifiers to which the discount applies.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "discountRestrictionsPrice": {
+      "title": "Discount Restrictions Price",
+      "properties": {
+        "amount": {
+          "description": "The amount of discount price",
+          "type": "number"
+        },
+        "currency": {
+          "description": "The currency of the price",
+          "type": "string"
+        }
+      }
+    },
+    "externalDiscount": {
+      "type": "object",
+      "description": "External discount that was applied to order items.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier of the external discount."
+        },
+        "discountType": {
+          "$ref": "#/$defs/externalDiscountType"
+        },
+        "value": {
+          "type": "number",
+          "format": "double",
+          "minimum": 0.0,
+          "maximum": 100.0,
+          "description": "Value of the discount (percentage e.g 15.00 -> 15% or absolute amount e.g 10.00 -> 10 EUR depending on the discountType). For discountType=`PERCENT`, maximum is 100.0; for ABSOLUTE, there is no limit."
+        },
+        "includeFees": {
+          "type": "boolean",
+          "description": "Flag indicating whether the discount is also applied to fees."
+        },
+        "sequence": {
+          "type": "integer",
+          "description": "Sequence number determining the order in which discounts are applied. The lowest sequence number is applied first."
+        }
+      },
+      "required": [
+        "id",
+        "discountType",
+        "value"
+      ]
+    },
+    "externalDiscountType": {
+      "type": "string",
+      "description": "Type of the external discount.",
+      "enum": [
+        "PERCENT",
+        "ABSOLUTE"
+      ]
+    },
+    "externalFee": {
+      "type": "object",
+      "required": [
+        "feeType"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier of the fee."
+        },
+        "name": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/localizedValue"
+            }
+          ],
+          "description": "Fee name."
+        },
+        "feeType": {
+          "type": "string",
+          "description": "Type of the fee.",
+          "enum": [
+            "PERCENT",
+            "ABSOLUTE",
+            "ABSOLUTE_MULTIPLY_ITEMQUANTITY"
+          ]
+        },
+        "feePercentage": {
+          "type": "number",
+          "description": "Value of the fee as percentage. It must be provided when feeType equals `PERCENT`."
+        },
+        "feeAbsolute": {
+          "type": "object",
+          "description": "Value of the fee as absolute. It must be provided when feeType equals `ABSOLUTE` or `ABSOLUTE_MULTIPLY_ITEMQUANTITY`.",
+          "required": [
+            "currency",
+            "amount"
+          ],
+          "properties": {
+            "currency": {
+              "type": "string",
+              "description": "Currency of the fee absolute."
+            },
+            "amount": {
+              "type": "number",
+              "description": "Value of the fee absolute."
+            }
+          }
+        },
+        "taxable": {
+          "type": "boolean",
+          "description": "It marks whether tax should be included to the fee or not. A taxable fee must have the `taxCode` attribute provided."
+        },
+        "taxCode": {
+          "type": "string",
+          "description": "Tax code of the fee."
+        }
+      }
+    },
+    "localizedValue": {
+      "description": "Localized value which can have different structure which depends on provided `Content-Language` header.",
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "measurementUnit": {
+      "title": "Measurement Unit",
+      "description": "The entry measurement unit",
+      "type": "object",
+      "properties": {
+        "unit": {
+          "description": "Code of the unit, like `kg` or `l`.",
+          "type": "string"
+        },
+        "value": {
+          "description": "Quantity of given unit.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "value"
+      ]
+    },
+    "media": {
+      "title": "Media",
+      "description": "The media.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Unique identifier of a media file.",
+          "type": "string"
+        },
+        "url": {
+          "description": "Media URL.",
+          "type": "string"
+        },
+        "stored": {
+          "description": "Media stored flag.",
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "metadataMixins": {
+      "title": "Metadata DTO",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "mixins": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "version": {
+          "type": "integer"
+        }
+      }
+    },
+    "mixinsMetadata": {
+      "title": "Product Metadata",
+      "description": "Product Metadata",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "mixins": {
+          "description": "A key-value map of mixins, where the mixin name is a key and schema url is a value",
+          "type": "object",
+          "additionalProperties": true
+        },
+        "version": {
+          "description": "The document version number.",
+          "type": "integer"
+        }
+      }
+    },
+    "orderCalculatedPrice": {
+      "type": "object",
+      "description": "A breakdown of the total price calculated from all line items, including detailed pricing components.",
+      "properties": {
+        "price": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/calculatedPrice"
+            },
+            {
+              "type": "object",
+              "description": "The sum of all line item price values, it means unit prices multiplied by quantity - `entries[].calculatedPrice.price`.",
+              "properties": {
+                "netValue": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "Net value of the price, price without tax."
+                },
+                "grossValue": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "Gross value of the price, price with tax."
+                },
+                "taxValue": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "Tax value of the price, it's the actual amount of tax that has to be paid."
+                },
+                "taxCode": {
+                  "type": "string",
+                  "description": "Tax code applied to the price, a tax code is a country's set of tax rules. If all fees have the same taxRate, then the value is present. Otherwise, the field is not returned."
+                },
+                "taxRate": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "Tax rate applied to the price, it's the percentage at which an individual or business is taxed. If all fees have the same taxRate, then the value is present. Otherwise, the field is not returned."
+                }
+              }
+            }
+          ]
+        },
+        "upliftValue": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/calculatedPrice"
+            },
+            {
+              "type": "object",
+              "description": "The sum of all line item uplift values. Uplift value is the maximum additional amount to be authorized for payment to cover potential price adjustments during packaging of weight-based products. For example, if the item’s `price.netValue=12`, the `upliftValue.netValue=1,2`, with 10% uplift configured. If the uplift value is not configured for any item, it's not returned in the response.",
+              "properties": {
+                "netValue": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "Net value of the uplift amount, value without tax."
+                },
+                "grossValue": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "Gross value of the uplift amount, value with tax."
+                },
+                "taxValue": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "Tax value of the uplift amount, it's the actual amount of tax that has to be paid."
+                },
+                "taxCode": {
+                  "type": "string",
+                  "description": "Tax code applied to the uplift amount, a tax code is a country's set of tax rules. If all fees have the same taxRate, then the value is present. Otherwise, the field is not returned."
+                },
+                "taxRate": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "Tax rate applied to the uplift amount, it's the percentage at which an individual or business is taxed. If all fees have the same taxRate, then the value is present. Otherwise, the field is not returned."
+                }
+              }
+            }
+          ]
+        },
+        "discountedPrice": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/calculatedPriceWithDiscounts"
+            },
+            {
+              "type": "object",
+              "description": "The sum of all line item prices after discounts are calculated. It's included in the response if at least one line item has a discounted price. It's the total amount of discounted prices for items with applied discounts and the original prices for items without discounts. It reflects the total cost of all line items after discounts.",
+              "properties": {
+                "netValue": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "The net value after applying discounts."
+                },
+                "grossValue": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "The gross value after applying discounts."
+                },
+                "taxValue": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "The difference between `grossValue` and `netValue`."
+                },
+                "taxCode": {
+                  "type": "string",
+                  "description": "Tax code applied to the discounted price, a tax code is a country's set of tax rules. If all fees have the same taxRate, then the value is present. Otherwise, the field is not returned."
+                },
+                "taxRate": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "Tax rate applied to the discounted price, it's the percentage at which an individual or business is taxed. If all fees have the same taxRate, then the value is present. Otherwise, the field is not returned."
+                }
+              }
+            }
+          ]
+        },
+        "paymentFees": {
+          "type": "array",
+          "description": "The list of payment fees applied to an order. Payment fees are not changed and are not discounted, even when a discount or coupon is applied to the total.",
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/$defs/calculatedPaymentFee"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Payment fee identifier."
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "PERCENT",
+                      "ABSOLUTE",
+                      "ABSOLUTE_MULTIPLY_ITEMQUANTITY"
+                    ],
+                    "description": "Type of the payment fee. PERCENT for the fee’s `feePercentage`` multiplied by sum of line items `finalPrice` plus shipping cost. ABSOLUTE - monetary amount that is assigned to the payment method."
+                  },
+                  "price": {
+                    "description": "Calculated price of the fee.",
+                    "properties": {
+                      "netValue": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "The monetary amount of the fee, depending on the fee type. ABSOLUTE for the value of defined fee’s `feeAbsolute.amount` attribute. The amount is treated as `netValue`. PERCENT, when defined on fee level percentage, `feePercentage` attribute, of sum of all item line’s `finalPrice.netValue` plus cart’s `calculatedPrice.totalShipping.netValue`. If the fee is taxable and has a tax code, the gross value is calculated. Otherwise, `grossValue` is equal to `netValue`."
+                      },
+                      "grossValue": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "For a fee where `taxable=true` and a valid `taxCode` is provided, the tax rate associated with that tax code is used to calculate `grossValue`. If the fee is not taxable, `netValue` is equal to `grossValue`."
+                      },
+                      "taxValue": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Tax value of the payment fee, it's the actual amount of tax that has to be paid."
+                      },
+                      "taxRate": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "If a fee is defined with the attribute `taxable=true`, the tax rate is calculated based on the `taxCode` provided at the fee level. A taxable fee must have a defined `taxCode`."
+                      },
+                      "taxCode": {
+                        "type": "string",
+                        "description": "The tax code defined at the fee level, for example STANDARD. The value must correspond to the available tax codes in the system configuration."
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "fees": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/calculatedPrice"
+            },
+            {
+              "type": "object",
+              "description": "The sum of all fees applied on the line items plus the payment fee *before discounts*."
+            }
+          ]
+        },
+        "totalFee": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/calculatedPriceWithDiscounts"
+            },
+            {
+              "type": "object",
+              "description": "The sum of all fees applied on the line items plus the payment fee. It's calculated by summing `entries[].calculatedPrice.totalFee` with `paymentFee`. **The `totalFee` is the value *after all the discounts*, if any discounts were applied.**",
+              "properties": {
+                "netValue": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "Net value of the total fee, value without tax."
+                },
+                "grossValue": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "Gross value of the total fee, value with tax."
+                },
+                "taxValue": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "Tax value of the total fee, it's the actual amount of tax that has to be paid."
+                },
+                "taxRate": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "If all fees have the same `taxCode` defined, resulting in the same `taxRate`, the value is present. Otherwise, the field is not returned in the response."
+                },
+                "taxCode": {
+                  "type": "string",
+                  "description": "If all fees have the same `taxCode` defined, the value is present. Otherwise, the field is not returned in the response."
+                },
+                "appliedDiscounts": {
+                  "type": "array",
+                  "description": "A list of discounts applied to on the line item fees. The payment fee itself is not discountable.",
+                  "items": {
+                    "allOf": [
+                      {
+                        "$ref": "#/$defs/calculatedAppliedDiscount"
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Discount identifier."
+                          },
+                          "value": {
+                            "type": "number",
+                            "format": "double",
+                            "description": "The sum of all `lines[].calculatedPrice.totalFee[].appliedDiscounts[].value` grouped by `discount.id`."
+                          },
+                          "discountType": {
+                            "type": "string",
+                            "enum": [
+                              "PERCENT",
+                              "ABSOLUTE",
+                              "FREE_SHIPPING"
+                            ],
+                            "description": "PERCENT for percentage discounts and ABSOLUTE for amount applied to the fee."
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "totalDiscount": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/calculatedTotalDiscount"
+            },
+            {
+              "type": "object",
+              "description": "A summary of all discounts applied to the line, including discounts on both the line item's price and its fees. If there are no discounts applied on to the line item, it's not returned in the response.",
+              "properties": {
+                "calculationType": {
+                  "type": "string",
+                  "enum": [
+                    "ApplyDiscountBeforeTax",
+                    "ApplyDiscountAfterTax"
+                  ],
+                  "description": "Indicates whether discounts were applied to net or gross values."
+                },
+                "value": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "Aggregated sum of `lines[].calculatedPrice.totalDiscount.value` plus the sum of shipping discounts `totalShipping.appliedDiscounts[].value`."
+                },
+                "appliedDiscounts": {
+                  "type": "array",
+                  "description": "A list of the applied discounts.",
+                  "items": {
+                    "allOf": [
+                      {
+                        "$ref": "#/$defs/calculatedAppliedDiscount"
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Discount identifier."
+                          },
+                          "value": {
+                            "type": "number",
+                            "format": "double",
+                            "description": "The sum of all `lines[].calculatedPrice.totalDiscount.value` plus `totalShipping.appliedDiscounts[].value` grouped by the discount ID."
+                          },
+                          "discountType": {
+                            "type": "string",
+                            "enum": [
+                              "PERCENT",
+                              "ABSOLUTE",
+                              "FREE_SHIPPING"
+                            ],
+                            "description": "PERCENT for percentage discounts, ABSOLUTE for monetary amount and FREE_SHIPPING is shipping is fully discounted."
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "shipping": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/calculatedPrice"
+            },
+            {
+              "type": "object",
+              "description": "The total shipping cost is calculated by summing `items[].calculatedPrice.price.grossValue` for shipping estimation. `GrossValue` is used because, even for zero-tax items, it remains equal to `netValue`. The `shipping` is the value *before discounts*, use totalShipping to get the value after discounts."
+            }
+          ]
+        },
+        "totalShipping": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/calculatedPriceWithDiscounts"
+            },
+            {
+              "type": "object",
+              "description": "The total shipping cost is calculated by summing `entries[].calculatedPrice.price.grossValue` for shipping estimation. `GrossValue` is used because, even for zero-tax items, it remains equal to `netValue`. **The `totalShipping` is the value *after all the discounts(, if any discounts were applied.**",
+              "properties": {
+                "netValue": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "The net value after applying discounts."
+                },
+                "grossValue": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "The gross value after applying discounts."
+                },
+                "taxValue": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "The difference between `grossValue` and `netValue`."
+                },
+                "taxCode": {
+                  "type": "string",
+                  "description": "Tax code applied to the shipping cost, a tax code is a country's set of tax rules."
+                },
+                "taxRate": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "Tax rate applied to the shipping cost, it's the percentage at which an individual or business is taxed."
+                },
+                "appliedDiscounts": {
+                  "type": "array",
+                  "description": "A list of discounts applied to shipping.",
+                  "items": {
+                    "allOf": [
+                      {
+                        "$ref": "#/$defs/calculatedAppliedDiscount"
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Discount identifier."
+                          },
+                          "value": {
+                            "type": "number",
+                            "format": "double",
+                            "description": "Value of the discount that was applied."
+                          },
+                          "discountType": {
+                            "type": "string",
+                            "enum": [
+                              "PERCENT",
+                              "ABSOLUTE",
+                              "FREE_SHIPPING"
+                            ],
+                            "description": "PERCENT for percentage discounts and ABSOLUTE for amount applied to the line item."
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "finalPrice": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/calculatedPriceWithTaxAggregate"
+            },
+            {
+              "type": "object",
+              "description": "The final price is the sum of `entries[].finalPrice`, `totalShipping`, and `paymentFee`, without the uplift value.",
+              "properties": {
+                "netValue": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "The sum of line items, `discountedPrice.netValue` or `price.netValue`, and `totalFee.netValue`."
+                },
+                "grossValue": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "The sum of line items, `discountedPrice.grossValue` or `price.grossValue`, and `totalFee.grossValue`."
+                },
+                "taxValue": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "The result of subtracting `netValue` and `grossValue`, which is equal to the sum of all `taxValues` from the prices."
+                },
+                "taxRate": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "If the tax code of the line item matches the tax code of all applied fees, the tax rate is populated with the value. Otherwise, it's not returned in the response."
+                },
+                "taxCode": {
+                  "type": "string",
+                  "description": "The common tax code of the line item and all applicable fees. If at least one fee does not have a defined tax code, the common tax code cannot be determined, and the field is empty."
+                },
+                "taxAggregate": {
+                  "properties": {
+                    "lines": {
+                      "allOf": [
+                        {
+                          "$ref": "#/$defs/calculatedPrice"
+                        },
+                        {
+                          "type": "object",
+                          "description": "A list of tax values grouped by `taxCode` and `taxRate`. It includes the sum of `item[].calculatedPrice.discountedPrice` or `item[].calculatedPrice.price`, `item[].calculatedPrice.fees[].discountedPrice` or `item[].calculatedPrice.fees[].price`, `calculatedPrice.totalShipping` and `calculatedPrice.paymentFees`. If any of these values have the same `taxRate` but different `taxCode`, they are listed separately. The aggregation also includes items that do not have a `taxRate` or `taxCode` defined.",
+                          "properties": {
+                            "netValue": {
+                              "type": "number",
+                              "format": "double",
+                              "description": "Net value of the tax, value without tax."
+                            },
+                            "grossValue": {
+                              "type": "number",
+                              "format": "double",
+                              "description": "Gross value of the tax, value with tax."
+                            },
+                            "taxValue": {
+                              "type": "number",
+                              "format": "double",
+                              "description": "Tax value of the tax, it's the actual amount of tax that has to be paid."
+                            },
+                            "taxCode": {
+                              "type": "string",
+                              "description": "Tax code applied to the tax, a tax code is a country's set of tax rules."
+                            },
+                            "taxRate": {
+                              "type": "number",
+                              "format": "double",
+                              "description": "Tax rate applied to the tax, it's the percentage at which an individual or business is taxed."
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "orderCommonDto": {
+      "title": "Order Common DTO",
+      "description": "The base order fields. This object is inherited by all of other order objects as Order Creation DTO, Order Update DTO etc.",
+      "type": "object",
+      "properties": {
+        "restriction": {
+          "$ref": "#/$defs/restriction"
+        },
+        "feeYrnAggregate": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/aggregateFee"
+            },
+            {
+              "type": "object",
+              "description": "**This field is deprecated**. Please use `calculatedPrice.totalFees` and `entries[].calculatedPrice.fees` instead. These fields provide the same values with updated functionality."
+            },
+            {
+              "deprecated": true
+            }
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/orderStatus"
+        },
+        "cartId": {
+          "type": "string",
+          "description": "The identifier of a cart that was used to create this order."
+        },
+        "vendor": {
+          "$ref": "#/$defs/vendor"
+        },
+        "orderType": {
+          "$ref": "#/$defs/splitOrderType"
+        },
+        "masterOrder": {
+          "type": "string",
+          "description": "The identifier of a master order. Available on suborders that have been created after splitting the master order."
+        },
+        "splitInfo": {
+          "$ref": "#/$defs/splitInfo"
+        },
+        "subOrders": {
+          "type": "array",
+          "description": "A list of string IDs for suborders created after a split. Available only on the master order from which the split originated."
+        },
+        "entries": {
+          "description": "Ordered item list.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/orderEntry"
+          }
+        },
+        "discounts": {
+          "description": "Discount list.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/discount"
+          }
+        },
+        "customer": {
+          "$ref": "#/$defs/customer"
+        },
+        "siteCode": {
+          "description": "Site's unique identifier. A site is a specific shop.",
+          "type": "string"
+        },
+        "countryCode": {
+          "description": "Two-letter country code, compliant with the ISO 3166 standard.",
+          "type": "string"
+        },
+        "billingAddress": {
+          "$ref": "#/$defs/address"
+        },
+        "shippingAddress": {
+          "$ref": "#/$defs/address"
+        },
+        "payments": {
+          "description": "Payment list.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/payment"
+          }
+        },
+        "shipping": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/shipping"
+            },
+            {
+              "type": "object",
+              "description": "**This field is deprecated**. Please use `calculatedPrice.totalShipping` instead. The `unitPrice` field provides the same value with updated functionality."
+            },
+            {
+              "deprecated": true
+            }
+          ]
+        },
+        "tax": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/tax"
+            },
+            {
+              "type": "object",
+              "description": "**This field is deprecated**. Please use `calculatedPrice.finalPrice.taxAggregate` instead. The `calculatedPrice.finalPrice.taxAggregate` field provides the same value with updated functionality."
+            },
+            {
+              "deprecated": true
+            }
+          ]
+        },
+        "subTotalPrice": {
+          "type": "number",
+          "deprecated": true,
+          "description": "Order sub total price. **This field is deprecated**. Please use `calculatedPrice.price` or `calculatedPrice.discountedPrice` instead. These fields provide the same value with updated functionality."
+        },
+        "totalPrice": {
+          "type": "number",
+          "deprecated": true,
+          "description": "Order total price. **This field is deprecated**. Please use `calculatedPrice.finalPrice` instead. The `calculatedPrice.finalPrice` field provides the same value with updated functionality."
+        },
+        "totalAuthorizedAmount": {
+          "type": "number",
+          "description": "The amount that should be authorized with payment provider. It's a sum of `calculatedPrice.finalPrice.grossValue` and `calculatedPrice.upliftValue.grossValue`."
+        },
+        "currency": {
+          "description": "Three-letter currency code, compliant with the ISO 4217 standard.",
+          "type": "string"
+        },
+        "orderCycle": {
+          "description": "Order cycle date.\n\n**This field is deprecated**. Please use the `deliveryWindow.deliveryCycle` attribute instead.",
+          "deprecated": true,
+          "type": "string"
+        },
+        "deliveryWindowId": {
+          "description": "Delivery window's unique identifier.\n\n**This field is deprecated**. Please use the `deliveryWindow.id` attribute instead.",
+          "type": "string",
+          "deprecated": true
+        },
+        "deliveryWindow": {
+          "$ref": "#/$defs/deliveryWindow"
+        },
+        "metadata": {
+          "$ref": "#/$defs/metadataMixins"
+        },
+        "mixins": {
+          "type": "object"
+        },
+        "calculatedPrice": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/orderCalculatedPrice"
+            },
+            {
+              "type": "object",
+              "description": "A breakdown of the total price calculated from all line items, including detailed pricing components. Can be skipped if deprecated`totalPrice` is provided to preserve backward compatibility"
+            }
+          ]
+        },
+        "legalEntityId": {
+          "type": "string",
+          "description": "The identifier of the legal entity on whose behalf the order was placed."
+        }
+      },
+      "required": [
+        "entries",
+        "customer",
+        "calculatedPrice"
+      ]
+    },
+    "orderEntry": {
+      "title": "Order entry",
+      "description": "The ordered item.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "The ordered item ID.",
+          "type": "string"
+        },
+        "itemYrn": {
+          "$ref": "#/$defs/YRN"
+        },
+        "fees": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/aggregateFee"
+            },
+            {
+              "type": "object",
+              "description": "**This field is deprecated**. Please use `calculatedPrice.fees` instead. The `calculatedPrice.fees` field provides the same value with updated functionality."
+            },
+            {
+              "deprecated": true
+            }
+          ]
+        },
+        "amount": {
+          "description": "The amount of items.",
+          "type": "integer"
+        },
+        "orderedAmount": {
+          "description": "The ordered amount of items.",
+          "type": "integer"
+        },
+        "packedAmountInPc": {
+          "description": "The packed amount of items.",
+          "type": "integer"
+        },
+        "effectiveQuantity": {
+          "description": "Effective quantity is q calculated average quantity customer is paying for.",
+          "type": "number",
+          "format": "double"
+        },
+        "originalAmount": {
+          "description": "The original amount. **This field is deprecated**. Please use `calculatedUnitPrice` instead. The `calculatedUnitPrice` field provides the same value with updated functionality.",
+          "type": "number",
+          "deprecated": true
+        },
+        "originalPrice": {
+          "description": "The original price. **This field is deprecated**. Please use `calculatedUnitPrice` instead. The `calculatedUnitPrice` field provides the same value with updated functionality.",
+          "type": "number",
+          "deprecated": true
+        },
+        "unitPrice": {
+          "type": "number",
+          "deprecated": true,
+          "description": "**This field is deprecated**. Please use `calculatedUnitPrice` instead. The `calculatedUnitPrice` field provides the same value with updated functionality."
+        },
+        "calculatedUnitPrice": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/calculatedPrice"
+            },
+            {
+              "type": "object",
+              "description": "Product's unit price with tax values, can be skipped if deprecated `unitPrice` is provided for backward compatibility."
+            }
+          ]
+        },
+        "measurementUnit": {
+          "$ref": "#/$defs/measurementUnit"
+        },
+        "link": {
+          "description": "Link to product.",
+          "type": "string"
+        },
+        "discounts": {
+          "deprecated": true,
+          "description": "The discount list. **This field is deprecated**. Please use `calculatedPrice.totalDiscount` instead. The `calculatedPrice.totalDiscount` field provides the same value with updated functionality."
+        },
+        "totalPrice": {
+          "type": "number",
+          "deprecated": true,
+          "description": "The total price of items. **This field is deprecated**. Please use `calculatedPrice.finalPrice` instead. The `calculatedPrice.finalPrice` field provides the same value with updated functionality."
+        },
+        "authorizedAmount": {
+          "description": "The authorized amount. **This field is deprecated**. Please use `calculatedPrice.upliftValue` instead. The `calculatedPrice.upliftValue` field how much payment authorization should be increased for given item.",
+          "deprecated": true,
+          "type": "number"
+        },
+        "product": {
+          "$ref": "#/$defs/product"
+        },
+        "tax": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/tax"
+            },
+            {
+              "type": "object",
+              "description": "**This field is deprecated**. Please use `calculatedPrice.price` instead. The `calculatedPrice.price` field provides the same value with updated functionality."
+            },
+            {
+              "deprecated": true
+            }
+          ]
+        },
+        "price": {
+          "$ref": "#/$defs/price"
+        },
+        "metadata": {
+          "$ref": "#/$defs/mixinsMetadata"
+        },
+        "mixins": {
+          "type": "object"
+        },
+        "calculatedPrice": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/orderEntryCalculatedPrice"
+            },
+            {
+              "type": "object",
+              "description": "Detailed price calculation for a single line item with all pricing components. Can be skipped if deprecated `totalPrice` is provided for backward compatibility."
+            }
+          ]
+        },
+        "priceMatchDetails": {
+          "$ref": "#/$defs/priceMatchDetails"
+        },
+        "externalDiscounts": {
+          "type": "array",
+          "description": "External discounts applied to this order entry.",
+          "items": {
+            "$ref": "#/$defs/externalDiscount"
+          }
+        },
+        "externalFees": {
+          "type": "array",
+          "description": "External fees applied to this order entry.",
+          "items": {
+            "$ref": "#/$defs/externalFee"
+          }
+        }
+      },
+      "required": [
+        "amount",
+        "calculatedUnitPrice",
+        "calculatedPrice"
+      ]
+    },
+    "orderEntryCalculatedPrice": {
+      "type": "object",
+      "properties": {
+        "price": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/calculatedPrice"
+            },
+            {
+              "type": "object",
+              "description": "The price is calculated by multiplying the unit price (taken from priceMatch) by the quantity."
+            },
+            {
+              "properties": {
+                "calculated": {
+                  "type": "string",
+                  "description": "Indicates how the line item price was determined. - `INTERNAL` — Calculated by Emporix using unit price × quantity. - `EXTERNAL` — Provided externally with `lineTax`.",
+                  "enum": [
+                    "INTERNAL",
+                    "EXTERNAL"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "upliftValue": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/calculatedPrice"
+            },
+            {
+              "type": "object",
+              "description": "Maximum additional amount authorized for payment to cover potential price adjustments during packaging of weight-based products. For example, if the item’s `price.netValue=12`, the `upliftValue.netValue=1,2`, with 10% uplift configured. If the uplift value is not configured for an item, it's not returned in the response.",
+              "properties": {
+                "netValue": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "Net value of the uplift amount, value without tax."
+                },
+                "grossValue": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "Gross value of the uplift amount, value with tax."
+                },
+                "taxValue": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "Tax value of the uplift amount, it's the actual amount of tax that has to be paid."
+                },
+                "taxCode": {
+                  "type": "string",
+                  "description": "Tax code applied to uplift amount, a tax code is a country's set of tax rules."
+                },
+                "taxRate": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "Tax rate applied to the uplift amount, it's the percentage at which an individual or business is taxed."
+                }
+              }
+            }
+          ]
+        },
+        "discountedPrice": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/calculatedPriceWithDiscounts"
+            },
+            {
+              "type": "object",
+              "description": "The total price for the item line calculated by multiplying the unit price by the quantity, with applied discounts. If there are no applied discounts to the given line item, the attribute is not returned in the response.",
+              "properties": {
+                "netValue": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "The net value after applying discounts, calculated if `includesTax=false`."
+                },
+                "grossValue": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "The gross value after applying discounts, calculated if `includesTax=true`."
+                },
+                "taxValue": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "The difference between `grossValue` and `netValue`."
+                },
+                "taxRate": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "Tax rate applied to the discounted price, it's the percentage at which an individual or business is taxed."
+                },
+                "taxCode": {
+                  "type": "string",
+                  "description": "Tax code applied to the discounted price, a tax code is a country's set of tax rules."
+                },
+                "appliedDiscounts": {
+                  "type": "array",
+                  "description": "A list of discounts applied to the line item.",
+                  "items": {
+                    "allOf": [
+                      {
+                        "$ref": "#/$defs/calculatedAppliedDiscount"
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Discount identifier."
+                          },
+                          "value": {
+                            "type": "number",
+                            "format": "double",
+                            "description": "Value of the discount that was applied."
+                          },
+                          "discountType": {
+                            "type": "string",
+                            "enum": [
+                              "PERCENT",
+                              "ABSOLUTE",
+                              "FREE_SHIPPING"
+                            ],
+                            "description": "PERCENT for percentage discounts and ABSOLUTE for amount applied to the line item."
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "fees": {
+          "type": "array",
+          "description": "A list of fees applied to the line item. If there are no fees on the item line, it's not returned in the response.",
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/$defs/calculatedFee"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Fee identifier."
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "PERCENT",
+                      "ABSOLUTE",
+                      "ABSOLUTE_MULTIPLY_ITEMQUANTITY"
+                    ],
+                    "description": "PERCENT for fee percentage of the item's line `price.netValue` - unit price x quantity. ABSOLUTE for the absolute amount assigned to the item line. ABSOLUTE_MULTIPLY_ITEMQUANTITY for the monetary amount multiplied by the item quantity and assigned to the item line."
+                  },
+                  "origin": {
+                    "enum": [
+                      "INTERNAL",
+                      "EXTERNAL"
+                    ],
+                    "description": "INTERNAL defined in commerce engine, EXTERNAL specified when an item is added to the order."
+                  },
+                  "name": {
+                    "type": "object",
+                    "description": "Fee name."
+                  },
+                  "price": {
+                    "type": "object",
+                    "description": "The calculated price of the fee.",
+                    "properties": {
+                      "netValue": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Monetary amount of the fee, depends on the fee type."
+                      },
+                      "grossValue": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Value calculated based on the `taxCode` and the `taxRate` if `taxable=true`."
+                      },
+                      "taxRate": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "If a fee is defined with the attribute `taxable=true`, the tax rate is calculated based on the provided `taxCode` at the fee level. A taxable fee must have a defined `taxCode`."
+                      },
+                      "taxCode": {
+                        "type": "string",
+                        "description": "Tax code defined on the fee level, for example STANDARD. The value should match the available tax codes in the system configuration."
+                      }
+                    }
+                  },
+                  "discountedPrice": {
+                    "allOf": [
+                      {
+                        "$ref": "#/$defs/calculatedPriceWithDiscounts"
+                      },
+                      {
+                        "type": "object",
+                        "description": "The total price for the item line calculated by multiplying the unit price by the quantity, with applied discounts. If there are no applied discounts to the given line item, the attribute is not returned in the response.",
+                        "properties": {
+                          "netValue": {
+                            "type": "number",
+                            "format": "double",
+                            "description": "The net value after applying discounts, calculated if `includesTax=false`."
+                          },
+                          "grossValue": {
+                            "type": "number",
+                            "format": "double",
+                            "description": "The gross value after applying discounts, calculated if `includesTax=true`."
+                          },
+                          "taxValue": {
+                            "type": "number",
+                            "format": "double",
+                            "description": "The difference between `grossValue` and `netValue`."
+                          },
+                          "taxRate": {
+                            "type": "number",
+                            "format": "double",
+                            "description": "Refers to `fees[].price.taxRate`."
+                          },
+                          "taxCode": {
+                            "type": "string",
+                            "description": "Refers to `fees[].price.taxCode`."
+                          },
+                          "appliedDiscounts": {
+                            "type": "array",
+                            "description": "A list of discounts applied to the line item.",
+                            "items": {
+                              "allOf": [
+                                {
+                                  "$ref": "#/$defs/calculatedAppliedDiscount"
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "string",
+                                      "description": "Discount identifier."
+                                    },
+                                    "value": {
+                                      "type": "number",
+                                      "format": "double",
+                                      "description": "Monetary amount of the discount applied to the price for the given discount ID."
+                                    },
+                                    "discountType": {
+                                      "type": "string",
+                                      "enum": [
+                                        "PERCENT",
+                                        "ABSOLUTE",
+                                        "FREE_SHIPPING"
+                                      ],
+                                      "description": "PERCENT for percentage discounts and ABSOLUTE for amount applied to the line item."
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "totalFee": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/calculatedPriceWithDiscounts"
+            },
+            {
+              "type": "object",
+              "description": "Sum of all fees applied to the item. It's calculated by summarizing `fees[].discountedPrice` if any discounts were applied to the fee, or `fees[].price` for an pre-discounted fee. If there are no fees applied to the line item, it's not returned in the response.",
+              "properties": {
+                "netValue": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "Net value of the price, price without tax."
+                },
+                "grossValue": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "Gross value of the price, price with tax."
+                },
+                "taxValue": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "Tax value of the price, it's the actual amount of tax that has to be paid."
+                },
+                "taxRate": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "If all fees have the same `taxCode` defined, which results in the same `taxRate`, then the value is present. Otherwise, the field is not returned."
+                },
+                "taxCode": {
+                  "type": "string",
+                  "description": "If all fees have the same `taxCode`, then the value is present. Otherwise, the field is not returned."
+                },
+                "appliedDiscounts": {
+                  "type": "array",
+                  "description": "A list of discounts applied to the line item.",
+                  "items": {
+                    "allOf": [
+                      {
+                        "$ref": "#/$defs/calculatedAppliedDiscount"
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Discount identifier."
+                          },
+                          "value": {
+                            "type": "number",
+                            "format": "double",
+                            "description": "Sum of all `fees[].discountedPrice.appliedDiscounts[].value` grouped by `discount.id`"
+                          },
+                          "discountType": {
+                            "type": "string",
+                            "enum": [
+                              "PERCENT",
+                              "ABSOLUTE",
+                              "FREE_SHIPPING"
+                            ],
+                            "description": "PERCENT for percentage discounts and ABSOLUTE for amount applied to the line item."
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "totalDiscount": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/calculatedTotalDiscount"
+            },
+            {
+              "type": "object",
+              "description": "A summary of all discounts applied to the line, including discounts on both the line item's price and its fees. If there are no discounts applied on to the line item, it's not returned in the response.",
+              "properties": {
+                "calculationType": {
+                  "type": "string",
+                  "enum": [
+                    "ApplyDiscountBeforeTax",
+                    "ApplyDiscountAfterTax"
+                  ],
+                  "description": "Indicates whether discounts were applied to net or gross values."
+                },
+                "value": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "Aggregated sum of `lines[].calculatedPrice.totalDiscount.value` plus the sum of shipping discounts `totalShipping.appliedDiscounts[].value`."
+                },
+                "appliedDiscounts": {
+                  "type": "array",
+                  "description": "A list of the applied discounts.",
+                  "items": {
+                    "allOf": [
+                      {
+                        "$ref": "#/$defs/calculatedAppliedDiscount"
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Discount identifier."
+                          },
+                          "value": {
+                            "type": "number",
+                            "format": "double",
+                            "description": "The sum of all `lines[].calculatedPrice.totalDiscount.value` plus `totalShipping.appliedDiscounts[].value` grouped by the discount ID."
+                          },
+                          "discountType": {
+                            "type": "string",
+                            "enum": [
+                              "PERCENT",
+                              "ABSOLUTE",
+                              "FREE_SHIPPING"
+                            ],
+                            "description": "PERCENT for percentage discounts, ABSOLUTE for monetary amount and FREE_SHIPPING is shipping is fully discounted."
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "finalPrice": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/calculatedPrice"
+            },
+            {
+              "type": "object",
+              "description": "The final price is the sum of the `discountedPrice` or the original price, depending on whether any discounts were applied to the line item, and the `totalFee`, which includes all fees applied to the line item. Since the total fee already includes the discounted prices of fees, the sum is calculated at the `totalFee` level.",
+              "properties": {
+                "netValue": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "The sum of line items, `discountedPrice.netValue` or `price.netValue`, and `totalFee.netValue`."
+                },
+                "grossValue": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "The sum of line items, `discountedPrice.grossValue` or `price.grossValue`, and `totalFee.grossValue`."
+                },
+                "taxValue": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "The result of subtracting `netValue` and `grossValue`, which is equal to the sum of all `taxValues` from the prices."
+                },
+                "taxRate": {
+                  "type": "number",
+                  "format": "double",
+                  "description": "If the tax code of the line item matches the tax code of all applied fees, the tax rate is populated with the value. Otherwise, it's not returned in the response."
+                },
+                "taxCode": {
+                  "type": "string",
+                  "description": "The common tax code of the line item and all applicable fees. If at least one fee does not have a defined tax code, the common tax code cannot be determined, and the field is empty."
+                }
+              }
+            }
+          ]
+        }
+      },
+      "required": [
+        "finalPrice"
+      ]
+    },
+    "orderStatus": {
+      "type": "string",
+      "enum": [
+        "IN_CHECKOUT",
+        "CREATED",
+        "CONFIRMED",
+        "DECLINED",
+        "SHIPPED",
+        "COMPLETED"
+      ],
+      "description": "Status of the order. Supported order statuses are `IN_CHECKOUT`, `CREATED`, `CONFIRMED`, `DECLINED`, `SHIPPED`, `COMPLETED`'. Customers can only change the order status from `CREATED` to `DECLINED`."
+    },
+    "payment": {
+      "title": "Payment",
+      "description": "Payment details.",
+      "type": "object",
+      "properties": {
+        "method": {
+          "description": "Payment method.",
+          "type": "string"
+        },
+        "status": {
+          "description": "Payment status.",
+          "allOf": [
+            {
+              "$ref": "#/$defs/paymentStatus"
+            }
+          ]
+        },
+        "paymentResponse": {
+          "description": "Payment response.",
+          "type": "string"
+        },
+        "paidAmount": {
+          "description": "Paid amount.",
+          "type": "number"
+        },
+        "refundAmount": {
+          "description": "Refund amount.",
+          "type": "number"
+        },
+        "currency": {
+          "description": "Three-letter currency code, compliant with the ISO 4217 standard.",
+          "type": "string"
+        },
+        "transactionId": {
+          "description": "The ID of the payment transaction.",
+          "type": "string"
+        },
+        "redirectUrl": {
+          "description": "Redirect url.",
+          "type": "string"
+        },
+        "authorizedAmount": {
+          "description": "Authorized amount.",
+          "type": "number"
+        },
+        "provider": {
+          "description": "Payment provider.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "method",
+        "paidAmount",
+        "currency"
+      ]
+    },
+    "paymentStatus": {
+      "type": "string",
+      "enum": [
+        "PENDING",
+        "AUTHORIZATION_SUCCESS",
+        "AUTHORIZATION_FAILURE",
+        "CAPTURE_SUCCESS",
+        "CAPTURE_FAILURE",
+        "SUCCESS",
+        "FAILURE",
+        "CANCELLATION_SUCCESS",
+        "CANCELLATION_FAILURE",
+        "REFUND_SUCCESS",
+        "REFUND_FAILURE"
+      ],
+      "default": "PENDING",
+      "description": "Status of the payment."
+    },
+    "price": {
+      "title": "Price",
+      "description": "Price details.",
+      "type": "object",
+      "properties": {
+        "priceId": {
+          "description": "Id of the price related to order entry.",
+          "type": "string"
+        },
+        "priceListId": {
+          "type": "string",
+          "description": "Identifier of price list. The field should be populated only in case when the returned prices belongs to any price list."
+        },
+        "effectiveAmount": {
+          "description": "Effective amount is a calculated average item price after a discount.",
+          "type": "number"
+        },
+        "originalAmount": {
+          "description": "Oryginal amount is a price set by the merchant.",
+          "type": "number"
+        },
+        "currency": {
+          "description": "Currency of the entry price.",
+          "type": "string"
+        },
+        "salePrice": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/salePrice"
+            },
+            {
+              "type": "object",
+              "description": "Attributes of the sale price."
+            }
+          ]
+        }
+      }
+    },
+    "priceMatchDetails": {
+      "title": "priceMatchDetails",
+      "type": "object",
+      "properties": {
+        "netValue": {
+          "type": "number",
+          "format": "double",
+          "description": "The net value of the matched price"
+        },
+        "grossValue": {
+          "type": "number",
+          "format": "double",
+          "description": "The gross value of the matched price"
+        },
+        "taxValue": {
+          "type": "number",
+          "format": "double",
+          "description": "The calculated tax value"
+        },
+        "taxCode": {
+          "type": "string",
+          "description": "The applied tax code"
+        },
+        "taxRate": {
+          "type": "number",
+          "format": "double",
+          "description": "The applied tax rate"
+        },
+        "taxCountry": {
+          "type": "string",
+          "description": "The tax country for which the price was matched"
+        }
+      },
+      "description": "This model represents the price value retrieved from the price service"
+    },
+    "product": {
+      "title": "Product",
+      "description": "Product details stored on the order entry as a creation-time snapshot.\nFor `DYNAMIC_VARIANT` products, the snapshot includes `parentVariantId`, `parentVariantPath`, `ownVariantAttributes`, `inheritedVariantAttributes`, and `sellable` when those fields are present on the source product. The fields are omitted when they are not present, for example on `BASIC` or `VARIANT` products.\n",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Unique identifier of a product.",
+          "type": "string"
+        },
+        "sku": {
+          "description": "Product sku.",
+          "type": "string"
+        },
+        "code": {
+          "description": "Unique code of a product.",
+          "type": "string"
+        },
+        "name": {
+          "description": "Unique name of a product.",
+          "type": "string"
+        },
+        "localizedName": {
+          "description": "A product's name represented as a map, with language as the key and the corresponding translated name as the value",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "description": {
+          "description": "Product description.",
+          "type": "string"
+        },
+        "published": {
+          "description": "Product published flag.",
+          "type": "boolean"
+        },
+        "productType": {
+          "description": "Type of the product. Possible values: `BASIC`, `VARIANT`, `BUNDLE`, `DYNAMIC_VARIANT`.",
+          "type": "string",
+          "enum": [
+            "BASIC",
+            "VARIANT",
+            "BUNDLE",
+            "DYNAMIC_VARIANT"
+          ]
+        },
+        "bundledProducts": {
+          "description": "The collection of products assigned to the bundle.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/bundleProduct"
+          }
+        },
+        "images": {
+          "description": "Product images.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/media"
+          }
+        },
+        "vendor": {
+          "$ref": "#/$defs/vendor"
+        },
+        "mixins": {
+          "description": "Product additional information.",
+          "type": "object",
+          "additionalProperties": true
+        },
+        "parentVariantId": {
+          "description": "Identifier of the immediate parent variant. Present only for `DYNAMIC_VARIANT` products that are not root variants.",
+          "type": "string"
+        },
+        "parentVariantPath": {
+          "description": "Ancestor variant identifiers ordered from the direct parent (index 0) to the root variant. Present only for `DYNAMIC_VARIANT` products.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ownVariantAttributes": {
+          "description": "Variant attributes defined on this `DYNAMIC_VARIANT` product.",
+          "type": "object",
+          "additionalProperties": true
+        },
+        "inheritedVariantAttributes": {
+          "description": "Read-only variant attributes merged from ancestor variants of this `DYNAMIC_VARIANT` product.",
+          "type": "object",
+          "additionalProperties": true
+        },
+        "sellable": {
+          "description": "Flag indicating whether this `DYNAMIC_VARIANT` product can be sold. The value is set per product and is not inherited.",
+          "type": "boolean"
+        },
+        "metadata": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/mixinsMetadata"
+            },
+            {
+              "type": "object",
+              "description": "The metadata of the product."
+            }
+          ]
+        }
+      }
+    },
+    "reference": {
+      "title": "Link",
+      "properties": {
+        "id": {
+          "description": "Unique identifier of a link.",
+          "type": "string"
+        },
+        "type": {
+          "description": "Link type.",
+          "type": "string"
+        },
+        "url": {
+          "description": "URL of the link.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "url"
+      ]
+    },
+    "restriction": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Access control identifier that determines who can view or manage the order.\n\n**Purpose**: Restricts order visibility based on scope permissions. Only users/applications \nwith matching restriction scopes can access orders with a specific restriction value.\n\n**Access Control**:\n- *Reading*: Users can only query and view orders with the `restriction` value that matches one of their authorized restrictions.\n\n**Validation**: The value must exist in the tenant's configured list of valid restrictions.\n\n**Site Synchronization**: If the `restriction` property is not set with tenant configuration property `enableSyncBetweenRestrictionsAndSiteCodes` set to `true`, the `restriction` field automatically syncs with `siteCode` property.\n"
+    },
+    "salePrice": {
+      "title": "Sale Price",
+      "description": "The sale price.",
+      "type": "object",
+      "properties": {
+        "discountAmount": {
+          "description": "Amount of the discount for sale price promotion.",
+          "type": "number"
+        },
+        "discountRate": {
+          "description": "Rate of the discount for sale price promotion.",
+          "type": "number"
+        },
+        "description": {
+          "description": "The sale price description.",
+          "type": "string"
+        }
+      }
+    },
+    "shipment": {
+      "title": "Shipment",
+      "description": "Shippment details.",
+      "type": "object",
+      "properties": {
+        "shippedDate": {
+          "description": "Shipped date.",
+          "type": "string"
+        },
+        "carrier": {
+          "description": "Carrier.",
+          "type": "string"
+        },
+        "trackingNumber": {
+          "description": "Tracking number.",
+          "type": "string"
+        },
+        "expectDeliveryOn": {
+          "description": "Expected delivery date.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "shippedDate",
+        "carrier"
+      ]
+    },
+    "shipping": {
+      "description": "Shipping details.",
+      "title": "Shipping",
+      "type": "object",
+      "properties": {
+        "total": {
+          "description": "Total shipping amount.",
+          "type": "object",
+          "properties": {
+            "amount": {
+              "type": "number",
+              "description": "Shipping amount.",
+              "default": 0
+            },
+            "currency": {
+              "type": "string",
+              "description": "Currency of the shipping amount."
+            }
+          }
+        },
+        "lines": {
+          "description": "Shipping line list.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/shippingLine"
+          }
+        }
+      },
+      "required": [
+        "total"
+      ]
+    },
+    "shippingLine": {
+      "title": "Shipping line",
+      "description": "Shipping line.",
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "number",
+          "description": "Shipping line amount.",
+          "default": 0
+        },
+        "currency": {
+          "description": "Three-letter currency code, compliant with the ISO 4217 standard.",
+          "type": "string"
+        },
+        "code": {
+          "description": "Shipping line code.",
+          "type": "string"
+        },
+        "name": {
+          "description": "Shipping line name.",
+          "type": "string"
+        },
+        "localizedName": {
+          "description": "Shipping line name in a form of a map of translations.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "discounts": {
+          "description": "Shipping line discount.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/discount"
+          }
+        },
+        "tax": {
+          "$ref": "#/$defs/shippingTax"
+        },
+        "link": {
+          "$ref": "#/$defs/reference"
+        },
+        "shippingTaxCode": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "code"
+      ]
+    },
+    "shippingTax": {
+      "title": "Tax",
+      "description": "Tax details.",
+      "type": "object",
+      "properties": {
+        "lines": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/taxLine"
+          }
+        },
+        "total": {
+          "$ref": "#/$defs/taxTotal"
+        },
+        "rate": {
+          "description": "The rate of the shipping tax",
+          "type": "number"
+        }
+      },
+      "required": [
+        "total"
+      ]
+    },
+    "splitBy": {
+      "type": "string",
+      "enum": [
+        "VENDOR_ID"
+      ],
+      "description": "Specifies the criteria used to split a master order into suborders. Currently, only `VENDOR_ID` is supported."
+    },
+    "splitInfo": {
+      "type": "object",
+      "properties": {
+        "splitBy": {
+          "$ref": "#/$defs/splitBy"
+        },
+        "uniqueValue": {
+          "type": "string",
+          "description": "A unique value used to split the entries of a master order into separate suborders. Available only on suborders that had uniqueValue for the split. Not available on master order."
+        }
+      },
+      "description": "Information about how the order was split from the master order."
+    },
+    "splitOrderType": {
+      "type": "string",
+      "enum": [
+        "MASTER_ORDER",
+        "SUB_ORDER"
+      ],
+      "description": "Available on orders that have been split. For standard orders, the value is `null`. For the original order that was split, the value is `MASTER_ORDER`s, and for the created suborders, the value is `SUB_ORDER`."
+    },
+    "tax": {
+      "title": "Tax",
+      "description": "Tax details.",
+      "type": "object",
+      "properties": {
+        "lines": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/taxLine"
+          }
+        },
+        "total": {
+          "$ref": "#/$defs/taxTotal"
+        }
+      },
+      "required": [
+        "total"
+      ]
+    },
+    "taxLine": {
+      "title": "taxLine",
+      "description": "Tax line details.",
+      "type": "object",
+      "properties": {
+        "amount": {
+          "description": "Tax line amount.",
+          "default": 0,
+          "type": "number"
+        },
+        "currency": {
+          "description": "Three-letter currency code, compliant with the ISO 4217 standard.",
+          "type": "string"
+        },
+        "code": {
+          "description": "Tax code.",
+          "type": "string"
+        },
+        "name": {
+          "description": "Tax name.",
+          "type": "string"
+        },
+        "rate": {
+          "description": "Tax rate.",
+          "type": "number",
+          "default": 0
+        },
+        "taxable": {
+          "description": "Order's taxable amount.",
+          "type": "number"
+        },
+        "sequenceId": {
+          "description": "Sequence ID.",
+          "type": "integer",
+          "default": 0
+        },
+        "inclusive": {
+          "description": "Inclusive flag.",
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "required": [
+        "amount",
+        "currency",
+        "sequenceId",
+        "inclusive"
+      ]
+    },
+    "taxTotal": {
+      "title": "Tax total",
+      "description": "The tax total tax amount.",
+      "type": "object",
+      "properties": {
+        "amount": {
+          "description": "Total tax amount.",
+          "default": 0,
+          "type": "number"
+        },
+        "currency": {
+          "description": "Three-letter currency code, compliant with the ISO 4217 standard.",
+          "type": "string"
+        },
+        "inclusive": {
+          "description": "Total tax inclusive flag.",
+          "default": false,
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "amount",
+        "currency",
+        "inclusive"
+      ]
+    },
+    "vendor": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "An identifier of a vendor"
+        },
+        "name": {
+          "type": "string",
+          "description": "vendor name"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    }
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-metadata-filter-schema.json",
+  "title": "MetadataFilter",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-ai-rag-indexer-openapi.yml#/components/schemas/MetadataFilter",
+  "type": "object",
+  "properties": {
+    "key": {
+      "type": "string",
+      "description": "Unique identifier of the fields. It contains full field path."
+    },
+    "name": {
+      "type": "string",
+      "deprecated": true,
+      "description": "Name of the field."
+    },
+    "description": {
+      "type": "string",
+      "deprecated": true,
+      "description": "Description of the field."
+    },
+    "type": {
+      "type": "string",
+      "description": "Type of the field.",
+      "enum": [
+        "string",
+        "integer",
+        "float",
+        "boolean",
+        "datetime",
+        "date",
+        "time",
+        "dictionary",
+        "list",
+        "object"
+      ]
+    }
+  }
+}

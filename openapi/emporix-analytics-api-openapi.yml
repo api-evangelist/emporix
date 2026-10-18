@@ -1,0 +1,800 @@
+openapi: 3.2.0
+info:
+  title: Emporix Analytics API
+  version: ''
+  contact:
+    name: Emporix
+    url: https://emporix.com
+    email: documentation@emporix.com
+  description: 'Operations tagged Analytics across 2 of this provider''s published API definitions: emporix-import-service-openapi.yml, emporix-import-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2:
+  - importtool.import_trigger
+tags:
+- name: Analytics
+  description: Read aggregated import statistics, health, and the settings behind them.
+paths:
+  /importtool/{tenant}/stats:
+    parameters:
+    - $ref: '#/components/parameters/trait_tenant'
+    get:
+      summary: Retrieving import statistics
+      description: 'Retrieves aggregated import metrics for a time window: headline counters and rates, a time series
+
+        bucketed by day, week, or month, per-stream health, the top failing streams, an error breakdown,
+
+        and how many streams were added or removed.
+
+
+        To narrow the scope, use:
+
+        - `configId` for one configuration
+
+        - `configIds` for several configurations
+
+        - `streamId` for one stream
+
+
+        When none of them are given, the whole tenant is summarised. Use `sections` to fetch only the parts
+
+        you need — an unrequested section is returned as `null`.'
+      operationId: GET-importtool-stats
+      tags:
+      - Analytics
+      parameters:
+      - name: configId
+        in: query
+        required: false
+        description: Restricts the statistics to a single configuration.
+        schema:
+          type: string
+          format: uuid
+          example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+      - name: configIds
+        in: query
+        required: false
+        description: Restricts the statistics to several configurations, as a comma-separated list of identifiers. Ignored when `configId` is given.
+        schema:
+          type: string
+          example: 7c9e6679-7425-40de-944b-e07fc1f90ae7,550e8400-e29b-41d4-a716-446655440000
+      - name: streamId
+        in: query
+        required: false
+        description: Restricts the statistics to a single stream. Takes precedence over the configuration filters.
+        schema:
+          type: string
+          format: uuid
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+      - name: from
+        in: query
+        required: false
+        description: The start of the window, as an ISO-8601 instant. When omitted, defaults to 30 days ago.
+        schema:
+          type: string
+          format: date-time
+          example: '2024-05-01T00:00:00Z'
+      - name: to
+        in: query
+        required: false
+        description: The end of the window, as an ISO-8601 instant. Exclusive. When omitted, defaults to now.
+        schema:
+          type: string
+          format: date-time
+          example: '2024-05-31T00:00:00Z'
+      - name: granularity
+        in: query
+        required: false
+        description: The bucket size of the returned time series.
+        schema:
+          type: string
+          enum:
+          - DAY
+          - WEEK
+          - MONTH
+          default: DAY
+          example: DAY
+      - name: sections
+        in: query
+        required: false
+        description: 'A comma-separated list of the sections to compute: `TOTALS`, `STREAMS`, `ERRORS`, `CHANGES`. When omitted, defaults to all sections. A section not requested through the `sections` parameter is returned as `null`.'
+        schema:
+          type: string
+          example: TOTALS,ERRORS
+      security:
+      - OAuth2:
+        - importtool.import_trigger
+      responses:
+        '200':
+          description: The request was successful. The statistics are returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportStats'
+              examples:
+                Import statistics response:
+                  $ref: '#/components/examples/ImportStats_Example'
+        '400':
+          description: The window or a filter value is invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+    servers:
+    - url: https://api.emporix.io
+  /importtool/{tenant}/dashboard/job-groups:
+    parameters:
+    - $ref: '#/components/parameters/trait_tenant'
+    get:
+      summary: Retrieving job groups
+      description: 'Retrieves the tenant''s job groups. A job group is a named set of import configurations, used to
+
+        scope the analytics to the imports that matter to you. Groups are stored per tenant and shared by
+
+        everyone working on it.
+
+
+        Creating, changing, and deleting groups requires the `importtool.import_manage` scope.'
+      operationId: GET-importtool-list-job-groups
+      tags:
+      - Analytics
+      security:
+      - OAuth2:
+        - importtool.import_trigger
+      responses:
+        '200':
+          description: The request was successful. The job groups are returned.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/JobGroup'
+              examples:
+                Job groups response:
+                  $ref: '#/components/examples/JobGroups_Example'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+    servers:
+    - url: https://api.emporix.io
+  /importtool/{tenant}/settings/health-thresholds:
+    parameters:
+    - $ref: '#/components/parameters/trait_tenant'
+    get:
+      summary: Retrieving the tenant's health thresholds
+      description: 'Retrieves the tenant-wide thresholds that decide whether a stream is reported as `GREEN`, `AMBER`,
+
+        or `RED` in the import statistics, together with the built-in defaults they fall back to.
+
+
+        Thresholds resolve field by field, from the most specific level to the least specific: stream,
+
+        configuration, tenant, then the built-in default. An unset field falls back to the value at the
+
+        next less-specific level.
+
+
+        Changing the tenant-wide thresholds requires the `importtool.import_manage` scope.'
+      operationId: GET-importtool-health-thresholds
+      tags:
+      - Analytics
+      security:
+      - OAuth2:
+        - importtool.import_trigger
+      responses:
+        '200':
+          description: The request was successful. The thresholds are returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthSettings'
+              examples:
+                Health thresholds response:
+                  $ref: '#/components/examples/HealthSettings_Example'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    HealthSettings:
+      title: Tenant health thresholds
+      type: object
+      description: The tenant-wide thresholds, together with the built-in defaults they fall back to.
+      properties:
+        thresholds:
+          $ref: '#/components/schemas/HealthThresholds'
+        builtInDefaults:
+          $ref: '#/components/schemas/HealthThresholds'
+    ImportEffectiveThresholds:
+      title: Effective thresholds
+      type: object
+      description: The threshold values the verdict was actually computed with, after resolving every level.
+      properties:
+        failureRatioAmber:
+          type: number
+          format: double
+          example: 0.01
+        failureRatioRed:
+          type: number
+          format: double
+          example: 0.1
+        staleAmberHours:
+          type: integer
+          example: 48
+        staleRedHours:
+          type: integer
+          example: 168
+        failedRunIsRed:
+          type: boolean
+          example: true
+        customised:
+          type: boolean
+          description: Whether any level overrides the built-in defaults.
+          example: false
+    ImportStreamChanges:
+      title: Stream changes
+      type: object
+      description: The counts of streams added and removed during the time window.
+      properties:
+        added:
+          type: integer
+          example: 2
+        removed:
+          type: integer
+          example: 1
+        trackingSince:
+          type: string
+          format: date-time
+          description: When stream tracking began for the tenant. Streams created before this point are not counted, so a window reaching further back is not comparable.
+          example: '2024-03-11T08:00:00.000Z'
+        series:
+          type: array
+          items:
+            type: object
+            properties:
+              bucket:
+                type: string
+                format: date-time
+                example: '2024-05-14T00:00:00.000Z'
+              added:
+                type: integer
+                example: 1
+              removed:
+                type: integer
+                example: 0
+    JobGroup:
+      title: Job group
+      type: object
+      description: A named set of import configurations, used to scope the import statistics.
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The job group identifier.
+          example: 9f8c7b6a-5d4e-3f2a-1b0c-9d8e7f6a5b4c
+        name:
+          type: string
+          description: The job group name. Unique within the tenant.
+          example: Nightly master data
+        configIds:
+          type: array
+          description: The configurations in the group.
+          items:
+            type: string
+            format: uuid
+            example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+        createdAt:
+          type: string
+          format: date-time
+          description: When the group was created.
+          example: '2024-05-01T09:00:00.000Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: When the group was last changed.
+          example: '2024-05-02T11:30:00.000Z'
+    errorMessage:
+      title: Error
+      description: Schema for specific API errors.
+      type: object
+      properties:
+        code:
+          type: integer
+          description: HTTP status code.
+          minimum: 100
+          maximum: 599
+        status:
+          description: HTTP status.
+          type: string
+        message:
+          description: Descriptive error message for debugging.
+          type: string
+        details:
+          description: List of problems causing this error.
+          type: array
+          items:
+            title: Error Detail
+            description: Error details.
+            type: string
+      required:
+      - status
+      - code
+      - message
+    ImportStatsSummary:
+      title: Statistics summary
+      type: object
+      description: Headline totals for the window. Rates are fractions between 0 and 1.
+      properties:
+        totalRuns:
+          type: integer
+          description: The number of runs started in the window.
+          example: 42
+        succeeded:
+          type: integer
+          description: The number of runs that finished successfully.
+          example: 38
+        partial:
+          type: integer
+          description: The number of runs that finished with some records failing.
+          example: 3
+        failed:
+          type: integer
+          description: The number of runs that failed.
+          example: 1
+        cancelled:
+          type: integer
+          description: The number of runs that were cancelled.
+          example: 0
+        recordsRead:
+          type: integer
+          description: The number of source records read.
+          example: 125000
+        created:
+          type: integer
+          description: The number of target objects created.
+          example: 4300
+        updated:
+          type: integer
+          description: The number of target objects updated.
+          example: 98000
+        skipped:
+          type: integer
+          description: The number of records skipped because nothing had changed.
+          example: 22000
+        deleted:
+          type: integer
+          description: The number of target objects deleted.
+          example: 700
+        failedRecords:
+          type: integer
+          description: The number of records that could not be imported.
+          example: 130
+        successRate:
+          type: number
+          format: double
+          description: The share of runs that finished successfully.
+          example: 0.905
+        failureRate:
+          type: number
+          format: double
+          description: The share of records that failed.
+          example: 0.001
+        deletionRate:
+          type: number
+          format: double
+          description: The share of processed records that resulted in a deletion.
+          example: 0.006
+        skipRate:
+          type: number
+          format: double
+          description: The share of records skipped as unchanged.
+          example: 0.176
+        avgRunDurationSec:
+          type: number
+          format: double
+          description: The mean duration of a finished run, in seconds, measured from when the run began executing (`executionStartedAt`). Time spent in the queue is not counted.
+          example: 184.5
+        avgCreatedPerRun:
+          type: number
+          format: double
+          description: The mean number of objects created per run.
+          example: 102.4
+        avgUpdatedPerRun:
+          type: number
+          format: double
+          description: The mean number of objects updated per run.
+          example: 2333.3
+        distinctEntities:
+          type: integer
+          description: The number of distinct target objects currently held by the imports in scope.
+          example: 87000
+        activeRuns:
+          type: integer
+          description: The number of runs currently in the `QUEUED`, `RUNNING`, or `RESUMABLE` status. When you filter by `streamId`, queued runs are not counted, because they have not started any stream yet.
+          example: 1
+    ImportStatsErrorBucket:
+      title: Error bucket
+      type: object
+      description: A count of errors sharing the same stage and code.
+      properties:
+        stage:
+          type: string
+          description: The pipeline stage the error occurred in.
+          example: UPSERT
+        errorCode:
+          type: string
+          example: VALIDATION
+        count:
+          type: integer
+          example: 54
+    ImportSourceIssue:
+      type: object
+      properties:
+        streamId:
+          type: string
+          format: uuid
+          description: The stream the problem was observed on.
+        configId:
+          type: string
+          format: uuid
+          description: The configuration that owns the stream.
+        name:
+          type: string
+          description: The stream name.
+          example: vendor
+        duplicateKeys:
+          type: integer
+          description: Source rows that repeat a key already imported in the same run. The import keeps the last row of each repeated key and discards earlier rows.
+          example: 25907
+        unresolvedParents:
+          type: integer
+          description: Child records that were not imported because their parent could not be found.
+          example: 25370
+    ImportStats:
+      title: Import statistics
+      type: object
+      description: Aggregated import metrics for the requested window and scope. A section that was not requested via the `sections` parameter is returned as `null`.
+      properties:
+        summary:
+          $ref: '#/components/schemas/ImportStatsSummary'
+        series:
+          type: array
+          description: Activity per time bucket, ordered oldest first and gap-free.
+          items:
+            $ref: '#/components/schemas/ImportStatsPoint'
+        streamHealth:
+          type: array
+          description: The health of each stream in scope.
+          items:
+            $ref: '#/components/schemas/ImportStreamHealth'
+        topFailingStreams:
+          type: array
+          description: The streams with the most errors during the time window, ordered by error count in descending order.
+          items:
+            $ref: '#/components/schemas/ImportStatsNamedCount'
+        errorBreakdown:
+          type: array
+          description: The most common errors in the window, grouped by stage and code.
+          items:
+            $ref: '#/components/schemas/ImportStatsErrorBucket'
+        streamChanges:
+          $ref: '#/components/schemas/ImportStreamChanges'
+        sourceIssues:
+          type: array
+          description: 'The source data does not match what the import process expects during the specified time window. These issues are not failures: the runs succeed, so they do not appear in pass/fail counters.'
+          items:
+            $ref: '#/components/schemas/ImportSourceIssue'
+    HealthThresholds:
+      title: Health thresholds
+      type: object
+      description: 'The limits that decide whether a stream is reported as `GREEN`, `AMBER`, or `RED`. Each field is optional and resolves independently. An unset field falls back through the hierarchy, from the most specific level to the least specific: stream, configuration, tenant, then the built-in default.'
+      properties:
+        failureRatioAmber:
+          type: number
+          format: double
+          description: The share of failed records (0..1) at or above which the stream is `AMBER`.
+          example: 0.01
+        failureRatioRed:
+          type: number
+          format: double
+          description: The share of failed records (0..1) at or above which the stream is `RED`.
+          example: 0.1
+        staleAmberHours:
+          type: integer
+          description: The age threshold, in hours, for the stream's newest data. The stream is `AMBER` when the data's age reaches or exceeds this threshold.
+          example: 48
+        staleRedHours:
+          type: integer
+          description: The age threshold, in hours, for the stream's newest data. The stream is `RED` when the data's age reaches or exceeds this threshold.
+          example: 168
+        failedRunIsRed:
+          type: boolean
+          description: Whether a failed most-recent run makes the stream `RED` regardless of the other limits.
+          example: true
+    ImportStatsNamedCount:
+      title: Named count
+      type: object
+      properties:
+        streamId:
+          type: string
+          format: uuid
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+        name:
+          type: string
+          example: products
+        count:
+          type: integer
+          example: 87
+    ImportStreamHealth:
+      title: Stream health
+      type: object
+      description: The health of one stream over the window, and the thresholds the verdict used.
+      properties:
+        streamId:
+          type: string
+          format: uuid
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+        configId:
+          type: string
+          format: uuid
+          description: The configuration the stream belongs to.
+          example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+        name:
+          type: string
+          example: products
+        targetType:
+          type: string
+          description: The target type the stream writes to.
+          example: product
+        lastRunStatus:
+          type: string
+          description: The status of the stream's most recent run.
+          example: SUCCEEDED
+        lastRunAt:
+          type: string
+          format: date-time
+          example: '2024-05-14T02:00:00.000Z'
+        watermarkAgeSeconds:
+          type: integer
+          description: The number of seconds since the stream last detected new data.
+          example: 7200
+        failureRatio:
+          type: number
+          format: double
+          description: The share of the stream's records that failed in the window.
+          example: 0.002
+        health:
+          type: string
+          enum:
+          - GREEN
+          - AMBER
+          - RED
+          description: The stream's health verdict.
+          example: GREEN
+        thresholds:
+          $ref: '#/components/schemas/ImportEffectiveThresholds'
+    ImportStatsPoint:
+      title: Statistics time bucket
+      type: object
+      description: One bucket of the time series, in UTC.
+      properties:
+        bucket:
+          type: string
+          format: date-time
+          description: The start of the bucket.
+          example: '2024-05-14T00:00:00.000Z'
+        runs:
+          type: integer
+          example: 3
+        succeeded:
+          type: integer
+          example: 3
+        failed:
+          type: integer
+          example: 0
+        recordsRead:
+          type: integer
+          example: 4200
+        created:
+          type: integer
+          example: 120
+        updated:
+          type: integer
+          example: 3900
+        deleted:
+          type: integer
+          example: 10
+        skipped:
+          type: integer
+          example: 170
+        failedRecords:
+          type: integer
+          example: 0
+  examples:
+    InternalServiceError500_Example:
+      value:
+        status: internal_service_error
+        code: 500
+        message: A server-side exception occurred that prevented the system from correctly returning the result.
+        details:
+        - https://pattern.yaas.io/errortypes.html
+    JobGroups_Example:
+      value:
+      - id: 9f8c7b6a-5d4e-3f2a-1b0c-9d8e7f6a5b4c
+        name: Nightly master data
+        configIds:
+        - 7c9e6679-7425-40de-944b-e07fc1f90ae7
+        createdAt: '2026-07-01T10:15:30.000Z'
+        updatedAt: '2026-07-20T08:00:00.000Z'
+    ImportStats_Example:
+      value:
+        summary:
+          totalRuns: 42
+          succeeded: 38
+          partial: 3
+          failed: 1
+          cancelled: 0
+          recordsRead: 125000
+          created: 4300
+          updated: 98000
+          skipped: 22000
+          deleted: 700
+          failedRecords: 130
+          successRate: 0.905
+          failureRate: 0.001
+          deletionRate: 0.006
+          skipRate: 0.176
+          avgRunDurationSec: 184.5
+          avgCreatedPerRun: 102.4
+          avgUpdatedPerRun: 2333.3
+          distinctEntities: 87000
+          activeRuns: 1
+        series:
+        - bucket: '2026-07-19T00:00:00.000Z'
+          runs: 3
+          succeeded: 3
+          failed: 0
+          recordsRead: 4200
+          created: 120
+          updated: 3900
+          deleted: 10
+          skipped: 170
+          failedRecords: 0
+        streamHealth:
+        - streamId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          configId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+          name: Products
+          targetType: product
+          lastRunStatus: SUCCEEDED
+          lastRunAt: '2026-07-20T02:00:00.000Z'
+          watermarkAgeSeconds: 7200
+          failureRatio: 0.002
+          health: GREEN
+          thresholds:
+            failureRatioAmber: 0.01
+            failureRatioRed: 0.1
+            staleAmberHours: 48
+            staleRedHours: 168
+            failedRunIsRed: true
+            customised: false
+        topFailingStreams:
+        - streamId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+          name: Products
+          count: 87
+        errorBreakdown:
+        - stage: UPSERT
+          errorCode: VALIDATION
+          count: 54
+        streamChanges:
+          added: 2
+          removed: 1
+          trackingSince: '2026-06-11T08:00:00.000Z'
+          series:
+          - bucket: '2026-07-19T00:00:00.000Z'
+            added: 1
+            removed: 0
+    HealthSettings_Example:
+      value:
+        thresholds:
+          failureRatioAmber: 0.05
+          staleRedHours: 72
+        builtInDefaults:
+          failureRatioAmber: 0.01
+          failureRatioRed: 0.1
+          staleAmberHours: 48
+          staleRedHours: 168
+          failedRunIsRed: true
+    Forbidden403_Example:
+      value:
+        status: forbidden
+        code: 403
+        message: The access to the requested resource has been forbidden.
+        details:
+        - Missing required scopes
+  responses:
+    InternalServiceError_500:
+      description: Internal Service Error occurred.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Internal service error:
+              $ref: '#/components/examples/InternalServiceError500_Example'
+    Forbidden_403:
+      description: Given authorization scopes are not sufficient and do not match scopes required by the endpoint.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Access to resource is forbidden:
+              $ref: '#/components/examples/Forbidden403_Example'
+    Unauthorized_401:
+      description: Given request is unauthorized - the authorization token is invalid or has expired. Details will be provided in the response payload.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            Access token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+  parameters:
+    trait_tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'The tenant you want to access.
+
+        '
+      schema:
+        type: string
+        example: mytenant
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            importtool.import_trigger: Needed to trigger, schedule, monitor, and cancel import runs and to read configurations, streams, schedules, runs, and imported data.
+x-refined-from:
+- emporix-import-service-openapi.yml
+- emporix-import-service-openapi.yml

@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-item-assignment-response-schema.json",
+  "title": "ItemAssignmentResponse",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-customer-segments-openapi.yml#/components/schemas/ItemAssignmentResponse",
+  "allOf": [
+    {
+      "type": "object",
+      "properties": {
+        "segmentId": {
+          "type": "string",
+          "description": "Unique identifier of the customer segment."
+        },
+        "item": {
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Unique identifier of an existing product/category."
+            },
+            "code": {
+              "type": "string",
+              "description": "Unique code of an existing product/category."
+            },
+            "name": {
+              "type": "object",
+              "description": "Localized name of the product/category",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "type": {
+          "type": "string",
+          "description": "Determines whether item is a `PRODUCT` or `CATEGORY`",
+          "enum": [
+            "PRODUCT",
+            "CATEGORY"
+          ]
+        }
+      }
+    },
+    {
+      "$ref": "#/$defs/ItemAssignmentUpsert"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "metadata": {
+          "$ref": "#/$defs/MetadataResponse"
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "ItemAssignmentUpsert": {
+      "type": "object",
+      "description": "",
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "mixins": {
+              "type": "object",
+              "description": "A key-value map of additional attributes.",
+              "additionalProperties": true
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "metadata": {
+              "$ref": "#/$defs/MetadataUpdate"
+            }
+          }
+        }
+      ]
+    },
+    "MetadataCreate": {
+      "type": "object",
+      "properties": {
+        "mixins": {
+          "type": "object",
+          "description": "A key-value map, where key is a mixin name and value is a link to the mixin schema.",
+          "additionalProperties": true
+        }
+      }
+    },
+    "MetadataResponse": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "createdAt": {
+              "description": "The creation date.",
+              "type": "string",
+              "format": "date-time"
+            },
+            "modifiedAt": {
+              "description": "The modification date.",
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        },
+        {
+          "$ref": "#/$defs/MetadataUpdate"
+        }
+      ]
+    },
+    "MetadataUpdate": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "integer",
+              "description": "The document version number."
+            }
+          }
+        },
+        {
+          "$ref": "#/$defs/MetadataCreate"
+        }
+      ]
+    }
+  }
+}

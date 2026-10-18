@@ -1,0 +1,407 @@
+openapi: 3.2.0
+info:
+  title: Emporix Group Assignments API
+  version: ''
+  contact:
+    name: Emporix
+    url: https://emporix.com
+    email: documentation@emporix.com
+  description: 'Operations tagged Group Assignments across 2 of this provider''s published API definitions: emporix-iam-openapi.yml, emporix-iam-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Group Assignments
+paths:
+  /iam/{tenant}/groups/{groupId}/users:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    - $ref: '#/components/parameters/groupId'
+    post:
+      tags:
+      - Group Assignments
+      summary: Adding a user to a group
+      description: 'Assigns a user to a specified group. The user gains all access controls (scopes) specified for this group.
+
+
+        Groups assigned to employee users must share the same vendor identifier.
+
+
+        The `iam.assignment_create_own` scope allows a customer to assign a user to a specified group only if the user is assigned to the same company.'
+      operationId: POST-iam-add-user-to-group
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/groupId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignmentCreateRequest'
+        required: true
+      responses:
+        '201':
+          description: The request was successful. The user has been added to the group.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignmentIdResponse'
+              example:
+                id: e243dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+        '400':
+          description: Request was syntactically incorrect.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                Invalid assignment type:
+                  value:
+                    resourceId: 084bcaf6-66b8-4ddd-9489-65c5f6449e94
+                    code: 400
+                    status: Constraint validation failed
+                    message: ' ''invalidUserType'' is not supported'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '404':
+          description: Given resources cannot be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    resourceId: 084bcaf6-66b8-4ddd-9489-65c5f6449e94
+                    code: 404
+                    status: Not Found
+                    message: User not found
+      security:
+      - OAuth2:
+        - iam.assignment_manage
+        - iam.assignment_create_own
+    delete:
+      tags:
+      - Group Assignments
+      summary: Removing all users from a group
+      description: Removes all users from a specified group.
+      operationId: DELETE-iam-remove-all-users
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/groupId'
+      responses:
+        '204':
+          description: The request was successful. All users have been deleted from the group.
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+      security:
+      - OAuth2:
+        - iam.assignment_manage
+    servers:
+    - url: https://api.emporix.io
+  /iam/{tenant}/groups/{groupId}/users/{userType}/{userId}:
+    put:
+      tags:
+      - Group Assignments
+      summary: Upserting user assignment to a group
+      description: 'Creates user''s assignment to a specified group. The user gains all access controls (scopes) specified for this group.
+
+        In case the assignment already exists, nothing happens as the type of assignment cannot be changed.
+
+
+        Groups assigned to employee users must share the same vendor identifier'
+      operationId: PUT-iam-update-user-to-group
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/userType'
+      - $ref: '#/components/parameters/userId'
+      responses:
+        '201':
+          description: The request was successful. The user has been added to the group.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignmentIdResponse'
+        '204':
+          description: The request was successful. The user assignment already exists and has not been changed.
+        '400':
+          description: Request was syntactically incorrect.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                Invalid assignment type:
+                  value:
+                    resourceId: 084bcaf6-66b8-4ddd-9489-65c5f6449e94
+                    code: 400
+                    status: Constraint validation failed
+                    message: ' ''invalidUserType'' is not supported'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '404':
+          description: Given resources cannot be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    resourceId: 084bcaf6-66b8-4ddd-9489-65c5f6449e94
+                    code: 404
+                    status: Not Found
+                    message: User not found
+      security:
+      - OAuth2:
+        - iam.assignment_manage
+    servers:
+    - url: https://api.emporix.io
+  /iam/{tenant}/groups/{groupId}/users/{userId}:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    - $ref: '#/components/parameters/groupId'
+    - $ref: '#/components/parameters/userId'
+    delete:
+      tags:
+      - Group Assignments
+      summary: Removing a user from a group
+      description: 'Removes a specified user from a specified group.
+
+
+        The `iam.assignment_delete_own` scope allows a customer to remove user from a specified group only if the user is assigned to the same company.'
+      operationId: DELETE-iam-remove-user-from-group
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/userId'
+      responses:
+        '204':
+          description: The request was successful. The user has been removed from the group.
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+      security:
+      - OAuth2:
+        - iam.assignment_manage
+        - iam.assignment_delete_own
+    servers:
+    - url: https://api.emporix.io
+  /iam/{tenant}/users/{userId}/groups:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    - $ref: '#/components/parameters/userId'
+    delete:
+      tags:
+      - Group Assignments
+      summary: Removing a user from all groups
+      description: Removes a specified user from all groups.
+      operationId: DELETE-iam-remove-user-from-all-groups
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/userId'
+      responses:
+        '204':
+          description: The request was successful. The user has been removed from all groups.
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          description: Permission denied due to insufficient rights. This may happen when request does not contain sufficient scopes for given query values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    code: 403
+                    status: Forbidden
+                    message: You need a scope for this action.
+                    details:
+                    - 'Required scope(s): iam.assignment_manage'
+      security:
+      - OAuth2:
+        - iam.assignment_manage
+    servers:
+    - url: https://api.emporix.io
+components:
+  responses:
+    Unauthorized_401:
+      description: Given request is unauthorized - the authorization token is invalid or has expired. It usually means that tenant from the token does not match tenant from path.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid Access Token:
+              value:
+                fault:
+                  faultstring: Invalid Access Token
+                  detail:
+                    errorcode: keymanagement.service.invalid_access_token
+            Unauthorized:
+              value: {}
+    Forbidden_403:
+      description: Scope validation failed, details will be provided in response message
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+              status:
+                type: string
+              details:
+                type: array
+                items:
+                  type: string
+          examples:
+            'Scope is missing ':
+              value:
+                code: 403
+                message: Scope validation failed
+                status: Forbidden
+                details:
+                - Missing required scopes '[scope_name]'
+  schemas:
+    ErrorResponse:
+      required:
+      - code
+      - message
+      - status
+      type: object
+      properties:
+        resourceId:
+          type:
+          - string
+          - 'null'
+        code:
+          type: integer
+          format: int32
+        status:
+          type: string
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            type: string
+    AssignmentIdResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID of generated document.
+    AssignmentCreateRequest:
+      type: object
+      example:
+        userId: f543dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+        userType: CUSTOMER
+      properties:
+        userId:
+          type: string
+          description: User unique identifier generated when the user is created. Might be customer ID or Management Dashboard user ID.
+        userType:
+          type: string
+          example: CUSTOMER
+          enum:
+          - CUSTOMER
+          - EMPLOYEE
+          default: EMPLOYEE
+          description: 'Assignment type, possible values: CUSTOMER, EMPLOYEE'
+      required:
+      - userId
+  parameters:
+    groupId:
+      name: groupId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Unique identifier of a group, generated when the group is created.
+    userType:
+      name: userType
+      in: path
+      required: true
+      schema:
+        type: string
+      description: 'User type that may be one of: ''CUSTOMER'', ''EMPLOYEE'''
+    userId:
+      name: userId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: User unique identifier, generated when the user is created.
+    tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: The tenant name should always be written in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            iam.access_read: ''
+            iam.access_manage: ''
+            iam.assignment_create_own: ''
+            iam.assignment_manage: ''
+            iam.assignment_delete_own: ''
+            iam.permission_read: ''
+            iam.permission_create: ''
+            iam.permission_update: ''
+            iam.permission_delete: ''
+            iam.role_read: ''
+            iam.role_create: ''
+            iam.role_update: ''
+            iam.role_delete: ''
+            iam.group_read: ''
+            iam.group_read_own: ''
+            iam.user_read: ''
+            iam.user_read_own: ''
+            iam.user_create: ''
+            iam.user_update: ''
+            iam.user_delete: ''
+            iam.scope_manage: ''
+            iam.scope_read: ''
+            iam.scope_read_own: ''
+            iam.resource_read: ''
+            iam.template_read: ''
+x-refined-from:
+- emporix-iam-openapi.yml
+- emporix-iam-openapi.yml

@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-points-summary-out-schema.json",
+  "title": "pointsSummaryOut",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-reward-points-openapi.yml#/components/schemas/pointsSummaryOut",
+  "type": "object",
+  "properties": {
+    "customerId": {
+      "type": "string",
+      "description": "Id of the customer to whom the points are assigned"
+    },
+    "activePoints": {
+      "type": "integer",
+      "description": "Active points that can be redeemed"
+    },
+    "summary": {
+      "$ref": "#/$defs/customerSummary"
+    }
+  },
+  "$defs": {
+    "addedPoints": {
+      "title": "addedPoints",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "reference-id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Order Id for which the points were created"
+        },
+        "description": {
+          "type": "string",
+          "description": "Auto-generated description"
+        },
+        "points": {
+          "type": "integer",
+          "description": "Number of points added in the operation"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validUntil": {
+          "format": "date-time",
+          "type": "string",
+          "description": "The date until when the points can be redeemed"
+        },
+        "allPointsAfterCreation": {
+          "type": "integer",
+          "description": "Number of points after creation"
+        },
+        "usedPoints": {
+          "type": "integer",
+          "description": "Number of points already used"
+        },
+        "usedWith": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "points"
+      ]
+    },
+    "customerSummary": {
+      "title": "customerSummary",
+      "type": "object",
+      "properties": {
+        "addedPointsList": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/addedPoints"
+          }
+        },
+        "redeemedPointsList": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/redeemedPoints"
+          }
+        }
+      },
+      "required": [
+        "addedPointsList"
+      ]
+    },
+    "redeemedPoints": {
+      "title": "redeemedPoints",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Identifier of the redeemed points"
+        },
+        "description": {
+          "type": "string",
+          "description": "A comment for the redeem operation"
+        },
+        "points": {
+          "type": "integer",
+          "description": "The amount of the redeemed points"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the points were redeemed"
+        },
+        "allPointsAfterCreation": {
+          "type": "integer",
+          "description": "Number of points after creation"
+        }
+      },
+      "required": [
+        "points"
+      ]
+    }
+  }
+}

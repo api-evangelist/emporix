@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-exchange-auth-token-response-schema.json",
+  "title": "ExchangeAuthTokenResponse",
+  "description": "Response returned when exchanging an external subject access token for an Emporix customer token.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-customer-management-openapi.yml#/components/schemas/ExchangeAuthTokenResponse",
+  "type": "object",
+  "properties": {
+    "subject_access_token": {
+      "type": "string",
+      "description": "The subject access token (JWT) that was exchanged."
+    },
+    "access_token": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Customer access token."
+    },
+    "saas_token": {
+      "type": "string",
+      "minLength": 1,
+      "description": "SaaS token for the session."
+    },
+    "refresh_token": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Token used to refresh the customer access token."
+    },
+    "refresh_token_expires_in": {
+      "type": "integer",
+      "format": "int32",
+      "description": "Expiration time of the refresh token in seconds."
+    },
+    "session_idle_time": {
+      "type": "integer",
+      "format": "int32",
+      "description": "Session idle time in seconds."
+    },
+    "token_type": {
+      "type": "string",
+      "description": "Type of the token. Usually `Bearer`."
+    },
+    "expires_in": {
+      "type": "integer",
+      "format": "int32",
+      "description": "Expiration time of the access token in seconds."
+    },
+    "scope": {
+      "type": "string",
+      "description": "List of scopes assigned to the customer."
+    },
+    "session_id": {
+      "type": "string",
+      "description": "Session identifier."
+    }
+  }
+}

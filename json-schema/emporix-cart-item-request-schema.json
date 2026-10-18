@@ -1,0 +1,494 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-cart-item-request-schema.json",
+  "title": "cartItemRequest",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-cart-openapi.yml#/components/schemas/cartItemRequest",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Cart item's unique identifier. "
+    },
+    "keepAsSeparateLineItem": {
+      "type": "boolean",
+      "description": "Indicates that products are maintained as individual entries in the cart, rather than being consolidated. When identical products are added multiple times, each addition creates a new line item instead of increasing the quantity of an existing one."
+    },
+    "product": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/product"
+        },
+        {
+          "type": "object",
+          "description": "Product details. This field is required when itemType is EXTERNAL and product does not exist in Emporix system."
+        }
+      ]
+    },
+    "itemYrn": {
+      "type": "string",
+      "title": "YRN",
+      "minLength": 1,
+      "description": "A unique identifier of a global resource, which stores information about the resource, such as its type, ID or name of the tenant. This field should not be provided when itemType is EXTERNAL and request contains external product."
+    },
+    "externalFees": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/externalFee"
+      }
+    },
+    "externalDiscounts": {
+      "type": "array",
+      "description": "External discounts that should be applied to this cart item. Requires `cart.cart_manage_external_prices` scope",
+      "items": {
+        "$ref": "#/$defs/externalDiscount"
+      }
+    },
+    "itemType": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/itemType"
+        },
+        {
+          "type": "object",
+          "description": "Optional field which allows fetching external prices if set to EXTERNAL."
+        }
+      ]
+    },
+    "taxCode": {
+      "description": "Tax code. Tax indicated in this field overrides the site's default tax value.",
+      "type": "string"
+    },
+    "quantity": {
+      "type": "number",
+      "minimum": 0,
+      "format": "double",
+      "description": "Quantity of the product added to cart."
+    },
+    "price": {
+      "$ref": "#/$defs/priceRowItem"
+    },
+    "tax": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/taxValue"
+        },
+        {
+          "type": "object",
+          "description": "Tax information per unit. This field is only required when itemType is EXTERNAL and request contains external price. It's optional for the `INTERNAL` itemType.'"
+        }
+      ]
+    },
+    "linePrice": {
+      "description": "Externally calculated total line price (`unit price × quantity`). When provided, this overrides internal calculations.",
+      "properties": {
+        "effectiveAmount": {
+          "type": "number",
+          "minimum": 0
+        },
+        "originalAmount": {
+          "type": "number",
+          "minimum": 0
+        },
+        "currency": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "effectiveAmount",
+        "originalAmount",
+        "currency"
+      ]
+    },
+    "lineTax": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/taxValue"
+        },
+        {
+          "type": "object",
+          "required": [
+            "netValue",
+            "grossValue",
+            "rate"
+          ]
+        }
+      ],
+      "description": "Externally calculated total tax for the item line. Only allowed when `itemType = EXTERNAL`."
+    },
+    "metadata": {
+      "$ref": "#/$defs/metadataRequest"
+    },
+    "mixins": {
+      "type": "object",
+      "description": "",
+      "additionalProperties": true
+    },
+    "weightDependent": {
+      "type": "boolean",
+      "deprecated": true,
+      "description": "Deprecated, use product `weightDependent` attribute that is stored in the database. \nIf set to `true`, the storefront displays a hint that the total price of the product may vary depending on the product’s actual weight.\n"
+    }
+  },
+  "required": [
+    "quantity",
+    "price"
+  ],
+  "$defs": {
+    "YRN": {
+      "type": "string",
+      "title": "YRN",
+      "description": "A unique identifier of a global resource, which stores information about the resource, such as its type, ID or name of the tenant.",
+      "minLength": 1
+    },
+    "externalDiscount": {
+      "type": "object",
+      "description": "External discount that can be applied to cart items.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier of the external discount."
+        },
+        "discountType": {
+          "$ref": "#/$defs/externalDiscountType"
+        },
+        "value": {
+          "type": "number",
+          "format": "double",
+          "minimum": 0.0,
+          "maximum": 100.0,
+          "description": "Value of the discount (percentage e.g 15.00 -> 15% or absolute amount e.g 10.00 -> 10 EUR depending on the discountType)."
+        },
+        "includeFees": {
+          "type": "boolean",
+          "description": "Flag indicating whether the discount should be also applied to fees."
+        },
+        "sequence": {
+          "type": "integer",
+          "description": "Sequence number determining the order in which discounts are applied. The lowest sequence number is applied first."
+        }
+      },
+      "required": [
+        "id",
+        "discountType",
+        "value"
+      ]
+    },
+    "externalDiscountType": {
+      "type": "string",
+      "description": "Type of the external discount.",
+      "enum": [
+        "PERCENT",
+        "ABSOLUTE"
+      ]
+    },
+    "externalFee": {
+      "type": "object",
+      "required": [
+        "feeType"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier of the fee."
+        },
+        "name": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/localizedValue"
+            },
+            {
+              "type": "object",
+              "description": "Fee name."
+            }
+          ]
+        },
+        "yrn": {
+          "type": "string",
+          "description": "Unique identifier of the fee."
+        },
+        "feeType": {
+          "type": "string",
+          "description": "Type of the fee.",
+          "enum": [
+            "PERCENT",
+            "ABSOLUTE",
+            "ABSOLUTE_MULTIPLY_ITEMQUANTITY"
+          ]
+        },
+        "feePercentage": {
+          "type": "number",
+          "description": "Value of fee as percentage. It must be provided when feeType equals `PERCENT`."
+        },
+        "feeAbsolute": {
+          "type": "object",
+          "description": "Value of fee as absolute. It must be provided when feeType equals `ABSOLUTE` or `ABSOLUTE_MULTIPLY_ITEMQUANTITY`.",
+          "required": [
+            "currency",
+            "amount"
+          ],
+          "properties": {
+            "currency": {
+              "type": "string",
+              "description": "Currency of fee absolute."
+            },
+            "amount": {
+              "type": "number",
+              "description": "Value of fee absolute."
+            }
+          }
+        },
+        "taxable": {
+          "type": "boolean",
+          "description": "Whether tax should be included to the fee or not."
+        },
+        "taxCode": {
+          "type": "string",
+          "description": "Tax code of the fee."
+        },
+        "taxValues": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name of the tax."
+              },
+              "rate": {
+                "type": "number",
+                "description": "Rate of the tax."
+              },
+              "taxable": {
+                "type": "number",
+                "description": "The taxable amount."
+              },
+              "value": {
+                "type": "object",
+                "properties": {
+                  "currency": {
+                    "type": "string",
+                    "description": "Currency of the tax."
+                  },
+                  "amount": {
+                    "type": "number",
+                    "description": "Value of the tax."
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "itemType": {
+      "type": "string",
+      "enum": [
+        "EXTERNAL",
+        "INTERNAL"
+      ]
+    },
+    "localizedValue": {
+      "description": "Localized value which can have different structure which depends on provided `Content-Language` header.",
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "measurementUnit": {
+      "type": "object",
+      "description": "Information about the unit by which the customer can order the product.",
+      "properties": {
+        "quantity": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Quantity of the measurement unit.\n\nFor example, if the customer can order a product by one piece, the value should be set to `1`.",
+          "format": "double"
+        },
+        "unitCode": {
+          "description": "Code of the measurement unit by which the customer can order the product. The possible values for the `unitCode` field are explained in the table below:\n|     |     |\n| --- | --- |\n| **Value** | **Measurement unit** |\n| `H87` | Pieces |\n| `KGM` | Kilograms |\n| `GRM` | Grams |\n| `LTR` | Liters |\n| `MLT` | Milliliters |\n| `MTR` | Meters |\n| `RO` | Rolls |\n\nFor example, if the customer can order a product by pieces, the value should be set to `H87`.",
+          "enum": [
+            "kg",
+            "g",
+            "mg",
+            "l",
+            "ml",
+            "lb",
+            "qt",
+            "qtr",
+            "gal",
+            "pt",
+            "oz",
+            "MTR",
+            "XRO",
+            "MLT",
+            "LTR",
+            "H87",
+            "KGM",
+            "GRM",
+            "HLT",
+            "DL",
+            "DAG",
+            "RO"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "quantity"
+      ]
+    },
+    "metadataRequest": {
+      "type": "object",
+      "description": "",
+      "properties": {
+        "mixins": {
+          "type": "object",
+          "description": "Links to mixin schemas.",
+          "additionalProperties": true
+        }
+      }
+    },
+    "priceRowItem": {
+      "type": "object",
+      "description": "Price details.",
+      "properties": {
+        "priceId": {
+          "type": "string",
+          "description": "Price’s unique identifier generated when the price is created through the Price Service. This field should not be provided when itemType is EXTERNAL."
+        },
+        "yrn": {
+          "$ref": "#/$defs/YRN"
+        },
+        "originalAmount": {
+          "minimum": 0,
+          "type": "number",
+          "format": "double",
+          "description": "Product’s regular price per specified `measurementUnit`. Property can be made optional by setting `cartItemValidationSkipOriginalAmount` configuration to `true` in the configuration-service. In that case, the value is fetched from `priceId`."
+        },
+        "effectiveAmount": {
+          "minimum": 0,
+          "type": "number",
+          "format": "double",
+          "description": "Actual amount the customer will pay per specified `measurementUnit`. Property can be made optional by setting `cartItemValidationSkipEffectiveAmount` configuration to `true` in the configuration-service. In that case, the value is fetched from `priceId`."
+        },
+        "currency": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 3,
+          "description": "Three-letter currency code, compliant with the ISO 4217 standard. Property can be made optional by setting `cartItemValidationSkipCurrency` configuration to `true` in the configuration-service. In that case, the value is fetched from cart currency."
+        },
+        "measurementUnit": {
+          "$ref": "#/$defs/measurementUnit"
+        }
+      },
+      "required": [
+        "priceId",
+        "originalAmount",
+        "effectiveAmount",
+        "currency"
+      ]
+    },
+    "product": {
+      "type": "object",
+      "description": "Product details.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Product’s unique identifier. This field should be provided when itemType is EXTERNAl and request contains external product."
+        },
+        "sku": {
+          "type": "string",
+          "description": "Product Stock Keeping Unit (SKU)."
+        },
+        "code": {
+          "type": "string",
+          "description": "Product code."
+        },
+        "yrn": {
+          "$ref": "#/$defs/YRN"
+        },
+        "name": {
+          "type": "string",
+          "description": "Product name."
+        },
+        "localizedName": {
+          "description": "A product name represented as a map, with language as the key and the corresponding translated name as the value",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "description": {
+          "type": "string",
+          "description": "Product description."
+        },
+        "images": {
+          "type": "array",
+          "description": "List of product images.",
+          "items": {
+            "$ref": "#/$defs/productImage"
+          }
+        },
+        "metadata": {
+          "$ref": "#/$defs/metadataRequest"
+        },
+        "mixins": {
+          "type": "object",
+          "description": "",
+          "additionalProperties": true
+        }
+      }
+    },
+    "productImage": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Product image''s unique identifier, generated when the image is added through the Product Service."
+        },
+        "url": {
+          "type": "string",
+          "description": "Product image's URL with the file extension specified."
+        }
+      },
+      "required": [
+        "id",
+        "url"
+      ],
+      "description": "Product image details."
+    },
+    "taxValue": {
+      "type": "object",
+      "description": "The tax amount from an external source, requiring either gross amount, net amount, or both to be specified",
+      "properties": {
+        "name": {
+          "description": "Tax name. This field is required only when the itemType is set as EXTERNAL and the request contains an external price.",
+          "type": "string"
+        },
+        "rate": {
+          "type": "number",
+          "description": "Tax rate based on which the net/gross values can be calculated. This field is required only when the itemType is set as EXTERNAL and the request contains an external price.",
+          "format": "double"
+        },
+        "grossValue": {
+          "type": "number",
+          "description": "The gross value (amount including tax). If not provided, it's calculated based on the net value and tax rate.  If provided then the price effective amount must be equal to it. This field is required only when the itemType is set as EXTERNAL and the request contains an external price."
+        },
+        "netValue": {
+          "type": "number",
+          "description": "The net value (amount excluding tax). If not provided, it's calculated based on the gross value and tax rate.  If provided then the price effective amount must be equal to it. This field is required only when the itemType is set as EXTERNAL and the request contains an external price."
+        }
+      }
+    }
+  }
+}

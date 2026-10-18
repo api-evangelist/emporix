@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-group-update-request-schema.json",
+  "title": "GroupUpdateRequest",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-iam-openapi.yml#/components/schemas/GroupUpdateRequest",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Localized group name in the form of a map of translations."
+    },
+    "description": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Localized group description in the form of a map of translations."
+    },
+    "mixins": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Custom group attributes that need to be included directly in the `mixins` object."
+    },
+    "accessControls": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "description": "Access control unique identifiers associated with this group. Required to perform the request.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "userType": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "The type of the group. Possible values: 'CUSTOMER', 'EMPLOYEE'. Default value 'EMPLOYEE' if not provided",
+      "default": "EMPLOYEE",
+      "enum": [
+        "CUSTOMER",
+        "EMPLOYEE"
+      ]
+    },
+    "templates": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "description": "Template unique identifier associated with this group. Required to perform the request.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "b2b": {
+      "type": "object",
+      "description": "additional properties for B2B",
+      "properties": {
+        "legalEntityId": {
+          "type": "string",
+          "description": "identifier of the assigned legal entity"
+        }
+      }
+    },
+    "restrictions": {
+      "$ref": "#/$defs/Restrictions"
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Version of the entity, If provided optimistic locking is enabled and its version must match the version of the document in the database."
+        }
+      },
+      "description": "Metadata of the updated group."
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "$defs": {
+    "Restrictions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "description": "Limits the visibility of the permission-aware entities for the user. \n\n**Purpose**: \nRestricts entity visibility based on scope permissions. Only users with matching restriction scopes can access entity with a specific restriction value.\n\n**Validation**: \nThe value must exist in the tenant's configured list of valid restrictions.\n**Site Synchronization**: \nWhen enabled via tenant configuration (`enableSyncBetweenRestrictionsAndSiteCodes` property), this field must match with the existing sites.\n"
+      }
+    }
+  }
+}

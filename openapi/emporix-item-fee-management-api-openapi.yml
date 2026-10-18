@@ -1,0 +1,1038 @@
+openapi: 3.2.0
+info:
+  title: Emporix Item fee management API
+  version: v1
+  contact:
+    name: Emporix
+    url: https://emporix.com
+    email: documentation@emporix.com
+  description: 'Operations tagged Item fee management across 2 of this provider''s published API definitions: emporix-fee-openapi.yml, emporix-fee-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Item fee management
+paths:
+  /fee/{tenant}/itemFees:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    get:
+      description: Retrieve all itemFees.
+      tags:
+      - Item fee management
+      summary: Retrieve all itemFees
+      operationId: GET-fee-list-item-fees
+      responses:
+        '200':
+          $ref: '#/components/responses/trait_paged_itemfee_200'
+        '400':
+          $ref: '#/components/responses/trait_paged_400'
+        '401':
+          $ref: '#/components/responses/trait_unauthorized_401'
+        '403':
+          $ref: '#/components/responses/trait_yaasAware_403'
+        '500':
+          $ref: '#/components/responses/trait_yaasAware_500'
+      parameters:
+      - $ref: '#/components/parameters/trait_localizedRetrieval_Accept-Language'
+      - $ref: '#/components/parameters/SiteCode'
+      - $ref: '#/components/parameters/FieldsIds'
+      - $ref: '#/components/parameters/ProductsIds'
+      - $ref: '#/components/parameters/Expand'
+      - $ref: '#/components/parameters/pageNumber'
+      - $ref: '#/components/parameters/pageSize'
+      - $ref: '#/components/parameters/siteFallback'
+    post:
+      description: Creates a new itemFee. This endpoint allows you to assign one or more predefined fees to a specific item within a tenant. By associating fees with items, you can manage charges such as packaging, handling, or other service fees directly at the item level.
+      security:
+      - OAuth2:
+        - fee.item_create
+      tags:
+      - Item fee management
+      summary: Creating an itemFee
+      operationId: POST-fee-create-item-fee
+      requestBody:
+        content:
+          application:json:
+            schema:
+              $ref: '#/components/schemas/ItemFee'
+            examples:
+              ItemFee creation payload:
+                $ref: '#/components/examples/CreateItemFee'
+      responses:
+        '201':
+          description: 'The resource has been successfully created.
+
+            '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemFeeCreationResponse'
+              examples:
+                ItemFee creation response:
+                  value:
+                    id: 5d80a196eec29e04726e921e
+                    yrn: urn:yaas:saasag:fee:id:tenantName;5d80a196eec29e04726e921e
+        '400':
+          $ref: '#/components/responses/trait_feeId_not_found_400'
+        '401':
+          $ref: '#/components/responses/trait_unauthorized_401'
+        '403':
+          $ref: '#/components/responses/trait_yaasAware_403'
+        '409':
+          $ref: '#/components/responses/trait_yaasAware_409'
+        '500':
+          $ref: '#/components/responses/trait_yaasAware_500'
+      parameters:
+      - $ref: '#/components/parameters/trait_localizedModification_Content-Language'
+    servers:
+    - url: https://api.emporix.io
+  /fee/{tenant}/itemFees/{itemYRN}/fees:
+    parameters:
+    - $ref: '#/components/parameters/ItemYRN'
+    - $ref: '#/components/parameters/tenant'
+    get:
+      description: Retrieves all item fees for specified itemYRN.
+      tags:
+      - Item fee management
+      summary: Retrieving all item fees
+      operationId: GET-fee-list-item-fees-itemYRN
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              examples:
+                Fees with itemYRN:
+                  value:
+                  - id: 5d94587853b0c7036ab0ab7b
+                    active: true
+                    code: lemon_picking_fee
+                    feeAbsolute:
+                      amount: 4.5
+                      currency: EUR
+                    feeType: ABSOLUTE
+                    name: Lemon Picking Fee
+                    siteCode: main
+                    taxable: false
+                    yrn: urn:yaas:saasag:fee:id:tenantName;5d94587853b0c7036ab0ab7b
+                  - id: 5d94587853b0c7036ab0ab7b
+                    active: true
+                    code: apple_picking_fee
+                    feeAbsolute:
+                      amount: 3.5
+                      currency: EUR
+                    feeType: ABSOLUTE
+                    name: Apple Picking Fee
+                    siteCode: main
+                    taxable: false
+                    yrn: urn:yaas:saasag:fee:id:tenantName;5d9457d953b0c7036ab0ab7a
+                Fees without expand:
+                  value:
+                  - 57b30fd2289c48001daf5486
+                  - 5d94587853b0c7036ab0ab7b
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/Fees'
+                - $ref: '#/components/schemas/FeeIds'
+        '400':
+          $ref: '#/components/responses/trait_localizedRetrieval_400'
+        '401':
+          $ref: '#/components/responses/trait_unauthorized_401'
+        '403':
+          $ref: '#/components/responses/trait_yaasAware_403'
+      parameters:
+      - $ref: '#/components/parameters/trait_localizedRetrieval_Accept-Language'
+      - $ref: '#/components/parameters/SiteCode'
+      - $ref: '#/components/parameters/Expand'
+    put:
+      description: Adds a list of feeIds to the itemYRN.
+      security:
+      - OAuth2:
+        - fee.item_update
+      tags:
+      - Item fee management
+      summary: Adding a list of fees to an item
+      operationId: PUT-fee-add-item-fees-itemYRN
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeeIdsUpdate'
+      responses:
+        '200':
+          description: FeeIds successfully added.
+        '400':
+          $ref: '#/components/responses/trait_feeId_not_found_400'
+        '401':
+          $ref: '#/components/responses/trait_unauthorized_401'
+        '403':
+          $ref: '#/components/responses/trait_yaasAware_403'
+      parameters:
+      - $ref: '#/components/parameters/Partial'
+    delete:
+      description: Deletes item fee with the specified itemYRN.
+      security:
+      - OAuth2:
+        - fee.item_delete
+      tags:
+      - Item fee management
+      summary: Deleting an item fee with itemYRN
+      operationId: DELETE-fee-remove-item-fee-with-itemYRN
+      responses:
+        '204':
+          description: Item fee successfully deleted
+        '401':
+          $ref: '#/components/responses/trait_unauthorized_401'
+        '403':
+          $ref: '#/components/responses/trait_yaasAware_403'
+    servers:
+    - url: https://api.emporix.io
+  /fee/{tenant}/itemFees/{itemYRN}/fees/{feeId}:
+    delete:
+      description: Deletes a fee for the specified itemYRN and optionally deletes item fee if does not contain any more fee ids.
+      security:
+      - OAuth2:
+        - fee.item_delete
+      tags:
+      - Item fee management
+      summary: Deleting a fee from the itemYRN
+      operationId: DELETE-fee-remove-item-fee-from-itemYRN
+      responses:
+        '204':
+          description: Fee successfully deleted from itemYRN.
+        '401':
+          $ref: '#/components/responses/trait_unauthorized_401'
+        '403':
+          $ref: '#/components/responses/trait_yaasAware_403'
+        '404':
+          $ref: '#/components/responses/trait_yaasAware_404'
+      parameters:
+      - $ref: '#/components/parameters/ItemYRN'
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/FeeId'
+    servers:
+    - url: https://api.emporix.io
+components:
+  parameters:
+    trait_localizedModification_Content-Language:
+      description: 'The locale identifier of the language of the updated attribute.
+
+        '
+      in: header
+      name: Content-Language
+      schema:
+        type: string
+    SiteCode:
+      description: A list of site codes.
+      in: query
+      name: siteCode
+      schema:
+        default: main
+        type: string
+    ProductsIds:
+      description: A list of product Ids.
+      in: query
+      name: productIds
+      schema:
+        type: string
+    ItemYRN:
+      in: path
+      name: itemYRN
+      required: true
+      schema:
+        type: string
+    FieldsIds:
+      description: A list of feeIds.
+      in: query
+      name: feeIds
+      schema:
+        type: string
+    tenant:
+      description: the tenant to work on.
+      in: path
+      name: tenant
+      required: true
+      schema:
+        type: string
+        example: testtenant
+    trait_localizedRetrieval_Accept-Language:
+      description: 'The value of the locale identifier of the language in which the attribute should be returned.
+
+        Provide several values separated by comma, in order to specify fallback languages.
+
+        '
+      in: header
+      name: Accept-Language
+      schema:
+        type: string
+        default: '*'
+        minimum: 1
+    Expand:
+      description: Whether only the fee-id is in the response or the full fees.
+      in: query
+      name: expand
+      schema:
+        type: boolean
+        default: false
+    FeeId:
+      in: path
+      name: feeId
+      required: true
+      schema:
+        type: string
+    Partial:
+      description: Boolean parameter that defines the update type. By default, its value is false. For partial updates, the value is true.
+      in: query
+      name: partial
+      schema:
+        type: boolean
+        default: false
+    pageNumber:
+      description: 'The page number to be retrieved where the size of the pages must be specified by the pageSize parameter.
+
+        The number of the first page is 1.
+
+        '
+      in: query
+      name: pageNumber
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    pageSize:
+      description: 'The number of documents being retrieved on one page.
+
+        '
+      in: query
+      name: pageSize
+      schema:
+        default: 16
+        minimum: 1
+        type: integer
+    siteFallback:
+      in: query
+      name: siteFallback
+      schema:
+        default: false
+        type: boolean
+  schemas:
+    monetaryAmount:
+      title: Monetary Amount
+      description: Schema defining monetary amount in given currency.
+      type: object
+      properties:
+        amount:
+          description: The amount in the specified currency
+          type: number
+        currency:
+          pattern: ^[a-zA-Z]{3}$
+          description: 'ISO 4217 currency code, e.g.: USD, EUR, CHF'
+          type: string
+      required:
+      - amount
+      - currency
+    ErrorMessage:
+      title: Error Message
+      description: Schema for API-specific errors.
+      type: object
+      properties:
+        status:
+          description: Original HTTP error code. It should be consistent with the HTTP response code.
+          type: integer
+        type:
+          pattern: '[a-z]+[a-z_]*[a-z]+'
+          description: 'Classification of the error type.
+
+
+            **Note:** The error type should be written in lowercase and include underscores, for example `validation_failure`.'
+          type: string
+        message:
+          description: Descriptive error message for debugging purposes.
+          type: string
+        moreInfo:
+          type: string
+          description: More information (such as a link to the documentation) for investigating further and getting support.
+        details:
+          description: List of problems causing the error.
+          type: array
+          items:
+            title: errorDetail
+            description: Specific error cause.
+            type: object
+            properties:
+              field:
+                description: 'Element in request data which is causing the error, for example `category.name`.
+
+
+                  If the violation was not field-specific, this field will be empty.'
+                type: string
+              type:
+                pattern: '[a-z]+[a-z_]*[a-z]+'
+                description: 'Classification of the specific error cause. This value should always be interpreted within the context of the general error type.
+
+
+                  **Note:** The error type should be written in lowercase and include underscores, for example `missing_value`.'
+                type: string
+              message:
+                description: Descriptive error message for debugging purposes.
+                type: string
+              moreInfo:
+                type: string
+                description: More information (such as a link to the documentation) for investigating further and getting support.
+    Localized:
+      description: The localized value in the form of map (language, value) or string.
+      oneOf:
+      - type: string
+        description: string in the specified language.
+        example: Longneck bottle
+      - type: object
+        description: 'Map of translations in form of language:translation pairs.
+
+          The keys (languages) should be ISO language codes.
+
+          The values (in specific languages) should be strings in specified language.'
+        example:
+          en: Longneck bottle
+        additionalProperties:
+          type: string
+    ItemFee:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the item fee.
+          type: string
+        siteCode:
+          description: The SiteCode this fee belongs to.
+          type: string
+        itemYrn:
+          description: YRN of the item to assign fees to.
+          type: string
+        feeIds:
+          description: List of unique identifiers of fees to assign to the item.
+          type: array
+          items:
+            type: string
+      required:
+      - itemYrn
+      - feeIds
+      - siteCode
+    FeeIdsUpdate:
+      type: object
+      properties:
+        feeIds:
+          type: array
+          items:
+            type: string
+      required:
+      - feeIds
+      example:
+        feeIds:
+        - 57b30fd2289c48001daf5486
+        - 96b30fd4586c48001daf1752
+    ItemFees:
+      type: array
+      items:
+        $ref: '#/components/schemas/ItemFee'
+    YRN:
+      type: string
+      title: YRN
+      description: A unique identifier of a global resource, which stores information about the resource, such as its type, ID or name of the tenant.
+      minLength: 1
+    Fees:
+      type: array
+      items:
+        $ref: '#/components/schemas/Fee'
+    FeeIds:
+      type: array
+      items:
+        type: string
+      example:
+      - 57b30fd2289c48001daf5486
+      - 96b30fd4586c48001daf1752
+    ItemFeeCreationResponse:
+      type: object
+      properties:
+        id:
+          description: unique identifier of the created resource
+          type: string
+        yrn:
+          description: YRN of the created resource
+          type: string
+      required:
+      - id
+    Fee:
+      type: object
+      properties:
+        id:
+          description: Unique identifier of the fee.
+          type: string
+        name:
+          description: The localized fee name.
+          $ref: '#/components/schemas/Localized'
+        description:
+          description: The localized fee description.
+          $ref: '#/components/schemas/Localized'
+        code:
+          maxLength: 100
+          description: The code-name, unique for the tenant.
+          type: string
+        feeType:
+          description: '''PERCENT'' for relative values, ''ABSOLUTE'' for float values or ''ABSOLUTE_MULTIPLY_ITEMQUANTITY'' for float values to be multiplied by the quantity of the item.'
+          enum:
+          - PERCENT
+          - ABSOLUTE
+          - ABSOLUTE_MULTIPLY_ITEMQUANTITY
+          type: string
+        feePercentage:
+          minimum: 0
+          description: The fee rate in percentage. Required if feeType is 'PERCENT'.
+          type: number
+        feeAbsolute:
+          description: The fee as an absolute amount. Required if type is 'ABSOLUTE'.
+          $ref: '#/components/schemas/monetaryAmount'
+        itemType:
+          description: 'The itemtype the fee can belong to. It could be a product or
+
+            paymenttype. '
+          enum:
+          - PRODUCT
+          - PAYMENTTYPE
+          type: string
+        siteCode:
+          description: The SiteCode the fee belongs to.
+          type: string
+        active:
+          description: Flag indicating whether the fee is currently active or not.
+          type: boolean
+        taxable:
+          description: Flag indicating whether the fee is taxable or not.
+          type: boolean
+        taxCode:
+          description: The tax code. When 'taxable' is set to true, the taxCode is mandatory
+          type: string
+        activeTimespan:
+          $ref: '#/components/schemas/timespan'
+        yrn:
+          $ref: '#/components/schemas/YRN'
+      required:
+      - name
+      - code
+      - feeType
+      - active
+      - siteCode
+    timespan:
+      description: 'Restricts the active fees to be only applied in the specified
+
+        timespan.'
+      title: Timespan
+      type: object
+      properties:
+        startDate:
+          format: date-time
+          type: string
+        endDate:
+          format: date-time
+          type: string
+      required:
+      - startDate
+      - endDate
+  responses:
+    trait_feeId_not_found_400:
+      description: 'Request was syntactically incorrect. Details of the error are included in the response payload.
+
+        '
+      content:
+        application/json:
+          schema:
+            title: error
+            description: Schema for API specified errors.
+            example:
+              status: 400
+              message: Fees Not Added
+              moreInfo: ''
+              type: application/json
+              details:
+              - field: ''
+                type: ''
+                message: These fees '[57b30fd2289c48001daf5486, 96b30fd4586c48001daf1752]' can not be added to itemYRN 'urn:yaas:saasag:caasproduct:product:tenantName;5c2e4957a46b0e0008491095' and siteCode 'main' on tenant 'tenantName'. They might not exist for the previous siteCode
+            type: object
+            properties:
+              status:
+                minimum: 100
+                maximum: 599
+                description: original HTTP error code, should be consistent with the response HTTP code
+                type: integer
+              type:
+                pattern: '[a-z]+[a-z_]*[a-z]+'
+                description: classification of the error type, lower case with underscore eg validation_failure
+                type: string
+              message:
+                description: descriptive error message for debugging
+                type: string
+              moreInfo:
+                type: string
+                description: link to documentation to investigate further and finding support
+              details:
+                description: list of problems causing this error
+                type: array
+                items:
+                  title: errorDetail
+                  description: schema for specific error cause
+                  type: object
+                  properties:
+                    field:
+                      description: a bean notation expression specifying the element in request data causing the error, eg product.variants[3].name, this can be empty if violation was not field specific
+                      type: string
+                    type:
+                      description: classification of the error detail type, lower case with underscore eg missing_value, this value must be always interpreted in context of the general error type.
+                      type: string
+                    message:
+                      description: descriptive error detail message for debugging
+                      type: string
+                    moreInfo:
+                      type: string
+                      description: link to documentation to investigate further and finding support for error detail
+                  required:
+                  - type
+            required:
+            - status
+            - type
+    trait_yaasAware_500:
+      description: Some server-side error occurred. Details will be provided in the response payload.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            internal_service_error:
+              value:
+                status: 500
+                message: Something went wrong while processing the request. The error has been logged under code 20210819_095055_677_vwurkrl.
+                type: internal_service_error
+    trait_paged_400:
+      description: 'Request was syntactically incorrect. Details of the error are included in the response payload.
+
+        '
+      content:
+        application/json:
+          schema:
+            title: error
+            description: Schema for API specified errors.
+            example:
+              status: 400
+              message: must be greater than or equal to 1, see details for more info"
+              moreInfo: ''
+              type: validation_violation
+              details:
+              - field: pageNumber
+                type: invalid_query_parameter
+                message: must be greater than or equal to 1
+            type: object
+            properties:
+              status:
+                minimum: 100
+                maximum: 599
+                description: original HTTP error code, should be consistent with the response HTTP code
+                type: integer
+              type:
+                pattern: '[a-z]+[a-z_]*[a-z]+'
+                description: classification of the error type, lower case with underscore eg validation_failure
+                type: string
+              message:
+                description: descriptive error message for debugging
+                type: string
+              moreInfo:
+                type: string
+                description: link to documentation to investigate further and finding support
+              details:
+                description: list of problems causing this error
+                type: array
+                items:
+                  title: errorDetail
+                  description: schema for specific error cause
+                  type: object
+                  properties:
+                    field:
+                      description: a bean notation expression specifying the element in request data causing the error, eg product.variants[3].name, this can be empty if violation was not field specific
+                      type: string
+                    type:
+                      pattern: '[a-z]+[a-z_]*[a-z]+'
+                      description: classification of the error detail type, lower case with underscore eg missing_value, this value must be always interpreted in context of the general error type.
+                      type: string
+                    message:
+                      description: descriptive error detail message for debugging
+                      type: string
+                    moreInfo:
+                      type: string
+                      description: link to documentation to investigate further and finding support for error detail
+                  required:
+                  - type
+            required:
+            - status
+            - type
+    trait_yaasAware_409:
+      description: 'Creation failed because there was a conflict with another resource. Details of the error are included in the response payload.
+
+        '
+      content:
+        application/json:
+          schema:
+            title: error
+            description: Schema for API specified errors.
+            example:
+              status: 409
+              message: FeeCode does already exist.
+              type: conflict_resource
+              moreInfo: ''
+              details:
+              - field: code
+                message: Duplicate FeeCode 'apple_picking_fee' on tenant 'tenantName
+                type: conflict
+            type: object
+            properties:
+              status:
+                minimum: 100
+                maximum: 599
+                description: original HTTP error code, should be consistent with the response HTTP code
+                type: integer
+              type:
+                pattern: '[a-z]+[a-z_]*[a-z]+'
+                description: classification of the error type, lower case with underscore eg validation_failure
+                type: string
+              message:
+                description: descriptive error message for debugging
+                type: string
+              moreInfo:
+                type: string
+                description: link to documentation to investigate further and finding support
+              details:
+                description: list of problems causing this error
+                type: array
+                items:
+                  title: errorDetail
+                  description: schema for specific error cause
+                  type: object
+                  properties:
+                    field:
+                      description: a bean notation expression specifying the element in request data causing the error, eg product.variants[3].name, this can be empty if violation was not field specific
+                      type: string
+                    type:
+                      pattern: '[a-z]+[a-z_]*[a-z]+'
+                      description: classification of the error detail type, lower case with underscore eg missing_value, this value must be always interpreted in context of the general error type.
+                      type: string
+                    message:
+                      description: descriptive error detail message for debugging
+                      type: string
+                    moreInfo:
+                      type: string
+                      description: link to documentation to investigate further and finding support for error detail
+                  required:
+                  - type
+            required:
+            - status
+            - type
+    trait_yaasAware_404:
+      description: 'The requested resource does not exist.
+
+        '
+      content:
+        application/json:
+          schema:
+            title: error
+            description: Schema for API specified errors.
+            example:
+              status: 404
+              message: Fee Not Found.
+              moreInfo: https://pattern.yaas.io/errortypes.html
+              type: application/json
+              details:
+              - field: ''
+                message: Could not find a fee with id '627e06ecf0452c2d6c0b8139z' on tenant 'oddity'
+                type: resource_not_found
+            type: object
+            properties:
+              status:
+                minimum: 100
+                maximum: 599
+                description: original HTTP error code, should be consistent with the response HTTP code
+                type: integer
+              type:
+                pattern: '[a-z]+[a-z_]*[a-z]+'
+                description: classification of the error type, lower case with underscore eg validation_failure
+                type: string
+              message:
+                description: descriptive error message for debugging
+                type: string
+              moreInfo:
+                type: string
+                description: link to documentation to investigate further and finding support
+              details:
+                description: list of problems causing this error
+                type: array
+                items:
+                  title: errorDetail
+                  description: schema for specific error cause
+                  type: object
+                  properties:
+                    field:
+                      description: a bean notation expression specifying the element in request data causing the error, eg product.variants[3].name, this can be empty if violation was not field specific
+                      type: string
+                    type:
+                      pattern: '[a-z]+[a-z_]*[a-z]+'
+                      description: classification of the error detail type, lower case with underscore eg missing_value, this value must be always interpreted in context of the general error type.
+                      type: string
+                    message:
+                      description: descriptive error detail message for debugging
+                      type: string
+                    moreInfo:
+                      type: string
+                      description: link to documentation to investigate further and finding support for error detail
+                  required:
+                  - type
+            required:
+            - status
+            - type
+    trait_yaasAware_403:
+      description: 'Access token does not contain necessary scopes or tenant in path does not match tenant from token.
+
+        '
+      content:
+        application/json:
+          schema:
+            title: error
+            description: Schema for API specified errors
+            type: object
+            properties:
+              status:
+                minimum: 100
+                maximum: 599
+                description: original HTTP error code, should be consistent with the response HTTP code
+                type: integer
+              type:
+                pattern: '[a-z]+[a-z_]*[a-z]+'
+                description: classification of the error type, lower case with underscore eg validation_failure
+                type: string
+              message:
+                description: descriptive error message for debugging
+                type: string
+              moreInfo:
+                type: string
+                description: link to documentation to investigate further and finding support
+              details:
+                description: list of problems causing this error
+                type: array
+                items:
+                  title: errorDetail
+                  description: schema for specific error cause
+                  type: object
+                  properties:
+                    field:
+                      description: a bean notation expression specifying the element in request data causing the error, eg product.variants[3].name, this can be empty if violation was not field specific
+                      type: string
+                    type:
+                      pattern: '[a-z]+[a-z_]*[a-z]+'
+                      description: classification of the error detail type, lower case with underscore eg missing_value, this value must be always interpreted in context of the general error type.
+                      type: string
+                    message:
+                      description: descriptive error detail message for debugging
+                      type: string
+                    moreInfo:
+                      type: string
+                      description: link to documentation to investigate further and finding support for error detail
+                  required:
+                  - type
+            required:
+            - status
+            - type
+          examples:
+            Insufficient scopes:
+              value:
+                status: 403
+                message: The access to the requested resource has been forbidden by the server.
+                type: insufficient_permissions
+            Invalid path tenant:
+              value:
+                status: 403
+                message: Something went wrong while processing the request. Please contact the administrator.
+                type: unknown
+    trait_localizedRetrieval_400:
+      description: Request syntactically incorrect. Details of the error are included in the response payload.
+      content:
+        application/json:
+          schema:
+            title: error
+            description: Schema for API specified errors.
+            example:
+              status: 400
+              message: There are validation problems, see details section for more information
+              moreInfo: https://pattern.yaas.io/errortypes.html
+              type: validation_violation
+              details:
+              - field: Accept-Language
+                message: not a language
+                type: invalid_header
+            type: object
+            properties:
+              status:
+                minimum: 100
+                maximum: 599
+                description: original HTTP error code, should be consistent with the response HTTP code
+                type: integer
+              type:
+                pattern: '[a-z]+[a-z_]*[a-z]+'
+                description: classification of the error type, lower case with underscore eg validation_failure
+                type: string
+              message:
+                description: descriptive error message for debugging
+                type: string
+              moreInfo:
+                type: string
+                description: link to documentation to investigate further and finding support
+              details:
+                description: list of problems causing this error
+                type: array
+                items:
+                  title: errorDetail
+                  description: schema for specific error cause
+                  type: object
+                  properties:
+                    field:
+                      description: a bean notation expression specifying the element in request data causing the error, eg product.variants[3].name, this can be empty if violation was not field specific
+                      type: string
+                    type:
+                      pattern: '[a-z]+[a-z_]*[a-z]+'
+                      description: classification of the error detail type, lower case with underscore eg missing_value, this value must be always interpreted in context of the general error type.
+                      type: string
+                    message:
+                      description: descriptive error detail message for debugging
+                      type: string
+                    moreInfo:
+                      type: string
+                      description: link to documentation to investigate further and finding support for error detail
+                  required:
+                  - type
+            required:
+            - status
+            - type
+    trait_paged_itemfee_200:
+      description: 'Request was successful.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ItemFees'
+          examples:
+            List of Fees:
+              $ref: '#/components/examples/ItemFees'
+    trait_unauthorized_401:
+      description: 'Given request is unauthorized - the authorization token is invalid or has expired.
+
+
+        Details will be provided in the response payload.'
+      content:
+        application/json:
+          schema:
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                    example: Invalid access token
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+                        example: oauth.v2.InvalidAccessToken
+          examples:
+            Access Token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+  examples:
+    ItemFees:
+      value:
+      - id: 5d94b80beec29eba2ad2793e
+        feeIds:
+        - 5d94b7e8eec29eba2ad2793d
+        itemYrn: urn:yaas:saasag:caasproduct:product:tenantName;5d934ed1eec29e0f8706b381
+        siteCode: main
+        fees:
+        - name: Pear Fee
+          code: pear_fee
+          feeType: ABSOLUTE
+          siteCode: main
+          feeAbsolute:
+            amount: 2.5
+            currency: EUR
+          active: true
+          taxable: false
+        - name: Plum Fee
+          code: plum_fee
+          feeType: ABSOLUTE
+          siteCode: main
+          feeAbsolute:
+            amount: 2.99
+            currency: EUR
+          active: true
+          taxable: false
+      - id: 5d94b674eec29eba2ad2793a
+        feeIds:
+        - 5d94b5ffeec29eba2ad27938
+        - 5d94b610eec29eba2ad27939
+        fees:
+        - name: Apple Picking Fee
+          code: apple_picking_fee
+          feeType: ABSOLUTE
+          siteCode: main
+          feeAbsolute:
+            amount: 3.5
+            currency: EUR
+          active: true
+          taxable: false
+        - name: Apple Packaging Fee
+          code: apple_packaging_fee
+          feeType: ABSOLUTE
+          siteCode: main
+          feeAbsolute:
+            amount: 4.5
+            currency: EUR
+          active: true
+          taxable: false
+        itemYrn: urn:yaas:saasag:caasproduct:product:tenantName;5c2e4957a46b0e0008491095
+        siteCode: main
+    CreateItemFee:
+      value:
+        siteCode: main
+        itemYrn: urn:yaas:saasag:caasproduct:product:tenantName;5c2e4957a46b0e0008491095
+        feeIds:
+        - 57b30fd2289c48001daf5486
+        - 96b30fd4586c48001daf1752
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            fee.fee_create: Needed to create a fee.
+            fee.fee_update: Needed to update a fee.
+            fee.fee_delete: Needed to delete a fee.
+            fee.item_create: Needed to create an item fee.
+            fee.item_update: Needed to update an item fee.
+            fee.item_delete: Needed to delete an item fee.
+x-refined-from:
+- emporix-fee-openapi.yml
+- emporix-fee-openapi.yml

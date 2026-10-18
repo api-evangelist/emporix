@@ -1,0 +1,12 @@
+generated: '2026-10-18'
+method: searched
+source: https://www.emporix.com/pricing
+name: Emporix pricing
+audience: business-product
+pricing_basis: negotiated
+published: false
+delivery:
+  delivery: managed
+plan_count: 0
+note: "Pricing is enterprise/negotiated via contact form only. No public pricing tiers found."
+plans: []

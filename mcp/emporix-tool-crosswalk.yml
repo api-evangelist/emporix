@@ -1,0 +1,976 @@
+name: Emporix MCP tool crosswalk
+type: ToolCrosswalk
+generated: '2026-10-18'
+method: derived
+source:
+- https://developer.emporix.io/agentic-commerce-intelligence/mcp-in-emporix/mcp.md
+- openapi/
+description: Each documented Emporix MCP tool (predefined domain servers) bound to the OpenAPI operationId(s) in openapi/ that back it. Bindings are by tool name, documented scope and resource; the live
+  MCP tools/list is gated so tool input schemas were not compared. Upsert tools are bound to both the PUT and POST operations and marked medium.
+surfaces:
+  openapi: openapi/ (Emporix Commerce Engine services, server https://api.emporix.io)
+  mcp:
+    url: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+    gated: true
+    probe_status: 401
+  docs_mcp:
+    url: https://developer.emporix.io/~gitbook/mcp
+    gated: false
+  graphql: null
+crosswalk:
+- tool: product/get-product
+  category: Product tools
+  rest:
+  - GET-product-retrieve-product
+  binding: GET /product/{tenant}/products/{productId}
+  confidence: high
+- tool: product/get-products
+  category: Product tools
+  rest:
+  - GET-product-list-products
+  - POST-product-search-products
+  binding: GET /product/{tenant}/products; POST /product/{tenant}/products/search
+  confidence: medium
+  note: Mapped by tool name and documented scope; live tools/list schema is gated (401) so input schema could not be compared.
+- tool: product/upsert-product
+  category: Product tools
+  rest:
+  - PUT-product-update-product
+  - POST-product-create-product
+  binding: PUT /product/{tenant}/products/{productId}; POST /product/{tenant}/products
+  confidence: medium
+  note: Mapped by tool name and documented scope; live tools/list schema is gated (401) so input schema could not be compared.
+- tool: product/partial-update-product
+  category: Product tools
+  rest:
+  - PATCH-product-update-product
+  binding: PATCH /product/{tenant}/products/{productId}
+  confidence: high
+- tool: product/delete-product
+  category: Product tools
+  rest:
+  - DELETE-product-remove-product
+  binding: DELETE /product/{tenant}/products/{productId}
+  confidence: high
+- tool: product/get-price
+  category: Price tools
+  rest:
+  - GET-price-retrieve-price
+  binding: GET /price/{tenant}/prices/{priceId}
+  confidence: high
+- tool: product/get-prices
+  category: Price tools
+  rest:
+  - GET-price-list-all-prices
+  binding: GET /price/{tenant}/prices
+  confidence: medium
+  note: Mapped by tool name and documented scope; live tools/list schema is gated (401) so input schema could not be compared.
+- tool: product/upsert-price
+  category: Price tools
+  rest:
+  - PUT-price-update-price
+  - POST-price-create-price
+  binding: PUT /price/{tenant}/prices/{priceId}; POST /price/{tenant}/prices
+  confidence: medium
+  note: Mapped by tool name and documented scope; live tools/list schema is gated (401) so input schema could not be compared.
+- tool: product/delete-price
+  category: Price tools
+  rest:
+  - DELETE-price-remove-price
+  binding: DELETE /price/{tenant}/prices/{priceId}
+  confidence: high
+- tool: product/get-price-model
+  category: Price tools
+  rest:
+  - GET-price-retrieve-price-model
+  binding: GET /price/{tenant}/priceModels/{priceModelId}
+  confidence: high
+- tool: product/match-prices
+  category: Price tools
+  rest:
+  - POST-price-match-prices
+  binding: POST /price/{tenant}/match-prices
+  confidence: high
+- tool: product/get-availabilities-by-site
+  category: Availability tools
+  rest:
+  - GET-availability-retrieve-availability-site
+  binding: GET /availability/{tenant}/availability/site/{site}
+  confidence: high
+- tool: product/get-availabilities-by-product-ids
+  category: Availability tools
+  rest:
+  - POST-availability-search-products-site
+  binding: POST /availability/{tenant}/availability/search
+  confidence: medium
+  note: Mapped by tool name and documented scope; live tools/list schema is gated (401) so input schema could not be compared.
+- tool: product/upsert-availability
+  category: Availability tools
+  rest:
+  - PUT-availability-update-product
+  - POST-availability-add-product
+  binding: PUT /availability/{tenant}/availability/{productId}/{site}; POST /availability/{tenant}/availability/{productId}/{site}
+  confidence: medium
+  note: Mapped by tool name and documented scope; live tools/list schema is gated (401) so input schema could not be compared.
+- tool: product/delete-availability
+  category: Availability tools
+  rest:
+  - DELETE-availability-remove-product
+  binding: DELETE /availability/{tenant}/availability/{productId}/{site}
+  confidence: high
+- tool: product/get-catalog
+  category: Catalog tools
+  rest:
+  - GET-catalog-retrieve-catalog
+  binding: GET /catalog/{tenant}/catalogs/{catalogId}
+  confidence: high
+- tool: product/get-catalogs
+  category: Catalog tools
+  rest:
+  - GET-catalog-list-catalogs
+  binding: GET /catalog/{tenant}/catalogs
+  confidence: high
+- tool: product/upsert-catalog
+  category: Catalog tools
+  rest:
+  - PUT-catalog-update-catalog
+  - POST-catalog-create-catalog
+  binding: PUT /catalog/{tenant}/catalogs/{catalogId}; POST /catalog/{tenant}/catalogs
+  confidence: medium
+  note: Mapped by tool name and documented scope; live tools/list schema is gated (401) so input schema could not be compared.
+- tool: product/partial-update-catalog
+  category: Catalog tools
+  rest:
+  - PATCH-catalog-update-catalog-properties
+  binding: PATCH /catalog/{tenant}/catalogs/{catalogId}
+  confidence: high
+- tool: product/delete-catalog
+  category: Catalog tools
+  rest:
+  - DELETE-catalog-remove-catalog
+  binding: DELETE /catalog/{tenant}/catalogs/{catalogId}
+  confidence: high
+- tool: product/get-category-catalogs
+  category: Catalog tools
+  rest:
+  - GET-catalog-list-catalogs-for-category
+  binding: GET /catalog/{tenant}/catalogs/categories/{categoryId}
+  confidence: high
+- tool: product/get-category
+  category: Category tools
+  rest:
+  - GET-category-tree-retrieve-category
+  binding: GET /category/{tenant}/categories/{categoryId}
+  confidence: high
+- tool: product/get-categories
+  category: Category tools
+  rest:
+  - GET-category-tree-list-categories
+  binding: GET /category/{tenant}/categories
+  confidence: high
+- tool: product/upsert-category
+  category: Category tools
+  rest:
+  - PUT-category-tree-update-category
+  - POST-category-tree-create-category
+  binding: PUT /category/{tenant}/categories/{categoryId}; POST /category/{tenant}/categories
+  confidence: medium
+  note: Mapped by tool name and documented scope; live tools/list schema is gated (401) so input schema could not be compared.
+- tool: product/partial-update-category
+  category: Category tools
+  rest:
+  - PATCH-category-tree-update-category
+  binding: PATCH /category/{tenant}/categories/{categoryId}
+  confidence: high
+- tool: product/delete-category
+  category: Category tools
+  rest:
+  - DELETE-category-tree-remove-category
+  binding: DELETE /category/{tenant}/categories/{categoryId}
+  confidence: high
+- tool: product/get-category-assignments
+  category: Category tools
+  rest:
+  - GET-category-tree-retrieve-category-assignments
+  binding: GET /category/{tenant}/categories/{categoryId}/assignments
+  confidence: high
+- tool: product/upsert-category-assignment
+  category: Category tools
+  rest:
+  - PUT-category-tree-assign-resource
+  - POST-category-tree-assign-resource
+  binding: PUT /category/{tenant}/categories/{categoryId}/assignments/references/{referenceId}; POST /category/{tenant}/categories/{categoryId}/assignments
+  confidence: medium
+  note: Mapped by tool name and documented scope; live tools/list schema is gated (401) so input schema could not be compared.
+- tool: product/delete-category-assignments
+  category: Category tools
+  rest:
+  - DELETE-category-tree-remove-all-category-assignments
+  binding: DELETE /category/{tenant}/categories/{categoryId}/assignments
+  confidence: high
+- tool: product/delete-category-assignment-by-id
+  category: Category tools
+  rest:
+  - DELETE-category-tree-remove-category-assignment
+  binding: DELETE /category/{tenant}/categories/{categoryId}/assignments/{assignmentId}
+  confidence: high
+- tool: product/delete-category-assignment-by-product
+  category: Category tools
+  rest:
+  - DELETE-category-tree-remove-category-assignment-by-reference-id
+  binding: DELETE /category/{tenant}/categories/{categoryId}/assignments/references/{referenceId}
+  confidence: medium
+  note: Mapped by tool name and documented scope; live tools/list schema is gated (401) so input schema could not be compared.
+- tool: product/get-categories-by-product-assignment
+  category: Category tools
+  rest:
+  - GET-category-tree-list-categories-by-reference-id
+  binding: GET /category/{tenant}/assignments/references/{referenceId}
+  confidence: medium
+  note: Mapped by tool name and documented scope; live tools/list schema is gated (401) so input schema could not be compared.
+- tool: product/delete-category-assignments-by-product
+  category: Category tools
+  rest:
+  - DELETE-category-tree-remove-all-assignments
+  binding: DELETE /category/{tenant}/assignments/references/{referenceId}
+  confidence: medium
+  note: Mapped by tool name and documented scope; live tools/list schema is gated (401) so input schema could not be compared.
+- tool: product/get-brand
+  category: Brand tools
+  rest:
+  - GET-brand-retrieve-brand
+  binding: GET /brand/brands/{brandId}
+  confidence: high
+- tool: product/get-brands
+  category: Brand tools
+  rest:
+  - GET-brand-list-brands
+  binding: GET /brand/brands
+  confidence: high
+- tool: product/create-brand
+  category: Brand tools
+  rest:
+  - POST-brand-create-brand
+  binding: POST /brand/brands
+  confidence: high
+- tool: product/partial-update-brand
+  category: Brand tools
+  rest:
+  - PATCH-brand-update-brand
+  binding: PATCH /brand/brands/{brandId}
+  confidence: high
+- tool: product/delete-brand
+  category: Brand tools
+  rest:
+  - DELETE-brand-remove-brand
+  binding: DELETE /brand/brands/{brandId}
+  confidence: high
+- tool: product/get-label
+  category: Label tools
+  rest:
+  - GET-label-retrieve-label
+  binding: GET /labels/{labelId}
+  confidence: high
+- tool: product/get-labels
+  category: Label tools
+  rest:
+  - GET-label-list-labels
+  binding: GET /labels
+  confidence: high
+- tool: product/create-label
+  category: Label tools
+  rest:
+  - POST-label-create-label
+  binding: POST /labels
+  confidence: high
+- tool: product/update-label
+  category: Label tools
+  rest:
+  - PUT-label-update-label
+  binding: PUT /labels/{labelId}
+  confidence: high
+- tool: product/partial-update-label
+  category: Label tools
+  rest:
+  - PATCH-label-update-label
+  binding: PATCH /labels/{labelId}
+  confidence: high
+- tool: product/delete-label
+  category: Label tools
+  rest:
+  - DELETE-label-remove-label
+  binding: DELETE /labels/{labelId}
+  confidence: high
+- tool: order/get-return
+  category: Return tools
+  rest:
+  - GET-returns-retrieve-return
+  binding: GET /return/{tenant}/returns/{returnId}
+  confidence: high
+- tool: order/get-returns
+  category: Return tools
+  rest:
+  - GET-returns-list-returns
+  binding: GET /return/{tenant}/returns
+  confidence: high
+- tool: order/create-return
+  category: Return tools
+  rest:
+  - POST-returns-create-return
+  binding: POST /return/{tenant}/returns
+  confidence: high
+- tool: order/update-return
+  category: Return tools
+  rest:
+  - PUT-returns-update-return
+  binding: PUT /return/{tenant}/returns/{returnId}
+  confidence: high
+- tool: order/partial-update-return
+  category: Return tools
+  rest:
+  - PATCH-returns-update-return
+  binding: PATCH /return/{tenant}/returns/{returnId}
+  confidence: high
+- tool: order/delete-return
+  category: Return tools
+  rest:
+  - DELETE-returns-remove-return
+  binding: DELETE /return/{tenant}/returns/{returnId}
+  confidence: high
+- tool: order/change-returns-status
+  category: Return tools
+  rest:
+  - PATCH-returns-update-return
+  binding: PATCH /return/{tenant}/returns/{returnId}
+  confidence: low
+  note: Mapped by tool name and documented scope; live tools/list schema is gated (401) so input schema could not be compared.
+- tool: order/get-order
+  category: Order tools
+  rest:
+  - GET-order-retrieve-order-employee
+  binding: GET /order-v2/{tenant}/salesorders/{orderId}
+  confidence: high
+- tool: order/get-orders
+  category: Order tools
+  rest:
+  - GET-order-retrieve-tenant-orders
+  binding: GET /order-v2/{tenant}/salesorders
+  confidence: high
+- tool: order/get-customer-orders
+  category: Order tools
+  rest:
+  - GET-order-retrieve-tenant-orders
+  binding: GET /order-v2/{tenant}/salesorders
+  confidence: low
+  note: Mapped by tool name and documented scope; live tools/list schema is gated (401) so input schema could not be compared.
+- tool: order/update-order-billing-data
+  category: Order tools
+  rest:
+  - PATCH-order-partial-update-order
+  binding: PATCH /order-v2/{tenant}/salesorders/{orderId}
+  confidence: medium
+  note: Mapped by tool name and documented scope; live tools/list schema is gated (401) so input schema could not be compared.
+- tool: order/update-order-delivery-date
+  category: Order tools
+  rest:
+  - PATCH-order-partial-update-order
+  binding: PATCH /order-v2/{tenant}/salesorders/{orderId}
+  confidence: medium
+  note: Mapped by tool name and documented scope; live tools/list schema is gated (401) so input schema could not be compared.
+- tool: order/send-invoice
+  category: Invoice tools
+  rest:
+  - POST-invoice-create-job
+  binding: POST /invoice/{tenant}/jobs/invoices
+  confidence: low
+  note: Mapped by tool name and documented scope; live tools/list schema is gated (401) so input schema could not be compared.
+- tool: customer/get-customer
+  category: Customer tools
+  rest:
+  - GET-customer-tenant-retrieve-customer
+  binding: GET /customer/{tenant}/customers/{customerNumber}
+  confidence: high
+- tool: customer/get-customers
+  category: Customer tools
+  rest:
+  - GET-customer-tenant-list-customers
+  binding: GET /customer/{tenant}/customers
+  confidence: high
+- tool: customer/upsert-customer
+  category: Customer tools
+  rest:
+  - PUT-customer-tenant-update-customer
+  - POST-customer-tenant-create-customer
+  binding: PUT /customer/{tenant}/customers/{customerNumber}; POST /customer/{tenant}/customers
+  confidence: medium
+  note: Mapped by tool name and documented scope; live tools/list schema is gated (401) so input schema could not be compared.
+- tool: customer/partial-update-customer
+  category: Customer tools
+  rest:
+  - PATCH-customer-tenant-update-customer
+  binding: PATCH /customer/{tenant}/customers/{customerNumber}
+  confidence: high
+- tool: customer/change-customer-activation-status
+  category: Customer tools
+  rest:
+  - PATCH-customer-tenant-update-customer
+  binding: PATCH /customer/{tenant}/customers/{customerNumber}
+  confidence: low
+  note: Mapped by tool name and documented scope; live tools/list schema is gated (401) so input schema could not be compared.
+- tool: customer/delete-customer
+  category: Customer tools
+  rest:
+  - DELETE-customer-tenant-remove-customer
+  binding: DELETE /customer/{tenant}/customers/{customerNumber}
+  confidence: high
+- tool: customer/get-legal-entity
+  category: Legal entity tools
+  rest:
+  - GET-customer-mgmt-retrieve-legal-entity
+  binding: GET /customer-management/{tenant}/legal-entities/{legalEntityId}
+  confidence: high
+- tool: customer/get-legal-entities
+  category: Legal entity tools
+  rest:
+  - GET-customer-mgmt-list-legal-entities
+  binding: GET /customer-management/{tenant}/legal-entities
+  confidence: high
+- tool: customer/upsert-legal-entity
+  category: Legal entity tools
+  rest:
+  - PUT-customer-mgmt-update-legal-entity
+  - POST-customer-mgmt-create-legal-entity
+  binding: PUT /customer-management/{tenant}/legal-entities/{legalEntityId}; POST /customer-management/{tenant}/legal-entities
+  confidence: medium
+  note: Mapped by tool name and documented scope; live tools/list schema is gated (401) so input schema could not be compared.
+- tool: customer/delete-legal-entity
+  category: Legal entity tools
+  rest:
+  - DELETE-customer-mgmt-remove-legal-entity
+  binding: DELETE /customer-management/{tenant}/legal-entities/{legalEntityId}
+  confidence: high
+- tool: customer/get-location
+  category: Location tools
+  rest:
+  - GET-customer-mgmt-retrieve-location
+  binding: GET /customer-management/{tenant}/locations/{locationId}
+  confidence: high
+- tool: customer/get-locations
+  category: Location tools
+  rest:
+  - GET-customer-mgmt-list-all-locations
+  binding: GET /customer-management/{tenant}/locations
+  confidence: high
+- tool: customer/upsert-location
+  category: Location tools
+  rest:
+  - PUT-customer-mgmt-update-location
+  - POST-customer-mgmt-create-location
+  binding: PUT /customer-management/{tenant}/locations/{locationId}; POST /customer-management/{tenant}/locations
+  confidence: medium
+  note: Mapped by tool name and documented scope; live tools/list schema is gated (401) so input schema could not be compared.
+- tool: customer/delete-location
+  category: Location tools
+  rest:
+  - DELETE-customer-mgmt-remove-location
+  binding: DELETE /customer-management/{tenant}/locations/{locationId}
+  confidence: high
+- tool: customer/get-contact-assignment
+  category: Contact assignment tools
+  rest:
+  - GET-customer-mgmt-retrieve-contact-assignment
+  binding: GET /customer-management/{tenant}/contact-assignments/{contactAssignmentId}
+  confidence: high
+- tool: customer/get-contact-assignments
+  category: Contact assignment tools
+  rest:
+  - GET-customer-mgmt-list-contact-assignments
+  binding: GET /customer-management/{tenant}/contact-assignments
+  confidence: high
+- tool: customer/upsert-contact-assignment
+  category: Contact assignment tools
+  rest:
+  - PUT-customer-mgmt-update-contact-assignment
+  - POST-customer-mgmt-create-contact-assignment
+  binding: PUT /customer-management/{tenant}/contact-assignments/{contactAssignmentId}; POST /customer-management/{tenant}/contact-assignments
+  confidence: medium
+  note: Mapped by tool name and documented scope; live tools/list schema is gated (401) so input schema could not be compared.
+- tool: customer/delete-contact-assignment
+  category: Contact assignment tools
+  rest:
+  - DELETE-customer-mgmt-remove-contact-assignment
+  binding: DELETE /customer-management/{tenant}/contact-assignments/{contactAssignmentId}
+  confidence: high
+- tool: extensibility/get-custom-types
+  category: Extensibility
+  rest:
+  - GET-schema-retrieve-custom-schema-types
+  binding: GET /schema/{tenant}/custom-entities
+  confidence: medium
+  note: Mapped by tool name and documented scope; live tools/list schema is gated (401) so input schema could not be compared.
+- tool: extensibility/get-custom-type-schema
+  category: Extensibility
+  rest:
+  - GET-schema-retrieve-custom-schema-type
+  binding: GET /schema/{tenant}/custom-entities/{id}
+  confidence: low
+  note: Mapped by tool name and documented scope; live tools/list schema is gated (401) so input schema could not be compared.
+- tool: extensibility/get-custom-type-instance
+  category: Extensibility
+  rest:
+  - GET-schema-retrieve-custom-instance
+  binding: GET /schema/{tenant}/custom-entities/{type}/instances/{id}
+  confidence: high
+- tool: extensibility/get-custom-type-instances
+  category: Extensibility
+  rest:
+  - GET-schema-retrieve-custom-instances
+  binding: GET /schema/{tenant}/custom-entities/{type}/instances
+  confidence: high
+- tool: extensibility/upsert-custom-type-instance
+  category: Extensibility
+  rest:
+  - PUT-schema-upsert-custom-instance
+  binding: PUT /schema/{tenant}/custom-entities/{type}/instances/{id}
+  confidence: high
+- tool: extensibility/partial-update-custom-type-instance
+  category: Extensibility
+  rest:
+  - PATCH-schema-patch-custom-instance
+  binding: PATCH /schema/{tenant}/custom-entities/{type}/instances/{id}
+  confidence: high
+- tool: importtool/list-import-jobs
+  category: Jobs & streams
+  rest:
+  - GET-importtool-list-configs
+  binding: GET /importtool/{tenant}/configs
+  confidence: medium
+  note: Mapped by tool name and documented scope; live tools/list schema is gated (401) so input schema could not be compared.
+- tool: importtool/get-import-job
+  category: Jobs & streams
+  rest:
+  - GET-importtool-get-config
+  binding: GET /importtool/{tenant}/configs/{id}
+  confidence: medium
+  note: Mapped by tool name and documented scope; live tools/list schema is gated (401) so input schema could not be compared.
+- tool: importtool/trigger-import-run
+  category: Running
+  rest:
+  - POST-importtool-trigger-run
+  binding: POST /importtool/{tenant}/configs/{configId}/runs
+  confidence: high
+- tool: importtool/cancel-import-run
+  category: Running
+  rest:
+  - POST-importtool-cancel-run
+  binding: POST /importtool/{tenant}/runs/{runId}/cancel
+  confidence: high
+- tool: importtool/retry-failed-records
+  category: Running
+  rest:
+  - POST-importtool-retry-run
+  binding: POST /importtool/{tenant}/runs/{runId}/retry
+  confidence: medium
+  note: Mapped by tool name and documented scope; live tools/list schema is gated (401) so input schema could not be compared.
+- tool: importtool/get-import-schedule
+  category: Running
+  rest:
+  - GET-importtool-get-schedule
+  binding: GET /importtool/{tenant}/configs/{configId}/schedule
+  confidence: high
+- tool: importtool/set-import-schedule
+  category: Running
+  rest:
+  - PUT-importtool-schedule-job
+  binding: PUT /importtool/{tenant}/configs/{configId}/schedule
+  confidence: high
+- tool: importtool/delete-import-schedule
+  category: Running
+  rest:
+  - deleteSchedule
+  binding: DELETE /importtool/{tenant}/configs/{configId}/schedule
+  confidence: high
+- tool: importtool/list-import-runs
+  category: Monitoring
+  rest:
+  - GET-importtool-list-runs
+  binding: GET /importtool/{tenant}/configs/{configId}/runs
+  confidence: high
+- tool: importtool/get-import-run
+  category: Monitoring
+  rest:
+  - GET-importtool-get-run
+  binding: GET /importtool/{tenant}/runs/{runId}
+  confidence: high
+- tool: importtool/get-import-run-errors
+  category: Monitoring
+  rest:
+  - GET-importtool-list-run-errors
+  binding: GET /importtool/{tenant}/runs/{runId}/errors
+  confidence: high
+- tool: importtool/get-import-stats
+  category: Monitoring
+  rest:
+  - GET-importtool-stats
+  binding: GET /importtool/{tenant}/stats
+  confidence: high
+- tool: importtool/search-imported-data
+  category: Monitoring
+  rest:
+  - GET-importtool-search-data-records
+  binding: GET /importtool/{tenant}/data/records
+  confidence: medium
+  note: Mapped by tool name and documented scope; live tools/list schema is gated (401) so input schema could not be compared.
+- tool: frontend/get-customer-info
+  category: Customer & Account
+  rest:
+  - GET-customer-retrieve-customer-profile
+  binding: GET /customer/{tenant}/me
+  confidence: high
+- tool: frontend/update-customer-profile
+  category: Customer & Account
+  rest:
+  - PATCH-customer-update-customer
+  binding: PATCH /customer/{tenant}/me
+  confidence: high
+- tool: frontend/upsert-customer-address
+  category: Customer & Account
+  rest:
+  - POST-customer-add-address
+  - PATCH-customer-update-customer-address
+  binding: POST /customer/{tenant}/me/addresses; PATCH /customer/{tenant}/me/addresses/{addressId}
+  confidence: medium
+  note: Mapped by tool name and documented scope; live tools/list schema is gated (401) so input schema could not be compared.
+- tool: frontend/get-products
+  category: Product & Cart
+  rest:
+  - POST-product-search-products
+  - GET-product-list-products
+  binding: POST /product/{tenant}/products/search; GET /product/{tenant}/products
+  confidence: low
+  note: Mapped by tool name and documented scope; live tools/list schema is gated (401) so input schema could not be compared.
+- tool: frontend/get-cart
+  category: Product & Cart
+  rest:
+  - GET-cart-retrieve-cart-by-criteria
+  - GET-cart-retrieve-cart-by-cartId
+  binding: GET /cart/{tenant}/carts; GET /cart/{tenant}/carts/{cartId}
+  confidence: medium
+  note: Mapped by tool name and documented scope; live tools/list schema is gated (401) so input schema could not be compared.
+- tool: frontend/modify-cart-items
+  category: Product & Cart
+  rest:
+  - POST-cart-add-item-to-cart
+  - PUT-cart-update-item-details
+  - DELETE-cart-remove-item-from-cart
+  binding: POST /cart/{tenant}/carts/{cartId}/items; PUT /cart/{tenant}/carts/{cartId}/items/{itemId}; DELETE /cart/{tenant}/carts/{cartId}/items/{itemId}
+  confidence: medium
+  note: Mapped by tool name and documented scope; live tools/list schema is gated (401) so input schema could not be compared.
+- tool: frontend/checkout
+  category: Checkout & Payment
+  rest:
+  - POST-checkout-trigger-checkout
+  binding: POST /checkout/{tenant}/checkouts/order
+  confidence: high
+- tool: frontend/get-payment-methods
+  category: Checkout & Payment
+  rest:
+  - GET-payment-gateway-list-payment-modes-frontend
+  binding: GET /payment-gateway/{tenant}/paymentmodes/frontend
+  confidence: high
+- tool: frontend/get-returns
+  category: Order & Return
+  rest:
+  - GET-returns-list-returns
+  binding: GET /return/{tenant}/returns
+  confidence: medium
+  note: Mapped by tool name and documented scope; live tools/list schema is gated (401) so input schema could not be compared.
+- tool: frontend/create-return
+  category: Order & Return
+  rest:
+  - POST-returns-create-return
+  binding: POST /return/{tenant}/returns
+  confidence: medium
+  note: Mapped by tool name and documented scope; live tools/list schema is gated (401) so input schema could not be compared.
+- tool: frontend/get-quote
+  category: Quote
+  rest:
+  - GET-quote-retrieve-quote
+  binding: GET /quote/{tenant}/quotes/{quoteId}
+  confidence: high
+- tool: frontend/get-quotes
+  category: Quote
+  rest:
+  - GET-quote-list-quotes
+  binding: GET /quote/{tenant}/quotes
+  confidence: high
+- tool: frontend/get-quote-reasons
+  category: Quote
+  rest:
+  - GET-quote-list-reasons
+  binding: GET /quote/{tenant}/quote-reasons
+  confidence: high
+- tool: frontend/create-quote
+  category: Quote
+  rest:
+  - POST-quote-create-quote
+  binding: POST /quote/{tenant}/quotes
+  confidence: high
+- tool: frontend/update-quote
+  category: Quote
+  rest:
+  - PATCH-quote-update-quote
+  binding: PATCH /quote/{tenant}/quotes/{quoteId}
+  confidence: high
+mcp_only:
+- tool: customer/send-email-to-customer
+  reason: No matching operation in the published Emporix OpenAPI contracts saved in openapi/ (tool is server-side or composite).
+- tool: importtool/create-import-job
+  reason: No matching operation in the published Emporix OpenAPI contracts saved in openapi/ (tool is server-side or composite).
+- tool: importtool/update-import-job
+  reason: No matching operation in the published Emporix OpenAPI contracts saved in openapi/ (tool is server-side or composite).
+- tool: importtool/create-import-stream
+  reason: No matching operation in the published Emporix OpenAPI contracts saved in openapi/ (tool is server-side or composite).
+- tool: importtool/update-import-stream
+  reason: No matching operation in the published Emporix OpenAPI contracts saved in openapi/ (tool is server-side or composite).
+- tool: importtool/get-import-limits
+  reason: No matching operation in the published Emporix OpenAPI contracts saved in openapi/ (tool is server-side or composite).
+- tool: importtool/list-import-connections
+  reason: No matching operation in the published Emporix OpenAPI contracts saved in openapi/ (tool is server-side or composite).
+- tool: importtool/list-connection-resources
+  reason: No matching operation in the published Emporix OpenAPI contracts saved in openapi/ (tool is server-side or composite).
+- tool: importtool/test-import-connection
+  reason: No matching operation in the published Emporix OpenAPI contracts saved in openapi/ (tool is server-side or composite).
+- tool: importtool/sample-connection
+  reason: No matching operation in the published Emporix OpenAPI contracts saved in openapi/ (tool is server-side or composite).
+- tool: importtool/get-stream-mappings
+  reason: No matching operation in the published Emporix OpenAPI contracts saved in openapi/ (tool is server-side or composite).
+- tool: importtool/list-source-fields
+  reason: No matching operation in the published Emporix OpenAPI contracts saved in openapi/ (tool is server-side or composite).
+- tool: importtool/list-target-fields
+  reason: No matching operation in the published Emporix OpenAPI contracts saved in openapi/ (tool is server-side or composite).
+- tool: importtool/list-target-types
+  reason: No matching operation in the published Emporix OpenAPI contracts saved in openapi/ (tool is server-side or composite).
+- tool: importtool/generate-stream-mappings
+  reason: No matching operation in the published Emporix OpenAPI contracts saved in openapi/ (tool is server-side or composite).
+- tool: importtool/set-stream-mappings
+  reason: No matching operation in the published Emporix OpenAPI contracts saved in openapi/ (tool is server-side or composite).
+- tool: importtool/preview-stream-mappings
+  reason: No matching operation in the published Emporix OpenAPI contracts saved in openapi/ (tool is server-side or composite).
+- tool: importtool/publish-stream-mappings
+  reason: No matching operation in the published Emporix OpenAPI contracts saved in openapi/ (tool is server-side or composite).
+- tool: importtool/list-mapping-versions
+  reason: No matching operation in the published Emporix OpenAPI contracts saved in openapi/ (tool is server-side or composite).
+- tool: importtool/restore-mapping-version
+  reason: No matching operation in the published Emporix OpenAPI contracts saved in openapi/ (tool is server-side or composite).
+- tool: importtool/check-schema-drift
+  reason: No matching operation in the published Emporix OpenAPI contracts saved in openapi/ (tool is server-side or composite).
+- tool: importtool/list-transforms
+  reason: No matching operation in the published Emporix OpenAPI contracts saved in openapi/ (tool is server-side or composite).
+- tool: frontend/get-companies-addresses
+  reason: No single public REST operation identified; appears to aggregate addresses across the customer's companies (legal entities) - composite.
+- tool: frontend/get-customer-orders
+  reason: Backed most plausibly by GET /order-v2/{tenant}/orders (storefront order list), which has no operationId in the published Order Service spec.
+- tool: docs/searchDocumentation
+  reason: GitBook documentation MCP server tool (live-probed tools/list); queries published docs, not the Commerce Engine REST API.
+- tool: docs/getPage
+  reason: GitBook documentation MCP server tool (live-probed tools/list); queries published docs, not the Commerce Engine REST API.
+- tool: docs/askQuestion
+  reason: GitBook documentation MCP server tool (live-probed tools/list); queries published docs, not the Commerce Engine REST API.
+- tool: docs/sendFeedback
+  reason: GitBook documentation MCP server tool (live-probed tools/list); queries published docs, not the Commerce Engine REST API.
+rest_only:
+- DELETE-availability-remove-location
+- DELETE-availability-tenant-availability-bulk
+- DELETE-cart-remove-all-discounts
+- DELETE-cart-remove-cart
+- DELETE-cart-remove-discount
+- DELETE-cart-remove-items-from-cart
+- DELETE-customer-remove-address-tags
+- DELETE-customer-remove-customer-address-by-id
+- DELETE-customer-tenant-remove-address-tags
+- DELETE-customer-tenant-remove-customer-address
+- DELETE-customer-tenant-remove-password-migration-retention
+- DELETE-order-remove-order
+- DELETE-payment-gateway-remove-payment-mode
+- DELETE-price-remove-multiple-prices-from-price-list
+- DELETE-price-remove-price-from-price-list
+- DELETE-price-remove-price-list
+- DELETE-price-remove-price-model
+- DELETE-product-remove-template
+- DELETE-quote-remove-quote
+- DELETE-quote-remove-reason
+- DELETE-schema-create-custom-instances-bulk
+- DELETE-schema-remove-custom-instance
+- DELETE-schema-remove-custom-schema-type
+- DELETE-schema-remove-reference
+- DELETE-schema-remove-schema
+- GET-availability-retrieve-locations-site
+- GET-availability-retrieve-product
+- GET-cart-list-all-discounts
+- GET-cart-list-cart-items
+- GET-cart-retrieve-item-details
+- GET-cart-retrieve-lead-time-and-non-delivery-times
+- GET-cart-validate
+- GET-category-tree-list-subcategories
+- GET-category-tree-retrieve-category-parents
+- GET-category-tree-retrieve-category-tree
+- GET-category-tree-retrieve-category-tree-by-id
+- GET-category-tree-retrieve-category-tree-deprecated
+- GET-customer-list-customer-addresses
+- GET-customer-logout-customer
+- GET-customer-mgmt-retrieve-legal-entity-parent-hierarchy
+- GET-customer-refresh-authtoken
+- GET-customer-retrieve-address-by-id
+- GET-customer-signup-customer-optin
+- GET-customer-tenant-list-customer-addresses
+- GET-customer-tenant-retrieve-customer-address-by-id
+- GET-customer-tenant-retrieve-password-migration-retention
+- GET-customer-validate-token
+- GET-importtool-download-run-diagnostics-csv
+- GET-importtool-get-stream
+- GET-importtool-health-thresholds
+- GET-importtool-license
+- GET-importtool-list-data-types
+- GET-importtool-list-job-groups
+- GET-importtool-list-run-diagnostics
+- GET-importtool-list-streams
+- GET-importtool-search-stream-records
+- GET-importtool-stream-order
+- GET-importtool-stream-run-events
+- GET-invoice-retrieve-job-and-order
+- GET-oauth-generate-anonymous-access-token
+- GET-oauth-refresh-anonymous-access-token
+- GET-order-retrieve-historical-transitions-employee
+- GET-order-retrieve-legal-entity-order
+- GET-order-retrieve-legal-entity-orders
+- GET-order-retrieve-order-storefront
+- GET-order-retrieve-order-transitions
+- GET-order-retrieve-transitions
+- GET-payment-gateway-list-payment-modes
+- GET-payment-gateway-list-transactions
+- GET-payment-gateway-retrieve-payment-mode
+- GET-payment-gateway-retrieve-payment-mode-frontend
+- GET-payment-gateway-retrieve-transaction-by-transactionId
+- GET-price-list-price-models
+- GET-price-list-prices-in-price-list
+- GET-price-retrieve-price-list
+- GET-price-retrieve-price-lists
+- GET-price-retrieve-prices-from-price-list
+- GET-product-get-recalculation-job
+- GET-product-list-recalculation-jobs
+- GET-product-list-templates
+- GET-product-retrieve-template
+- GET-quote-retrieve-quote-history
+- GET-quote-retrieve-reason
+- GET-schema-retrieve-reference
+- GET-schema-retrieve-references
+- GET-schema-retrieve-schema
+- GET-schema-retrieve-schema-types
+- GET-schema-retrieve-schemas
+- PATCH-customer-tenant-update-customer-address
+- PATCH-schema-bulk-patch-custom-instances
+- POST-availability-add-locations-site
+- POST-availability-search-locations
+- POST-availability-tenant-availability-bulk
+- POST-cart-add-multiple-items-to-cart
+- POST-cart-apply-discount
+- POST-cart-change-cart-currency
+- POST-cart-change-cart-site
+- POST-cart-create-cart
+- POST-cart-execute
+- POST-cart-merge-carts
+- POST-cart-retrieve-carts-by-search
+- POST-category-tree-assign-category-resources
+- POST-category-tree-rebuild-category-tree
+- POST-category-tree-search-categories
+- POST-category-tree-search-category-trees
+- POST-customer-add-address-tags
+- POST-customer-authenticate-customer
+- POST-customer-change-account-password
+- POST-customer-change-customer-login-email
+- POST-customer-confirm-customer-login-email
+- POST-customer-create-customer-account
+- POST-customer-exchange-authtoken
+- POST-customer-login-customer-by-auth0
+- POST-customer-mgmt-search-legal-entities
+- POST-customer-refresh-token
+- POST-customer-request-reset-password
+- POST-customer-reset-password
+- POST-customer-tenant-add-address-tags
+- POST-customer-tenant-add-customer-address
+- POST-customer-tenant-configure-password-migration-retention
+- POST-customer-tenant-import-customers
+- POST-customer-tenant-search
+- POST-order-calculate-order-entries-employees
+- POST-order-create-order-employee
+- POST-order-split
+- POST-order-tenant-orders-search
+- POST-order-update-order-entries
+- POST-order-update-order-transition-employee
+- POST-order-update-order-transition-storefront
+- POST-payment-gateway-authorize-payment
+- POST-payment-gateway-authorize-payment-frontend
+- POST-payment-gateway-cancel-payment
+- POST-payment-gateway-capture-payment
+- POST-payment-gateway-create-payment-mode
+- POST-payment-gateway-initialize-payment-frontend
+- POST-payment-gateway-refund-payment
+- POST-price-create-multiple-prices
+- POST-price-create-multiple-prices-for-price-list
+- POST-price-create-price-in-price-list
+- POST-price-create-price-list
+- POST-price-create-price-model
+- POST-price-match-prices-by-context
+- POST-price-search-price-lists
+- POST-price-search-prices
+- POST-price-search-prices-in-price-list
+- POST-product-create-bulk-products
+- POST-product-create-template
+- POST-product-trigger-dynamic-variant-recalculation
+- POST-quote-create-quote-reason
+- POST-quote-generate-quote-pdf
+- POST-schema-create-custom-instance
+- POST-schema-create-custom-instances-bulk
+- POST-schema-create-custom-schema-type
+- POST-schema-create-reference
+- POST-schema-create-schema
+- POST-schema-export-custom-entities
+- POST-schema-import-custom-entites
+- POST-schema-parse-schema-file
+- POST-schema-search-custom-instances
+- PUT-availability-tenant-availability-bulk
+- PUT-availability-update-locations-site
+- PUT-brand-update-brand
+- PUT-cart-refresh-cart
+- PUT-cart-update-cart
+- PUT-cart-update-multiple-items-in-cart
+- PUT-category-tree-update-category-assignments
+- PUT-customer-tenant-update-customer-address
+- PUT-order-update-order
+- PUT-payment-gateway-update-payment-mode
+- PUT-price-update-multiple-prices
+- PUT-price-update-multiple-prices-in-price-list
+- PUT-price-update-price-in-price-list
+- PUT-price-update-price-list
+- PUT-price-update-price-model
+- PUT-product-update-bulk-products
+- PUT-product-update-template
+- PUT-quote-update-reason
+- PUT-schema-create-custom-instances-bulk
+- PUT-schema-update-reference
+- PUT-schema-update-schema
+- PUT-schema-update-schema-types
+- PUT-schema-upsert-custom-schema-type
+coverage:
+  documented_tools: 133
+  docs_mcp_tools: 4
+  crosswalk_rows: 109
+  mcp_only: 28
+  operations_bound: 117
+  operations_total: 668
+  confidence:
+    high: 75
+    medium: 28
+    low: 6
+rest_only_note: Operations in the specs that back at least one tool but are not themselves bound to any tool (specs with no tools at all are omitted).

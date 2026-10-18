@@ -1,0 +1,602 @@
+openapi: 3.2.0
+info:
+  title: Emporix Mixins API
+  version: ''
+  contact:
+    email: documentation@emporix.com
+  description: 'Operations tagged Mixins across 2 of this provider''s published API definitions: emporix-site-settings-service-openapi.yml, emporix-site-settings-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Mixins
+paths:
+  /site/{tenant}/sites/{siteCode}/mixins:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    - $ref: '#/components/parameters/siteCode'
+    get:
+      summary: Retrieving site mixins
+      tags:
+      - Mixins
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mixins'
+              examples:
+                Response example:
+                  value:
+                    couponSettings:
+                      rewardpoints:
+                        codePrefix: T
+                        orderValueToRewardPointsFactor: 1
+                        enabled: true
+                        validityInMonths: 2
+                      codePrefix: ED
+                      length: 3
+                      referral:
+                        codePrefix: E
+                        redemptionCodeValue: 8
+                        value: 8
+                        orderValueToRewardPointsFactor: 1
+                      sendReferralCoupon: true
+                      metadata:
+                        schema: https://res.cloudinary.com/saas-ag/raw/upload/emporix-docs/couponSettingsSiteMixIn.v4
+                    merchantInfo:
+                      merchantName: Emporix
+                      metadata:
+                        schema: https://res.cloudinary.com/saas-ag/raw/upload/emporix-docs/merchantAddressMixin.v10
+                    customerSettings:
+                      regExSettings:
+                        mail: ^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$
+                        phone: ^[0-9\+][0-9]{7,}$
+                        password: .{6,}
+                        bic: ^((.{8})|(.{11}))$
+                        accountOwner: ^[a-zA-Z0-9':?,()\-. +/ÄäÜüÖöß&]{0,70}$
+                      metadata:
+                        schema: https://res.cloudinary.com/saas-ag/raw/upload/emporix-docs/customerSettingsSiteMixIn.v3
+                    imageSize:
+                      productTileSizes:
+                        default: 214x160
+                      productDetailSizes:
+                        mobile: 347x261
+                        tablet: 290x218
+                        desktop: 490x367
+                      basketLineItemImage:
+                        mobile: 40x30
+                        tablet: 47x35
+                        desktop: 60x45
+                        default: 60x45
+                      imageSlider:
+                        desktop: 1473x491
+                        tablet: 960x320
+                        mobile: 379x133
+                      metadata:
+                        schema: https://res.cloudinary.com/saas-ag/raw/upload/emporix-docs/imageSize.v6
+                    feeService:
+                      serviceUrl: https://api.emporix.io/fee
+                      active: true
+                      metadata:
+                        schema: https://res.cloudinary.com/saas-ag/raw/upload/emporix-docs/siteFeeService.json
+                    orderProcessSettings:
+                      checkoutSettings:
+                        minimumOrderValue: 20
+                        lastPossibleOrderTime: 8
+                        lastPossibleOrderTimeDateShift: -1
+                        minOrderAge: 18
+                        maxOrderAge: 100
+                        minDeliveryTimeSpan: 2
+                        cutOffTimeValidationEnabled: false
+                        checkoutElements:
+                          onPickup:
+                            showPackingOptions: false
+                          onDelivery:
+                            showPackingOptions: true
+                      deliveryTimeToMethodSettings:
+                        '1': 1-2_hours_timeframe
+                        '3': 3_hours_timeframe
+                        '4': 4-more_hours_timeframe
+                        '10': 4-more_hours_timeframe
+                      paymentSettings:
+                        paymentByInvoice: true
+                        paymentByDebit: false
+                        paymentByCash: true
+                        paymentByCredit: false
+                      pickup: false
+                      pickupTimeToMethodSettings:
+                        '1': pickup
+                      paymentSettingsB2B:
+                        paymentByInvoice: true
+                        paymentByDebit: true
+                        paymentByCash: false
+                        paymentByCredit: false
+                      paymentSettingsB2C:
+                        paymentByInvoice: true
+                        paymentByDebit: true
+                        paymentByCash: false
+                        paymentByCredit: false
+                      metadata:
+                        schema: https://res.cloudinary.com/saas-ag/raw/upload/emporix-docs/orderProcessSettingsSiteMixIn.v7
+                    generalShopSettings:
+                      footerLogoUrl: saas-storefront/images/tenant/tenant_logo.png
+                      confirmationPageImageUrl: saas-storefront/images/misc/Example_neutral_700.png
+                      placeholderLogo: saas-storefront/images/example/example_placeholder.png
+                      baseStyleUrl: https://example.com/saas-storefront
+                      duzen: true
+                      primaryColor: '#fff'
+                      shopCountry:
+                        code: DE
+                      brandName: Example Demo
+                      facebookUrl: https://www.facebook.com/
+                      backgroundColor: '#fff'
+                      logoUrl: https://res.cloudinary.com/saas-ag/image/upload/v1528267395/example/example_logo.png
+                      clientGroup: example
+                      trustedShopCode: none
+                      regionName: Stuttgart
+                      zoneId: Europe/Berlin
+                      metadata:
+                        schema: https://res.cloudinary.com/saas-ag/raw/upload/emporix-docs/generalShopSettingsSiteMixIn.v10
+                    productSettings:
+                      serviceOptionsConfiguration:
+                        cuttingOptions:
+                        - id: small
+                          displayText: Dünn geschnitten
+                        - id: medium
+                          displayText: Mittel geschnitten
+                        - id: thick
+                          displayText: Dick geschnitten
+                        - id: atAStretch
+                          displayText: Am Stück
+                        - id: sliced
+                          displayText: Geschnitten
+                        - id: slice_100GRM
+                          displayText: Scheibe (ca. 100 g)
+                        - id: slice_120GRM
+                          displayText: Scheibe (ca. 120 g)
+                        - id: slice_140GRM
+                          displayText: Scheibe (ca. 140 g)
+                        - id: slice_160GRM
+                          displayText: Scheibe (ca. 160 g)
+                        - id: slice_180GRM
+                          displayText: Scheibe (ca. 180 g)
+                        - id: slice_200GRM
+                          displayText: Scheibe (ca. 200 g)
+                        - id: slice_220GRM
+                          displayText: Scheibe (ca. 220 g)
+                        - id: slice_240GRM
+                          displayText: Scheibe (ca. 240 g)
+                        - id: slice_260GRM
+                          displayText: Scheibe (ca. 260 g)
+                        - id: flimsy
+                          displayText: Hauchdünn
+                        - id: cubed
+                          displayText: Würfel
+                        - id: stripCutted
+                          displayText: Geschnezelt
+                        - id: slice_50MMT
+                          displayText: Scheibe (ca. 0,5 cm)
+                        - id: slice_1CMT
+                          displayText: Scheibe (ca. 1 cm)
+                        - id: slice_2CMT
+                          displayText: Scheibe (ca. 2 cm)
+                        - id: slice_3CMT
+                          displayText: Scheibe (ca. 3 cm)
+                        - id: unseasoned
+                          displayText: Ungewürzt
+                        - id: seasoned
+                          displayText: Gewürzt
+                        - id: bbqSeasoned
+                          displayText: Grillgewürz
+                        - id: winemakerSeasoned
+                          displayText: Weinbauerngewürz
+                        - id: marinadeAvignon
+                          displayText: Marinade Avignon
+                        - id: marinadeBBQ
+                          displayText: Marinade Barbecue
+                        - id: marinadeWildGarlic
+                          displayText: Marinade Bärlauch
+                        - id: marinadeCafeParis
+                          displayText: Marinade Café de Paris
+                        - id: marinadeClassic
+                          displayText: Marinade Classic
+                        - id: marinadeCurry
+                          displayText: Marinade Curry
+                        - id: marinadeHotChili
+                          displayText: Marinade Hot Chili
+                        - id: marinadeItalia
+                          displayText: Marinade Italia
+                        - id: marinadeCaribbean
+                          displayText: Marinade Karibik
+                        - id: marinadeLasVegas
+                          displayText: Marinade Las Vegas
+                        - id: marinadeTexas
+                          displayText: Marinade Texas
+                        - id: marinadePaprika
+                          displayText: Marinade Paprika
+                        - id: marinadeAnanas
+                          displayText: Marinade Ananas
+                          editing: false
+                        - id: loafWhole
+                          displayText: Ganzer Laib
+                        - id: loafHalf
+                          displayText: Halber Laib
+                        - id: loafQuarter
+                          displayText: Viertel Laib
+                        - id: grated
+                          displayText: Gerieben
+                        - id: Grinded
+                          displayText: Gemahlen
+                        - displayText: Gemahlt
+                          id: Ground
+                        servicePackagingOptions:
+                        - id: paper
+                          displayText: Papier
+                        - id: vacuum
+                          displayText: Vakuumiert
+                        - displayText: lose
+                          id: loose
+                      metadata:
+                        schema: https://res.cloudinary.com/saas-ag/raw/upload/emporix-docs/productSettingsSiteMixIn.v1
+        '400':
+          $ref: '#/components/responses/400_invalid_tenant'
+        '401':
+          $ref: '#/components/responses/401_invalidToken'
+        '403':
+          $ref: '#/components/responses/403_insufficient_permissions'
+      operationId: GET-site-settings-list-site-mixins
+      security:
+      - OAuth2:
+        - site.site_manage
+      parameters: []
+      description: Retrieves all mixins for a specified site.
+    post:
+      summary: Creating a site mixin
+      operationId: POST-site-settings-create-site-mixin
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceLocation'
+              examples:
+                Example 1:
+                  value:
+                    id: test
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+              example:
+                No matching schema found:
+                  value:
+                    type: validation_violation
+                    status: 400
+                    message: The request violates validation constraints.
+                    details:
+                    - field: mixins.{mixinName}
+                      type: invalid_field
+                      message: mixins.{mixinName} No matching schema found
+                      moreInfo: ''
+                Invalid tenant:
+                  value:
+                    type: bad_request
+                    status: 400
+                    message: The tenant information provided with the request is not valid.
+        '401':
+          $ref: '#/components/responses/401_invalidToken'
+        '403':
+          $ref: '#/components/responses/403_insufficient_permissions'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+              example:
+                Response example:
+                  value:
+                    type: conflict_resource
+                    status: 409
+                    message: Mixin {mixinName} already exists for site {siteCode}
+      security:
+      - OAuth2:
+        - site.site_manage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Mixin'
+            examples:
+              Create mixin:
+                value:
+                  testMixin:
+                    active: true
+                    metadata:
+                      schema: https://res.cloudinary.com/saas-ag/raw/upload/emporix-docs/695388d813fd4242de135807_testMixin_v1.json
+              Create general shop settings mixin:
+                value:
+                  generalShopSettings:
+                    logoUrl: https://sample_logo_url.png
+        description: ''
+      description: Creates a mixin for a specified site.
+      tags:
+      - Mixins
+    servers:
+    - url: https://api.emporix.io
+  /site/{tenant}/sites/{siteCode}/mixins/{mixinName}:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    - $ref: '#/components/parameters/siteCode'
+    - schema:
+        type: string
+      name: mixinName
+      in: path
+      required: true
+      description: Mixin name, defined when the mixin is created.
+    get:
+      summary: Retrieving a site mixin
+      tags:
+      - Mixins
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mixin'
+              example:
+                Response example:
+                  value:
+                    regExSettings:
+                      mail: ^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$
+                      phone: ^[0-9\\+][0-9]{7,}$
+                      password: .{6,}
+                      bic: ^((.{8})|(.{11}))$
+                      accountOwner: ^[a-zA-Z0-9':?,()\\-. +/ÄäÜüÖöß&]{0,70}$
+                    metadata:
+                      schema: https://res.cloudinary.com/saas-ag/raw/upload/emporix-docs/customerSettingsSiteMixIn.v3
+        '400':
+          $ref: '#/components/responses/400_invalid_tenant'
+        '401':
+          $ref: '#/components/responses/401_invalidToken'
+        '403':
+          $ref: '#/components/responses/403_insufficient_permissions'
+        '404':
+          $ref: '#/components/responses/404_mixinNotFound'
+      operationId: GET-site-settings-retrieve-site-mixin
+      description: Retrieves a specified site mixin.
+      security:
+      - OAuth2:
+        - site.site_manage
+    delete:
+      summary: Deleting a site mixin
+      operationId: DELETE-site-settings-remove-site-mixin
+      responses:
+        '204':
+          description: No Content
+        '400':
+          $ref: '#/components/responses/400_invalid_tenant'
+        '401':
+          $ref: '#/components/responses/401_invalidToken'
+        '403':
+          $ref: '#/components/responses/403_insufficient_permissions'
+        '404':
+          $ref: '#/components/responses/404_mixinNotFound'
+      description: Deletes a specified site mixin.
+      security:
+      - OAuth2:
+        - site.site_manage
+      tags:
+      - Mixins
+    put:
+      summary: Fully updating a site mixin
+      operationId: PUT-site-settings-update-site-mixin
+      responses:
+        '200':
+          description: OK
+        '400':
+          $ref: '#/components/responses/400_invalid_tenant'
+        '401':
+          $ref: '#/components/responses/401_invalidToken'
+        '403':
+          $ref: '#/components/responses/403_insufficient_permissions'
+        '404':
+          $ref: '#/components/responses/404_mixinNotFound'
+      description: Fully updates a specified site mixin.
+      security:
+      - OAuth2:
+        - site.site_manage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Mixin'
+            examples:
+              Update mixin:
+                value:
+                  testMixin:
+                    active: true
+                    metadata:
+                      schema: https://res.cloudinary.com/saas-ag/raw/upload/emporix-docs/695388d813fd4242de135807_testMixin_v1.json
+      tags:
+      - Mixins
+    patch:
+      summary: Partially updating a site mixin
+      operationId: PATCH-site-settings-update-site-mixin
+      responses:
+        '200':
+          description: OK
+        '400':
+          $ref: '#/components/responses/400_invalid_tenant'
+        '401':
+          $ref: '#/components/responses/401_invalidToken'
+        '403':
+          $ref: '#/components/responses/403_insufficient_permissions'
+      description: Partially updates a specified site mixin.
+      security:
+      - OAuth2:
+        - site.site_manage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Mixin'
+            examples:
+              Patch mixin:
+                value:
+                  active: true
+      tags:
+      - Mixins
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    Mixins:
+      title: Mixins
+      type: object
+      description: Represents mixins. The object is represented as a map with keys and values, where key represents a mixin group name and value represents a map with keys and values.
+      additionalProperties: true
+    ErrorMessage:
+      type: object
+      properties:
+        type:
+          type: string
+          description: 'Classification of the error type.
+
+
+            **Note**: The error type should be written in lowercase and include underscores, for example validation_failure.'
+        status:
+          type: number
+          minimum: 100
+          maximum: 599
+          description: Original HTTP error code. It should be consistent with the HTTP response code.
+        message:
+          type: string
+          description: Descriptive error message for debugging purposes.
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              message:
+                type: string
+    Mixin:
+      title: Mixin
+      type: object
+      description: Represents a single mixin. The payload is represented as a map with a single key and value, where key represents a mixin group name and value represents a map with keys and values.
+      additionalProperties: true
+    ResourceLocation:
+      title: ResourceLocation
+      type: object
+      properties:
+        id:
+          type: string
+          description: Resource identifier.
+      description: ''
+  responses:
+    401_invalidToken:
+      description: ''
+      content:
+        application/json:
+          schema:
+            description: ''
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                    minLength: 1
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+                        minLength: 1
+          examples:
+            Invalid Token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+    403_insufficient_permissions:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            '403':
+              value:
+                type: Forbidden
+                status: 403
+                message: User not authorized
+                details:
+                - message: Missing required scopes [site.site_manage]
+    400_invalid_tenant:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            '400':
+              value:
+                status: 400
+                type: bad_request
+                message: The tenant information provided with the request is not valid.
+    404_mixinNotFound:
+      description: ''
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            '404':
+              value:
+                type: resource_not_found
+                status: 404
+                message: Mixin with name 'example' could not be found
+  parameters:
+    siteCode:
+      name: siteCode
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Site code, defined when a site is created.
+    tenant:
+      name: tenant
+      in: path
+      required: true
+      schema:
+        type: string
+      description: 'Your Emporix  tenant name.
+
+
+        **Note:** The tenant name should always be provided in lowercase.
+
+        '
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          refreshUrl: ''
+          scopes:
+            site.site_read: Needed to retrieve information about sites.
+            site.site_manage: Needed to manage sites.
+          tokenUrl: https://api.emporix.io/oauth/token
+x-refined-from:
+- emporix-site-settings-service-openapi.yml
+- emporix-site-settings-service-openapi.yml

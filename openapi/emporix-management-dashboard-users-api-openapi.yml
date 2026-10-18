@@ -1,0 +1,972 @@
+openapi: 3.2.0
+info:
+  title: Emporix Management Dashboard Users API
+  version: ''
+  contact:
+    name: Emporix
+    url: https://emporix.com
+    email: documentation@emporix.com
+  description: 'Operations tagged Management Dashboard Users across 2 of this provider''s published API definitions: emporix-iam-openapi.yml, emporix-iam-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Management Dashboard Users
+paths:
+  /iam/{tenant}/users:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    get:
+      summary: Retrieving a list of users
+      tags:
+      - Management Dashboard Users
+      responses:
+        '200':
+          description: The request was successful a list of users is returned.
+          headers:
+            X-Total-Count:
+              description: Total number of retrieved users.
+              schema:
+                type: integer
+                format: int32
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserExtendedResponse'
+              examples:
+                Employee list with extended groups:
+                  value:
+                  - id: 00u4ukrqkmEP1opFf417
+                    firstName: John
+                    lastName: Doe
+                    backofficeUserNumber: 00u4ukrqkmEP1opFf417
+                    preferredSite: main
+                    preferredCurrency: PLN
+                    preferredLanguage: en
+                    department: departmentName
+                    validFrom: '2022-08-19T10:41:28Z'
+                    isAccountLocked: true
+                    contactEmail: user2@gmail.com
+                    status: ACTIVE
+                    groupIds:
+                    - 1gr5e52e-6e27-4ac5-9471-2467d3fb7503
+                    groups:
+                    - id: 1gr5e52e-6e27-4ac5-9471-2467d3fb7503
+                      name:
+                        de: Backoffice Manager
+                        en: Backoffice managers
+                      description:
+                        de: Backoffice Manager
+                        en: Backoffice managers
+                      code: BO_MANAGER
+                      userType: EMPLOYEE
+                    lastLogin: '2025-05-21T09:15:00.733Z'
+                  - id: 00u4ukqvzlEP31sCk417
+                    firstName: John
+                    lastName: Doe
+                    backofficeUserNumber: 00u4ukqvzlEP31sCk417
+                    preferredSite: main
+                    preferredCurrency: PLN
+                    preferredLanguage: en
+                    department: departmentName
+                    validFrom: '2022-08-19T10:41:10Z'
+                    isAccountLocked: true
+                    contactEmail: user1@gmail.com
+                    status: PROVISIONED
+                    groupIds:
+                    - 1gr5e52e-6e27-4ac5-9471-2467d3fb7503
+                    groups:
+                    - id: 1gr5e52e-6e27-4ac5-9471-2467d3fb7503
+                      name:
+                        de: Backoffice Manager
+                        en: Backoffice managers
+                      description:
+                        de: Backoffice Manager
+                        en: Backoffice managers
+                      code: BO_MANAGER
+                      userType: EMPLOYEE
+                    lastLogin: '2025-05-20T10:45:07.333Z'
+                No employees found:
+                  value: []
+                Employee list:
+                  value:
+                  - id: 00u4ukrqkmEP1opFf417
+                    firstName: John 2
+                    lastName: Doe
+                    backofficeUserNumber: 00u4ukrqkmEP1opFf417
+                    preferredSite: main
+                    preferredCurrency: PLN
+                    preferredLanguage: en
+                    department: departmentName
+                    validFrom: '2022-08-19T10:41:28Z'
+                    isAccountLocked: true
+                    contactEmail: user2@gmail.com
+                    status: ACTIVE
+                    groupIds:
+                    - 1gr5e52e-6e27-4ac5-9471-2467d3fb7503
+                    lastLogin: '2025-05-25T13:45:05.353Z'
+                  - id: 00u4ukqvzlEP31sCk417
+                    firstName: John
+                    lastName: Doe
+                    backofficeUserNumber: 00u4ukqvzlEP31sCk417
+                    preferredSite: main
+                    preferredCurrency: PLN
+                    preferredLanguage: en
+                    department: departmentName
+                    validFrom: '2022-08-19T10:41:10Z'
+                    isAccountLocked: true
+                    contactEmail: user1@gmail.com
+                    status: PROVISIONED
+                    groupIds:
+                    - 1gr5e52e-6e27-4ac5-9471-2467d3fb7503
+                    lastLogin: '2025-04-10T10:47:07.733Z'
+            application/xml:
+              schema:
+                type: array
+                items: {}
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  details:
+                    type: array
+                    items:
+                      type: string
+              examples:
+                Wrong user type:
+                  value:
+                    code: 400
+                    status: Bad Request
+                    message: This user type is not supported yet for the user search
+                    details:
+                    - Wrong user type.
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+      operationId: GET-iam-list-users-with-groups
+      description: Retrieves all users for the given tenant with the assigned groups. The user type can be specified as `EMPLOYEE` or `CUSTOMER`.
+      parameters:
+      - schema:
+          type: string
+        in: query
+        description: Page number to be retrieved. The number of the first page is 1.
+        name: pageNumber
+      - schema:
+          type: string
+        in: query
+        name: pageSize
+        description: Number of items to be retrieved per page.
+      - schema:
+          type: string
+          enum:
+          - groups
+          example: groups
+        in: query
+        name: expand
+        description: Adds expanded groups objects to the response result.
+      - schema:
+          type: string
+          enum:
+          - EMPLOYEE
+          example: EMPLOYEE
+        in: query
+        name: userType
+        description: 'The user type of the returned users. Supported types: `EMPLOYEE` and `CUSTOMER`.'
+      - $ref: '#/components/parameters/trait_XTotalCount_header'
+      security:
+      - OAuth2:
+        - iam.user_read
+    post:
+      summary: Create a new user of `EMPLOYEE` type
+      tags:
+      - Management Dashboard Users
+      operationId: POST-iam-create-user
+      responses:
+        '201':
+          description: The request was successful. The user has been created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserIdResponse'
+              examples:
+                New employee id:
+                  value:
+                    id: e243dc9e-a3f6-4573-bb01-a8ae21d2d4at
+        '400':
+          $ref: '#/components/responses/Bad_request_400'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '404':
+          description: Given resource cannot be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                Employee not found:
+                  value:
+                    resourceId: 1gr5e52e-6e27-4ac5-9471-2467d3fb7503
+                    code: 404
+                    status: Not Found
+                    message: Error while getting groups provided in request.
+      description: Creates a new Management Dashboard user for a given tenant. The user will be able to log in to the Management Dashboard right after they confirm their email and set up a password. If a user with a given email already exists in the system, the assignment is created and no further steps are needed.
+      security:
+      - OAuth2:
+        - iam.user_create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreateRequest'
+            examples:
+              User creation request:
+                value:
+                  lastName: Doe
+                  firstName: John
+                  preferredSite: main
+                  contactEmail: example@emporix.com
+                  preferredCurrency: PLN
+                  preferredLanguage: en
+                  department: departmentName
+                  groupIds:
+                  - 1gr5e52e-6e27-4ac5-9471-2467d3fb7503
+                  - 1gr5e52e-6e27-4ac5-9471-2467d3fb7504
+        required: true
+        description: User creation sample
+    servers:
+    - url: https://api.emporix.io
+  /iam/{tenant}/users/me:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    get:
+      summary: Retrieving own user
+      tags:
+      - Management Dashboard Users
+      responses:
+        '200':
+          description: The request was successful and user is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+              examples:
+                Own user with extended groups:
+                  value:
+                    id: 00u4ukqvzlEP31sCk417
+                    firstName: John
+                    lastName: Doe
+                    backofficeUserNumber: 00u4ukqvzlEP31sCk417
+                    preferredSite: main
+                    preferredCurrency: PLN
+                    preferredLanguage: en
+                    department: departmentName
+                    validFrom: '2022-08-19T10:41:10Z'
+                    isAccountLocked: true
+                    contactEmail: user1@gmail.com
+                    status: ACTIVE
+                    groupIds:
+                    - 1gr5e52e-6e27-4ac5-9471-2467d3fb7503
+                    groups:
+                    - id: 1gr5e52e-6e27-4ac5-9471-2467d3fb7503
+                      name:
+                        de: Backoffice Manager
+                        en: Backoffice managers
+                      description:
+                        de: Backoffice Manager
+                        en: Backoffice managers
+                      code: BO_MANAGER
+                      userType: EMPLOYEE
+                Own user definition:
+                  value:
+                    id: 00u4ukqvzlEP31sCk417
+                    firstName: John
+                    lastName: Doe
+                    backofficeUserNumber: 00u4ukqvzlEP31sCk417
+                    preferredSite: main
+                    preferredCurrency: PLN
+                    preferredLanguage: en
+                    department: departmentName
+                    validFrom: '2022-08-19T10:41:10Z'
+                    isAccountLocked: true
+                    contactEmail: user1@gmail.com
+                    status: ACTIVE
+                    groupIds:
+                    - 1gr5e52e-6e27-4ac5-9471-2467d3fb7503
+        '400':
+          $ref: '#/components/responses/Bad_request_400'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+      operationId: GET-iam-retrieve-own-user
+      description: Retrieves the currently authenticated user along with the groups this user belongs to.
+      parameters:
+      - schema:
+          type: string
+          enum:
+          - groups
+          example: groups
+        in: query
+        name: expand
+        description: Adds expanded groups objects to the response result.
+      security:
+      - OAuth2: []
+    servers:
+    - url: https://api.emporix.io
+  /iam/{tenant}/users/{userId}:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    - $ref: '#/components/parameters/userId'
+    get:
+      summary: Retrieving a user of the `EMPLOYEE` type
+      tags:
+      - Management Dashboard Users
+      responses:
+        '200':
+          description: The request was successful and user is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserExtendedResponse'
+              examples:
+                Employee with extended groups:
+                  value:
+                    id: 00u4ukqvzlEP31sCk417
+                    firstName: John
+                    lastName: Doe
+                    backofficeUserNumber: 00u4ukqvzlEP31sCk417
+                    preferredSite: main
+                    preferredCurrency: PLN
+                    preferredLanguage: en
+                    department: departmentName
+                    validFrom: '2022-08-19T10:41:10Z'
+                    isAccountLocked: true
+                    contactEmail: user1@gmail.com
+                    status: ACTIVE
+                    groupIds:
+                    - 1gr5e52e-6e27-4ac5-9471-2467d3fb7503
+                    groups:
+                    - id: 1gr5e52e-6e27-4ac5-9471-2467d3fb7503
+                      name:
+                        de: Backoffice Manager
+                        en: Backoffice managers
+                      description:
+                        de: Backoffice Manager
+                        en: Backoffice managers
+                      code: BO_MANAGER
+                      userType: EMPLOYEE
+                    lastLogin: '2025-05-20T10:45:07.333Z'
+                Employee definition:
+                  value:
+                    id: 00u4ukqvzlEP31sCk417
+                    firstName: John
+                    lastName: Doe
+                    backofficeUserNumber: 00u4ukqvzlEP31sCk417
+                    preferredSite: main
+                    preferredCurrency: PLN
+                    preferredLanguage: en
+                    department: departmentName
+                    validFrom: '2022-08-19T10:41:10Z'
+                    isAccountLocked: true
+                    contactEmail: user1@gmail.com
+                    status: ACTIVE
+                    groupIds:
+                    - 1gr5e52e-6e27-4ac5-9471-2467d3fb7503
+        '400':
+          $ref: '#/components/responses/Bad_request_400'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '404':
+          description: Given resource cannot be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                Employee not found:
+                  value:
+                    resourceId: 084bcaf6-66b8-4ddd-9489-65c5f6449e94
+                    code: 404
+                    status: Not Found
+                    message: Error while getting user
+                    details:
+                    - User with id '084bcaf6-66b8-4ddd-9489' not found
+      operationId: GET-iam-retrieve-user-and-groups
+      description: For a specific tenant, retrieves user by ID along with the groups this user belongs to. The user type can be specified as `EMPLOYEE` or `CUSTOMER`.
+      parameters:
+      - schema:
+          type: string
+          enum:
+          - groups
+          example: groups
+        in: query
+        name: expand
+        description: Adds expanded groups objects to the response result.
+      security:
+      - OAuth2:
+        - iam.user_read
+    put:
+      summary: Updating a user of the `EMPLOYEE` type
+      tags:
+      - Management Dashboard Users
+      operationId: PUT-iam-update-user
+      responses:
+        '204':
+          description: The request was successful. The user has been updated.
+        '400':
+          $ref: '#/components/responses/Bad_request_400'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '404':
+          description: Given resource cannot be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                Employee not found:
+                  value:
+                    resourceId: 084bcaf6-66b8-4ddd-9489-65c5f6449e94
+                    code: 404
+                    status: Not Found
+                    message: Error while getting user
+                    details:
+                    - User with id '084bcaf6-66b8-4ddd-9489' not found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateRequest'
+            examples:
+              User update request sample:
+                value:
+                  lastName: Doe
+                  firstName: John
+                  preferredSite: main
+                  preferredCurrency: PLN
+                  preferredLanguage: en
+                  backofficeUserNumber: 00u4ujmuyhhfJodyS417
+                  department: departmentName
+                  groupIds:
+                  - 1gr5e52e-6e27-4ac5-9471-2467d3fb7503
+                  - 1gr5e52e-6e27-4ac5-9471-2467d3fb7504
+        required: true
+        description: User creation sample
+      description: Updating a user of the `EMPLOYEE` type. The user is deleted from all groups and assigned to a given group list based on the `groupIds` field.
+      security:
+      - OAuth2:
+        - iam.user_update
+    delete:
+      summary: Deleting a user from the Management Dashboard
+      tags:
+      - Management Dashboard Users
+      operationId: DELETE-iam-remove-user-from-md
+      responses:
+        '204':
+          description: User has been deleted successfully.
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+      description: Removes a specified user from all groups. This operation blocks user access to Management Dashboard, but the Developer Portal account access remains the same.
+      security:
+      - OAuth2:
+        - iam.user_delete
+      parameters:
+      - schema:
+          type: boolean
+          default: false
+          example: false
+        in: query
+        name: forceDelete
+        description: 'Indicates whether user will be deleted from Developer Portal as well.
+
+
+          **NOTE:** Only Developer Portal admin can perform force delete.
+
+          '
+    servers:
+    - url: https://api.emporix.io
+  /iam/{tenant}/users/vendors/{vendorId}:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    - $ref: '#/components/parameters/vendorId'
+    get:
+      summary: Retrieving a list of vendor users
+      tags:
+      - Management Dashboard Users
+      responses:
+        '200':
+          description: The request was successful a list of users is returned.
+          headers:
+            X-Total-Count:
+              description: Total number of retrieved users.
+              schema:
+                type: integer
+                format: int32
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserResponse'
+              examples:
+                Employee list with extended groups:
+                  value:
+                  - id: 00u4ukrqkmEP1opFf417
+                    firstName: John 2
+                    lastName: Doe
+                    backofficeUserNumber: 00u4ukrqkmEP1opFf417
+                    preferredSite: main
+                    preferredCurrency: PLN
+                    preferredLanguage: en
+                    department: departmentName
+                    validFrom: '2022-08-19T10:41:28Z'
+                    isAccountLocked: true
+                    contactEmail: user2@gmail.com
+                    status: ACTIVE
+                    groupIds:
+                    - 1gr5e52e-6e27-4ac5-9471-2467d3fb7503
+                    groups:
+                    - id: 1gr5e52e-6e27-4ac5-9471-2467d3fb7503
+                      name:
+                        de: Raw Materials Vendor Order manager
+                        en: Raw Materials Bestellmanager Lieferant
+                      userType: EMPLOYEE
+                  - id: 00u4ukqvzlEP31sCk417
+                    firstName: John
+                    lastName: Doe
+                    backofficeUserNumber: 00u4ukqvzlEP31sCk417
+                    preferredSite: main
+                    preferredCurrency: PLN
+                    preferredLanguage: en
+                    department: departmentName
+                    validFrom: '2022-08-19T10:41:10Z'
+                    isAccountLocked: true
+                    contactEmail: user1@gmail.com
+                    status: PROVISIONED
+                    groupIds:
+                    - 1gr5e52e-6e27-4ac5-9471-2467d3fb7503
+                    groups:
+                    - id: 1gr5e52e-6e27-4ac5-9471-2467d3fb7503
+                      name:
+                        de: Raw Materials Vendor Order manager
+                        en: Raw Materials Bestellmanager Lieferant
+                      userType: EMPLOYEE
+                No employees found:
+                  value: []
+                Employee list:
+                  value:
+                  - id: 00u4ukrqkmEP1opFf417
+                    firstName: John 2
+                    lastName: Doe
+                    backofficeUserNumber: 00u4ukrqkmEP1opFf417
+                    preferredSite: main
+                    preferredCurrency: PLN
+                    preferredLanguage: en
+                    department: departmentName
+                    validFrom: '2022-08-19T10:41:28Z'
+                    isAccountLocked: true
+                    contactEmail: user2@gmail.com
+                    status: ACTIVE
+                    groupIds:
+                    - 1gr5e52e-6e27-4ac5-9471-2467d3fb7503
+                  - id: 00u4ukqvzlEP31sCk417
+                    firstName: John
+                    lastName: Doe
+                    backofficeUserNumber: 00u4ukqvzlEP31sCk417
+                    preferredSite: main
+                    preferredCurrency: PLN
+                    preferredLanguage: en
+                    department: departmentName
+                    validFrom: '2022-08-19T10:41:10Z'
+                    isAccountLocked: true
+                    contactEmail: user1@gmail.com
+                    status: PROVISIONED
+                    groupIds:
+                    - 1gr5e52e-6e27-4ac5-9471-2467d3fb7503
+            application/xml:
+              schema:
+                type: array
+                items: {}
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+      operationId: GET-iam-list-users-with-groups-vendor
+      description: Retrieves all users for the given vendor with the assigned groups.
+      security:
+      - OAuth2:
+        - iam.user_read
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    ErrorResponse:
+      required:
+      - code
+      - message
+      - status
+      type: object
+      properties:
+        resourceId:
+          type:
+          - string
+          - 'null'
+        code:
+          type: integer
+          format: int32
+        status:
+          type: string
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            type: string
+    UserCreateRequest:
+      type: object
+      properties:
+        firstName:
+          type: string
+          description: User first name.
+        lastName:
+          type: string
+          description: User last name.
+        preferredSite:
+          type: string
+          description: User preferred site
+        preferredCurrency:
+          type: string
+          description: User preferred currency
+        preferredLanguage:
+          type: string
+          description: User preferred language
+        department:
+          type: string
+          description: User department
+        contactEmail:
+          type: string
+          description: User contact email
+        groupIds:
+          type: array
+          description: Unique identifier of a group associated with to this user. Required to perform the request.
+          items:
+            type: string
+      required:
+      - firstName
+      - lastName
+      - preferredSite
+      - preferredCurrency
+      - preferredLanguage
+      - department
+      - contactEmail
+      - groupIds
+    UserExtendedResponse:
+      description: User response schema extended with additional information
+      allOf:
+      - $ref: '#/components/schemas/UserResponse'
+      - type: object
+        properties:
+          lastLogin:
+            type: string
+            description: Timestamp of account's last login
+    UserUpdateRequest:
+      type: object
+      description: User update schema
+      properties:
+        firstName:
+          type: string
+          description: User first name.
+        lastName:
+          type: string
+          description: User last name.
+        preferredSite:
+          type: string
+          description: User preferred site
+        preferredCurrency:
+          type: string
+          description: User preferred currency
+        preferredLanguage:
+          type: string
+          description: User preferred language
+        department:
+          type: string
+          description: User department
+        backofficeUserNumber:
+          type: string
+          description: User backoffice user number. For new users, it is the same as ID. For existing users, it may be different.
+        groupIds:
+          type: array
+          description: Groups unique identifier attached to this user. Required to perform the request.
+          items:
+            type: string
+      required:
+      - firstName
+      - lastName
+      - preferredSite
+      - preferredCurrency
+      - preferredLanguage
+      - department
+      - backofficeUserNumber
+      - groupIds
+    UserIdResponse:
+      type: object
+      example:
+        id: e243dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+      properties:
+        id:
+          type: string
+          description: ID of the generated/updated user.
+    UserResponse:
+      type: object
+      description: User response schema
+      properties:
+        id:
+          type: string
+          description: User unique identifier generated when the group is created.
+        firstName:
+          type: string
+          description: User first name.
+        lastName:
+          type: string
+          description: User last name.
+        backofficeUserNumber:
+          type: string
+          description: For a new user, the value is the same as Id. For an existing user, the value is an internal number. This field should be used when retrieving user details and for user update and deletion.
+        preferredSite:
+          type: string
+          description: User preferred site
+        preferredCurrency:
+          type: string
+          description: User preferred currency
+        preferredLanguage:
+          type: string
+          description: User preferred language
+        department:
+          type: string
+          description: User department
+        validFrom:
+          type: string
+          description: Account creation date
+        isAccountLocked:
+          type: boolean
+          description: Indicates whether user is able to log in to Management Dashboard.
+        contactEmail:
+          type: string
+          description: User contact email
+        status:
+          type: string
+          description: Indicates user status. May be 'Active' or 'Provisioned' in case user does not confirm their email.
+        groupIds:
+          type: array
+          description: Group ids where user is assigned to.
+          items:
+            type: string
+        groups:
+          type: array
+          description: Group extended definition, may be fetched when `extend` param is used
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: Group unique identifier generated when the group is created.
+              name:
+                additionalProperties:
+                  type: string
+                description: Localized group name in the form of a map of translations.
+              description:
+                type: object
+                additionalProperties:
+                  type: string
+                description: Localized group description in the form of a map of translations.
+              code:
+                type: string
+                description: Internal code of a group.
+              userType:
+                type: string
+                description: The group type determines if the group can consist of users of the `CUSTOMER` or the `EMPLOYEE` type.
+      required:
+      - id
+      - firstName
+      - lastName
+      - backofficeUserNumber
+      - preferredSite
+      - preferredCurrency
+      - preferredLanguage
+      - department
+      - validFrom
+      - isAccountLocked
+      - contactEmail
+      - status
+      - groupIds
+  responses:
+    Unauthorized_401:
+      description: Given request is unauthorized - the authorization token is invalid or has expired. It usually means that tenant from the token does not match tenant from path.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid Access Token:
+              value:
+                fault:
+                  faultstring: Invalid Access Token
+                  detail:
+                    errorcode: keymanagement.service.invalid_access_token
+            Unauthorized:
+              value: {}
+    Forbidden_403:
+      description: Scope validation failed, details will be provided in response message
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+              status:
+                type: string
+              details:
+                type: array
+                items:
+                  type: string
+          examples:
+            'Scope is missing ':
+              value:
+                code: 403
+                message: Scope validation failed
+                status: Forbidden
+                details:
+                - Missing required scopes '[scope_name]'
+    Bad_request_400:
+      description: Unsupported language provided.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              status:
+                type: string
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: string
+          examples:
+            Unsupported language:
+              value:
+                code: 400
+                status: Bad Request
+                message: Language header validation failed
+                details:
+                - 'Following languages are not supported: ''ru'''
+  parameters:
+    trait_XTotalCount_header:
+      in: header
+      name: X-Total-Count
+      required: false
+      description: In order to get information how many entities meet a filter requirements, X-Total-Count header has been introduced. The header is optional and its default value is false. It the header is provided and it is true then total count is returned in the X-Total-Count response header. In both cases (X-Total-Count true, false or not provided), the response body has the same format (array of entities). In other words, the information about total count is returned on demand, depending of an existence of X-Total-Count header in a request. Therefore, the X-Total-Count header is not returned if an API consumer didn't ask for it.
+      schema:
+        default: false
+        type: boolean
+    userId:
+      name: userId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: User unique identifier, generated when the user is created.
+    tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: The tenant name should always be written in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+    vendorId:
+      name: vendorId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Unique identifier of a vendor
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            iam.access_read: ''
+            iam.access_manage: ''
+            iam.assignment_create_own: ''
+            iam.assignment_manage: ''
+            iam.assignment_delete_own: ''
+            iam.permission_read: ''
+            iam.permission_create: ''
+            iam.permission_update: ''
+            iam.permission_delete: ''
+            iam.role_read: ''
+            iam.role_create: ''
+            iam.role_update: ''
+            iam.role_delete: ''
+            iam.group_read: ''
+            iam.group_read_own: ''
+            iam.user_read: ''
+            iam.user_read_own: ''
+            iam.user_create: ''
+            iam.user_update: ''
+            iam.user_delete: ''
+            iam.scope_manage: ''
+            iam.scope_read: ''
+            iam.scope_read_own: ''
+            iam.resource_read: ''
+            iam.template_read: ''
+x-refined-from:
+- emporix-iam-openapi.yml
+- emporix-iam-openapi.yml

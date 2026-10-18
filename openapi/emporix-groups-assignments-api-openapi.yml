@@ -1,0 +1,496 @@
+openapi: 3.2.0
+info:
+  title: Emporix Groups Assignments API
+  version: ''
+  contact:
+    email: documentation@emporix.com
+  description: 'Operations tagged Groups Assignments across 2 of this provider''s published API definitions: emporix-customer-segments-openapi.yml, emporix-customer-segments-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Groups Assignments
+  description: Manage IAM group assignments to segments
+paths:
+  /customer-segment/{tenant}/segments/{segmentId}/groups:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    - $ref: '#/components/parameters/segmentId'
+    get:
+      summary: Retrieving all group assignments for a customer segment
+      tags:
+      - Groups Assignments
+      operationId: GET-customer-segment-retrieve-groups
+      description: Retrieves all IAM group assignments for a given customer segment.
+      security:
+      - OAuth2:
+        - customersegment.segment_read
+      parameters:
+      - $ref: '#/components/parameters/qParam'
+      - $ref: '#/components/parameters/pageSize'
+      - $ref: '#/components/parameters/pageNumber'
+      - $ref: '#/components/parameters/sort'
+      - $ref: '#/components/parameters/fields'
+      - $ref: '#/components/parameters/xTotalCount'
+      responses:
+        '200':
+          description: Group assignments for a customer segment were successfully retrieved.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GroupAssignmentResponse'
+              examples:
+                Group Assignments:
+                  $ref: '#/components/examples/GroupAssignmentsResponse'
+        '401':
+          $ref: '#/components/responses/Common_response_Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Common_response_Forbidden_403'
+    servers:
+    - url: https://api.emporix.io
+  /customer-segment/{tenant}/segments/{segmentId}/groups/search:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    - $ref: '#/components/parameters/segmentId'
+    post:
+      summary: Searching with parameters for group assignments
+      tags:
+      - Groups Assignments
+      operationId: POST-customer-segment-search-groups
+      description: Returns all IAM group assignments that match the provided criteria.
+      security:
+      - OAuth2:
+        - customersegment.segment_read
+      parameters:
+      - $ref: '#/components/parameters/pageSize'
+      - $ref: '#/components/parameters/pageNumber'
+      - $ref: '#/components/parameters/sort'
+      - $ref: '#/components/parameters/fields'
+      - $ref: '#/components/parameters/xTotalCount'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SegmentsSearch'
+            examples:
+              Search Group Assignments:
+                value:
+                  q: group.id:1gr5e52e-6e27-4ac5-9471-2467d3fb7500
+      responses:
+        '200':
+          description: Group assignments for a customer segment were successfully retrieved.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GroupAssignmentResponse'
+              examples:
+                Group Assignments:
+                  $ref: '#/components/examples/GroupAssignmentsResponse'
+        '400':
+          $ref: '#/components/responses/Common_response_BadRequest_400'
+        '401':
+          $ref: '#/components/responses/Common_response_Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Common_response_Forbidden_403'
+    servers:
+    - url: https://api.emporix.io
+  /customer-segment/{tenant}/segments/{segmentId}/groups/{groupId}:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    - $ref: '#/components/parameters/segmentId'
+    - $ref: '#/components/parameters/groupId'
+    get:
+      summary: Retrieving a group assignment for a customer segment
+      tags:
+      - Groups Assignments
+      operationId: GET-customer-segment-retrieve-group
+      description: Retrieves an IAM group assignment for a specified group and customer segment.
+      security:
+      - OAuth2:
+        - customersegment.segment_read
+      parameters:
+      - $ref: '#/components/parameters/fields'
+      responses:
+        '200':
+          description: Group assignment for a customer segment was successfully retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupAssignmentResponse'
+              examples:
+                Group Assignment Response:
+                  $ref: '#/components/examples/GroupAssignmentResponse'
+        '401':
+          $ref: '#/components/responses/Common_response_Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Common_response_Forbidden_403'
+        '404':
+          $ref: '#/components/responses/Common_response_NotFound_404'
+    put:
+      summary: Upserting a group assignment for a customer segment
+      tags:
+      - Groups Assignments
+      operationId: PUT-customer-segment-update-group
+      description: 'Performs an `UPSERT` operation. Updates an IAM group assignment for a customer segment. Creates the assignment if it is not present in the system.
+
+
+        Only IAM groups with `userType` `CUSTOMER` can be assigned to a segment.'
+      security:
+      - OAuth2:
+        - customersegment.segment_manage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupAssignmentUpsert'
+            examples:
+              Group Assignment Update:
+                $ref: '#/components/examples/GroupAssignmentUpsert'
+      responses:
+        '201':
+          description: A new group assignment was successfully created.
+        '204':
+          description: Group assignment was successfully updated.
+        '400':
+          $ref: '#/components/responses/Common_response_BadRequest_400'
+        '401':
+          $ref: '#/components/responses/Common_response_Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Common_response_Forbidden_403'
+        '409':
+          $ref: '#/components/responses/Common_response_Conflict_409'
+    delete:
+      summary: Removing a group from a customer segment
+      tags:
+      - Groups Assignments
+      operationId: DELETE-customer-segment-remove-group
+      description: Removes an IAM group assignment from a customer segment.
+      security:
+      - OAuth2:
+        - customersegment.segment_manage
+      responses:
+        '204':
+          description: Group assignment was successfully removed.
+        '401':
+          $ref: '#/components/responses/Common_response_Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Common_response_Forbidden_403'
+    servers:
+    - url: https://api.emporix.io
+components:
+  parameters:
+    qParam:
+      in: query
+      name: q
+      description: "A standard query parameter is used to search for specific values. \n\nSee: [Standard Practices - Query parameter](https://developer.emporix.io/api-documentation/standard-practices/q-param)\n"
+      schema:
+        type: string
+    groupId:
+      schema:
+        type: string
+      name: groupId
+      in: path
+      required: true
+      description: Unique identifier of an existing IAM group.
+    sort:
+      schema:
+        type: string
+      in: query
+      name: sort
+      description: List of properties used to sort the results, separated by colons.
+    tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: Always write the tenant name in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+    segmentId:
+      name: segmentId
+      in: path
+      required: true
+      description: Unique identifier of the customer segment.
+      schema:
+        type: string
+    xTotalCount:
+      schema:
+        type: boolean
+      in: header
+      name: X-Total-Count
+      description: Flag indicating whether the total number of retrieved results should be returned.
+    pageNumber:
+      schema:
+        type: string
+      in: query
+      name: pageNumber
+      description: The page number to be retrieved. The size of the pages should be specified by the pageSize parameter.
+    pageSize:
+      schema:
+        type: string
+      in: query
+      name: pageSize
+      description: The number of documents to be retrieved per page.
+    fields:
+      schema:
+        type: string
+      in: query
+      name: fields
+      description: Fields to be returned in the response.
+  schemas:
+    GroupAssignmentUpsert:
+      type: object
+      description: 'Request body for creating or updating an IAM group assignment.
+
+        '
+      properties:
+        mixins:
+          type: object
+          description: A key-value map of additional attributes.
+          additionalProperties: true
+        metadata:
+          $ref: '#/components/schemas/MetadataUpdate'
+    MetadataUpdate:
+      allOf:
+      - type: object
+        properties:
+          version:
+            type: integer
+            description: The document version number.
+      - $ref: '#/components/schemas/MetadataCreate'
+    Group:
+      type: object
+      description: IAM group assigned to the customer segment.
+      properties:
+        id:
+          type: string
+          description: Unique identifier of an existing IAM group, generated when the group is created through the IAM Service.
+        name:
+          type: object
+          description: Localized name of the group.
+          additionalProperties:
+            type: string
+    MetadataCreate:
+      type: object
+      properties:
+        mixins:
+          type: object
+          description: A key-value map, where key is a mixin name and value is a link to the mixin schema.
+          additionalProperties: true
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: HTTP Status Code.
+        status:
+          type: string
+          description: HTTP Status.
+        message:
+          type: string
+          description: Error message.
+        resourceId:
+          type: string
+          description: An ID of the resource which caused the error.
+        details:
+          type: object
+          description: Error details
+          properties:
+            field:
+              type: string
+            type:
+              type: string
+            message:
+              type: string
+            moreInfo:
+              type: string
+    SegmentsSearch:
+      type: object
+      properties:
+        q:
+          type: string
+          description: "A standard query parameter is used to search for specific values. \n\nSee: [Standard Practices - Query parameter](https://developer.emporix.io/api-documentation/standard-practices/q-param)\n"
+    GroupAssignmentResponse:
+      type: object
+      properties:
+        segmentId:
+          type: string
+          description: Unique identifier of the customer segment.
+        group:
+          $ref: '#/components/schemas/Group'
+        mixins:
+          type: object
+          description: A key-value map of additional attributes.
+          additionalProperties: true
+        metadata:
+          $ref: '#/components/schemas/MetadataResponse'
+    MetadataResponse:
+      allOf:
+      - type: object
+        properties:
+          createdAt:
+            description: The creation date.
+            type: string
+            format: date-time
+          modifiedAt:
+            description: The modification date.
+            type: string
+            format: date-time
+      - $ref: '#/components/schemas/MetadataUpdate'
+  examples:
+    Response_BadRequest_400:
+      value:
+        code: 400
+        status: Bad Request
+        message: Validation problem with request body.
+    Response_Forbidden_403:
+      value:
+        code: 403
+        status: Forbidden
+        message: The access to the requested resource has been forbidden by the server.
+    GroupAssignmentUpsert:
+      value:
+        mixins:
+          segmentAttributes:
+            membershipStatus: PREMIUM
+        metadata:
+          mixins:
+            segmentAttributes: https://res.cloudinary.com/saas-ag/raw/upload/emporix-docs/69537caeb3fd5d378296ae42_segmentAttributes.json
+    Response_Conflict_409_changed:
+      value:
+        code: 409
+        status: Conflict
+        message: The resource you are attempting to access has changed.
+    GroupAssignmentResponse:
+      value:
+        segmentId: 628cd20c6e8b2432b6346ca6
+        group:
+          id: 1gr5e52e-6e27-4ac5-9471-2467d3fb7500
+          name:
+            en: Buyers
+        metadata:
+          createdAt: 2024-10-12 12:00:00+00:00
+          modifiedAt: 2024-10-12 12:00:00+00:00
+          version: 1
+    Response_Conflict_409_exists:
+      value:
+        code: 409
+        status: Conflict
+        message: The resource already exists.
+    GroupAssignmentsResponse:
+      value:
+      - segmentId: 628cd20c6e8b2432b6346ca6
+        group:
+          id: 1gr5e52e-6e27-4ac5-9471-2467d3fb7500
+          name:
+            en: Buyers
+        metadata:
+          createdAt: 2024-10-12 12:00:00+00:00
+          modifiedAt: 2024-10-12 12:00:00+00:00
+          version: 1
+      - segmentId: 628cd20c6e8b2432b6346ca6
+        group:
+          id: 2ac869fc-d548-4ec8-8e06-c01491314124
+          name:
+            en: Requesters
+        metadata:
+          createdAt: 2024-10-16 12:00:00+00:00
+          modifiedAt: 2024-10-16 12:00:00+00:00
+          version: 1
+    Response_NotFound_404:
+      value:
+        code: 404
+        status: Not Found
+        message: The resource with id 628cd20c6e8b2432b6346ca6 has not been found.
+  responses:
+    Common_response_Unauthorized_401:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+    Common_response_Conflict_409:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            Conflict - resource exists:
+              $ref: '#/components/examples/Response_Conflict_409_exists'
+            Conflict - resource has changed:
+              $ref: '#/components/examples/Response_Conflict_409_changed'
+    Common_response_Forbidden_403:
+      description: Access forbidden. The caller is not allowed to access this resource.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            Forbidden:
+              $ref: '#/components/examples/Response_Forbidden_403'
+    Common_response_BadRequest_400:
+      description: Bad request due to validation, incorrect parameters, etc.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            Validation Error:
+              $ref: '#/components/examples/Response_BadRequest_400'
+    Common_response_NotFound_404:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            Not Found:
+              $ref: '#/components/examples/Response_NotFound_404'
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            customersegment.segment_manage: Needed to create or update customer segments.
+            customersegment.segment_read: Needed to read customer segments.
+            customersegment.segment_read_own: Needed to read own customer segments.
+    CustomerAccessToken:
+      type: http
+      scheme: bearer
+      description: To generate a customer access token, go to the [Logging in a customer](https://developer.emporix.io/api-documentation/api-guides/companies-and-customers/customer-management/api-reference/authentication-and-authorization#post-customer-tenant-login) endpoint.
+x-refined-from:
+- emporix-customer-segments-openapi.yml
+- emporix-customer-segments-openapi.yml

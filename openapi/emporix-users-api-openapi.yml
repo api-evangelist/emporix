@@ -1,0 +1,1601 @@
+openapi: 3.2.0
+info:
+  title: Emporix Users API
+  version: ''
+  contact:
+    name: Emporix
+    url: https://emporix.com
+    email: documentation@emporix.com
+  description: 'Operations tagged Users across 2 of this provider''s published API definitions: emporix-iam-openapi.yml, emporix-iam-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Users
+paths:
+  /iam/{tenant}/users/{userId}/access-controls:
+    parameters:
+    - $ref: '#/components/parameters/userId'
+    - $ref: '#/components/parameters/tenant'
+    get:
+      tags:
+      - Users
+      summary: Retrieving all access controls assigned to a user
+      description: Retrieves all access controls assigned to a specified user. You can expand the result by resolving the role and resource references.
+      operationId: GET-iam-list-user-access-controls
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/userId'
+      - $ref: '#/components/parameters/trait_paged_pageNumber'
+      - $ref: '#/components/parameters/trait_paged_pageSize'
+      - $ref: '#/components/parameters/X-Total-Count'
+      - $ref: '#/components/parameters/trait_expand_query_param'
+      - $ref: '#/components/parameters/trait_acceptLanguage_header'
+      responses:
+        '200':
+          description: The request was successful. A list of user access controls is returned.
+          headers:
+            X-Total-Count:
+              description: Total number of retrieved access controls.
+              schema:
+                type: integer
+                format: int32
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AccessControlQueryDocument'
+              examples:
+                Fully expanded access control list:
+                  $ref: '#/components/examples/fullyExpandedAccessControlList'
+                Access control list with role expand:
+                  $ref: '#/components/examples/fullyExpandedAccessControlListEn'
+                Access control list with resource expand:
+                  $ref: '#/components/examples/accessControlListWithResourceExpand'
+                Access control list:
+                  $ref: '#/components/examples/accessControlList'
+                Access control list empty:
+                  value: []
+        '400':
+          $ref: '#/components/responses/Bad_request_400'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '404':
+          description: Given resources cannot be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    resourceId: 084bcaf6-66b8-4ddd-9489-65c5f6449e94
+                    code: 404
+                    status: Not Found
+                    message: Error while getting user
+                    details:
+                    - User with id '084bcaf6-66b8-4ddd-9489-65c5f6449e94' not found
+      security:
+      - OAuth2:
+        - iam.access_read
+    servers:
+    - url: https://api.emporix.io
+  /iam/{tenant}/users/{userId}/access-controls/{resourceId}:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    - $ref: '#/components/parameters/userId'
+    - $ref: '#/components/parameters/resourceId'
+    get:
+      tags:
+      - Users
+      summary: Retrieving user access controls for a resource
+      deprecated: true
+      description: 'Retrieves a specified user''s access controls for a specified resource.
+
+
+        **Note**: This endpoint is deprecated.'
+      operationId: GET-iam-retrieve-user-resource-access-controls
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/userId'
+      - $ref: '#/components/parameters/resourceId'
+      - $ref: '#/components/parameters/trait_expand_query_param'
+      - $ref: '#/components/parameters/trait_acceptLanguage_header'
+      responses:
+        '200':
+          description: The request was successful. A list of user access controls for the resource is returned.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AccessControlQueryDocument'
+              examples:
+                Fully expanded access control list:
+                  value:
+                  - id: I981dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    roleId: Z843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    resourceId: S843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    domains:
+                    - example_domain
+                    name:
+                      en: Example name
+                      de: Beispielname
+                    role:
+                      id: Z843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                      name:
+                        en: Example name
+                        de: Beispielname
+                      description:
+                        en: Example role description
+                        de: Beispiel Berechtigungsbeschreibung
+                      permissions:
+                      - id: F243dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                        applicablePermissionResources:
+                        - Q1233dc9e-a3f6-4573-bb01-a8ae21d2d43g
+                      - id: F343dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                      metadata:
+                        version: 1
+                        createdAt: '2022-01-04 10:44:51.871Z'
+                        modifiedAt: '2022-01-05 12:44:51.456Z'
+                    resource:
+                      id: S843dc9e-a3f6-4573-bb01-a8ae21d2d4ab
+                      name:
+                        en: Example name
+                        de: Beispielname
+                      description:
+                        en: Example resource description
+                        de: Beispiel Domainbeschreibung 2
+                      code: serviceName.resource
+                      metadata:
+                        version: 1
+                        createdAt: '2022-01-04 10:44:51.871Z'
+                        modifiedAt: '2022-01-05 12:44:51.456Z'
+                    metadata:
+                      version: 1
+                      createdAt: '2019-08-24T14:15:22Z'
+                      modifiedAt: '2019-08-24T14:15:22Z'
+                  - id: PO43dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    roleId: Rvsf43dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    resourceId: S843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    domains:
+                    - example_domain
+                    name:
+                      en: Example name 2
+                      de: Beispielname 2
+                    role:
+                      id: Rvsf43dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                      name:
+                        en: Example name 2
+                        de: Beispielname 2
+                      description:
+                        en: Example role description 2
+                        de: Beispiel Berechtigungsbeschreibung 2
+                      permissions:
+                      - id: M243dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                        applicablePermissionResources:
+                        - N943dc9e-a3f6-4573-bb01-a8ae21d2d43g
+                      - id: Z243dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                      metadata:
+                        version: 1
+                        createdAt: '2022-01-04 10:44:51.871Z'
+                        modifiedAt: '2022-01-05 12:44:51.456Z'
+                    resource:
+                      id: S843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                      name:
+                        en: Example name 2
+                        de: Beispielname 2
+                      description:
+                        en: Example resource description 2
+                        de: Beispiel Domainbeschreibung 2
+                      code: serviceName.resource
+                      metadata:
+                        version: 1
+                        createdAt: '2022-01-04 10:44:51.871Z'
+                        modifiedAt: '2022-01-05 12:44:51.456Z'
+                    metadata:
+                      version: 1
+                      createdAt: '2019-08-24T14:15:22Z'
+                      modifiedAt: '2019-08-24T14:15:22Z'
+                Fully expanded access control list with Accept-Language 'en':
+                  value:
+                  - id: I981dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    roleId: Z843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    resourceId: S843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    domains:
+                    - example_domain
+                    name:
+                      en: Example name
+                    role:
+                      id: Z843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                      name:
+                        en: Example name
+                      description:
+                        en: Example role description
+                      permissions:
+                      - id: F243dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                        applicablePermissionResources:
+                        - Q1233dc9e-a3f6-4573-bb01-a8ae21d2d43g
+                      - id: F343dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                      metadata:
+                        version: 1
+                        createdAt: '2022-01-04 10:44:51.871Z'
+                        modifiedAt: '2022-01-05 12:44:51.456Z'
+                    resource:
+                      id: S843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                      name:
+                        en: Example name
+                      description:
+                        en: Example resource description
+                      code: serviceName.resource
+                      metadata:
+                        version: 1
+                        createdAt: '2022-01-04 10:44:51.871Z'
+                        modifiedAt: '2022-01-05 12:44:51.456Z'
+                    metadata:
+                      version: 1
+                      createdAt: '2019-08-24T14:15:22Z'
+                      modifiedAt: '2019-08-24T14:15:22Z'
+                  - id: PO43dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    roleId: Rvsf43dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    resourceId: S843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    domains:
+                    - example_domain
+                    name:
+                      en: Example name 2
+                    role:
+                      id: Rvsf43dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                      name:
+                        en: Example name 2
+                      description:
+                        en: Example role description 2
+                      permissions:
+                      - id: M243dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                        applicablePermissionResources:
+                        - N943dc9e-a3f6-4573-bb01-a8ae21d2d43g
+                      - id: Z243dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                      metadata:
+                        version: 1
+                        createdAt: '2022-01-04 10:44:51.871Z'
+                        modifiedAt: '2022-01-05 12:44:51.456Z'
+                    resource:
+                      id: S843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                      name:
+                        en: Example name 2
+                      description:
+                        en: Example resource description 2
+                      code: serviceName.resource
+                      metadata:
+                        version: 1
+                        createdAt: '2022-01-04 10:44:51.871Z'
+                        modifiedAt: '2022-01-05 12:44:51.456Z'
+                    metadata:
+                      version: 1
+                      createdAt: '2019-08-24T14:15:22Z'
+                      modifiedAt: '2019-08-24T14:15:22Z'
+                Access control list with role expand:
+                  value:
+                  - id: I981dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    roleId: Z843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    resourceId: S843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    domains:
+                    - example_domain
+                    name:
+                      en: Example name
+                      de: Beispielname
+                    role:
+                      id: Z843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                      name:
+                        en: Example name
+                        de: Beispielname
+                      description:
+                        en: Example role description
+                        de: Beispiel Berechtigungsbeschreibung
+                      permissions:
+                      - id: F243dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                        applicablePermissionResources:
+                        - Q1233dc9e-a3f6-4573-bb01-a8ae21d2d43g
+                      - id: F343dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                      metadata:
+                        version: 1
+                        createdAt: '2022-01-04 10:44:51.871Z'
+                        modifiedAt: '2022-01-05 12:44:51.456Z'
+                    metadata:
+                      version: 1
+                      createdAt: '2019-08-24T14:15:22Z'
+                      modifiedAt: '2019-08-24T14:15:22Z'
+                  - id: PO43dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    roleId: Rvsf43dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    resourceId: S843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    domains:
+                    - example_domain
+                    name:
+                      en: Example name 2
+                      de: Beispielname 2
+                    role:
+                      id: Rvsf43dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                      name:
+                        en: Example name 2
+                        de: Beispielname 2
+                      description:
+                        en: Example role description 2
+                        de: Beispiel Berechtigungsbeschreibung 2
+                      permissions:
+                      - id: M243dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                        applicablePermissionResources:
+                        - N943dc9e-a3f6-4573-bb01-a8ae21d2d43g
+                      - id: Z243dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                      metadata:
+                        version: 1
+                        createdAt: '2022-01-04 10:44:51.871Z'
+                        modifiedAt: '2022-01-05 12:44:51.456Z'
+                    metadata:
+                      version: 1
+                      createdAt: '2019-08-24T14:15:22Z'
+                      modifiedAt: '2019-08-24T14:15:22Z'
+                Access control list with resource expand:
+                  value:
+                  - id: I981dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    roleId: Z843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    resourceId: S843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    domains:
+                    - example_domain
+                    name:
+                      en: Example name
+                      de: Beispielname
+                    resource:
+                      id: S843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                      name:
+                        en: Example name
+                        de: Beispielname
+                      description:
+                        en: Example resource description
+                        de: Beispiel Domainbeschreibung 2
+                      code: serviceName.resource
+                      metadata:
+                        version: 1
+                        createdAt: '2022-01-04 10:44:51.871Z'
+                        modifiedAt: '2022-01-05 12:44:51.456Z'
+                    metadata:
+                      version: 1
+                      createdAt: '2019-08-24T14:15:22Z'
+                      modifiedAt: '2019-08-24T14:15:22Z'
+                  - id: PO43dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    roleId: Rvsf43dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    resourceId: S843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    domains:
+                    - example_domain
+                    name:
+                      en: Example name 2
+                      de: Beispielname 2
+                    resource:
+                      id: S843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                      name:
+                        en: Example name 2
+                        de: Beispielname 2
+                      description:
+                        en: Example resource description 2
+                        de: Beispiel Domainbeschreibung 2
+                      code: serviceName.resource
+                      metadata:
+                        version: 1
+                        createdAt: '2022-01-04 10:44:51.871Z'
+                        modifiedAt: '2022-01-05 12:44:51.456Z'
+                    metadata:
+                      version: 1
+                      createdAt: '2019-08-24T14:15:22Z'
+                      modifiedAt: '2019-08-24T14:15:22Z'
+                Access control list:
+                  value:
+                  - id: I981dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    roleId: Z843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    resourceId: S843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    domains:
+                    - example_domain
+                    name:
+                      en: Example name
+                      de: Beispielname
+                    metadata:
+                      version: 1
+                      createdAt: '2019-08-24T14:15:22Z'
+                      modifiedAt: '2019-08-24T14:15:22Z'
+                  - id: PO43dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    roleId: Rvsf43dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    resourceId: S843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    domains:
+                    - example_domain
+                    name:
+                      en: Example name 2
+                      de: Beispielname 2
+                    metadata:
+                      version: 1
+                      createdAt: '2019-08-24T14:15:22Z'
+                      modifiedAt: '2019-08-24T14:15:22Z'
+                Access control list empty:
+                  value: []
+        '400':
+          $ref: '#/components/responses/Bad_request_400'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '404':
+          description: Given resources cannot be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    resourceId: 084bcaf6-66b8-4ddd-9489-65c5f6449e94
+                    code: 404
+                    status: Not Found
+                    message: Error while getting user
+                    details:
+                    - User with id '084bcaf6-66b8-4ddd-9489-65c5f6449e94' not found
+      security:
+      - OAuth2:
+        - iam.access_read
+    servers:
+    - url: https://api.emporix.io
+  /iam/{tenant}/users/{userId}/groups:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    - $ref: '#/components/parameters/userId'
+    get:
+      tags:
+      - Users
+      summary: Retrieving all groups to which a user is assigned
+      description: Retrieves all groups to which a specified user is assigned.
+      operationId: GET-iam-retrieve-user-groups
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/userId'
+      - $ref: '#/components/parameters/trait_paged_pageNumber'
+      - $ref: '#/components/parameters/trait_paged_pageSize'
+      - $ref: '#/components/parameters/trait_sort'
+      - $ref: '#/components/parameters/trait_acceptLanguage_header'
+      - $ref: '#/components/parameters/X-Total-Count'
+      responses:
+        '200':
+          description: The request was successful. A list of groups is returned.
+          headers:
+            X-Total-Count:
+              description: Total number of retrieved groups.
+              schema:
+                type: integer
+                format: int32
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GroupsQueryDocument'
+              examples:
+                Groups list:
+                  value:
+                  - id: Z843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    name:
+                      en: Example name
+                      de: Beispielname
+                    description:
+                      en: Example group description
+                      de: Beispiel Berechtigungsbeschreibung
+                    accessControls:
+                    - f543dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    - r243dc9e-a3f6-4573-zz01-a8ae21d2d4ae
+                    userType: CUSTOMER
+                    metadata:
+                      version: 1
+                      createdAt: '2022-01-04 10:44:51.871Z'
+                      modifiedAt: '2022-01-05 12:44:51.456Z'
+                Empty group list:
+                  value: []
+        '400':
+          $ref: '#/components/responses/Bad_request_400'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+      security:
+      - OAuth2:
+        - iam.group_read
+    servers:
+    - url: https://api.emporix.io
+  /iam/{tenant}/users/{userId}/groups/{groupId}:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    - $ref: '#/components/parameters/userId'
+    - $ref: '#/components/parameters/groupId'
+    get:
+      tags:
+      - Users
+      summary: Retrieving user group info
+      description: Retrieves user specific group.
+      operationId: GET-iam-retrieve-user-group
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/userId'
+      - $ref: '#/components/parameters/groupId'
+      - $ref: '#/components/parameters/trait_acceptLanguage_header'
+      responses:
+        '200':
+          description: The request was successful. The group is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupsQueryDocument'
+              examples:
+                Group definition:
+                  value:
+                    id: Z843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    name:
+                      en: Example name
+                      de: Beispielname
+                    description:
+                      en: Example group description
+                      de: Beispiel Berechtigungsbeschreibung
+                    accessControls:
+                    - f543dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    - r243dc9e-a3f6-4573-zz01-a8ae21d2d4ae
+                    userType: CUSTOMER
+                    metadata:
+                      version: 1
+                      createdAt: '2022-01-04 10:44:51.871Z'
+                      modifiedAt: '2022-01-05 12:44:51.456Z'
+        '400':
+          $ref: '#/components/responses/Bad_request_400'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '404':
+          description: Given resources cannot be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    resourceId: '123'
+                    code: 404
+                    status: Not Found
+                    message: Error while getting assignment
+                    details:
+                    - Assignment with user id '0dfasf089124-12498fas-4214fa' and with group id '1iofa812-124kfa8-fasoi' not found
+      security:
+      - OAuth2:
+        - iam.group_read
+    servers:
+    - url: https://api.emporix.io
+  /iam/{tenant}/users/{userId}/permissions/{resourceId}:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    - $ref: '#/components/parameters/userId'
+    - $ref: '#/components/parameters/resourceId'
+    get:
+      tags:
+      - Users
+      summary: Retrieving user permissions for a resource
+      deprecated: true
+      description: 'Retrieves a specified user''s permissions for a specific resource. The permissions are calculated based on the user''s group assignments and the access control lists of those groups.
+
+
+        **Note**: This endpoint is deprecated.'
+      operationId: GET-iam-retrieve-user-resource-permissions
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/userId'
+      - $ref: '#/components/parameters/resourceId'
+      - $ref: '#/components/parameters/trait_acceptLanguage_header'
+      responses:
+        '200':
+          description: The request was successful. A list of user permissions for the resource is returned.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PermissionQueryDocument'
+              examples:
+                Permission list:
+                  value:
+                  - id: Z843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    name:
+                      en: Example name
+                      de: Beispielname
+                    description:
+                      en: Example permission description
+                      de: Beispiel Berechtigungsbeschreibung
+                    applicableResources:
+                    - SQ43dc9e-a3f6-4573-bb01-a8ae21d2d4ca
+                    - RE43dc9e-a3f6-4573-bb01-a8ae21d2d4g1
+                    code: read
+                    metadata:
+                      version: 1
+                      createdAt: '2022-01-04 10:44:51.871Z'
+                      modifiedAt: '2022-01-05 12:44:51.456Z'
+                Empty permission list:
+                  value: []
+        '400':
+          $ref: '#/components/responses/Bad_request_400'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+      security:
+      - OAuth2:
+        - iam.permission_read
+    servers:
+    - url: https://api.emporix.io
+  /iam/{tenant}/users/{userId}/scopes:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    - $ref: '#/components/parameters/userId'
+    get:
+      tags:
+      - Users
+      summary: Retrieving scopes of a specific user
+      description: Retrieves all scopes granted to a user specified by id. Those are calculated based on user group assignments. For each particular group all access controls are resolved to scopes based on defined role(s) and resource(s).
+      operationId: GET-iam-retrieve-user-scopes
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/userId'
+      responses:
+        '200':
+          description: The request was successful. A list of scopes is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserScopesResponse'
+              examples:
+                User scopes:
+                  value:
+                    userId: Z843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    scopes: iam.group_read iam.roles_read tenant=yourtenant
+                User has no scopes:
+                  value:
+                    userId: Z843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    scopes: tenant=yourtenant
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+      security:
+      - OAuth2:
+        - iam.scope_read
+    servers:
+    - url: https://api.emporix.io
+  /iam/{tenant}/users/me/access-controls:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    get:
+      tags:
+      - Users
+      summary: Retrieving all access controls assigned to a requested user
+      description: Retrieves all access controls assigned to a requested user. You can expand the result by resolving the role and resource references.
+      operationId: GET-iam-retrieve-user-access-controls
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/trait_paged_pageNumber'
+      - $ref: '#/components/parameters/trait_paged_pageSize'
+      - $ref: '#/components/parameters/X-Total-Count'
+      - $ref: '#/components/parameters/trait_expand_query_param'
+      - $ref: '#/components/parameters/trait_acceptLanguage_header'
+      responses:
+        '200':
+          description: The request was successful. A list of user access controls is returned.
+          headers:
+            X-Total-Count:
+              description: Total number of retrieved access controls.
+              schema:
+                type: integer
+                format: int32
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AccessControlQueryDocument'
+              examples:
+                Fully expanded access control list:
+                  $ref: '#/components/examples/fullyExpandedAccessControlList'
+                Access control list with role expand:
+                  $ref: '#/components/examples/fullyExpandedAccessControlListEn'
+                Access control list with resource expand:
+                  $ref: '#/components/examples/accessControlListWithResourceExpand'
+                Access control list:
+                  $ref: '#/components/examples/accessControlList'
+                Access control list empty:
+                  value: []
+        '400':
+          $ref: '#/components/responses/Bad_request_400'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '404':
+          description: Given resources cannot be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    resourceId: 084bcaf6-66b8-4ddd-9489-65c5f6449e94
+                    code: 404
+                    status: Not Found
+                    message: Error while getting user
+                    details:
+                    - User with id '084bcaf6-66b8-4ddd-9489-65c5f6449e94' not found
+      security:
+      - OAuth2: []
+    servers:
+    - url: https://api.emporix.io
+  /iam/{tenant}/users/me/scopes:
+    get:
+      tags:
+      - Users
+      summary: Retrieving scopes of a requested user
+      description: Retrieves all own scopes granted to the user sending the request. Those are calculated based on user group assignments. For each particular group all access controls are resolved to scopes based on defined role(s) and resource(s).
+      operationId: GET-iam-retrieve-own-user-scopes
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      responses:
+        '200':
+          description: The request was successful. A list of scopes is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserScopesResponse'
+              examples:
+                User scopes:
+                  value:
+                    userId: Z843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    scopes: iam.group_read iam.roles_read tenant=yourtenant
+                User has no scopes:
+                  value:
+                    userId: Z843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    scopes: tenant=yourtenant
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+      security:
+      - OAuth2: []
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    ErrorResponse:
+      required:
+      - code
+      - message
+      - status
+      type: object
+      properties:
+        resourceId:
+          type:
+          - string
+          - 'null'
+        code:
+          type: integer
+          format: int32
+        status:
+          type: string
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            type: string
+    RolesMetadata:
+      required:
+      - createdAt
+      - version
+      type: object
+      properties:
+        version:
+          type: integer
+          description: Role document version.
+          format: int32
+        createdAt:
+          type: string
+          description: Timestamp indicating when the role was created.
+          format: date-time
+        modifiedAt:
+          type: string
+          description: Timestamp indicating when the role was last modified.
+          format: date-time
+    PermissionsMetadataQueryDocument:
+      required:
+      - createdAt
+      - version
+      type: object
+      properties:
+        version:
+          type: integer
+          description: Permission document version.
+          format: int32
+        createdAt:
+          type: string
+          description: Timestamp indicating when the permission was created.
+          format: date-time
+        modifiedAt:
+          type: string
+          description: Timestamp indicating when the permission was last modified.
+          format: date-time
+      description: Permission metadata.
+    Restrictions:
+      type: array
+      items:
+        type: string
+        description: "Limits the visibility of the permission-aware entities for the user. \n\n**Purpose**: \nRestricts entity visibility based on scope permissions. Only users with matching restriction scopes can access entity with a specific restriction value.\n\n**Validation**: \nThe value must exist in the tenant's configured list of valid restrictions.\n**Site Synchronization**: \nWhen enabled via tenant configuration (`enableSyncBetweenRestrictionsAndSiteCodes` property), this field must match with the existing sites.\n"
+        example:
+        - DE
+        - FR
+    GroupsMetadataQueryDocument:
+      required:
+      - createdAt
+      - version
+      type: object
+      properties:
+        version:
+          type: integer
+          description: Group document version.
+          format: int32
+        createdAt:
+          type: string
+          description: Timestamp indicating when the group was created.
+          format: date-time
+        modifiedAt:
+          type: string
+          description: Timestamp indicating when the group was last modified.
+          format: date-time
+      description: Group metadata.
+    UserScopesResponse:
+      type: object
+      properties:
+        userId:
+          type: string
+          description: User unique identifier.
+        scopes:
+          type: string
+          description: User scopes.
+        vendorId:
+          type: string
+          description: An identifier of a vendor to whom the user belongs. Calculated based on groups assignment
+          readOnly: true
+      description: Definition of user scopes
+      example:
+        id: Z843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+        scopes: iam.group_read iam.roles_read
+    AccessControlMetadataQueryDocument:
+      required:
+      - createdAt
+      - version
+      type: object
+      properties:
+        version:
+          type: integer
+          description: Access control document version.
+          format: int32
+        createdAt:
+          type: string
+          description: Timestamp indicating when the access control was created.
+          format: date-time
+        modifiedAt:
+          type: string
+          description: Timestamp indicating when the access control was last modified.
+          format: date-time
+      description: Access control metadata.
+    ResourcesMetadataQueryDocument:
+      required:
+      - createdAt
+      - version
+      type: object
+      properties:
+        version:
+          type: integer
+          description: Resource document version.
+          format: int32
+        createdAt:
+          type: string
+          description: Timestamp indicating when the resource was created.
+          format: date-time
+        modifiedAt:
+          type: string
+          description: Timestamp indicating when the resource was last modified.
+          format: date-time
+      description: Resource metadata.
+    RolePermissionsDocument:
+      type: object
+      description: Role permissions list.
+      title: ''
+      properties:
+        applicablePermissionResources:
+          type: array
+          description: 'Allows you to allowlist resources that the permission is applicable to. Can only contain resources specified in the permission document under `applicableResources`.
+
+            '
+          items:
+            type: string
+        id:
+          type: string
+          description: Reference to the permission document with specific resources defined.
+      required:
+      - id
+    PermissionQueryDocument:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Permission unique identifier generated when the permission is created.
+        code:
+          type: string
+          description: Permission code identifier used for scopes mapping.
+        name:
+          type: object
+          additionalProperties:
+            type: string
+          description: Localized permission name in the form of a map of codes.
+        description:
+          type: object
+          additionalProperties:
+            type: string
+          description: Localized permission description in the form of a map of translations.
+        applicableResources:
+          type: array
+          description: Applicable domains list declared for this permission.
+          items:
+            type: string
+        metadata:
+          $ref: '#/components/schemas/PermissionsMetadataQueryDocument'
+      description: Definition of permissions
+    AccessControlQueryDocument:
+      type: object
+      description: Definition of access control
+      properties:
+        id:
+          type: string
+          description: Assignment unique identifier generated when the assignment is created.
+        roleId:
+          type: string
+          deprecated: true
+          description: Role unique identifier associated with this access control.
+        resourceId:
+          type: string
+          deprecated: true
+          description: Resource unique identifier associated with this access control.
+        domains:
+          type: array
+          description: Domain identifiers associated with this access control.
+          items:
+            type: string
+          example:
+          - example_domain
+        name:
+          type: object
+          additionalProperties:
+            type: string
+          description: Localized resource name in the form of a map of translations.
+        role:
+          $ref: '#/components/schemas/RoleQueryDocument'
+        resource:
+          $ref: '#/components/schemas/ResourceQueryDocument'
+        metadata:
+          $ref: '#/components/schemas/AccessControlMetadataQueryDocument'
+        scopes:
+          type: array
+          description: A list of resolved scopes for a particular access control.
+          items:
+            type: string
+        restrictionAware:
+          type: boolean
+          description: Determines whether this access control generates scopes with restriction suffixes when assigned to a group that has restrictions defined. When `true`, the generated scopes will include restrictions (e.g. order.`order_manage--DE`) based on the group's restrictions list. When `false`, scopes are generated without restriction suffixes regardless of the group's restrictions.
+        restrictedTo:
+          type: string
+          enum:
+          - CUSTOMER
+          - EMPLOYEE
+          description: 'Restricts the type of group this access control can be assigned to.
+
+            * `CUSTOMER` - the access control can be assigned only to groups of `CUSTOMER` user type.
+
+            * `EMPLOYEE` - the access control can be assigned only to groups of `EMPLOYEE` user type.
+
+
+            If this property is not present, the access control can be assigned to any group regardless of its user type.
+
+            '
+        predefined:
+          type: boolean
+          readOnly: true
+          description: Indicated whether this access control is predefined in the system or was created by a user.
+        vendorAware:
+          type: boolean
+          readOnly: true
+          description: Indicated whether this access control is associated with vendor scopes.
+    RoleQueryDocument:
+      type: object
+      description: Role definition associated with this access control.
+      example:
+        id: Z843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+        name:
+          en: Example name
+          de: Beispielname
+        description:
+          en: Example role description
+          de: Beispiel Berechtigungsbeschreibung
+        permissions:
+        - id: R143dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+          applicablePermissionResources:
+          - Z243dc9e-a3f6-4573-bb01-a8ae21d2d43g
+        - id: Z243dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+        metadata:
+          version: 1
+          createdAt: '2022-01-04 10:44:51.871Z'
+          modifiedAt: '2022-01-05 12:44:51.456Z'
+      properties:
+        id:
+          type: string
+          description: Role unique identifier generated when the role is created.
+        name:
+          type: object
+          additionalProperties:
+            type: string
+          description: Localized role name in the form of a map of translations.
+        description:
+          type: object
+          additionalProperties:
+            type: string
+          description: Localized role description in the form of a map of translations.
+        permissions:
+          type: array
+          description: Permissions unique identifier list declared for this role.
+          items:
+            $ref: '#/components/schemas/RolePermissionsDocument'
+        metadata:
+          $ref: '#/components/schemas/RolesMetadata'
+    GroupsQueryDocument:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Group unique identifier generated when the group is created.
+        name:
+          type: object
+          additionalProperties:
+            type: string
+          description: Localized group name in the form of a map of translations.
+        description:
+          type: object
+          additionalProperties:
+            type: string
+          description: Localized group description in the form of a map of translations.
+        vendorId:
+          type: string
+          description: An identifier of a vendor to whom the group belongs. Can only be set during creation and is immutable thereafter. A group with vendorId can only be assigned to users of type `EMPLOYEE`
+          readOnly: true
+        accessControls:
+          type: array
+          description: Access control unique identifiers associated with this group.
+          items:
+            type: string
+        templates:
+          type: array
+          description: Template unique identifiers associated with this group.
+          items:
+            type: string
+        code:
+          type: string
+        userType:
+          type: string
+          description: The group type determines if the group can consist of users of the `CUSTOMER` or the `EMPLOYEE` type.
+        b2b:
+          type: object
+          description: additional properties for B2B
+          properties:
+            legalEntityId:
+              type: string
+              description: identifier of the assigned legal entity
+        restrictions:
+          $ref: '#/components/schemas/Restrictions'
+        mixins:
+          type: object
+          additionalProperties:
+            type: string
+          description: Custom group attributes that need to be included directly in the `mixins` object.
+        metadata:
+          $ref: '#/components/schemas/GroupsMetadataQueryDocument'
+      description: Definition of groups
+    ResourceQueryDocument:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Resource unique identifier generated when the resource is created.
+        name:
+          type: object
+          additionalProperties:
+            type: string
+          description: Localized resource name in the form of a map of translations.
+        description:
+          type: object
+          additionalProperties:
+            type: string
+          description: Localized resource description in the form of a map of translations.
+        code:
+          type: string
+          description: Resource unique code identifier.
+        metadata:
+          $ref: '#/components/schemas/ResourcesMetadataQueryDocument'
+      description: Resource definition associated with this access control.
+  examples:
+    fullyExpandedAccessControlList:
+      value:
+      - id: I981dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+        roleId: Z843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+        resourceId: S843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+        domains:
+        - example_domain
+        name:
+          en: Example name
+          de: Beispielname
+        role:
+          id: Z843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+          name:
+            en: Example name
+            de: Beispielname
+          description:
+            en: Example role description
+            de: Beispiel Berechtigungsbeschreibung
+          permissions:
+          - id: F243dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+            applicablePermissionResources:
+            - Q1233dc9e-a3f6-4573-bb01-a8ae21d2d43g
+          - id: F343dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+          metadata:
+            version: 1
+            createdAt: '2022-01-04 10:44:51.871Z'
+            modifiedAt: '2022-01-05 12:44:51.456Z'
+        resource:
+          id: S843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+          name:
+            en: Example name
+            de: Beispielname
+          description:
+            en: Example resource description
+            de: Beispiel Domainbeschreibung 2
+          code: serviceName.resource
+          metadata:
+            version: 1
+            createdAt: '2022-01-04 10:44:51.871Z'
+            modifiedAt: '2022-01-05 12:44:51.456Z'
+        metadata:
+          version: 1
+          createdAt: '2019-08-24T14:15:22Z'
+          modifiedAt: '2019-08-24T14:15:22Z'
+      - id: PO43dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+        roleId: Rvsf43dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+        resourceId: L343dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+        domains:
+        - example_domain
+        name:
+          en: Example name 2
+          de: Beispielname 2
+        role:
+          id: Rvsf43dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+          name:
+            en: Example name 2
+            de: Beispielname 2
+          description:
+            en: Example role description 2
+            de: Beispiel Berechtigungsbeschreibung 2
+          permissions:
+          - id: M243dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+            applicablePermissionResources:
+            - N943dc9e-a3f6-4573-bb01-a8ae21d2d43g
+          - id: Z243dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+          metadata:
+            version: 1
+            createdAt: '2022-01-04 10:44:51.871Z'
+            modifiedAt: '2022-01-05 12:44:51.456Z'
+        resource:
+          id: L343dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+          name:
+            en: Example name 2
+            de: Beispielname 2
+          description:
+            en: Example resource description 2
+            de: Beispiel Domainbeschreibung 2
+          code: serviceName.resource
+          metadata:
+            version: 1
+            createdAt: '2022-01-04 10:44:51.871Z'
+            modifiedAt: '2022-01-05 12:44:51.456Z'
+        metadata:
+          version: 1
+          createdAt: '2019-08-24T14:15:22Z'
+          modifiedAt: '2019-08-24T14:15:22Z'
+    fullyExpandedAccessControlListEn:
+      value:
+      - id: I981dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+        roleId: Z843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+        resourceId: S843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+        domains:
+        - example_domain
+        name:
+          en: Example name
+        role:
+          id: Z843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+          name:
+            en: Example name
+          description:
+            en: Example role description
+          permissions:
+          - id: F243dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+            applicablePermissionResources:
+            - Q1233dc9e-a3f6-4573-bb01-a8ae21d2d43g
+          - id: F343dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+          metadata:
+            version: 1
+            createdAt: '2022-01-04 10:44:51.871Z'
+            modifiedAt: '2022-01-05 12:44:51.456Z'
+        resource:
+          id: S843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+          name:
+            en: Example name
+          description:
+            en: Example resource description
+          code: serviceName.resource
+          metadata:
+            version: 1
+            createdAt: '2022-01-04 10:44:51.871Z'
+            modifiedAt: '2022-01-05 12:44:51.456Z'
+        metadata:
+          version: 1
+          createdAt: '2019-08-24T14:15:22Z'
+          modifiedAt: '2019-08-24T14:15:22Z'
+      - id: PO43dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+        roleId: Rvsf43dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+        resourceId: L343dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+        domains:
+        - example_domain
+        name:
+          en: Example name 2
+        role:
+          id: Rvsf43dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+          name:
+            en: Example name 2
+          description:
+            en: Example role description 2
+          permissions:
+          - id: M243dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+            applicablePermissionResources:
+            - N943dc9e-a3f6-4573-bb01-a8ae21d2d43g
+          - id: Z243dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+          metadata:
+            version: 1
+            createdAt: '2022-01-04 10:44:51.871Z'
+            modifiedAt: '2022-01-05 12:44:51.456Z'
+        resource:
+          id: L343dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+          name:
+            en: Example name 2
+          description:
+            en: Example resource description 2
+          code: serviceName.resource
+          metadata:
+            version: 1
+            createdAt: '2022-01-04 10:44:51.871Z'
+            modifiedAt: '2022-01-05 12:44:51.456Z'
+        metadata:
+          version: 1
+          createdAt: '2019-08-24T14:15:22Z'
+          modifiedAt: '2019-08-24T14:15:22Z'
+    accessControlListWithResourceExpand:
+      value:
+      - id: I981dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+        roleId: Z843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+        resourceId: S843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+        domains:
+        - example_domain
+        name:
+          en: Example name
+          de: Beispielname
+        resource:
+          id: S843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+          name:
+            en: Example name
+            de: Beispielname
+          description:
+            en: Example resource description
+            de: Beispiel Domainbeschreibung 2
+          code: serviceName.resource
+          metadata:
+            version: 1
+            createdAt: '2022-01-04 10:44:51.871Z'
+            modifiedAt: '2022-01-05 12:44:51.456Z'
+        metadata:
+          version: 1
+          createdAt: '2019-08-24T14:15:22Z'
+          modifiedAt: '2019-08-24T14:15:22Z'
+      - id: PO43dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+        roleId: Rvsf43dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+        resourceId: L343dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+        domains:
+        - example_domain
+        name:
+          en: Example name 2
+          de: Beispielname 2
+        resource:
+          id: L343dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+          name:
+            en: Example name 2
+            de: Beispielname 2
+          description:
+            en: Example resource description 2
+            de: Beispiel Domainbeschreibung 2
+          code: serviceName.resource
+          metadata:
+            version: 1
+            createdAt: '2022-01-04 10:44:51.871Z'
+            modifiedAt: '2022-01-05 12:44:51.456Z'
+        metadata:
+          version: 1
+          createdAt: '2019-08-24T14:15:22Z'
+          modifiedAt: '2019-08-24T14:15:22Z'
+    accessControlList:
+      value:
+      - id: I981dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+        roleId: Z843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+        resourceId: S843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+        domains:
+        - example_domain
+        name:
+          en: Example name
+          de: Beispielname
+        metadata:
+          version: 1
+          createdAt: '2019-08-24T14:15:22Z'
+          modifiedAt: '2019-08-24T14:15:22Z'
+      - id: PO43dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+        roleId: Rvsf43dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+        resourceId: L343dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+        domains:
+        - example_domain
+        name:
+          en: Example name 2
+          de: Beispielname 2
+        metadata:
+          version: 1
+          createdAt: '2019-08-24T14:15:22Z'
+          modifiedAt: '2019-08-24T14:15:22Z'
+  parameters:
+    groupId:
+      name: groupId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Unique identifier of a group, generated when the group is created.
+    trait_paged_pageNumber:
+      name: pageNumber
+      in: query
+      description: 'Page number to be retrieved. The number of the first page is 1.
+
+        '
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    userId:
+      name: userId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: User unique identifier, generated when the user is created.
+    trait_expand_query_param:
+      name: expand
+      in: query
+      required: false
+      deprecated: true
+      schema:
+        type: string
+        example: role,resource
+        enum:
+        - role,resource
+        - resource,role
+        - role
+        - resource
+      description: 'Adds expanded resource and/or role objects to the response.
+
+
+        **Note**: This query parameter is deprecated.
+
+        '
+    tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: The tenant name should always be written in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+    trait_acceptLanguage_header:
+      name: Accept-Language
+      in: header
+      required: false
+      schema:
+        type: string
+      description: 'List of language codes acceptable for the response. You can specify factors that indicate which language should be retrieved if the one with a higher factor was not found in the localized fields. If the value is specified, then it must be present in the tenant configuration.
+
+        * If the header is set to a particular language or a list of languages, all localized fields are retrieved as strings.
+
+        * If the header is set to `*`, all localized fields are retrieved as maps of translations, where the keys are language codes and values are the fields in their respective languages.
+
+        * If the header is empty, localized fields are retrieved in the default language defined in the Configuration Service.
+
+        '
+    trait_paged_pageSize:
+      name: pageSize
+      in: query
+      description: 'Number of items to be retrieved per page.
+
+        '
+      schema:
+        default: 60
+        minimum: 1
+        type: integer
+    X-Total-Count:
+      name: X-Total-Count
+      in: header
+      required: false
+      schema:
+        type: boolean
+        example: true
+        default: false
+      description: 'Flag indicating whether the total number of retrieved items should be returned.
+
+        '
+    trait_sort:
+      name: sort
+      in: query
+      description: "List of properties used to sort the results, separated by colons. The order of properties indicates their priority in sorting.\n\nPossible values:\n* `{fieldName}`\n* `{fieldName}:asc`\n* `{fieldName}:desc`\n\n**Note:** If you want to sort the results by localized properties, the possible values are as follows:\n  * `{fieldName}.{language}`\n  * `{fieldName}.{language}:asc`\n  * `{fieldName}.{language}:desc`\n\nIf the sorting direction is not specified, the fields are sorted in ascending order."
+      schema:
+        type: string
+    resourceId:
+      name: resourceId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Unique identifier of a resource.
+  responses:
+    Bad_request_400:
+      description: Unsupported language provided.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              status:
+                type: string
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: string
+          examples:
+            Unsupported language:
+              value:
+                code: 400
+                status: Bad Request
+                message: Language header validation failed
+                details:
+                - 'Following languages are not supported: ''ru'''
+    Forbidden_403:
+      description: Scope validation failed, details will be provided in response message
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+              status:
+                type: string
+              details:
+                type: array
+                items:
+                  type: string
+          examples:
+            'Scope is missing ':
+              value:
+                code: 403
+                message: Scope validation failed
+                status: Forbidden
+                details:
+                - Missing required scopes '[scope_name]'
+    Unauthorized_401:
+      description: Given request is unauthorized - the authorization token is invalid or has expired. It usually means that tenant from the token does not match tenant from path.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid Access Token:
+              value:
+                fault:
+                  faultstring: Invalid Access Token
+                  detail:
+                    errorcode: keymanagement.service.invalid_access_token
+            Unauthorized:
+              value: {}
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            iam.access_read: ''
+            iam.access_manage: ''
+            iam.assignment_create_own: ''
+            iam.assignment_manage: ''
+            iam.assignment_delete_own: ''
+            iam.permission_read: ''
+            iam.permission_create: ''
+            iam.permission_update: ''
+            iam.permission_delete: ''
+            iam.role_read: ''
+            iam.role_create: ''
+            iam.role_update: ''
+            iam.role_delete: ''
+            iam.group_read: ''
+            iam.group_read_own: ''
+            iam.user_read: ''
+            iam.user_read_own: ''
+            iam.user_create: ''
+            iam.user_update: ''
+            iam.user_delete: ''
+            iam.scope_manage: ''
+            iam.scope_read: ''
+            iam.scope_read_own: ''
+            iam.resource_read: ''
+            iam.template_read: ''
+x-refined-from:
+- emporix-iam-openapi.yml
+- emporix-iam-openapi.yml

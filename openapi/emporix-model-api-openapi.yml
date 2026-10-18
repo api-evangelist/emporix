@@ -1,0 +1,210 @@
+openapi: 3.2.0
+info:
+  title: Emporix Model API
+  version: ''
+  contact:
+    name: Emporix
+    url: https://emporix.com
+    email: documentation@emporix.com
+  description: 'Operations tagged Model across 2 of this provider''s published API definitions: emporix-ai-service-openapi.yml, emporix-ai-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+tags:
+- name: Model
+  description: Read LLM models from supported providers
+paths:
+  /ai-service/{tenant}/agentic/models:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    get:
+      summary: Listing LLM models from supported providers
+      operationId: GET-ai-list-models
+      responses:
+        '200':
+          description: List of models grouped by LLM provider.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProviderModelsResponse'
+              examples:
+                Provider Models Response:
+                  $ref: '#/components/examples/ProviderModelsResponse'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_resp_common'
+      description: 'Retrieves available LLM models from supported LLM providers: OpenAI, Anthropic, and Google.'
+      security:
+      - OAuth2:
+        - ai.agent_read
+      tags:
+      - Model
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    ErrorMessage:
+      type: object
+      properties:
+        code:
+          type: integer
+        type:
+          type: string
+        message:
+          type: string
+        moreInfo:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              type:
+                type: string
+              message:
+                type: string
+              moreInfo:
+                type: string
+      description: ''
+    ModelResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Model identifier to use in agent LLM configuration.
+          example: gpt-4.1-mini
+        name:
+          type: string
+          description: Display name of the model.
+          example: gpt-4.1-mini
+        description:
+          type: string
+          description: Short description of the model. Available for some providers, such as Google.
+          example: Gemini 3.1 Flash Lite
+        thinking:
+          type: boolean
+          description: Indicates whether the model supports thinking capabilities.
+          example: true
+      required:
+      - id
+      - name
+    ApiKeyLlmProvider:
+      type: string
+      description: Type of the LLM Provider. The supported providers allows you to provide your own API key. When using this providers, the `apiKey` property cannot be omitted.
+      enum:
+      - openai
+      - google
+      - anthropic
+      example: openai
+    ErrorMessageFault:
+      type: object
+      properties:
+        fault:
+          type: object
+          properties:
+            faultstring:
+              type: string
+            detail:
+              type: object
+              properties:
+                errorcode:
+                  type: string
+    ProviderModelsResponse:
+      type: object
+      properties:
+        provider:
+          $ref: '#/components/schemas/ApiKeyLlmProvider'
+        models:
+          type: array
+          description: List of models available for the provider.
+          items:
+            $ref: '#/components/schemas/ModelResponse'
+      required:
+      - provider
+      - models
+  responses:
+    403_resp_common:
+      description: Authorization scopes of the access token are not sufficient and do not match the scopes required by the endpoint.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Access forbidden:
+              value:
+                code: 403
+                status: Forbidden
+                message: The access to the requested resource has been forbidden by the server.
+    401_resp_common:
+      description: The authorization token is invalid or has expired.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessageFault'
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            Access token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+  parameters:
+    path_tenant:
+      name: tenant
+      in: path
+      required: true
+      schema:
+        type: string
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: The tenant name should always be provided in lowercase.
+
+        '
+  examples:
+    ProviderModelsResponse:
+      value:
+      - provider: openai
+        models:
+        - id: gpt-4.1-mini
+          name: gpt-4.1-mini
+      - provider: anthropic
+        models:
+        - id: claude-opus-4-6
+          name: Claude Opus 4.6
+          thinking: true
+        - id: claude-haiku-3-5
+          name: Claude Haiku 3.5
+          thinking: false
+      - provider: google
+        models:
+        - id: gemini-3.1-flash-lite
+          name: Gemini 3.1 Flash Lite
+          description: Gemini 3.1 Flash Lite
+          thinking: true
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes:
+            ai.text_manage: Needed to execute actions related to the text generation.
+            ai.completion_manage: Needed to execute actions related to the AI completions.
+            ai.agentexecution_manage: Needed to execute agentic chat.
+            ai.agentexecution_manage_own: Needed to execute agentic chat by customers.
+            ai.agent_read: Needed to read AI agents.
+            ai.agent_manage: Needed to manage AI agents.
+          tokenUrl: https://api.emporix.io/oauth/token
+x-refined-from:
+- emporix-ai-service-openapi.yml
+- emporix-ai-service-openapi.yml

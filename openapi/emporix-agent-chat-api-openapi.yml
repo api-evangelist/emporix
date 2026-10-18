@@ -1,0 +1,572 @@
+openapi: 3.2.0
+info:
+  title: Emporix Agent Chat API
+  version: ''
+  contact:
+    name: Emporix
+    url: https://emporix.com
+    email: documentation@emporix.com
+  description: 'Operations tagged Agent Chat across 2 of this provider''s published API definitions: emporix-ai-service-openapi.yml, emporix-ai-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+tags:
+- name: Agent Chat
+  description: Chat With Agents
+paths:
+  /ai-service/{tenant}/agentic/chat:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    - $ref: '#/components/parameters/header_session-id'
+    post:
+      summary: Starting agent chat
+      operationId: POST-ai-agents-chat
+      responses:
+        '200':
+          description: Chat response.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChatResponse'
+              examples:
+                JobId:
+                  value:
+                  - agentId: complaint-agent
+                    agentType: complaint
+                    message: Found an order with its details.
+                    sessionId: fe91d168-4ce9-4b4d-8451-0029035b34a5
+        '400':
+          $ref: '#/components/responses/400_resp_common'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_resp_common'
+        '500':
+          $ref: '#/components/responses/500_resp_common'
+      description: 'Allows for communication with Emporix agents. Conversational continuity requires both the `session-id` header and `enabledMemory` set to `true` on the agent. Collaborations configured in `agentCollaborations` run in the same session.
+
+
+        When the request includes `attachments`, each `attachments[].attachmentId` must reference a file already uploaded in this session. Send the upload `sessionId` as the `session-id` header. The attachment must already be attached to the `agentId` in the request body. After a file upload, send that same path `agentId` in the chat body. After reuse, send the target agent''s path `agentId` in the chat body. If they differ, the request returns `400`. To use the file with a different agent, first assign the attachment to that agent with `attachmentId` on `POST /ai-service/{tenant}/agentic/{agentId}/attachments` using the target `agentId` in the path, then chat with that target agent.'
+      security:
+      - OAuth2:
+        - ai.agentexecution_manage_own
+        - ai.agentexecution_manage
+      requestBody:
+        $ref: '#/components/requestBodies/AgenticChat'
+      tags:
+      - Agent Chat
+    servers:
+    - url: https://api.emporix.io
+  /ai-service/{tenant}/agentic/chat-stream:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    - $ref: '#/components/parameters/header_session-id'
+    - schema:
+        type: string
+        example: text/event-stream
+      name: Accept
+      in: header
+      required: false
+      description: Use `text/event-stream` to receive the response as a Server-Sent Events stream.
+    post:
+      summary: Starting agent chat stream
+      operationId: POST-ai-agents-chat-stream
+      responses:
+        '200':
+          description: Chat response stream as Server-Sent Events. Each named event carries a JSON object in `data`. Concatenate `token` `content` values for the assistant reply. When `session_id` is present on the `done` event, send it as the `session-id` header on later calls.
+          content:
+            text/event-stream:
+              schema:
+                type: string
+                description: "Complete Server-Sent Events body. The HTTP entity is `event:` / `data:` text, not a JSON object.\n\nEach `data` line is a JSON object. The object shape depends on the event name and is documented by `ChatStreamEventData`:\n\n* `token` — `ChatStreamTokenData`\n* `thinking` — **The `thinking` event is in preview mode** - some of the features may not be fully operational yet.\n\n  `ChatStreamThinkingData`\n* `tool_start` and `tool_end` — `ChatStreamToolMetaData`\n* `tool_result` — `ChatStreamToolResultData`\n* `done` — `ChatStreamDoneData`\n* `error` — **The `error` event is in preview mode** - some of the features may not be fully operational yet.\n\n  `ChatStreamErrorData`"
+              examples:
+                TokenDeltasAndCompletion:
+                  summary: Incremental assistant text followed by session metadata
+                  value: 'event: token
+
+                    data: {"content":"Standard "}
+
+
+                    event: token
+
+                    data: {"content":"delivery is available for order EON1243."}
+
+
+                    event: done
+
+                    data: {"agent_id":"generic-agent","agent_type":"generic","session_id":"33a550d0-d812-4fb2-bb0d-d50dbfe3627b"}'
+                ToolActivity:
+                  summary: Tool start, result, and end around a token delta
+                  value: 'event: tool_start
+
+                    data: {"tool_name":"get-quotes","tool_call_id":"call-1"}
+
+
+                    event: tool_result
+
+                    data: {"tool_name":"get-quotes","tool_call_id":"call-1","output":{"quotes":[{"id":"Q1"}]}}
+
+
+                    event: tool_end
+
+                    data: {"tool_name":"get-quotes","tool_call_id":"call-1"}
+
+
+                    event: token
+
+                    data: {"content":"Quote Q1 is available."}
+
+
+                    event: done
+
+                    data: {"agent_id":"generic-agent","agent_type":"generic","session_id":"33a550d0-d812-4fb2-bb0d-d50dbfe3627b"}'
+                StreamError:
+                  summary: In-stream error before completion
+                  value: 'event: error
+
+                    data: {"code":"AGENT_SETUP","message":"Agent setup failed"}
+
+
+                    event: done
+
+                    data: {"session_id":"33a550d0-d812-4fb2-bb0d-d50dbfe3627b"}'
+        '400':
+          $ref: '#/components/responses/400_resp_common'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_resp_common'
+        '500':
+          $ref: '#/components/responses/500_resp_common'
+      description: 'Allows for communication with Emporix agents using a Server-Sent Events stream. Conversational continuity requires both the `session-id` header and `enabledMemory` set to `true` on the agent. Collaborations configured in `agentCollaborations` run in the same session.
+
+
+        When the request includes `attachments`, each `attachments[].attachmentId` must reference a file already uploaded in this session. Send the upload `sessionId` as the `session-id` header. The attachment must already be attached to the `agentId` in the request body. After a file upload, send that same path `agentId` in the chat body. After reuse, send the target agent''s path `agentId` in the chat body. If they differ, the request returns `400`. To use the file with a different agent, first assign the attachment to that agent with `attachmentId` on `POST /ai-service/{tenant}/agentic/{agentId}/attachments` using the target `agentId` in the path, then chat with that target agent.
+
+
+        The response `Content-Type` is `text/event-stream`. Each frame uses an SSE `event` name and a JSON object in `data`. Concatenate successive `token` `content` values to build the assistant reply. The `done` event carries session metadata, including `session_id` when present. Send that value as the `session-id` header on later chat and attachment calls. The `done` event does not repeat the full message.
+
+
+        Named events:
+
+
+        * `token` — Incremental text of the assistant reply. `data` is `{ "content": "..." }`.
+
+        * `thinking` — **The `thinking` event is in preview mode** - some of the features may not be fully operational yet.
+
+
+        Optional reasoning text. `data` is `{ "content": "..." }`. Do not treat this as part of the user-facing reply unless the client displays reasoning.
+
+        * `tool_start` — The agent started a tool. `data` is `{ "tool_name": "...", "tool_call_id": "..." }`.
+
+        * `tool_end` — The agent finished a tool. `data` uses the same fields as `tool_start`.
+
+        * `tool_result` — Tool output. `data` is `{ "tool_name": "...", "tool_call_id": "...", "output": {} }`. `output` is a JSON object or array. Credential-like keys in `output` are omitted.
+
+        * `done` — The stream completed. `data` includes `agent_id`, `agent_type`, and `session_id` when present. At least one of these fields is sent.
+
+        * `error` — **The `error` event is in preview mode** - some of the features may not be fully operational yet.
+
+
+        A failure during generation. `data` includes `message` and/or `code`. Example codes are `AGENT_SETUP` and `RECURSION_LIMIT`.
+
+
+        SSE `data` fields use snake_case (`session_id`, `agent_id`, `agent_type`). They are not the camelCase fields of the synchronous chat `ChatResponse` (`sessionId`, `agentId`, `agentType`).
+
+
+        HTTP `400`, `401`, `403`, and `500` responses are JSON problem bodies, not SSE events. They occur when the request is rejected before the stream starts. Unknown event names are not forwarded. Frames without an event name and with no data may appear as keepalives; ignore them.'
+      security:
+      - OAuth2:
+        - ai.agentexecution_manage_own
+        - ai.agentexecution_manage
+      requestBody:
+        $ref: '#/components/requestBodies/AgenticChat'
+      tags:
+      - Agent Chat
+    servers:
+    - url: https://api.emporix.io
+  /ai-service/{tenant}/agentic/chat-async:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    - $ref: '#/components/parameters/header_session-id'
+    post:
+      summary: Starting agent async chat
+      operationId: POST-ai-agents-chat-async
+      responses:
+        '201':
+          description: Job ID response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobIdResponse'
+              examples:
+                JobId:
+                  value:
+                    jobId: 68835cc3ef4e8e1425c360ad
+        '400':
+          $ref: '#/components/responses/400_resp_common'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_resp_common'
+        '500':
+          $ref: '#/components/responses/500_resp_common'
+      description: 'Allows for communication with Emporix agents in async way. Conversational continuity requires both the `session-id` header and `enabledMemory` set to `true` on the agent. Collaborations configured in `agentCollaborations` run in the same session.
+
+
+        When the request includes `attachments`, each `attachments[].attachmentId` must reference a file already uploaded in this session. Send the upload `sessionId` as the `session-id` header. The attachment must already be attached to the `agentId` in the request body. After a file upload, send that same path `agentId` in the chat body. After reuse, send the target agent''s path `agentId` in the chat body. If they differ, the request returns `400`. To use the file with a different agent, first assign the attachment to that agent with `attachmentId` on `POST /ai-service/{tenant}/agentic/{agentId}/attachments` using the target `agentId` in the path, then chat with that target agent.'
+      security:
+      - OAuth2:
+        - ai.agentexecution_manage_own
+        - ai.agentexecution_manage
+      requestBody:
+        $ref: '#/components/requestBodies/AgenticChat'
+      tags:
+      - Agent Chat
+    servers:
+    - url: https://api.emporix.io
+  /ai-service/{tenant}/agentic/{agentId}/attachments:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    - schema:
+        type: string
+      name: agentId
+      in: path
+      required: true
+      description: Unique identifier of the agent that receives the attachment. For a file upload, a later chat request must send this same value in the body `agentId` field. When you reuse an attachment, this path value is the target agent. The later chat request must send that target `agentId`.
+    - $ref: '#/components/parameters/header_session-id'
+    post:
+      summary: Uploading attachment
+      operationId: POST-ai-agents-upload-attachment
+      responses:
+        '201':
+          description: Attachment created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttachmentResponse'
+              examples:
+                AttachmentId:
+                  value:
+                    id: 68835cc3ef4e8e1425c360ad
+                    sessionId: 0499bef6-a4d2-45b9-86a0-2edf7d70d726
+        '200':
+          description: Existing media assigned to the agent. The body contains the attachment `id` and the `sessionId` to send on later chat requests.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttachmentResponse'
+              examples:
+                AttachmentId:
+                  value:
+                    id: 68835cc3ef4e8e1425c360ad
+                    sessionId: 0499bef6-a4d2-45b9-86a0-2edf7d70d726
+        '400':
+          $ref: '#/components/responses/400_resp_common'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_resp_common'
+        '500':
+          $ref: '#/components/responses/500_resp_common'
+      description: 'Uploads a new file and assigns it to the agent, or assigns an existing media asset to the agent.
+
+
+        Send exactly one of `attachment` or `attachmentId`. Sending both or neither returns `400`.
+
+
+        **Upload a file:** Send the `attachment` form field. The response is `201` with the new attachment `id` and `sessionId`. Supported file extensions:
+
+        - jpg
+
+        - jpeg
+
+        - png
+
+        - pdf
+
+        - csv
+
+        - text
+
+        - txt
+
+
+        **Assign existing media:** Send `attachmentId` and the target agent''s `agentId` in the path. Use either the `attachmentId` form field or an `application/json` body with `attachmentId`. The response is `200` with the attachment `id` and `sessionId`. If you omit the `session-id` header, the response includes the generated `sessionId`.
+
+
+        With the `ai.agentexecution_manage` scope, `attachmentId` can be any existing media asset. The asset does not have to belong to the session and does not have to already have references. AI Service adds an `AGENT` reference and attaches the file to the session in the response.
+
+
+        With only the `ai.agentexecution_manage_own` scope, the attachment must already belong to the `session-id` session.
+
+
+        **Chat with the attachment:** Call the Starting agent chat, Starting agent chat stream, or Starting agent async chat endpoint. Send the returned `sessionId` as the `session-id` header and the path `agentId` in the chat body. If the chat `agentId` is not the agent in this path, the API returns `400` with the message `Agent chat attachment with id={attachmentId} cannot be used to chat with agentId={agentId}`.'
+      security:
+      - OAuth2:
+        - ai.agentexecution_manage_own
+        - ai.agentexecution_manage
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              oneOf:
+              - type: object
+                required:
+                - attachment
+                additionalProperties: false
+                properties:
+                  attachment:
+                    type: string
+                    format: binary
+                    description: Content of the file. Use this field to upload a new file.
+              - type: object
+                required:
+                - attachmentId
+                additionalProperties: false
+                properties:
+                  attachmentId:
+                    type: string
+                    description: Identifier of an existing media asset. With `ai.agentexecution_manage`, any media id can be assigned to the path agent. With only `ai.agentexecution_manage_own`, the attachment must already belong to the session.
+          application/json:
+            schema:
+              type: object
+              required:
+              - attachmentId
+              additionalProperties: false
+              properties:
+                attachmentId:
+                  type: string
+                  description: Identifier of an existing media asset. With `ai.agentexecution_manage`, any media id can be assigned to the path agent. With only `ai.agentexecution_manage_own`, the attachment must already belong to the session.
+      tags:
+      - Agent Chat
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    AttachmentResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the created attachment.
+        sessionId:
+          type: string
+          description: Unique identifier of the session the attachment is on. Send this value as the `session-id` header on later chat requests. If the assign request omits `session-id`, this value is the generated session.
+    ErrorMessage:
+      type: object
+      properties:
+        code:
+          type: integer
+        type:
+          type: string
+        message:
+          type: string
+        moreInfo:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              type:
+                type: string
+              message:
+                type: string
+              moreInfo:
+                type: string
+      description: ''
+    ErrorMessageFault:
+      type: object
+      properties:
+        fault:
+          type: object
+          properties:
+            faultstring:
+              type: string
+            detail:
+              type: object
+              properties:
+                errorcode:
+                  type: string
+    AgentType:
+      type: string
+      description: Type of the agent handling the request.
+      enum:
+      - generic
+      - complaint
+      - anti_fraud
+    ChatResponse:
+      type: object
+      properties:
+        agentId:
+          type: string
+          description: Unique identifier of the agent.
+        agentType:
+          $ref: '#/components/schemas/AgentType'
+        sessionId:
+          type: string
+          description: Unique identifier of the session. Send this value back as the `session-id` header on later chat and attachment calls.
+        message:
+          type: string
+          description: Agent message.
+    JobIdResponse:
+      type: object
+      properties:
+        jobId:
+          type: string
+          description: Identifier of the job.
+    AgenticRequest:
+      type: object
+      properties:
+        agentId:
+          type: string
+          description: Unique identifier of the agent.
+        message:
+          type: string
+          description: The user message to the agent.
+        attachments:
+          type: array
+          items:
+            type: object
+            properties:
+              attachmentId:
+                type: string
+                description: Identifier returned by the upload. Required for each attached file. The attachment must belong to the current session and be attached to this request's `agentId`.
+              caption:
+                type: string
+                description: Caption of the attachment.
+              purpose:
+                type: string
+                description: Purpose of the attachment.
+            required:
+            - attachmentId
+      required:
+      - agentId
+      - message
+  parameters:
+    header_session-id:
+      name: session-id
+      in: header
+      required: false
+      schema:
+        type: string
+        format: uuid
+      description: 'Optional UUID of the AI Service chat session. If omitted, the system generates one.
+
+
+        Reuse the same value on later chat and attachment calls to continue the same session, access attachments from that session, and keep conversational memory when `enabledMemory` is `true` on the agent. A new value starts a new session.
+
+
+        On [Starting agent chat](https://developer.emporix.io/api-documentation/api-guides/artificial-intelligence/ai-service/api-reference/agent-chat#post-ai-service-tenant-agentic-chat), the value is `sessionId` in the JSON response. On [Starting agent chat stream](https://developer.emporix.io/api-documentation/api-guides/artificial-intelligence/ai-service/api-reference/agent-chat#post-ai-service-tenant-agentic-chat-stream), the value is `session_id` in the SSE `done` event. When a chat request includes `attachments`, send the same value returned as `sessionId` from the upload or from assigning existing media. Do not send `sessionId` in the request body. Omitting `session-id` when you assign media starts a new session and returns that `sessionId`.
+
+        '
+    path_tenant:
+      name: tenant
+      in: path
+      required: true
+      schema:
+        type: string
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: The tenant name should always be provided in lowercase.
+
+        '
+  responses:
+    403_resp_common:
+      description: Authorization scopes of the access token are not sufficient and do not match the scopes required by the endpoint.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Access forbidden:
+              value:
+                code: 403
+                status: Forbidden
+                message: The access to the requested resource has been forbidden by the server.
+    401_resp_common:
+      description: The authorization token is invalid or has expired.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessageFault'
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            Access token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+    400_resp_common:
+      description: The request was syntactically incorrect.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Code must not be null:
+              value:
+                code: 400
+                status: Bad Request
+                message: Validation problem with request body.
+                details:
+                - message: code must not be null nor blank
+    500_resp_common:
+      description: A server-side error occurred.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Internal Server Error:
+              value:
+                code: 500
+                status: Internal Server Error
+                message: Problem encountered while trying to connect to the database.
+  requestBodies:
+    AgenticChat:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AgenticRequest'
+          examples:
+            Agentic Chat request:
+              value:
+                agentId: complaint-agent
+                message: Find a product with "EON1243" code
+            Agentic Chat with attachment:
+              value:
+                agentId: order-assistant-agent
+                message: Find products or equivalents from the attached order request and create an order for the customer
+                attachments:
+                - attachmentId: 6a1d5961a8c0af22364a2c54
+                  caption: Order Request
+                  purpose: Serves as a basis to create an order with the data, customer, and products mentioned in the file.
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes:
+            ai.text_manage: Needed to execute actions related to the text generation.
+            ai.completion_manage: Needed to execute actions related to the AI completions.
+            ai.agentexecution_manage: Needed to execute agentic chat.
+            ai.agentexecution_manage_own: Needed to execute agentic chat by customers.
+            ai.agent_read: Needed to read AI agents.
+            ai.agent_manage: Needed to manage AI agents.
+          tokenUrl: https://api.emporix.io/oauth/token
+x-refined-from:
+- emporix-ai-service-openapi.yml
+- emporix-ai-service-openapi.yml

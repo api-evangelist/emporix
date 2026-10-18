@@ -1,0 +1,300 @@
+openapi: 3.2.0
+info:
+  title: Emporix Schedules API
+  version: ''
+  contact:
+    name: Emporix
+    url: https://emporix.com
+    email: documentation@emporix.com
+  description: 'Operations tagged Schedules across 2 of this provider''s published API definitions: emporix-import-service-openapi.yml, emporix-import-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2:
+  - importtool.import_trigger
+tags:
+- name: Schedules
+  description: Read and set a configuration's run schedule.
+paths:
+  /importtool/{tenant}/configs/{configId}/schedule:
+    parameters:
+    - $ref: '#/components/parameters/trait_tenant'
+    - $ref: '#/components/parameters/trait_configId'
+    get:
+      summary: Retrieving a schedule
+      description: Retrieves the cron schedule for a configuration.
+      operationId: GET-importtool-get-schedule
+      tags:
+      - Schedules
+      security:
+      - OAuth2:
+        - importtool.import_trigger
+      responses:
+        '200':
+          description: The request was successful. The schedule is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Schedule'
+              examples:
+                Schedule response:
+                  $ref: '#/components/examples/Schedule_Example'
+        '204':
+          description: No schedule is configured for the configuration.
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+    put:
+      summary: Scheduling an import job
+      description: Creates or updates the cron schedule (cron expression, time zone, and enabled flag) that runs a configuration automatically.
+      operationId: PUT-importtool-schedule-job
+      tags:
+      - Schedules
+      security:
+      - OAuth2:
+        - importtool.import_trigger
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Schedule'
+            examples:
+              Every day at 02:00 Berlin time:
+                value:
+                  cron: 0 0 2 * * *
+                  timezone: Europe/Berlin
+                  enabled: true
+      responses:
+        '200':
+          description: The request was successful. The schedule has been saved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Schedule'
+              examples:
+                Schedule response:
+                  $ref: '#/components/examples/Schedule_Example'
+        '400':
+          description: The `cron` expression or `timezone` value is invalid. The service expects a six-field cron expression (`second minute hour day-of-month month day-of-week`). A five-field expression such as `0 * * * *` is rejected. The service does not store it.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '404':
+          $ref: '#/components/responses/NotFound_404'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+    delete:
+      summary: Removing a schedule
+      description: 'Removes the schedule. The configuration then runs only when it is triggered.
+
+
+        The request is idempotent. Removing a schedule that does not exist also returns `204`.
+
+        Unlike creating a schedule, this request does not require the configuration to exist.
+
+        Use it to remove a schedule that remains after the configuration is deleted.'
+      operationId: deleteSchedule
+      tags:
+      - Schedules
+      security:
+      - OAuth2:
+        - importtool.import_trigger
+      responses:
+        '204':
+          description: The schedule has been removed. The configuration now runs only when triggered.
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+    servers:
+    - url: https://api.emporix.io
+components:
+  responses:
+    Unauthorized_401:
+      description: Given request is unauthorized - the authorization token is invalid or has expired. Details will be provided in the response payload.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            Access token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+    Forbidden_403:
+      description: Given authorization scopes are not sufficient and do not match scopes required by the endpoint.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Access to resource is forbidden:
+              $ref: '#/components/examples/Forbidden403_Example'
+    NotFound_404:
+      description: The requested resource does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Resource not found:
+              $ref: '#/components/examples/NotFound404_Example'
+    InternalServiceError_500:
+      description: Internal Service Error occurred.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Internal service error:
+              $ref: '#/components/examples/InternalServiceError500_Example'
+  schemas:
+    errorMessage:
+      title: Error
+      description: Schema for specific API errors.
+      type: object
+      properties:
+        code:
+          type: integer
+          description: HTTP status code.
+          minimum: 100
+          maximum: 599
+        status:
+          description: HTTP status.
+          type: string
+        message:
+          description: Descriptive error message for debugging.
+          type: string
+        details:
+          description: List of problems causing this error.
+          type: array
+          items:
+            title: Error Detail
+            description: Error details.
+            type: string
+      required:
+      - status
+      - code
+      - message
+    Schedule:
+      title: Schedule
+      type: object
+      description: A cron schedule for a configuration.
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The schedule identifier.
+          example: a3bb189e-8bf9-3888-9912-ace4e6543002
+        configId:
+          type: string
+          format: uuid
+          description: The scheduled configuration.
+          example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+        cron:
+          type: string
+          description: A Spring cron expression with six fields.
+          example: 0 0 2 * * *
+        timezone:
+          type: string
+          description: The IANA time zone the cron is evaluated in.
+          example: Europe/Berlin
+        enabled:
+          type: boolean
+          description: Whether the schedule is active.
+          example: true
+        nextFireAt:
+          type: string
+          format: date-time
+          description: The next fire time.
+          example: '2026-07-28T00:00:00.000Z'
+      required:
+      - cron
+  examples:
+    NotFound404_Example:
+      value:
+        status: element_resource_non_existing
+        code: 404
+        message: The requested resource does not exist.
+    Forbidden403_Example:
+      value:
+        status: forbidden
+        code: 403
+        message: The access to the requested resource has been forbidden.
+        details:
+        - Missing required scopes
+    Schedule_Example:
+      value:
+        id: a3bb189e-8bf9-3888-9912-ace4e6543002
+        configId: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+        cron: 0 0 2 * * *
+        timezone: Europe/Berlin
+        enabled: true
+        nextFireAt: '2026-07-28T00:00:00.000Z'
+    InternalServiceError500_Example:
+      value:
+        status: internal_service_error
+        code: 500
+        message: A server-side exception occurred that prevented the system from correctly returning the result.
+        details:
+        - https://pattern.yaas.io/errortypes.html
+  parameters:
+    trait_configId:
+      name: configId
+      in: path
+      required: true
+      description: The configuration identifier.
+      schema:
+        type: string
+        format: uuid
+        example: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+    trait_tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'The tenant you want to access.
+
+        '
+      schema:
+        type: string
+        example: mytenant
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            importtool.import_trigger: Needed to trigger, schedule, monitor, and cancel import runs and to read configurations, streams, schedules, runs, and imported data.
+x-refined-from:
+- emporix-import-service-openapi.yml
+- emporix-import-service-openapi.yml

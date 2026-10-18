@@ -1,0 +1,16 @@
+overlay: 1.0.0
+info:
+  title: Emporix Fee Service overlay
+  version: 1.0.0
+  x-generated: '2026-10-18'
+  x-method: generated
+  x-source: mcp/emporix-tool-crosswalk.yml
+extends: ../openapi/_original/emporix-fee-openapi.yml
+actions:
+- target: $.info
+  update:
+    x-provider: Emporix
+    x-documentation: https://developer.emporix.io/api-references
+    x-llms-txt: https://developer.emporix.io/llms.txt
+    x-docs-mcp: https://developer.emporix.io/~gitbook/mcp
+  description: Provider metadata and agent-facing entry points.

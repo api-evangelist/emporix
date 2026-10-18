@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-redemption-schema.json",
+  "title": "Coupon Redemption",
+  "description": "Defines a coupon redemption response.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-coupon-openapi.yml#/components/schemas/redemption",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "#/$defs/redemption-creation"
+    }
+  ],
+  "properties": {
+    "id": {
+      "description": "Unique identifier of the redemption.",
+      "type": "string"
+    },
+    "redeemedAt": {
+      "description": "Timestamp of the redemption.",
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "$defs": {
+    "currency-amount": {
+      "type": "object",
+      "title": "Money amount",
+      "description": "Defines an amount in a specific currency.",
+      "properties": {
+        "amount": {
+          "type": "number",
+          "default": 0,
+          "minimum": 0,
+          "description": "Total amount in the specified currency."
+        },
+        "currency": {
+          "type": "string",
+          "default": "USD",
+          "pattern": "^[A-Z]{3}$",
+          "description": "ISO 4217 currency code, e.g.: USD, EUR, CHF."
+        }
+      }
+    },
+    "redemption-creation": {
+      "type": "object",
+      "title": "Coupon Redemption Request",
+      "description": "Defines a coupon redemption request payload that affects a coupon instance.",
+      "properties": {
+        "orderCode": {
+          "description": "Code of the associated order.",
+          "type": "string"
+        },
+        "customerNumber": {
+          "type": "string",
+          "description": "The customer Id of the user, e.g. C0123456789. Can be specified only if coupon.coupon_redeem_on_behalf scope is present."
+        },
+        "legalEntityId": {
+          "type": "string",
+          "description": "The id of the legal entity to which customer is assigned. When customer is assigned to many legal entities then he can redeem the same coupon separately for each legal entity."
+        },
+        "orderTotal": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/currency-amount"
+            },
+            {
+              "description": "The amount of the purchase."
+            }
+          ]
+        },
+        "discount": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/currency-amount"
+            },
+            {
+              "description": "The absolute amount of the granted discount."
+            }
+          ]
+        }
+      },
+      "required": [
+        "orderTotal",
+        "discount"
+      ]
+    }
+  }
+}

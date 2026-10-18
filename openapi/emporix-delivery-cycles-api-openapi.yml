@@ -1,0 +1,212 @@
+openapi: 3.2.0
+info:
+  title: Emporix Delivery Cycles API
+  version: ''
+  contact:
+    name: Emporix
+    url: https://emporix.com
+    email: documentation@emporix.com
+  description: 'Operations tagged Delivery Cycles across 2 of this provider''s published API definitions: emporix-shipping-openapi.yml, emporix-shipping-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- oAuth2: []
+tags:
+- name: Delivery Cycles
+  description: Generate delivery cycles
+paths:
+  /shipping/{tenant}/delivery-cycles/generate:
+    parameters:
+    - schema:
+        type: string
+      name: tenant
+      in: path
+      required: true
+    post:
+      summary: Generating a delivery cycle
+      tags:
+      - Delivery Cycles
+      responses:
+        '201':
+          description: CREATED
+          content:
+            application/json:
+              schema:
+                type: string
+        '401':
+          $ref: '#/components/responses/unauthorized_401'
+        '403':
+          $ref: '#/components/responses/yaasAware_403'
+        '404':
+          $ref: '#/components/responses/notFound_404'
+        '500':
+          $ref: '#/components/responses/internalError_500'
+      operationId: POST-shipping-generate-delivery-cycle
+      description: Generates a delivery cycle.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeliveryCycle'
+            examples:
+              Sample request payload:
+                value:
+                  deliveryTimeId: 64a80cf4c123c90e6c263789
+                  slotId: bdf61ee4-25f4-48af-94c3-ccea8612aefa
+                  deliveryDate: '2020-12-08T12:00:00.000Z'
+    servers:
+    - url: https://api.emporix.io
+components:
+  responses:
+    unauthorized_401:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+    yaasAware_403:
+      description: 'Given authorization scopes are not sufficient and do not match required scopes.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Forbidden:
+              value:
+                status: 403
+                message: User not authorized.
+                type: Forbidden
+                details:
+                - Missing required scopes
+    internalError_500:
+      description: 'Some server side error occurred.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Internal Server Error:
+              value:
+                status: 500
+                message: Something went wrong while processing the request. Please contact the administrator.
+                errorCode: ENTITY-500001
+                moreInfo: ''
+                type: internal_service_error
+    notFound_404:
+      description: 'The requested resource does not exist.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Not Found:
+              value:
+                status: 404
+                message: The requested URI does not map to a single element resource.
+                errorCode: ENTITY-GET-404001
+                moreInfo: ''
+                type: element_resource_non_existing
+  schemas:
+    DeliveryCycle:
+      title: Delivery Cycle
+      type: object
+      description: Object which encapsulates all the fields needed to generate delivery cycle.
+      properties:
+        deliveryTimeId:
+          type: string
+          description: A unique identifier for the overall delivery time period or range.
+        slotId:
+          type: string
+          description: A unique identifier that represents a specific delivery slot within the delivery time.
+        deliveryDate:
+          type: string
+          description: The selected delivery date.
+      required:
+      - deliveryTimeId
+      - slotId
+      - deliveryDate
+    errorMessage:
+      title: error
+      description: Schema for API specified errors.
+      type: object
+      properties:
+        status:
+          minimum: 100
+          maximum: 599
+          description: original HTTP error code, should be consistent with the response HTTP code
+          type: integer
+        type:
+          pattern: '[a-z]+[a-z_]*[a-z]+'
+          description: classification of the error type, lower case with underscore eg validation_failure
+          type: string
+        message:
+          description: descriptive error message for debugging
+          type: string
+        moreInfo:
+          type: string
+          description: link to documentation to investigate further and finding support
+        errorCode:
+          type: string
+          description: The error code which specify the problem
+        details:
+          description: list of problems causing this error
+          type: array
+          items:
+            title: errorDetail
+            description: schema for specific error cause
+            anyOf:
+            - type: string
+            - type: object
+              properties:
+                field:
+                  description: a bean notation expression specifying the element in request data causing the error, eg shipTo[0].country, this can be empty if violation was not field specific
+                  type: string
+                type:
+                  pattern: '[a-z]+[a-z_]*[a-z]+'
+                  description: classification of the error detail type, lower case with underscore eg missing_value, this value must be always interpreted in context of the general error type.
+                  type: string
+                message:
+                  description: descriptive error detail message for debugging
+                  type: string
+                moreInfo:
+                  type: string
+                  description: link to documentation to investigate further and finding support for error detail
+      required:
+      - status
+      - type
+  securitySchemes:
+    oAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            shipping.shipping_manage: Needed to manage shipping settings.
+            shipping.shipping_read: Needed to read shipping settings.
+x-refined-from:
+- emporix-shipping-openapi.yml
+- emporix-shipping-openapi.yml

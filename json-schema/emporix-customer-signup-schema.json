@@ -1,0 +1,240 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-customer-signup-schema.json",
+  "title": "CustomerSignup",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-customer-management-openapi.yml#/components/schemas/CustomerSignup",
+  "type": "object",
+  "properties": {
+    "email": {
+      "minLength": 1,
+      "type": "string",
+      "description": "Customer email address."
+    },
+    "password": {
+      "minLength": 1,
+      "type": "string",
+      "description": "Customer account password."
+    },
+    "customerDetails": {
+      "$ref": "#/$defs/CustomerUpdateDto",
+      "description": "If customer details are provided, the `contactEmail` value has to be the same as in the `email` property of the contact."
+    },
+    "customerAddress": {
+      "$ref": "#/$defs/Address"
+    },
+    "signup": {
+      "$ref": "#/$defs/PasswordAuthentication",
+      "description": "Customer email and password used for separate login credentials to the frontend. Use these if you want to log in with a different email than the main contact email."
+    }
+  },
+  "required": [
+    "email",
+    "password"
+  ],
+  "$defs": {
+    "Address": {
+      "type": "object",
+      "description": "Customer address information.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Customer address' unique identifier generated when the address is added to the customer account."
+        },
+        "contactName": {
+          "type": "string"
+        },
+        "companyName": {
+          "type": "string"
+        },
+        "street": {
+          "type": "string"
+        },
+        "streetNumber": {
+          "type": "string"
+        },
+        "streetAppendix": {
+          "type": "string"
+        },
+        "extraLine1": {
+          "type": "string"
+        },
+        "extraLine2": {
+          "type": "string"
+        },
+        "extraLine3": {
+          "type": "string"
+        },
+        "extraLine4": {
+          "type": "string"
+        },
+        "zipCode": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string",
+          "maxLength": 2,
+          "minLength": 2
+        },
+        "state": {
+          "type": "string"
+        },
+        "contactPhone": {
+          "type": "string"
+        },
+        "isDefault": {
+          "type": "boolean",
+          "default": false,
+          "description": "Flag indicating whether the address is the customer default address."
+        },
+        "tags": {
+          "type": "array",
+          "description": "",
+          "items": {
+            "type": "string"
+          }
+        },
+        "metadata": {
+          "$ref": "#/$defs/DefaultDtoMetadata"
+        },
+        "mixins": {
+          "type": "object",
+          "description": "Customer address' additional properties.",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "contactName"
+      ]
+    },
+    "B2BCreate": {
+      "type": "object",
+      "description": "Additional properties for B2B customer. If the `companyRegistrationId` property is provided, an additional validation for customer details executes - `firstName`, `lastName` and `company` values have to be provided.",
+      "properties": {
+        "companyRegistrationId": {
+          "type": "string",
+          "description": "Registration number of the company."
+        }
+      }
+    },
+    "BasicMetadataDto": {
+      "title": "DefaultDtoMetadata",
+      "type": "object",
+      "properties": {
+        "mixins": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "description": "Links to mixin schemas."
+    },
+    "CustomerCommonDto": {
+      "title": "CustomerCommonDto",
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "middleName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "contactPhone": {
+          "type": "string"
+        },
+        "company": {
+          "type": "string"
+        },
+        "preferredLanguage": {
+          "type": "string",
+          "default": "en_US",
+          "description": "Customer preferred language."
+        },
+        "preferredCurrency": {
+          "type": "string",
+          "default": "USD",
+          "description": "Customer's preferred currency, compliant with the ISO 4217 standard.",
+          "minLength": 3,
+          "maxLength": 3
+        },
+        "preferredSite": {
+          "type": "string",
+          "default": "main",
+          "description": "Customer preferred site."
+        },
+        "b2b": {
+          "$ref": "#/$defs/B2BCreate"
+        },
+        "metadata": {
+          "$ref": "#/$defs/DefaultDtoMetadata"
+        },
+        "mixins": {
+          "type": "object",
+          "description": "Customer account additional properties.",
+          "additionalProperties": true
+        }
+      }
+    },
+    "CustomerUpdateDto": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/CustomerCommonDto"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "contactEmail": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "DefaultDtoMetadata": {
+      "title": "DefaultDtoMetadata",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasicMetadataDto"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "integer"
+            }
+          }
+        }
+      ]
+    },
+    "PasswordAuthentication": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "minLength": 1,
+          "type": "string",
+          "description": "Customer email address."
+        },
+        "password": {
+          "minLength": 6,
+          "type": "string",
+          "description": "Customer account password."
+        }
+      },
+      "required": [
+        "email",
+        "password"
+      ]
+    }
+  }
+}

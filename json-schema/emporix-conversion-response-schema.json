@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-conversion-response-schema.json",
+  "title": "ConversionResponse",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-unit-handling-service-openapi.yml#/components/schemas/ConversionResponse",
+  "type": "object",
+  "properties": {
+    "commandUuid": {
+      "type": "string"
+    },
+    "input": {
+      "$ref": "#/$defs/ConversionInput"
+    },
+    "output": {
+      "$ref": "#/$defs/ConversionOutput"
+    }
+  },
+  "$defs": {
+    "ConversionInput": {
+      "description": "The input payload for conversion. Contains the source unit code, target unit code, and optionally the source unit amount to convert.",
+      "type": "object",
+      "properties": {
+        "sourceUnitAmount": {
+          "type": "number",
+          "description": "The source unit quantity."
+        },
+        "sourceUnit": {
+          "type": "string",
+          "description": "The source unit code."
+        },
+        "targetUnit": {
+          "type": "string",
+          "description": "The target unit code."
+        }
+      },
+      "required": [
+        "sourceUnit",
+        "targetUnit"
+      ]
+    },
+    "ConversionOutput": {
+      "description": "Output payload. Contains the computed result of a conversion factor - conversionFactor (number) and unit conversion - targetUnitAmount (number) and targetUnit (string).",
+      "properties": {
+        "targetUnitAmount": {
+          "type": "number",
+          "description": "The amount in the target unit after conversion from the source unit."
+        },
+        "targetUnit": {
+          "type": "string",
+          "description": "The target unit."
+        }
+      }
+    }
+  }
+}

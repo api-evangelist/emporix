@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-base-unit-schema.json",
+  "title": "BaseUnit",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-unit-handling-service-openapi.yml#/components/schemas/BaseUnit",
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string",
+      "description": "The unit code."
+    },
+    "name": {
+      "description": "The name of the unit in the form of a map (language, value) or string.",
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "type": {
+      "type": "string",
+      "description": "The type of a unit."
+    },
+    "symbol": {
+      "type": "string",
+      "description": "The symbol of a unit."
+    },
+    "baseUnit": {
+      "type": "boolean",
+      "description": "The base unit flag."
+    },
+    "factor": {
+      "type": "number",
+      "description": "The conversion factor. The factor value must be greater than zero."
+    }
+  },
+  "required": [
+    "code",
+    "name",
+    "type",
+    "baseUnit",
+    "factor"
+  ]
+}

@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-changelog-history-response-schema.json",
+  "title": "ChangelogHistoryResponse",
+  "description": "Paginated tenant changelog history.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-audit-logs-changelog-openapi.yml#/components/schemas/ChangelogHistoryResponse",
+  "type": "object",
+  "properties": {
+    "items": {
+      "type": "array",
+      "description": "List of changed entries for the requested page.",
+      "items": {
+        "$ref": "#/$defs/ChangelogChangeItem"
+      }
+    },
+    "page": {
+      "type": "integer",
+      "description": "Current page number. The number of the first page is 1."
+    },
+    "size": {
+      "type": "integer",
+      "description": "Number of items requested per page."
+    },
+    "totalElements": {
+      "type": "integer",
+      "format": "int64",
+      "description": "Total number of changed entries matching the query."
+    },
+    "totalPages": {
+      "type": "integer",
+      "description": "Total number of pages for the matching result set."
+    }
+  },
+  "required": [
+    "items",
+    "page",
+    "size",
+    "totalElements",
+    "totalPages"
+  ],
+  "$defs": {
+    "ChangelogChangeItem": {
+      "type": "object",
+      "description": "A single changelog entry describing a change to a platform entity.",
+      "properties": {
+        "at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 UTC timestamp with milliseconds when the change occurred, for example `2026-06-01T13:01:29.123Z`.\n"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "create",
+            "update",
+            "delete"
+          ],
+          "description": "Change type returned by the API.\n* `create` — Document insert.\n* `update` — Document update or replace.\n* `delete` — Document delete.\n"
+        },
+        "entity": {
+          "type": "string",
+          "description": "Logical entity type of the changed document, for example `order`, `customer`, `company`, `product`, `segment`, `group`, `group-assignment`, `coupon`, `quote`, `site`, or a custom entity created with the Schema Service.\n"
+        },
+        "entityId": {
+          "type": "string",
+          "description": "Unique identifier of the changed document."
+        },
+        "name": {
+          "type": "string",
+          "description": "Optional display name of the changed document when available."
+        },
+        "paths": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/PathValueChange"
+          },
+          "description": "Flattened map of changed field paths to before/after values derived from the change patch.\n"
+        },
+        "schemaVersion": {
+          "type": "string",
+          "description": "Optional schema or document format version associated with the change."
+        },
+        "actor": {
+          "type": "string",
+          "description": "Actor display name that performed the change. Possible values include a person name, `system`, `external`, or `unknown`.\n"
+        },
+        "related": {
+          "type": "array",
+          "description": "Related entities linked to the changed document, for example junction-style references.",
+          "items": {
+            "$ref": "#/$defs/ChangelogRelatedItem"
+          }
+        }
+      }
+    },
+    "ChangelogRelatedItem": {
+      "type": "object",
+      "description": "A related entity referenced by a changelog entry.",
+      "properties": {
+        "entity": {
+          "type": "string",
+          "description": "Related entity type, for example `group` or `customer`."
+        },
+        "entityId": {
+          "type": "string",
+          "description": "Unique identifier of the related entity."
+        }
+      }
+    },
+    "PathValueChange": {
+      "type": "object",
+      "description": "Before and after values for a changed field path.",
+      "properties": {
+        "before": {
+          "description": "Value of the field before the change. Omitted when not available."
+        },
+        "after": {
+          "description": "Value of the field after the change. Omitted when not available."
+        }
+      }
+    }
+  }
+}

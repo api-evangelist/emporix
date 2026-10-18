@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-price-model-definition-retrieval-schema.json",
+  "title": "priceModelDefinitionRetrieval",
+  "description": "A price model can be defined as a repeatable way to sell products in a market with the intention of making a profit. Price models define basic structures for prices.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-price-service-openapi.yml#/components/schemas/priceModelDefinitionRetrieval",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Price model's unique identifier, generated when the price model is created."
+    },
+    "includesTax": {
+      "type": "boolean",
+      "description": "Flag indicating whether prices assigned to the price model are expressed as net or gross.\n\n| Value | Description |\n| --- | --- |\n| `true` | Prices are expressed as gross values. |\n| `false` | Prices are expressed as net values. |\n"
+    },
+    "includesMarkup": {
+      "type": "boolean",
+      "description": "Flag indicating whether prices assigned to the price model include markup.\n\n**The `includesMarkup` field is in preview mode** - some of the features may not be fully operational yet.\n"
+    },
+    "default": {
+      "type": "boolean",
+      "description": "Indicates whether the price model is default one or not."
+    },
+    "name": {
+      "description": "Price model name.",
+      "oneOf": [
+        {
+          "type": "object"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "description": {
+      "description": "Price model description.",
+      "oneOf": [
+        {
+          "type": "object"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "tierDefinition": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/tierDefinitionCreation"
+        },
+        {
+          "type": "object",
+          "description": "Definition of pricing tiers."
+        }
+      ]
+    },
+    "measurementUnit": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/measurementUnit"
+        },
+        {
+          "type": "object",
+          "description": "Measurement unit and quantity for which the price is defined.\n\nFor example, if a product is sold by the piece, the field should contain `1 pc`. If products for this price model are sold per kilogram, this field should contain `1kg`.\n"
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "measurementUnit": {
+      "type": "object",
+      "description": "Measurement unit for which the price is defined.",
+      "properties": {
+        "quantity": {
+          "minimum": 0,
+          "description": "Quantity of the measurement unit.",
+          "type": "number"
+        },
+        "unitCode": {
+          "description": "Code of the measurement unit, as defined in the Unit Handling Service.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "quantity",
+        "unitCode"
+      ],
+      "title": ""
+    },
+    "tierDefinitionCreation": {
+      "type": "object",
+      "properties": {
+        "tierType": {
+          "type": "string",
+          "description": "Possible values:\n* `BASIC`\n* `VOLUME`\n* `TIERED`\n\n`BASIC`: Used to offer the same price per unit, regardless of the ordered quantity.\n\n  **Note**: When using basic pricing, you need to define a single tier and set its `minQuantity` field to `0`.\n\n`VOLUME`: Used to offer a lower price per unit depending on the total ordered quantity.\n\n`TIERED`: Used to offer a lower price per unit based on the tiers that the total ordered quantity falls into.\n\n  **Example**: You defined three tiers, starting at 5, 10, and 15 pieces respectively. A customer orders 16 pieces. In this pricing model, the first 5 pieces will be priced according to the first tier, the next 5 according to the second tier, and the 16th piece will be priced according to the third tier."
+        },
+        "tiers": {
+          "type": "array",
+          "description": "Tier quantities.\n\nEach tier contains information about the minimum quantity from which it (and its price) is valid.\n\n**Example**: For two tiers with the following `minQuantity` values: 0 pieces and 10 pieces, the effective ranges will be `<0, 9)` and `<10, infinity)`.\n\n**Note**: When defining tiers, be aware of the following restrictions to the `PriceModel` object:\n* For `BASIC` tier type:\n  * Only one tier should be defined. If the tier is not defined, it will be automatically generated.\n  * The tier's `minQuantity.quantity` should be set to `0`.\n* For `VOLUME` and `TIERED` type:\n  * Each `minQuantity.quantity` field must contain a unique value.\n  * The tiers must be defined in an ascending order based on their `quantity` value.\n  * The `quantity` field in the first tier must be set to `0`.\n  * All `unitCode` fields must contain the same value.",
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/$defs/tierDetailsDefinitionCreation"
+              }
+            ]
+          }
+        }
+      },
+      "required": [
+        "tierType"
+      ]
+    },
+    "tierDetailsDefinitionCreation": {
+      "type": "object",
+      "description": "Quantity that indicates the tier's range:\n* The `minQuantity` of the tier defines the left side of the range (inclusive).\n* The `minQuantity` of the next tier defines the right side of the range (exclusive).\n",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "An identifier of the tier. If the value is not provided then it is automatically generated. The id is used during an update operation for recognizing whether a particular tier has been changed, removed or added. "
+        },
+        "minQuantity": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/measurementUnit"
+            },
+            {
+              "type": "object",
+              "description": "Minimum quantity of the product from which the tier applies."
+            }
+          ]
+        }
+      },
+      "required": [
+        "minQuantity"
+      ]
+    }
+  }
+}

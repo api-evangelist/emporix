@@ -1,0 +1,514 @@
+openapi: 3.2.0
+info:
+  title: Emporix Currency exchange API
+  version: ''
+  contact:
+    email: documentation@emporix.com
+  description: 'Operations tagged Currency exchange across 2 of this provider''s published API definitions: emporix-currency-service-openapi.yml, emporix-currency-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2:
+  - currency.currency_manage
+  - currency.currency_read
+tags:
+- name: Currency exchange
+paths:
+  /currency/{tenant}/exchanges:
+    parameters:
+    - $ref: '#/components/parameters/trait_tenant'
+    post:
+      summary: Creating a new exchange rate
+      description: 'Creates a new exchange rate between two currencies.
+
+
+        **Note:** Both the source and target currency codes must be compliant with the ISO-4217 standard (https://www.iso.org/iso-4217-currency-codes.html) and must be defined in the system.'
+      security:
+      - OAuth2:
+        - currency.currency_manage
+      parameters:
+      - $ref: '#/components/parameters/trait_tenant'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/exchangeRateCreationRequest'
+            examples:
+              Exchange rate creation request:
+                value:
+                  sourceCurrency: USD
+                  targetCurrency: EUR
+                  rate: '0.91'
+        description: ''
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/exchangeRateResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest_400'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '409':
+          $ref: '#/components/responses/Conflict_409'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+      tags:
+      - Currency exchange
+      operationId: POST-currency-create-exchange-rate
+    get:
+      summary: Retrieving all exchange rates
+      description: Retrieves all exchange rates. You can filter and sort the results by the fields, for example `source` or `target currency`.
+      security:
+      - OAuth2:
+        - currency.currency_read
+      parameters:
+      - $ref: '#/components/parameters/trait_tenant'
+      - $ref: '#/components/parameters/trait_paged_pageNumber'
+      - $ref: '#/components/parameters/trait_paged_pageSize'
+      - $ref: '#/components/parameters/trait_XTotalCount_header'
+      - $ref: '#/components/parameters/trait_sort'
+      - $ref: '#/components/parameters/trait_exchange_source_currency'
+      - $ref: '#/components/parameters/trait_exchange_target_currency'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              examples:
+                Exchange rates:
+                  value:
+                  - code: PLN_EUR
+                    sourceCurrency: PLN
+                    targetCurrency: EUR
+                    rate: '0.21'
+                  - code: PLN_USD
+                    sourceCurrency: PLN
+                    targetCurrency: USD
+                    rate: '0.23'
+                  - code: EUR_USD
+                    sourceCurrency: EUR
+                    targetCurrency: USD
+                    rate: '1.1'
+                  - code: USD_EUR
+                    sourceCurrency: USD
+                    targetCurrency: EUR
+                    rate: '0.91'
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/exchangeRateRetrieval'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+      tags:
+      - Currency exchange
+      operationId: GET-currency-retrieve-exchange-rates
+    servers:
+    - url: https://api.emporix.io
+  /currency/{tenant}/exchanges/{code}:
+    parameters:
+    - name: code
+      in: path
+      required: true
+      description: Identifier of the exchange rate definition. The identifier consists of source currency, underscore, and a target currency.
+      schema:
+        type: string
+    get:
+      summary: Retrieving an exchange rate by code
+      description: Retrieves a currency exchange rate definition by code.
+      security:
+      - OAuth2:
+        - currency.currency_read
+      parameters:
+      - $ref: '#/components/parameters/trait_tenant'
+      responses:
+        '200':
+          description: Exchange rate returned
+          content:
+            application/json:
+              examples:
+                Exchange rate:
+                  value:
+                    code: USD_EUR
+                    sourceCurrency: USD
+                    targetCurrency: EUR
+                    rate: '0.91'
+              schema:
+                $ref: '#/components/schemas/exchangeRateRetrieval'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '404':
+          $ref: '#/components/responses/NotFound_404'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+      tags:
+      - Currency exchange
+      operationId: GET-currency-retrieve-exchange-rate
+    put:
+      summary: Updating an exchange rate by code
+      description: 'Updates an existing exchange rate by code.
+
+
+        **Note:** The exchange rate code, source, and target currencies are immutable, so they cannot be changed in this request. Only the `rate` field can be changed.'
+      security:
+      - OAuth2:
+        - currency.currency_manage
+      parameters:
+      - $ref: '#/components/parameters/trait_tenant'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/exchangeRateUpdateRequest'
+            examples:
+              Update exchange rate:
+                value:
+                  rate: '0.91'
+                  metadata:
+                    version: 1
+      responses:
+        '204':
+          description: Exchange rate updated
+        '400':
+          $ref: '#/components/responses/BadRequest_400'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '404':
+          $ref: '#/components/responses/NotFound_404'
+        '409':
+          $ref: '#/components/responses/Conflict_409'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+      tags:
+      - Currency exchange
+      operationId: PUT-currency-update-exchange-rate
+    delete:
+      summary: Deleting an exchange rate
+      description: Deletes the exchange rate definition by the provided code. If given definition does not exist in the system, the http code `204` will be returned.
+      security:
+      - OAuth2:
+        - currency.currency_manage
+      parameters:
+      - $ref: '#/components/parameters/trait_tenant'
+      responses:
+        '204':
+          description: Exchange rate deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+      tags:
+      - Currency exchange
+      operationId: DELETE-currency-remove-exchange-rate
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    exchangeRateRetrieval:
+      title: exchangeRateRetrieval
+      type: object
+      properties:
+        code:
+          type: string
+          description: Identifier of the exchange rate. The identifier consists of the source currency and the target currency separated by an underscore.
+        sourceCurrency:
+          type: string
+          description: Source currency code. The currency symbol must consist of three capital letters and must be a valid ISO-4217 code (https://www.iso.org/iso-4217-currency-codes.html) defined in the system.
+        targetCurrency:
+          type: string
+          description: Target currency code. The currency symbol must consist of three capital letters and must be a valid ISO-4217 code (https://www.iso.org/iso-4217-currency-codes.html) defined in the system.
+        rate:
+          type: string
+          description: 'Represents the exchange rate.
+
+
+            The value of the field is represented by a number where the cent part is separated by a dot. For example `1.09`. The cent part is not limited just to two digits. A rate with any precision can be returned. For example: `1.091934212`'
+        metadata:
+          $ref: '#/components/schemas/metadata'
+    metadata:
+      type: object
+      properties:
+        createdAt:
+          description: Time of document creation.
+          type: string
+          format: date-time
+        modifiedAt:
+          description: Time of document modification.
+          type: string
+          format: date-time
+        version:
+          minimum: 1
+          type: integer
+          description: Document version.
+    errorMessage:
+      title: error
+      description: Schema for API-specific errors.
+      type: object
+      properties:
+        currencyCode:
+          type: string
+        code:
+          description: Original HTTP error code, should be consistent with the response HTTP code.
+          type: integer
+        status:
+          description: classification of the error type, lower case with underscore eg validation_failure
+          type: string
+        message:
+          description: Descriptive error message for debugging.
+          type: string
+        details:
+          description: list of problems causing this error
+          type: array
+          items:
+            title: errorDetail
+            description: schema for specific error cause
+            type: string
+        errorCode:
+          type: string
+      required:
+      - status
+      - code
+    updateMetadata:
+      type: object
+      properties:
+        version:
+          minimum: 1
+          type: integer
+          description: Current version of the updated document.
+      required:
+      - version
+    exchangeRateResponse:
+      title: exchangeRateResponse
+      type: object
+      description: Represents the response after a successful exchange rate creation.
+      properties:
+        code:
+          type: string
+          description: 'Code of the newly created exchange rate in the following format: `sourceCurrency_targetCurrency`.
+
+            '
+    exchangeRateUpdateRequest:
+      title: exchangeRateUpdateRequest
+      type: object
+      properties:
+        rate:
+          type: string
+          description: 'Represents the exchange rate.
+
+
+            The value of the field is represented by a number where the cent part is separated by a comma. For example, `1.09`. The cent part is not limited just to two digits. A rate with any precision can be returned. For example: `1.09193421`'
+        metadata:
+          $ref: '#/components/schemas/updateMetadata'
+      required:
+      - rate
+      - metadata
+    exchangeRateCreationRequest:
+      title: exchangeRate
+      type: object
+      properties:
+        sourceCurrency:
+          type: string
+          description: The source currency code. The currency symbol must consist of three capital letters and must be a valid ISO-4217 code (https://www.iso.org/iso-4217-currency-codes.html) defined in the system.
+        targetCurrency:
+          type: string
+          description: The target currency code. The currency symbol must consist of three capital letters and must be a valid ISO-4217 code (https://www.iso.org/iso-4217-currency-codes.html) defined in the system.
+        rate:
+          type: string
+          description: 'Represents the exchange rate.
+
+
+            The value of the field is represented by a number where the cent part is separated by a comma. For example `1.09`. The cent part is not limited just to two digits. A rate with any precision can be returned. For example: `1.091934212`'
+      required:
+      - sourceCurrency
+      - targetCurrency
+      - rate
+  parameters:
+    trait_paged_pageNumber:
+      name: pageNumber
+      in: query
+      description: 'The page number to be retrieved where the size of the pages is specified by the `pageSize` parameter.
+
+        The number of the first page is 1.
+
+        '
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    trait_XTotalCount_header:
+      in: header
+      name: X-Total-Count
+      required: false
+      description: The flag indicates if the total count of items should be returned. The total count will be returned as a value of the `X-Total-Count` header.
+      schema:
+        default: false
+        type: boolean
+    trait_exchange_source_currency:
+      name: sourceCurrency
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 'Returns all exchange definitions for which the source currency matches the pattern. The `contains` operation is used for the parameter. '
+    trait_exchange_target_currency:
+      name: targetCurrency
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 'Returns all exchange definitions for which the target currency matches the pattern. The `contains` operation is used for the parameter. '
+    trait_paged_pageSize:
+      name: pageSize
+      in: query
+      description: 'The number of documents being retrieved on one page.
+
+        '
+      schema:
+        default: 60
+        minimum: 1
+        type: integer
+    trait_sort:
+      in: query
+      name: sort
+      required: false
+      description: Fields to sort the response data by following order of the parameters from left to right. Can contain multiple fields in the following format: field name:sort direction separated by a comma. The colon with sort direction parameter is redundant and descending order is taken only if it is equal to desc or DESC. Ascending order is considered in any other case. Sorting by name parameter works properly only if the Accept-Language header is set to a specific language or is empty with default language specified in the configuration service.
+      schema:
+        type: string
+        example: name,code:desc
+    trait_tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'The tenant that the caller is acting upon.
+
+
+        **Note:** This value must always be provided in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+  responses:
+    BadRequest_400:
+      description: Request was syntactically incorrect. Details will be provided in the response payload.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            AmbigousTenant:
+              $ref: '#/components/examples/BadRequest400_AmbiguousTenant'
+    NotFound_404:
+      description: Resource has not been found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            NotFoundExample:
+              $ref: '#/components/examples/NotFound404_CurrencyNotFound'
+    InternalServiceError_500:
+      description: Internal Service Error occurred.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            InternalServiceErrorExample:
+              value:
+                code: 500
+                status: Internal Service Error
+                message: A server-side exception occurred that prevented the system from correctly returning the result.
+    Forbidden_403:
+      description: Given authorization scopes are not sufficient and do not match scopes required by the endpoint.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            ForbiddenExample:
+              value:
+                code: 403
+                status: Forbidden
+                message: The access to the requested resource has been forbidden by the server.
+    Unauthorized_401:
+      description: Given request is unauthorized - the authorization token is invalid or has expired. Details will be provided in the response payload.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            UnauthorizedExample:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            AccessTokenExpiredExample:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+    Conflict_409:
+      description: Conflict.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            ConflictExample:
+              value:
+                code: 409
+                status: Conflict
+                message: The object that you are trying to update has already changed. Please refresh and try again!
+  examples:
+    BadRequest400_AmbiguousTenant:
+      value:
+        code: 400
+        status: Bad Request
+        message: Tenant in the header is not matching with the one provided in the URI.
+    NotFound404_CurrencyNotFound:
+      value:
+        code: 404
+        status: Not Found
+        message: The currency was not found for this code
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            currency.currency_manage: The scope allows you to create, update, and delete currencies and currency exchanges
+            currency.currency_read: The scope allows you to retrieve currencies and currency exchanges.
+x-refined-from:
+- emporix-currency-service-openapi.yml
+- emporix-currency-service-openapi.yml

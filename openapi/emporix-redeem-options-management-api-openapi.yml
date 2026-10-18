@@ -1,0 +1,572 @@
+openapi: 3.2.0
+info:
+  title: Emporix Redeem Options Management API
+  version: ''
+  contact:
+    email: documentation@emporix.com
+  description: 'Operations tagged Redeem Options Management across 2 of this provider''s published API definitions: emporix-reward-points-openapi.yml, emporix-reward-points-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Redeem Options Management
+paths:
+  /reward-points/{tenant}/redeemOptions:
+    post:
+      description: 'Sets up a reward points redemption option that contains instructions for transforming these points into a coupon. Customers are required to choose this option to convert the reward points and create a coupon based on the pre-established rules.
+
+
+        **Note**: Only employees have the authority to configure the redemption options.'
+      operationId: POST-reward-points-create-redeem-options
+      tags:
+      - Redeem Options Management
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/redeemOptions'
+              examples:
+                response:
+                  value:
+                  - points: 30
+                    type: coupon
+                    name: persönlicher 20 Euro Gutschein
+                    description: Ein persönlicher Gutschein zum einlösen auf Lieferladen.de (nur gültig im Lieferladen.de Stuttgart Shop)
+        '400':
+          $ref: '#/components/responses/trait_badRequest_400'
+        '401':
+          $ref: '#/components/responses/trait_unauthorized_401'
+        '403':
+          $ref: '#/components/responses/trait_forbidden_403'
+        '500':
+          $ref: '#/components/responses/trait_internal_500'
+      parameters:
+      - name: tenant
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Tenant name.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/redeemOption'
+            examples:
+              Redeem option creation sample:
+                value:
+                  type: coupon
+                  name: 10 Euro Gutschein
+                  description: Für 90 Punkte können Sie sich einen Gutschein über 10 Euro generieren lassen. Diesen Gutschein können Sie auch an Freunde und Bekannte weitergeben.
+                  points: 90
+                  coupon:
+                    name: Gutschein über 10 Euro (eingelöste Bonuspunkte)
+                    description: Gutschein über 10 Euro aus 1000 Bonuspunkte
+                    discountType: ABSOLUTE
+                    discountAbsolute:
+                      amount: 10
+                      currency: EUR
+                    allowAnonymous: true
+                    maxRedemptions: 1
+                    status: VALID
+      security:
+      - CustomerAccessToken: []
+      - OAuth2:
+        - rewardspoints.rewardpoints_manage
+      summary: Creating redemption options
+    get:
+      summary: Retrieving redemption options
+      operationId: GET-reward-points-list-redeem-options
+      tags:
+      - Redeem Options Management
+      responses:
+        '200':
+          description: Returns all configured reward points redemption options
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/redeemOption'
+              examples:
+                Sample response:
+                  value:
+                  - id: 5f905280df6b3b0013b6c541
+                    type: coupon
+                    name: 10 Euro Gutschein
+                    description: Für 90 Punkte können Sie sich einen Gutschein über 10 Euro generieren lassen. Diesen Gutschein können Sie auch an Freunde und Bekannte weitergeben.
+                    points: 90
+                    coupon:
+                      name: Gutschein über 10 Euro (eingelöste Bonuspunkte)
+                      description: Gutschein über 10 Euro aus 1000 Bonuspunkte
+                      discountType: ABSOLUTE
+                      discountAbsolute:
+                        amount: 10
+                        currency: EUR
+                      allowAnonymous: true
+                      maxRedemptions: 1
+                      status: VALID
+                    metadata:
+                      version: 1
+                      createdAt: '2023-07-25T13:28:25.960Z'
+                      modifiedAt: '2023-07-25T13:28:25.960Z'
+        '401':
+          $ref: '#/components/responses/trait_unauthorized_401'
+        '403':
+          $ref: '#/components/responses/trait_forbidden_403'
+        '500':
+          $ref: '#/components/responses/trait_internal_500'
+      parameters:
+      - name: tenant
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Tenant name.
+      description: 'Retrieves all available reward points redemption options configured for customers to use.
+
+
+        **Note:** This public API endpoint is accessible to all customers.'
+    servers:
+    - url: https://api.emporix.io
+  /reward-points/{tenant}/redeemOptions/{redeemOptionId}:
+    delete:
+      description: 'Deletes a reward points redemption option for a given tenant.
+
+
+        **Note**: Only employees have the authority to delete the redemption options.'
+      operationId: DELETE-reward-points-remove-redeem-option
+      tags:
+      - Redeem Options Management
+      responses:
+        '204':
+          description: Deletes given redeem option by id
+        '401':
+          $ref: '#/components/responses/trait_unauthorized_401'
+        '403':
+          $ref: '#/components/responses/trait_forbidden_403'
+        '500':
+          $ref: '#/components/responses/trait_internal_500'
+      parameters:
+      - name: redeemOptionId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier of a redeem option.
+      - name: tenant
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Tenant name.
+      security:
+      - CustomerAccessToken: []
+      summary: Deleting redemption options
+    put:
+      description: 'Updates a reward points redemption option for a given tenant.
+
+
+        **Note**: Only employees have the authority to update the redemption options.'
+      operationId: PUT-reward-points-update-redeem-option
+      tags:
+      - Redeem Options Management
+      responses:
+        '200':
+          description: Updates given redeem option by id
+        '400':
+          $ref: '#/components/responses/trait_badRequest_400'
+        '401':
+          $ref: '#/components/responses/trait_unauthorized_401'
+        '403':
+          $ref: '#/components/responses/trait_forbidden_403'
+        '409':
+          description: The resource requested for update has changed.
+          content:
+            application/json:
+              schema:
+                example:
+                  status: 409
+                  message: RedeemOption not Updated
+                  details:
+                    message: The resource that was requested for update with id = 64b7a has changed. Please retry your request with valid version
+        '500':
+          $ref: '#/components/responses/trait_internal_500'
+      parameters:
+      - name: redeemOptionId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Unique identifier of a redeem option.
+      - name: tenant
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Tenant name.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/redeemOption'
+            examples:
+              Redeem option update sample:
+                value:
+                  type: coupon
+                  name: 10 Euro Gutschein
+                  description: Für 90 Punkte können Sie sich einen Gutschein über 10 Euro generieren lassen. Diesen Gutschein können Sie auch an Freunde und Bekannte weitergeben.
+                  points: 90
+                  coupon:
+                    name: Gutschein über 10 Euro (eingelöste Bonuspunkte)
+                    description: Gutschein über 10 Euro aus 1000 Bonuspunkte
+                    discountType: ABSOLUTE
+                    discountAbsolute:
+                      amount: 10
+                      currency: EUR
+                    allowAnonymous: true
+                    maxRedemptions: 1
+                    status: VALID
+                  metadata:
+                    version: 1
+      security:
+      - CustomerAccessToken: []
+      - OAuth2:
+        - rewardspoints.rewardpoints_manage
+      summary: Updating redemption options
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    redeemOption:
+      title: redeemOption
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID of the redemption option to be used at reward points exchange
+        type:
+          type: string
+          description: Option type, typically 'coupon'.
+        name:
+          type: string
+          description: Name of the redeem option that can be presented to customer
+        description:
+          type: string
+          description: Description of the redeem option that can be presented to customer
+        points:
+          type: integer
+          description: Points to deduct from customer's account at coupon creation
+        coupon:
+          $ref: '#/components/schemas/coupon'
+        pointsAfterCoupon:
+          type: integer
+        metadata:
+          type: object
+          properties:
+            version:
+              type: integer
+              description: Version of the redeem option
+            createdAt:
+              type: string
+              description: Timestamp when the redeem option has been created.
+            modifiedAt:
+              type: string
+              description: Timestamp when the redeem option has been modified.
+      required:
+      - type
+      - name
+      - points
+    restrictions:
+      title: Restrictions
+      type: object
+      properties:
+        validFor:
+          default: []
+          description: A list of identifiers of customers that can redeem the coupon. Cannot be specified for coupons which can be redeemed by anonymous users.
+          type: array
+          items:
+            type: string
+        validFrom:
+          format: date-time
+          type: string
+          description: Must be provided in the ISO 8601 format (http://www.iso.org/iso/home/standards/iso8601.htm), e.g. '2015-01-31T23:59:59.999Z'
+        validUntil:
+          format: date-time
+          type: string
+          description: Must be provided in the ISO 8601 format (http://www.iso.org/iso/home/standards/iso8601.htm), e.g. '2015-01-31T23:59:59.999Z'
+        minOrderValue:
+          title: Money Amount
+          description: Minimum order value which entitles the customer to redeem the coupon
+          type: object
+          properties:
+            amount:
+              default: 0
+              minimum: 0
+              description: Total amount in the specified currency
+              type: number
+            currency:
+              default: USD
+              pattern: ^[a-zA-Z]{3}$
+              description: 'ISO 4217 currency code, e.g.: USD, EUR, CHF'
+              type: string
+    redeemOptions:
+      title: redeemOptions
+      type: array
+      items:
+        $ref: '#/components/schemas/redeemOption'
+    coupon:
+      title: Coupon API
+      description: Coupons describe voucher-like commerce capabilities.
+      type: object
+      properties:
+        code:
+          description: 'Coupon code, for example: WINTER-SALE, 10OFF (read-only)'
+          type: string
+        name:
+          description: Localized coupon name
+          type: string
+        description:
+          description: Localized coupon description
+          type: string
+        discountType:
+          description: '''PERCENT'' for relative values, ''ABSOLUTE'' for float values referring to a specific currency, ''FREE_SHIPPING'' for reducing the shipping cost to 0.'
+          enum:
+          - PERCENT
+          - ABSOLUTE
+          - FREE_SHIPPING
+          type: string
+        discountPercentage:
+          minimum: 0
+          maximum: 100
+          description: Discount percentage within a range [0.00, 100.00]. Must be specified only if type is 'PERCENT'.
+          type: number
+        discountAbsolute:
+          title: Money Amount
+          description: Must be specified only if type is 'ABSOLUTE'
+          type: object
+          properties:
+            amount:
+              default: 0
+              minimum: 0
+              description: Total amount in the specified currency.
+              type: number
+            currency:
+              default: USD
+              pattern: ^[a-zA-Z]{3}$
+              description: 'ISO 4217 currency code, e.g.: USD, EUR, CHF'
+              type: string
+        allowAnonymous:
+          default: false
+          description: Defines if the coupon can be redeemed by anonymous users
+          type: boolean
+        maxRedemptions:
+          default: -1
+          description: Maximum number of redemptions; -1 designates 'unlimited' (seller-only)
+          type: number
+        maxRedemptionsPerCustomer:
+          default: -1
+          description: Maximum number of redemptions per customer; -1 designates 'unlimited'. Cannot be specified for coupons which can be redeemed by anonymous users.
+          type: number
+        restrictions:
+          $ref: '#/components/schemas/restrictions'
+        issuedTo:
+          description: Id of the customer who originally received the coupon (seller-only).
+          type: string
+        redemptionCount:
+          description: The number of times a specific coupon has been redeemed. Read-only, set through server. (seller-only)
+          type: number
+        status:
+          description: 'Current status of the coupon (read-only). ''INACTIVE'': the coupon is only valid in the future; ''VALID'': can be used; ''EXPIRED'': the coupon validity period has expired; ''USED'': the maximum number of redemptions for the coupon has been reached.'
+          enum:
+          - INACTIVE
+          - VALID
+          - EXPIRED
+          - USED
+          type: string
+        links:
+          description: Hypermedia reference to coupon actions (read-only, customer-only)
+          type: array
+          items:
+            description: Hypermedia reference to a resource
+            type: object
+            properties:
+              rel:
+                description: Link relation type
+                type: string
+              title:
+                description: Link title
+                type: string
+              href:
+                description: Target URI of the link
+                type: string
+              type:
+                description: Content type of the referenced resource
+                type: string
+            required:
+            - rel
+            - title
+            - href
+            - type
+        deleted:
+          description: Flag to mark a coupon as deleted (a.k.a. Soft delete). It is a read-only and seller-only attribute
+          type: boolean
+      required:
+      - name
+      - discountType
+  responses:
+    trait_badRequest_400:
+      description: Request syntactically incorrect. Details of the error are included in the response payload.
+      content:
+        application/json:
+          schema:
+            title: error
+            description: Schema for API specified errors.
+            example:
+              status: 400
+              message: There are validation problems, see details section for more information
+              moreInfo: ''
+              type: validation_violation
+              details:
+              - field: tenant
+                message: size must be between 3 and 16
+                type: invalid_header
+            type: object
+            properties:
+              status:
+                minimum: 100
+                maximum: 599
+                description: Original HTTP error code, should be consistent with the response HTTP code
+                type: integer
+              title:
+                pattern: '[a-z]+[a-z_]*[a-z]+'
+                description: 'Classification of the error type in the lower case with underscore format, for example: `validation_failure`'
+                type: string
+              type:
+                description: Type of the error.
+                type: string
+              instance:
+                type: string
+                description: Resource link
+              detail:
+                description: Detailed information about the error.
+                type: string
+          examples:
+            Bad request:
+              value:
+                type: about:blank
+                title: Bad Request
+                status: 400
+                detail: Invalid request content.
+                instance: /customer/61443563/addPoints
+    trait_internal_500:
+      description: Internal error
+      content:
+        application/json:
+          schema:
+            title: error
+            description: Schema for API specified errors.
+            type: object
+            properties:
+              timestamp:
+                description: Timestamp when the error occurred.
+                type: string
+              status:
+                description: Original HTTP error code, should be consistent with the response HTTP code
+                type: integer
+              error:
+                description: Descriptive error message for debugging
+                type: string
+              path:
+                description: Path of a resource that caused the error.
+                type: string
+          examples:
+            Internal error:
+              value:
+                timestamp: '2023-10-12T06:41:03.866+00:00'
+                status: 500
+                error: Internal Server Error
+                path: /customer/30010284222
+    trait_forbidden_403:
+      description: 'Given authorization scopes are not sufficient and do not match required scopes.
+
+        '
+      content:
+        application/json:
+          schema:
+            title: error
+            description: Schema for API specified errors.
+            type: object
+            properties:
+              code:
+                minimum: 100
+                maximum: 599
+                description: Original HTTP error code, should be consistent with the response HTTP code
+                type: integer
+              status:
+                pattern: '[a-z]+[a-z_]*[a-z]+'
+                description: 'Classification of the error type in the lower case with underscore format, for example: `validation_failure`'
+                type: string
+              message:
+                description: Descriptive error message for debugging
+                type: string
+              details:
+                description: List of problems causing this error
+                type: array
+                items:
+                  title: errorDetail
+                  description: Schema for a specific error cause
+                  type: string
+            required:
+            - code
+            - status
+          examples:
+            Forbidden:
+              value:
+                code: 403
+                status: Forbidden
+                message: Scope validation failed
+                details:
+                - Missing required scopes '[rewardspoints.rewardpoints_view, saasag.rewardpoints_view]'
+    trait_unauthorized_401:
+      description: ''
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Unauthorized:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            rewardspoints.rewardpoints_view: Nedeed to view reward points information
+            rewardspoints.rewardpoints_manage: Needed to manage reward points
+    CustomerAccessToken:
+      type: http
+      scheme: bearer
+x-refined-from:
+- emporix-reward-points-openapi.yml
+- emporix-reward-points-openapi.yml

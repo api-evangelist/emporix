@@ -1,0 +1,41 @@
+generated: '2026-10-18'
+method: searched
+source: https://developer.emporix.io/api-documentation/standard-practices/pagination.md
+idempotency:
+  coverage: none
+  evidence: No evidence of idempotency mechanism found in documentation
+pagination:
+  style: offset-based, cursor-based
+  parameters:
+    offset-based: pageNumber, pageSize
+    cursor-based: next, prev
+  response_fields:
+    offset-based: X-Total-Count header
+    cursor-based: X-Next-Cursor, X-Prev-Cursor headers
+  evidence: "Emporix APIs support offset-based and cursor-based pagination for retrieving large collections in smaller chunks."
+reversibility:
+  coverage: none
+  evidence: No evidence of reversal operations or windows found in documentation
+authentication:
+  style: OAuth 2.0 token-based
+  header: "Authorization: Bearer {token}"
+  evidence: "The Emporix API incorporates OAuth 2.0 token-based authorization. API keys are used to generate access tokens, which are then used to authorize HTTP methods."
+error_envelope:
+  format: unknown
+  evidence: No error envelope documentation found
+rate_limit_signaling:
+  headers: unknown
+  status_code: unknown
+  evidence: No rate limit signaling documentation found
+request_id_tracing:
+  header: unknown
+  evidence: No request ID tracing documentation found
+versioning:
+  style: unknown
+  evidence: No API versioning documentation found
+field_expansion:
+  style: unknown
+  evidence: No field expansion documentation found
+metadata:
+  style: unknown
+  evidence: No metadata documentation found

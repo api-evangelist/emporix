@@ -1,0 +1,106 @@
+overlay: 1.0.0
+info:
+  title: Emporix Customer Management Service overlay
+  version: 1.0.0
+  x-generated: '2026-10-18'
+  x-method: generated
+  x-source: mcp/emporix-tool-crosswalk.yml
+extends: ../openapi/_original/emporix-client-management-openapi.yml
+actions:
+- target: $.info
+  update:
+    x-provider: Emporix
+    x-documentation: https://developer.emporix.io/api-references
+    x-llms-txt: https://developer.emporix.io/llms.txt
+    x-docs-mcp: https://developer.emporix.io/~gitbook/mcp
+  description: Provider metadata and agent-facing entry points.
+- target: $.paths['/customer-management/{tenant}/legal-entities'].post
+  update:
+    x-mcp-tools:
+    - customer/upsert-legal-entity
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: POST-customer-mgmt-create-legal-entity backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/customer-management/{tenant}/legal-entities'].get
+  update:
+    x-mcp-tools:
+    - customer/get-legal-entities
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: GET-customer-mgmt-list-legal-entities backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/customer-management/{tenant}/legal-entities/{legalEntityId}'].get
+  update:
+    x-mcp-tools:
+    - customer/get-legal-entity
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: GET-customer-mgmt-retrieve-legal-entity backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/customer-management/{tenant}/legal-entities/{legalEntityId}'].put
+  update:
+    x-mcp-tools:
+    - customer/upsert-legal-entity
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: PUT-customer-mgmt-update-legal-entity backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/customer-management/{tenant}/legal-entities/{legalEntityId}'].delete
+  update:
+    x-mcp-tools:
+    - customer/delete-legal-entity
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: DELETE-customer-mgmt-remove-legal-entity backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/customer-management/{tenant}/contact-assignments'].post
+  update:
+    x-mcp-tools:
+    - customer/upsert-contact-assignment
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: POST-customer-mgmt-create-contact-assignment backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/customer-management/{tenant}/contact-assignments'].get
+  update:
+    x-mcp-tools:
+    - customer/get-contact-assignments
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: GET-customer-mgmt-list-contact-assignments backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/customer-management/{tenant}/contact-assignments/{contactAssignmentId}'].get
+  update:
+    x-mcp-tools:
+    - customer/get-contact-assignment
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: GET-customer-mgmt-retrieve-contact-assignment backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/customer-management/{tenant}/contact-assignments/{contactAssignmentId}'].put
+  update:
+    x-mcp-tools:
+    - customer/upsert-contact-assignment
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: PUT-customer-mgmt-update-contact-assignment backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/customer-management/{tenant}/contact-assignments/{contactAssignmentId}'].delete
+  update:
+    x-mcp-tools:
+    - customer/delete-contact-assignment
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: DELETE-customer-mgmt-remove-contact-assignment backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/customer-management/{tenant}/locations'].post
+  update:
+    x-mcp-tools:
+    - customer/upsert-location
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: POST-customer-mgmt-create-location backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/customer-management/{tenant}/locations'].get
+  update:
+    x-mcp-tools:
+    - customer/get-locations
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: GET-customer-mgmt-list-all-locations backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/customer-management/{tenant}/locations/{locationId}'].get
+  update:
+    x-mcp-tools:
+    - customer/get-location
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: GET-customer-mgmt-retrieve-location backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/customer-management/{tenant}/locations/{locationId}'].put
+  update:
+    x-mcp-tools:
+    - customer/upsert-location
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: PUT-customer-mgmt-update-location backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/customer-management/{tenant}/locations/{locationId}'].delete
+  update:
+    x-mcp-tools:
+    - customer/delete-location
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: DELETE-customer-mgmt-remove-location backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).

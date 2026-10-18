@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-payment-mode-request-schema.json",
+  "title": "paymentModeRequest",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-payment-gateway-openapi.yml#/components/schemas/paymentModeRequest",
+  "type": "object",
+  "required": [
+    "code",
+    "provider"
+  ],
+  "properties": {
+    "code": {
+      "type": "string",
+      "description": "Indicates a code of a given method."
+    },
+    "active": {
+      "type": "boolean",
+      "description": "Indicates whether a give mode is active."
+    },
+    "provider": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/provider"
+        }
+      ],
+      "description": "Indicates which provider should be used."
+    },
+    "configuration": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Map of configuration values for a particular gateway. Supported and required values for Spreedly: \n* `Spreedly/GatewayToken` - Indicates Spreedly gateway. Valid for `SPREEDLY`, `SPREEDLY_SAFERPAY`.\n* `Spreedly/EnvironmentKey` - Indicates Spreedly environment key. Valid for `SPREEDLY`, `SPREEDLY_SAFERPAY`.\n* `Spreedly/AccessSecret` - Indicates Spreedly access secret. Valid for `SPREEDLY`, `SPREEDLY_SAFERPAY`.\n* `Spreedly/PaymentMethodType` - Indicates payment method type, for example: paypal. Valid for `SPREEDLY`.\n* `Spreedly/RedirectURL` - Indicates a redirect URL where an end user should be redirected when a payment flow is finished. Usually it's a storefront URL. Valid for `SPREEDLY`.\n* `Spreedly/SignatureSecret` - Indicates a signature secret. The value is needed  for an offsite flow, when a confirmation callback is used. Valid for `SPREEDLY`.\n* `Spreedly/SCAProviderToken` - Indicates the Spreedly SCA (Strong Customer Authentication) provider token (3DS credit cart). Valid for `SPREEDLY`.\n* `Spreedly/ReceiverId` - Indicates the Spreedly Receiver identifier. Valid for `SPREEDLY_SAFERPAY`.\n* `Saferpay/BasicAuth` - Base64 encoded username and password of Saferpay account. Valid for `SPREEDLY_SAFERPAY`.\n* `Saferpay/CustomerId` - Saferpay customer ID. Valid for `SPREEDLY_SAFERPAY`.\n* `Saferpay/TerminalId` - Saferpay terminal ID. Valid for `SPREEDLY_SAFERPAY`.\n* `Saferpay/TestEnvironment` - Indicates if the configuration is done for test environment or a production one. If `true` then `https://test.saferpay.com` is used as a destination. Otherwise `https://www.saferpay.com` is used. Valid for `SPREEDLY_SAFERPAY`.\n* `Saferpay/RedirectUrl` - Indicates a redirect URL where an end user should be redirected when a payment flow is finished. Usually it's a storefront URL. Valid for `SPREEDLY_SAFERPAY`.\n* `Unzer/PaymentMethodType` - Indicates a payment method type. Currently supported value is `PAYLATER_INVOICE`. Valid for `UNZER`.\n* `Unzer/PublicKey` - Indicates a Unzer public key. Valid for `UNZER`.\n* `Unzer/PrivateKey` - Indicates a Unzer private key. Valid for `UNZER`.\n* `Unzer/CustomerType` - Indicates a customer type. Currently supported value is `B2C`. Valid for `UNZER`.\n  requestBodies: { }"
+    }
+  },
+  "$defs": {
+    "provider": {
+      "type": "string",
+      "enum": [
+        "INVOICE",
+        "CASH_ON_DELIVERY",
+        "SPREEDLY",
+        "SPREEDLY_SAFERPAY",
+        "UNZER"
+      ]
+    }
+  }
+}

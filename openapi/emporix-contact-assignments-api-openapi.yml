@@ -1,0 +1,1102 @@
+openapi: 3.2.0
+info:
+  title: Emporix Contact Assignments API
+  version: ''
+  contact:
+    name: Emporix
+    url: https://emporix.com
+    email: documentation@emporix.com
+  description: 'Operations tagged Contact Assignments across 2 of this provider''s published API definitions: emporix-client-management-openapi.yml, emporix-client-management-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2:
+  - customermanagement.legalentity_read
+  - customermanagement.legalentity_read_own
+  - customermanagement.legalentity_manage
+  - customermanagement.contactassignment_read
+  - customermanagement.contactassignment_manage
+  - customermanagement.location_read
+  - customermanagement.location_manage
+tags:
+- name: Contact Assignments
+paths:
+  /customer-management/{tenant}/contact-assignments:
+    parameters:
+    - name: tenant
+      in: path
+      required: true
+      description: 'The tenant that the caller is acting upon.
+
+
+        Please note that this value is always lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+    post:
+      summary: Creating contact assignment
+      description: Creates a new contact assignment for the tenant. A contact assignment represents assignment of an employee of the Company to a legal entity.
+      security:
+      - OAuth2:
+        - customermanagement.contactassignment_manage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/contactAssignmentCreate'
+            examples:
+              Create a customer assignment:
+                value:
+                  legalEntity:
+                    id: 612306ecf0452c2d6c0b81392
+                  customer:
+                    id: 612306ecf0452c2d6c0b81123
+                  type: BILLING
+                  primary: true
+      responses:
+        '201':
+          description: The request was successful. The customer assignment has been created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+              examples:
+                Customer assignment created:
+                  value:
+                    id: 53ac81fd0cce8b26b36f1234
+        '400':
+          $ref: '#/components/responses/BadRequest_400'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '409':
+          $ref: '#/components/responses/Conflict_409'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+      operationId: POST-customer-mgmt-create-contact-assignment
+      tags:
+      - Contact Assignments
+    get:
+      summary: Retrieving all contact assignments
+      description: Retrieves all contact assignments assigned to the tenant. You can filter, sort and paginate the results with query parameters.
+      security:
+      - OAuth2:
+        - customermanagement.contactassignment_read
+      parameters:
+      - $ref: '#/components/parameters/trait_paged_pageNumber'
+      - $ref: '#/components/parameters/trait_paged_pageSize'
+      - $ref: '#/components/parameters/trait_XTotalCount_header'
+      - $ref: '#/components/parameters/trait_sort'
+      - $ref: '#/components/parameters/trait_q_param'
+      - $ref: '#/components/parameters/trait_fields'
+      - $ref: '#/components/parameters/trait_contactAssignment_legalEntity_query_param'
+      - $ref: '#/components/parameters/trait_contactAssignment_customer_query_param'
+      - $ref: '#/components/parameters/trait_contactAssignment_type_query_param'
+      - $ref: '#/components/parameters/trait_contactAssignment_primary_query_param'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetContactAssignments'
+        '400':
+          $ref: '#/components/responses/BadRequest_400'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+      operationId: GET-customer-mgmt-list-contact-assignments
+      tags:
+      - Contact Assignments
+    servers:
+    - url: https://api.emporix.io
+  /customer-management/{tenant}/contact-assignments/{contactAssignmentId}:
+    parameters:
+    - name: tenant
+      in: path
+      required: true
+      description: 'The tenant that the caller is acting upon.
+
+
+        Please note that this value is always lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+    - schema:
+        type: string
+      name: contactAssignmentId
+      in: path
+      required: true
+      description: The identifier of the customer assignment
+    get:
+      summary: Retrieving a contact assignment
+      parameters:
+      - in: query
+        name: fields
+        required: false
+        description: Comma-separated list of fields to return in the response. If not specified, all fields are returned.
+        schema:
+          type: string
+          example: name,type
+      description: Retrieves a contact assignment by the specified unique identifier.
+      security:
+      - OAuth2:
+        - customermanagement.contactassignment_read
+      responses:
+        '200':
+          $ref: '#/components/responses/GetContactAssignment'
+        '400':
+          $ref: '#/components/responses/BadRequest_400'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '404':
+          $ref: '#/components/responses/NotFound_404'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+      operationId: GET-customer-mgmt-retrieve-contact-assignment
+      tags:
+      - Contact Assignments
+    put:
+      summary: Upserting a contact assignment
+      description: Updates or creates a contact assignment with given contact assignment id. You can omit the `metadata.version`, but then optimistic locking is not enabled.
+      security:
+      - OAuth2:
+        - customermanagement.contactassignment_manage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/contactAssignmentUpdate'
+            examples:
+              Update the customer assignment:
+                value:
+                  legalEntity:
+                    id: 612306ecf0452c2d6c0b82222
+                  customer:
+                    id: 111106ecf0452c2d6c0b81123
+                  type: LOGISTICS
+                  primary: false
+                  metadata:
+                    version: 1
+      responses:
+        '201':
+          description: The request was successful. The contact assignment has been created.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+              examples:
+                Contact assignment created:
+                  value:
+                    id: 53ac81fd0cce8b26b36f3492
+        '204':
+          description: The customer assignment has been updated successfully.
+        '400':
+          $ref: '#/components/responses/BadRequest_400_Update'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '404':
+          $ref: '#/components/responses/NotFound_404'
+        '409':
+          $ref: '#/components/responses/Conflict_409'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+      operationId: PUT-customer-mgmt-update-contact-assignment
+      tags:
+      - Contact Assignments
+    delete:
+      summary: Delete a contact assignment
+      description: Deletes a contact assignment.
+      security:
+      - OAuth2:
+        - customermanagement.contactassignment_manage
+      responses:
+        '204':
+          description: The customer assignment has been deleted successfully.
+        '400':
+          $ref: '#/components/responses/BadRequest_400'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '404':
+          $ref: '#/components/responses/NotFound_404'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+      operationId: DELETE-customer-mgmt-remove-contact-assignment
+      tags:
+      - Contact Assignments
+    servers:
+    - url: https://api.emporix.io
+components:
+  responses:
+    GetContactAssignments:
+      description: The request was successful. A list of customer assignments is returned.
+      headers:
+        X-Total-Count:
+          description: '''The total number of entities in the database matching the specified query criteria.
+
+            Returned if request X-Total-Count header has been set to true.'''
+          schema:
+            type: number
+            example: 69
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/contactAssignment'
+          examples:
+            List of customer assignments:
+              value:
+              - id: 627e06ecf0452c2d6c0b81391
+                legalEntity:
+                  id: 123e06ecf0452c2d6c0b12391
+                  name: ABC Subsidiary
+                  type: SUBSIDIARY
+                  parentId: 627e06ecf0452c2d6c0b81391
+                  accountLimit:
+                    currency: EUR
+                    value: 1000.99
+                  legalInfo:
+                    legalName: ABC Subsidiary
+                    registrationDate: '2022-03-31T13:18:02.379Z'
+                    taxRegistrationNumber: '4311'
+                    registrationAgency: Sub reg agency
+                    countryOfRegistration: DE
+                    registrationId: 627e06ecf0452c2d6c0b81399
+                  customerGroups:
+                  - id: 123e06ecf0452c2d6c0b81390
+                    name:
+                      en: Customer group 1
+                      fr: Groupe de clients 1
+                  restrictions:
+                  - US
+                customer:
+                  id: 627e06ecf0452c2d6c0b81391
+                  name: John
+                  surname: Doe
+                type: BILLING
+                primary: true
+                metadata:
+                  createdAt: '2022-03-31T13:18:02.379Z'
+                  modifiedAt: '2022-03-31T13:18:02.379Z'
+                  version: 1
+              - id: 627e06ecf0452c2d6c0b81311
+                legalEntity:
+                  id: 123e06ecf0452c2d6c0b81390
+                  name: ABC Company
+                  type: COMPANY
+                  legalInfo:
+                    legalName: ABC Company
+                    registrationDate: '2022-03-31T13:18:02.379Z'
+                    registrationAgency: Comp reg agency
+                    registrationId: 627e06ecf0452c2d6c0b81391
+                    countryOfRegistration: DE
+                    taxRegistrationNumber: '1234'
+                    accountLimit:
+                      currency: EUR
+                      value: 1000.99
+                  customerGroups:
+                  - id: 123e06ecf0452c2d6c0b81390
+                    name:
+                      en: Customer group 1
+                      fr: Groupe de clients 1
+                  - id: 123e06ecf0452c2d6c0b12345
+                    name:
+                      en: Customer group 2
+                      fr: Groupe de clients 2
+                  entitiesAddresses:
+                  - id: 627e06ecf0452c2d6c0b81391
+                    name: Main HQ
+                    type: HEADQUARTER
+                    contactDetails:
+                      emails:
+                      - jon.doe@example.com
+                      - adam.smith@sample.org
+                      phones:
+                      - '1234567890'
+                      - '123456789'
+                      addressLine1: W Sample St
+                      addressLine2: 3601-3799
+                      city: South Bend
+                      state: Indiana
+                      postcode: '46619'
+                      countryCode: US
+                      tags:
+                      - shipping
+                    metadata:
+                      createdAt: '2022-03-31T13:18:02.379Z'
+                      modifiedAt: '2022-03-31T13:18:02.379Z'
+                      version: 1
+                  - id: 123e06ecf0acd223140b12345
+                    name: Main Warehouse
+                    type: WAREHOUSE
+                    metadata:
+                      createdAt: '2022-03-31T13:22:31.112Z'
+                      modifiedAt: '2022-03-31T13:22:31.112Z'
+                      version: 1
+                  approvalGroup:
+                  - id: 627e06ecf0452c2d6c0b81391
+                    name: John
+                    surname: Doe
+                  - id: 123e06ecf0452c2d6c0b81390
+                    name: Adam
+                    surname: Smith
+                  restrictions:
+                  - US
+                  metadata:
+                    createdAt: '2022-03-31T13:18:02.379Z'
+                    modifiedAt: '2022-03-31T13:18:02.379Z'
+                    version: 1
+                contact:
+                  id: 627e06ecf0452c2d6c0b81391
+                  name: John
+                  surname: Doe
+                type: PRIMARY
+                primary: false
+                metadata:
+                  createdAt: '2022-04-31T13:18:02.379Z'
+                  modifiedAt: '2022-05-31T13:18:02.379Z'
+                  version: 2
+    GetContactAssignment:
+      description: The request was successful. The requested customer assignment is returned.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/contactAssignment'
+          examples:
+            Requested customer assignment:
+              value:
+                id: 627e06ecf0452c2d6c0b81391
+                legalEntity:
+                  id: 123e06ecf0452c2d6c0b81390
+                  name: ABC Company
+                  type: COMPANY
+                  legalInfo:
+                    legalName: ABC Company
+                    registrationDate: '2022-03-31T13:18:02.379Z'
+                    registrationAgency: Comp reg agency
+                    registrationId: 627e06ecf0452c2d6c0b81391
+                    countryOfRegistration: DE
+                    taxRegistrationNumber: '1234'
+                    accountLimit:
+                      currency: EUR
+                      value: 1000.99
+                  customerGroups:
+                  - id: 123e06ecf0452c2d6c0b81390
+                    name:
+                      en: Customer group 1
+                      fr: Groupe de clients 1
+                  - id: 123e06ecf0452c2d6c0b12345
+                    name:
+                      en: Customer group 2
+                      fr: Groupe de clients 2
+                  entitiesAddresses:
+                  - id: 627e06ecf0452c2d6c0b81391
+                    name: Main HQ
+                    type: HEADQUARTER
+                    contactDetails:
+                      emails:
+                      - jon.doe@example.com
+                      - adam.smith@sample.org
+                      phones:
+                      - '1234567890'
+                      - '123456789'
+                      addressLine1: W Sample St
+                      addressLine2: 3601-3799
+                      city: South Bend
+                      state: Indiana
+                      postcode: '46619'
+                      countryCode: US
+                      tags:
+                      - shipping
+                    metadata:
+                      createdAt: '2022-03-31T13:18:02.379Z'
+                      modifiedAt: '2022-03-31T13:18:02.379Z'
+                      version: 1
+                  - id: 123e06ecf0acd223140b12345
+                    name: Main Warehouse
+                    type: WAREHOUSE
+                    metadata:
+                      createdAt: '2022-03-31T13:22:31.112Z'
+                      modifiedAt: '2022-03-31T13:22:31.112Z'
+                      version: 1
+                  approvalGroup:
+                  - id: 627e06ecf0452c2d6c0b81391
+                    name: John
+                    surname: Doe
+                  - id: 123e06ecf0452c2d6c0b81390
+                    name: Adam
+                    surname: Smith
+                  metadata:
+                    createdAt: '2022-03-31T13:18:02.379Z'
+                    modifiedAt: '2022-03-31T13:18:02.379Z'
+                    version: 1
+                customer:
+                  id: 627e06ecf0452c2d6c0b81391
+                  name: John
+                  surname: Doe
+                type: BILLING
+                primary: true
+                metadata:
+                  createdAt: '2022-03-31T13:18:02.379Z'
+                  modifiedAt: '2022-03-31T13:18:02.379Z'
+                  version: 1
+    BadRequest_400:
+      description: Request was syntactically incorrect. Details will be provided in the response payload.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Ambiguous tenant:
+              $ref: '#/components/examples/BadRequest400_AmbiguousTenant'
+    NotFound_404:
+      description: The requested resource does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Legal Entity not found:
+              $ref: '#/components/examples/NotFound404_LegalEntityNotFound'
+    InternalServiceError_500:
+      description: Internal Service Error occurred.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Internal service error:
+              $ref: '#/components/examples/InternalServiceError500_Example'
+    Forbidden_403:
+      description: Given authorization scopes are not sufficient and do not match scopes required by the endpoint.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Access to resource is forbidden:
+              $ref: '#/components/examples/Forbidden403_Example'
+    BadRequest_400_Update:
+      description: Request was syntactically incorrect. Details will be provided in the response payload.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Ambiguous tenant:
+              $ref: '#/components/examples/BadRequest400_AmbiguousTenant'
+            Document version not specified:
+              $ref: '#/components/examples/BadRequest400_VersionNotSpecified'
+    Unauthorized_401:
+      description: Given request is unauthorized - the authorization token is invalid or has expired. Details will be provided in the response payload.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            Access token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+    Conflict_409:
+      description: Given resource already exists
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Access to resource is forbidden:
+              $ref: '#/components/examples/Conflict409_Example'
+  parameters:
+    trait_fields:
+      in: query
+      name: fields
+      required: false
+      description: Comma-separated list of fields to return in the response. If not specified, all fields are returned.
+      schema:
+        type: string
+        example: name,type
+    trait_paged_pageNumber:
+      name: pageNumber
+      in: query
+      description: 'The page number to be retrieved where the size of the pages must be specified by the pageSize parameter.
+
+        The number of the first page is 1.
+
+        '
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    trait_XTotalCount_header:
+      in: header
+      name: X-Total-Count
+      required: false
+      description: In order to get information how many entities meet a filter requirements, X-Total-Count header has been introduced. The header is optional and its default value is false. It the header is provided and it is true then total count is returned in the X-Total-Count response header. In both cases (X-Total-Count true, false or not provided), the response body has the same format (array of entities). In other words, the information about total count is returned on demand, depending of an existence of X-Total-Count header in a request. Therefore, the X-Total-Count header is not returned if an API consumer didn't ask for it.
+      schema:
+        default: false
+        type: boolean
+    trait_q_param:
+      in: query
+      name: q
+      required: false
+      description: "Query param for filtering entities by specified type. Examples of query params which are supported:\n\n| Q Param                                                                            | Description                                                                                                                          |\n|------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|\n| `name:\"Exact match\"`                                                               | find an entity with `name` field with `Exact match` value                                                                            |\n| `name:~John`                                                                       | find an entity with `name` field containing `John` value                                                                             |\n| `locDescription.fr:\"Description traduction française 02\"`                          | find an entity with localized `locDescription` field with `Description traduction française 02` value in french language             |      \n| `primary:true`                                                                     | find an entity with `primary` field with `true` value                                                                                |\n| `metadata.createdAt:(>\"2019-01-06T10:29:30.602Z\" AND <\"2020-01-07T10:29:30.602Z\")` | find an entity with `metadata.createdAt` field with value between `2019-01-06T10:29:30.602Z` and `2020-01-07T10:29:30.602Z`          |\n| `name:exists`                                                                      | find an entity with existing `name` field                                                                                            |\n| `name:null`                                                                        | find an entity with non-existing `name` field                                                                                        |\n| `name:missing`                                                                     | find an entity with non-existing `name` field                                                                                        |\n| `name:\"John\" surname:~Smith`                                                       | find an entity with `name` exactly equals to `John` and surname containing `Smith` value                                             |\n| `name:(\"John\",\"Jack\",\"James\")`                                                     | find an entity with `name` field with one of the following value: `John` or `Jack` or `James`                                        |\n"
+      schema:
+        type: string
+        example: name:~john
+    trait_contactAssignment_customer_query_param:
+      name: customer.id
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 'The id of the customer. When specified, only customer assignments attached to the specified customer will be returned.
+
+
+        **Note**: When filtering the results with this field, the `equals` operator is used.
+
+        '
+    trait_paged_pageSize:
+      name: pageSize
+      in: query
+      description: 'The number of documents being retrieved on the page.
+
+        '
+      schema:
+        default: 16
+        minimum: 1
+        type: integer
+    trait_contactAssignment_primary_query_param:
+      name: primary
+      in: query
+      required: false
+      schema:
+        type: boolean
+      description: 'The primary customer flag. When specified, only customers with the specified primary flag value will be returned.
+
+
+        **Note**: When filtering the results with this field, the `equals` operator is used.
+
+        '
+    trait_sort:
+      in: query
+      name: sort
+      required: false
+      description: Fields to sort the response data by following order of the parameters from left to right. Can contain multiple fields in format: field name:sort direction separated by a comma. The colon with sort direction parameter is redundant and descending order is taken only if it is equal to desc or DESC. Ascending order is considered in any other case.
+      schema:
+        type: string
+        example: name,metadata.createdAt:desc
+    trait_contactAssignment_type_query_param:
+      name: type
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+        - PRIMARY
+        - BILLING
+        - LOGISTICS
+        - CONTACT
+      description: 'The type of the customer assignment. When specified, only customer assignments with the specified type will be returned.
+
+
+        **Note**: When filtering the results with this field, the `equals` operator is used.
+
+        '
+    trait_contactAssignment_legalEntity_query_param:
+      name: legalEntity.id
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 'The id of the legal entity. When specified, only customer assignments attached to the specified legal entity will be returned.
+
+
+        **Note**: When filtering the results with this field, the `equals` operator is used.
+
+        '
+  schemas:
+    metadataUpdate:
+      type: object
+      properties:
+        version:
+          minimum: 1
+          type: integer
+          description: Version of the document.
+        mixins:
+          type: object
+          description: Links to the mixin schemas. A map where the keys represent mixins set attributes and the values represent url to a schema for a particular set.
+          additionalProperties: true
+    contactAssignmentCreate:
+      title: Contact Assignment create payload
+      type: object
+      properties:
+        id:
+          type: string
+          description: Custom assignment identifier. If not provided, it is automatically generated.
+          minLength: 1
+          maxLength: 66
+          pattern: ^[a-zA-Z0-9_-]$
+        legalEntity:
+          type: object
+          description: The legal entity unique identifier.
+          required:
+          - id
+          properties:
+            id:
+              type: string
+              description: The unique identifier of the legal entity.
+        customer:
+          type: object
+          description: The customer unique identifier.
+          required:
+          - id
+          properties:
+            id:
+              type: string
+              description: The unique identifier of the customer.
+        type:
+          type: string
+          enum:
+          - PRIMARY
+          - BILLING
+          - LOGISTICS
+          - CONTACT
+          description: The type of the customer assignment. If not provided, it is set to `Contact` by default.
+        primary:
+          type: boolean
+          default: false
+          description: Indicates whether the customer is primary.
+        metadata:
+          $ref: '#/components/schemas/metadata_create'
+        mixins:
+          type: object
+          description: Mixins request. A map where a key represent mixins set name and a value represent a map with key-value pairs.
+          additionalProperties: true
+      required:
+      - legalEntity
+      - customer
+    contactAssignment:
+      title: Contact Assignment
+      type: object
+      properties:
+        id:
+          type: string
+          description: The customer assignment unique identifier.
+        legalEntity:
+          $ref: '#/components/schemas/legalEntity'
+        customer:
+          $ref: '#/components/schemas/customer'
+        type:
+          type: string
+          enum:
+          - PRIMARY
+          - BILLING
+          - LOGISTICS
+          - CONTACT
+          description: The type of the customer assignment.
+        primary:
+          type: boolean
+          description: Indicates whether the customer is primary.
+        metadata:
+          $ref: '#/components/schemas/metadata'
+        mixins:
+          type: object
+          description: Mixins request. A map where a key represent mixins set name and a value represent a map with key-value pairs.
+          additionalProperties: true
+    contactAssignmentUpdate:
+      title: Contact Assignment update payload
+      type: object
+      properties:
+        legalEntity:
+          type: object
+          description: The legal entity unique identifier.
+          required:
+          - id
+          properties:
+            id:
+              type: string
+              description: The unique identifier of the legal entity.
+        customer:
+          type: object
+          description: The customer unique identifier.
+          required:
+          - id
+          properties:
+            id:
+              type: string
+              description: The unique identifier of the customer.
+        type:
+          type: string
+          enum:
+          - PRIMARY
+          - BILLING
+          - LOGISTICS
+          - CONTACT
+          description: The type of the customer assignment.
+        primary:
+          type: boolean
+          default: false
+          description: Indicates whether the customer is primary.
+        metadata:
+          $ref: '#/components/schemas/metadataUpdate'
+        mixins:
+          type: object
+          description: Mixins request. A map where a key represent mixins set name and a value represent a map with key-value pairs.
+          additionalProperties: true
+      required:
+      - legalEntity
+      - customer
+      - type
+    metadata:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/metadataUpdate'
+      - type: object
+        properties:
+          createdAt:
+            description: Date and time when the document was created.
+            type: string
+          modifiedAt:
+            description: Date and time when the document was last modified.
+            type: string
+    restrictions:
+      title: Restriction
+      type:
+      - array
+      - 'null'
+      maximum: 1
+      description: List of restrictions which determine who can view or manage the Legal Entity.
+      items:
+        type: string
+        description: "Access control identifier that determines who can view or manage the Legal Entity.\n\n**Purpose**: Restricts Legal Entity visibility based on scope permissions. Only users/applications \nwith matching restrictions scopes can access Legal Entities with a specific restrictions value.\n\n**Access Control**:\n- *Reading*: Users can only query and view Legal Entities whose `restrictions` value matches one of their authorized restrictions.\n\n**Validation**: The value must exist in the tenant's configured list of valid restrictions.\n"
+        example: DE
+    customer:
+      title: Customer
+      properties:
+        id:
+          type: string
+          description: The customer unique identifier.
+        name:
+          type: string
+          description: The name of the customer.
+        surname:
+          type: string
+          description: The surname of the customer.
+        email:
+          type: string
+          description: The email of the customer.
+        phone:
+          type: string
+          description: The phone number of the customer.
+    contactAssignmentWithoutExpandedLegalEntity:
+      title: Contact Assignment
+      type: object
+      properties:
+        id:
+          type: string
+          description: The customer assignment unique identifier.
+        legalEntity:
+          type: object
+          description: Assigned legal entity.
+          properties:
+            id:
+              type: string
+              description: The legal entity unique identifier.
+        customer:
+          $ref: '#/components/schemas/customer'
+        type:
+          type: string
+          enum:
+          - PRIMARY
+          - BILLING
+          - LOGISTICS
+          - CONTACT
+          description: The type of the customer assignment.
+        primary:
+          type: boolean
+          description: Indicates whether the customer is primary.
+        metadata:
+          $ref: '#/components/schemas/metadata'
+    contactDetails:
+      title: Contact Details
+      type: object
+      properties:
+        emails:
+          type: array
+          items:
+            type: string
+          description: The list of contact emails.
+        phones:
+          type: array
+          items:
+            type: string
+          description: The list of contact phone numbers.
+        addressLine1:
+          type: string
+          description: The first address line of the contact.
+        addressLine2:
+          type: string
+          description: The second address line of the contact.
+        city:
+          type: string
+          description: The city of the contact.
+        state:
+          type: string
+          description: The state of the contact.
+        postcode:
+          type: string
+          description: The post code of the contact.
+        countryCode:
+          type: string
+          description: The country code of the contact.
+        tags:
+          type: array
+          items:
+            type: string
+          description: Allows to tag the location.
+    legalEntity:
+      title: Legal Entity
+      type: object
+      properties:
+        id:
+          type: string
+          description: The legal entity unique identifier.
+        name:
+          type: string
+          description: The name of the legal entity.
+        type:
+          type: string
+          enum:
+          - COMPANY
+          - SUBSIDIARY
+          description: The type of the legal entity.
+        parentId:
+          type: string
+          description: The id of the parent legal entity.
+        accountLimit:
+          $ref: '#/components/schemas/accountLimit'
+        legalInfo:
+          $ref: '#/components/schemas/legalInfo'
+        customerGroups:
+          type: array
+          description: The list of customer groups assigned to the legal entity.
+          items:
+            $ref: '#/components/schemas/customerGroup'
+        entitiesAddresses:
+          type: array
+          description: The list of locations assigned to the legal entity.
+          items:
+            $ref: '#/components/schemas/location'
+        approvalGroup:
+          type: array
+          description: The list of customer assignment of the approval group of the legal entity.
+          items:
+            $ref: '#/components/schemas/contactAssignmentWithoutExpandedLegalEntity'
+        restrictions:
+          $ref: '#/components/schemas/restrictions'
+        metadata:
+          $ref: '#/components/schemas/metadata'
+        mixins:
+          type: object
+          description: Mixins request. A map where a key represent mixins set name and a value represent a map with key-value pairs.
+          additionalProperties: true
+    errorMessage:
+      title: Error
+      description: Schema for API specified errors.
+      type: object
+      properties:
+        code:
+          minimum: 100
+          maximum: 599
+          description: Original HTTP error code, should be consistent with the response HTTP code.
+          type: integer
+        status:
+          description: Original HTTP error name.
+          type: string
+        message:
+          description: Descriptive error message for debugging.
+          type: string
+        resourceId:
+          type: string
+          description: Id of the resource.
+        details:
+          description: List of problems causing this error.
+          type: array
+          items:
+            description: Details for specific error cause.
+            type: string
+      required:
+      - status
+      - code
+    customerGroup:
+      title: Customer group
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the customer group.
+        name:
+          additionalProperties:
+            type: string
+          description: Localized name of a customer group.
+        role:
+          type: string
+          description: The customer group role.
+      required:
+      - id
+    legalInfo:
+      title: Legal Entity additional information
+      type: object
+      properties:
+        legalName:
+          type: string
+          description: The legal name of the entity.
+        registrationDate:
+          type: string
+          description: The registration date of the legal entity in the ISO 8601 format, e.g. 2020-04-30T04:00:00.000Z.
+        taxRegistrationNumber:
+          type: string
+          description: The tax registration number of the legal entity.
+        registrationAgency:
+          type: string
+          description: The registration agency of the legal entity.
+        countryOfRegistration:
+          type: string
+          description: The country in which the legal entity has been registered. The country needs to be defined and active in the Country Service.
+        registrationId:
+          type: string
+          description: The unique identifier of the legal entity registration.
+    metadata_create:
+      title: metadata_create
+      type: object
+      description: Metadata request.
+      properties:
+        mixins:
+          type: object
+          description: Links to the mixin schemas. A map where the keys represent mixins set attributes and the values represent url to a schema for a particular set.
+          additionalProperties: true
+    location:
+      title: Location
+      type: object
+      properties:
+        id:
+          type: string
+          description: The location unique identifier.
+        name:
+          type: string
+          description: The name of the location
+        type:
+          type: string
+          enum:
+          - HEADQUARTER
+          - WAREHOUSE
+          - OFFICE
+          description: The type of the location.
+        contactDetails:
+          $ref: '#/components/schemas/contactDetails'
+        metadata:
+          $ref: '#/components/schemas/metadata'
+        mixins:
+          type: object
+          description: Mixins request. A map where a key represent mixins set name and a value represent a map with key-value pairs.
+          additionalProperties: true
+    accountLimit:
+      title: Account Limit additional information
+      type: object
+      properties:
+        currency:
+          type: string
+          description: The account limit currency.
+        value:
+          type: number
+          description: The purchasing limit for account in the legal entity.
+          minimum: 0
+  examples:
+    InternalServiceError500_Example:
+      value:
+        code: 500
+        status: Internal Server Error
+        message: A server-side exception occurred that prevented the system from correctly returning the result.
+    Conflict409_Example:
+      value:
+        code: 409
+        status: Conflict
+        message: Given resource already exists.
+    BadRequest400_AmbiguousTenant:
+      value:
+        code: 400
+        status: Bad Request
+        message: Tenant in the header is not matching with the one provided in the URI.
+    NotFound404_LegalEntityNotFound:
+      value:
+        code: 404
+        status: Not Found
+        message: The legal entity with the requested code does not exist.
+    Forbidden403_Example:
+      value:
+        code: 403
+        status: Forbidden
+        message: The access to the given resource is forbidden.
+    BadRequest400_VersionNotSpecified:
+      value:
+        code: 400
+        status: Bad Request
+        message: The document version has to be provided on update operations.
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            customermanagement.legalentity_read: Needed to read legal entities.
+            customermanagement.legalentity_read_own: Needed to read legal entities by customer.
+            customermanagement.legalentity_manage: Needed to manage legal entities.
+            customermanagement.contactassignment_read: Needed to read contact assignments.
+            customermanagement.contactassignment_manage: Needed to manage contact assignments.
+            customermanagement.location_read: Needed to read locations.
+            customermanagement.location_manage: Needed to manage locations.
+x-refined-from:
+- emporix-client-management-openapi.yml
+- emporix-client-management-openapi.yml

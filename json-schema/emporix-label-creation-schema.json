@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-label-creation-schema.json",
+  "title": "labelCreation",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-label-service-openapi.yml#/components/schemas/labelCreation",
+  "allOf": [
+    {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique ID of the label. It will be auto-generated if not provided."
+        }
+      }
+    },
+    {
+      "$ref": "#/$defs/labelUpdate"
+    }
+  ],
+  "$defs": {
+    "labelUpdate": {
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the label."
+        },
+        "overlay": {
+          "$ref": "#/$defs/overlay"
+        },
+        "description": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          ],
+          "description": "Localized resource description in a form of a map of translations."
+        }
+      },
+      "required": [
+        "name",
+        "description"
+      ]
+    },
+    "overlay": {
+      "description": "If present and `isTrue` is actually true the label should be printed on associated products on the described position.",
+      "properties": {
+        "isTrue": {
+          "type": "boolean"
+        },
+        "position": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "position"
+      ]
+    }
+  }
+}

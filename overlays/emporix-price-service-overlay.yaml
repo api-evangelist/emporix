@@ -1,0 +1,58 @@
+overlay: 1.0.0
+info:
+  title: Emporix Price Service overlay
+  version: 1.0.0
+  x-generated: '2026-10-18'
+  x-method: generated
+  x-source: mcp/emporix-tool-crosswalk.yml
+extends: ../openapi/_original/emporix-price-service-openapi.yml
+actions:
+- target: $.info
+  update:
+    x-provider: Emporix
+    x-documentation: https://developer.emporix.io/api-references
+    x-llms-txt: https://developer.emporix.io/llms.txt
+    x-docs-mcp: https://developer.emporix.io/~gitbook/mcp
+  description: Provider metadata and agent-facing entry points.
+- target: $.paths['/price/{tenant}/prices'].post
+  update:
+    x-mcp-tools:
+    - product/upsert-price
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: POST-price-create-price backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/price/{tenant}/prices'].get
+  update:
+    x-mcp-tools:
+    - product/get-prices
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: GET-price-list-all-prices backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/price/{tenant}/prices/{priceId}'].get
+  update:
+    x-mcp-tools:
+    - product/get-price
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: GET-price-retrieve-price backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/price/{tenant}/prices/{priceId}'].put
+  update:
+    x-mcp-tools:
+    - product/upsert-price
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: PUT-price-update-price backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/price/{tenant}/prices/{priceId}'].delete
+  update:
+    x-mcp-tools:
+    - product/delete-price
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: DELETE-price-remove-price backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/price/{tenant}/match-prices'].post
+  update:
+    x-mcp-tools:
+    - product/match-prices
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: POST-price-match-prices backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/price/{tenant}/priceModels/{priceModelId}'].get
+  update:
+    x-mcp-tools:
+    - product/get-price-model
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: GET-price-retrieve-price-model backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).

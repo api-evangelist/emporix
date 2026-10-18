@@ -1,0 +1,165 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-referral-coupon-schema.json",
+  "title": "Coupon",
+  "description": "Coupons describe voucher alike commerce capabilities.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-coupon-openapi.yml#/components/schemas/referralCoupon",
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string",
+      "description": "e.g.: WINTER-SALE, 10OFF (read-only)"
+    },
+    "name": {
+      "type": "string",
+      "description": "Coupon name."
+    },
+    "description": {
+      "type": "string",
+      "description": "Coupon description."
+    },
+    "discountType": {
+      "enum": [
+        "PERCENT",
+        "ABSOLUTE",
+        "FREE_SHIPPING"
+      ],
+      "description": "`PERCENT` for relative values, `ABSOLUTE` for float values, referring to a specific currency, `FREE_SHIPPING` for reducing the shipping cost to 0.\n",
+      "type": "string"
+    },
+    "discountPercentage": {
+      "type": "number",
+      "description": "A discount percentage within the range [0.00, 100.00]. Must be specified only if type is `PERCENT`.",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "discountAbsolute": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/currency-amount"
+        }
+      ]
+    },
+    "allowAnonymous": {
+      "type": "boolean",
+      "description": "Specifies if the coupon can be redeemed by anonymous users.",
+      "default": false
+    },
+    "maxRedemptions": {
+      "type": "number",
+      "description": "Maximum number of redemptions; -1 designates 'unlimited' (seller-only).",
+      "default": -1
+    },
+    "maxRedemptionsPerCustomer": {
+      "type": "number",
+      "description": "Maximum number of redemptions per customer; -1 designates 'unlimited'. Cannot be specified for coupons which can be redeemed by anonymous users.",
+      "default": -1
+    },
+    "restrictions": {
+      "type": "object",
+      "properties": {
+        "validFor": {
+          "type": "array",
+          "description": "A list of customer identifiers for whom the coupon can be redeemed. Cannot be specified for coupons which can be redeemed by anonymous users.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Must be provided in ISO 8601 format (http://www.iso.org/iso/home/standards/iso8601.htm), e.g. '2015-01-31T23:59:59.999Z'"
+        },
+        "validUntil": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Must be provided in ISO 8601 format (http://www.iso.org/iso/home/standards/iso8601.htm), e.g. '2015-01-31T23:59:59.999Z'"
+        },
+        "minOrderValue": {
+          "$ref": "#/$defs/currency-amount"
+        }
+      }
+    },
+    "issuedTo": {
+      "type": "string",
+      "description": "The Id of the customer who originally received the coupon (seller-only)."
+    },
+    "referralCoupon": {
+      "$ref": "#/$defs/referralCouponProperty"
+    },
+    "redemptionCount": {
+      "type": "number",
+      "description": "The number of times a specific coupon has been redeemed. Read-only, set through server (seller-only)."
+    },
+    "status": {
+      "enum": [
+        "INACTIVE",
+        "VALID",
+        "EXPIRED",
+        "USED"
+      ],
+      "description": "Current status of the coupon (read-only). `INACTIVE`: the coupon is only valid in the future; `VALID`: can be used; `EXPIRED`: the coupon validity period has expired; `USED`: the maximum number of redemptions for the coupon has been reached.",
+      "type": "string"
+    },
+    "deleted": {
+      "description": "Flag to mark a coupon as deleted (a.k.a. Soft delete). It is a read-only and seller-only attribute",
+      "type": "boolean"
+    },
+    "mixins": {
+      "type": "object",
+      "description": "The field contains mixins values.",
+      "additionalProperties": true
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "description": "Version of the document. Set to 0 after creating a document. Increments by 1 after every update.",
+          "type": "number"
+        },
+        "mixins": {
+          "type": "object",
+          "description": "Links to the mixin schemas.",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "discountType",
+    "issuedTo",
+    "status",
+    "name"
+  ],
+  "$defs": {
+    "currency-amount": {
+      "type": "object",
+      "title": "Money amount",
+      "description": "Defines an amount in a specific currency.",
+      "properties": {
+        "amount": {
+          "type": "number",
+          "default": 0,
+          "minimum": 0,
+          "description": "Total amount in the specified currency."
+        },
+        "currency": {
+          "type": "string",
+          "default": "USD",
+          "pattern": "^[A-Z]{3}$",
+          "description": "ISO 4217 currency code, e.g.: USD, EUR, CHF."
+        }
+      }
+    },
+    "referralCouponProperty": {
+      "type": "boolean",
+      "description": "Indicates if the coupon is type of referral coupon. This property is read only."
+    }
+  }
+}

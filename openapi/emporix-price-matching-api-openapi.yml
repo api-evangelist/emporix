@@ -1,0 +1,846 @@
+openapi: 3.2.0
+info:
+  title: Emporix Price matching API
+  version: ''
+  contact:
+    email: documentation@emporix.com
+  description: 'Operations tagged Price matching across 2 of this provider''s published API definitions: emporix-price-service-openapi.yml, emporix-price-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+tags:
+- name: Price matching
+paths:
+  /price/{tenant}/match-prices:
+    parameters:
+    - $ref: '#/components/parameters/trait_tenant'
+    post:
+      summary: Matching prices for specific attributes
+      description: 'Finds the best price based on specified criteria.
+
+
+        To simplify, the price matching algorithm is made up of the following steps:
+
+        * All prices that match the specified criteria are fetched.
+
+        * A unified `originalValue` is calculated for each price.
+
+        * The price with the lowest `effectiveValue` is returned.
+
+
+        To use the price matching functionality, you need to define appropriate tax classes in the Tax Service and then assign them to products for which prices are matched through the Product Service.
+
+
+        Special cases:
+
+        * If the matched price currency is different than the requested currency, the price is calculated based on exchange rates.
+
+
+        **Note**: To calculate prices in different currencies, you need to define their exchange rates in the Currency Service.
+
+        * If the matched price location is different than the requested location, the price is calculated based on tax classes.
+
+
+        **Note**: To calculate prices for different locations, you need to assign their tax classes to the product for which the price is matched. Tax classes need to be defined in the Tax Service and then assigned to the product through the Product Service.
+
+
+        The `includesTax` setting, defined at the site or price model level, determines if the algorithm returns net or gross prices. The endpoint returns the best price as a gross or net depending on the following cases:
+
+        * If requested site''s `includesTax` field is specified (through the Site Settings Service):
+
+        * If the `includesTax` field is set to `true`, the matched price is returned as a gross value.
+
+        * If the `includesTax` field is set to `false`, the matched price is returned as a net value.
+
+        * If requested site''s `includesTax` field is not specified:
+
+        * If the `includesTax` field in the price model associated with the price is set to `true`, the matched price is returned as a gross value.
+
+        * If the `includesTax` field in the price model associated with the price is set to `false`, the matched price is returned as a net value.'
+      security:
+      - OAuth2:
+        - price.price_read
+        - price.price_manage
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/matchResponse'
+              examples:
+                Response example:
+                  value:
+                    priceId: 6245aa0a78a8576e338fa9c4
+                    itemId:
+                      itemType: PRODUCT
+                      id: 5f5a3a365bac380024b93c45
+                    site:
+                      code: '1111'
+                    currency: EUR
+                    location:
+                      countryCode: DE
+                    originalValue: 13.55
+                    effectiveValue: 13.55
+                    totalValue: 1355
+                    quantity:
+                      quantity: 10
+                      unitCode: kg
+                    includesTax: true
+                    priceModel:
+                      id: 6245a8f578a8576e338fa9c3
+                      name:
+                        en: Tiered in grams
+                      includesTax: true
+                      includesMarkup: true
+                      measurementUnit:
+                        quantity: 0.1
+                        unitCode: kg
+                      tierDefinition:
+                        tierType: TIERED
+                        tiers:
+                        - minQuantity:
+                            quantity: 0
+                            unitCode: kg
+                        - minQuantity:
+                            quantity: 0.5
+                            unitCode: kg
+                        - minQuantity:
+                            quantity: 5
+                            unitCode: kg
+                      metadata:
+                        version: 1
+                        createdAt: '2022-03-31T13:13:25.816Z'
+                        modifiedAt: '2022-03-31T13:13:25.816Z'
+                    tax:
+                      taxClass: STANDARD
+                      taxRate: 20
+                      prices:
+                        originalValue:
+                          netValue: 10.84
+                          grossValue: 13.55
+                          taxValue: 2.71
+                        effectiveValue:
+                          netValue: 10.84
+                          grossValue: 13.55
+                          taxValue: 2.71
+                        totalValue:
+                          netValue: 1084
+                          grossValue: 1355
+                          taxValue: 271
+                    tierValues:
+                    - id: 04e9b68bc1ea4982a42247726239e7be
+                      priceValue: 15.55
+                    - id: 04e9b68bc1ea4982a42247726239e7be
+                      priceValue: 14.55
+                    - id: 04e9b68bc1ea4982a42247726239e7be
+                      priceValue: 13.55
+                    metadata:
+                      version: '1'
+                      createdAt: '2022-03-31T13:18:02.379Z'
+                      modifiedAt: '2022-03-31T13:18:02.379Z'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+              examples:
+                AmbiguousTenant:
+                  $ref: '#/components/examples/BadRequest400_AmbiguousTenant'
+                ValidationErrorExample:
+                  value:
+                    code: 400
+                    status: Bad Request
+                    message: may not be empty, see details for more info
+                    details:
+                    - currency may not be empty
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '404':
+          description: Not Found
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/match'
+            examples:
+              Request example:
+                value:
+                  targetCurrency: EUR
+                  siteCode: '1111'
+                  targetLocation:
+                    countryCode: DE
+                  items:
+                  - itemId:
+                      itemType: PRODUCT
+                      id: 5f5a3a365bac380024b93c45
+                    quantity:
+                      quantity: 10
+                      unitCode: kg
+        description: ''
+      tags:
+      - Price matching
+      operationId: POST-price-match-prices
+    servers:
+    - url: https://api.emporix.io
+  /price/{tenant}/match-prices-by-context:
+    parameters:
+    - $ref: '#/components/parameters/trait_tenant'
+    post:
+      summary: Matching prices for session context
+      description: 'Finds the best price based on information retrieved from the session context.
+
+
+        The behavior of the logic is the same as of the price/{tenant}/match-prices mechanism. The only exception is that the criteria are created based on the information retrieved from the session details assigned to the access-token in the Session-context Service.
+
+
+        The list of items is also needed as body parameter (similar to the other endpoint).'
+      responses:
+        '200':
+          description: The prices were successfully matched.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/matchResponse'
+              examples:
+                Response example:
+                  value:
+                    priceId: 6245aa0a78a8576e338fa9c4
+                    itemId:
+                      itemType: PRODUCT
+                      id: 5f5a3a365bac380024b93c45
+                    site:
+                      code: '1111'
+                    currency: EUR
+                    location:
+                      countryCode: DE
+                    originalValue: 13.55
+                    effectiveValue: 13.55
+                    totalValue: 1355
+                    quantity:
+                      quantity: 10
+                      unitCode: kg
+                    includesTax: true
+                    priceModel:
+                      id: 6245a8f578a8576e338fa9c3
+                      name:
+                        en: Tiered in grams
+                      includesTax: true
+                      includesMarkup: true
+                      measurementUnit:
+                        quantity: 0.1
+                        unitCode: kg
+                      tierDefinition:
+                        tierType: TIERED
+                        tiers:
+                        - minQuantity:
+                            quantity: 0
+                            unitCode: kg
+                        - minQuantity:
+                            quantity: 0.5
+                            unitCode: kg
+                        - minQuantity:
+                            quantity: 5
+                            unitCode: kg
+                      metadata:
+                        version: 1
+                        createdAt: '2022-03-31T13:13:25.816Z'
+                        modifiedAt: '2022-03-31T13:13:25.816Z'
+                    tax:
+                      taxClass: STANDARD
+                      taxRate: 20
+                      prices:
+                        originalValue:
+                          netValue: 10.84
+                          grossValue: 13.55
+                          taxValue: 2.71
+                        effectiveValue:
+                          netValue: 10.84
+                          grossValue: 13.55
+                          taxValue: 2.71
+                        totalValue:
+                          netValue: 1084
+                          grossValue: 1355
+                          taxValue: 271
+                    tierValues:
+                    - id: 04e9b68bc1ea4982a42247726239e7be
+                      priceValue: 15.55
+                    - id: 04e9b68bc1ea4982a42247726239e7be
+                      priceValue: 14.55
+                    - id: 04e9b68bc1ea4982a42247726239e7be
+                      priceValue: 13.55
+                    metadata:
+                      version: '1'
+                      createdAt: '2022-03-31T13:18:02.379Z'
+                      modifiedAt: '2022-03-31T13:18:02.379Z'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorMessage'
+              examples:
+                AmbiguousTenant:
+                  $ref: '#/components/examples/BadRequest400_AmbiguousTenant'
+                ValidationErrorExample:
+                  value:
+                    code: 400
+                    status: Bad Request
+                    message: Currency may not be empty, see details for more info
+                    details:
+                    - Currency may not be empty
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '404':
+          description: Not Found
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/matchByContext'
+            examples:
+              Request example:
+                value:
+                  items:
+                  - itemId:
+                      itemType: PRODUCT
+                      id: 5f5a39d95bac380024b93c24
+                    quantity:
+                      quantity: 1
+                      unitCode: kg
+      tags:
+      - Price matching
+      operationId: POST-price-match-prices-by-context
+      security:
+      - CustomerAccessToken: []
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    priceModelRetrieval:
+      description: 'Price model holds additional attributes that are extending price. For example it''s possible to define a price which will be specific for a given customer or customer group.
+
+        '
+      type: object
+      properties:
+        id:
+          type: string
+          description: 'Price model''s unique identifier, generated when the price model is created.
+
+            '
+        name:
+          oneOf:
+          - type: object
+          - type: string
+        description:
+          oneOf:
+          - type: object
+          - type: string
+        includesTax:
+          type: boolean
+          description: 'Flag indicating whether prices assigned to the price model are expressed as net or gross.
+
+
+            | Value | Description |
+
+            | --- | --- |
+
+            | `true` | Prices are expressed as gross values. |
+
+            | `false` | Prices are expressed as net values. |
+
+            '
+        includesMarkup:
+          type: boolean
+          description: 'Flag indicating whether prices assigned to the price model include markup.
+
+
+            **The `includesMarkup` field is in preview mode** - some of the features may not be fully operational yet.
+
+            '
+        measurementUnit:
+          $ref: '#/components/schemas/measurementUnit'
+        tierDefinition:
+          type: object
+          properties:
+            tierType:
+              type: string
+              description: "If the price is created based on a price model (the `priceModelId` is provided, the field should stay null. Otherwise the provided value will override a value from price model.\n\nPossible values:\n* `BASIC`\n* `VOLUME`\n* `TIERED`\n\n`BASIC`: Used to offer the same price per unit, regardless of the ordered quantity.\n\n  **Note**: When using basic pricing, you need to define a single tier and set its `minQuantity` field to `0`.\n\n`VOLUME`: Used to offer a lower price per unit depending on the total ordered quantity.\n\n`TIERED`: Used to offer a lower price per unit based on the tiers that the total ordered quantity falls into.\n\n  **Example**: You defined three tiers, starting at 5, 10, and 15 pieces respectively. A customer orders 16 pieces. In this pricing model, the first 5 pieces will be priced according to the first tier, the next 5 according to the second tier, and the 16th piece will be priced according to the third tier."
+            tiers:
+              type: array
+              items:
+                type: object
+                properties:
+                  minQuantity:
+                    $ref: '#/components/schemas/measurementUnit'
+                  id:
+                    type: string
+                    description: Identifier of a given tier.
+        isDefault:
+          type: boolean
+          description: Indicates if the price model is a default price model.
+        metadata:
+          $ref: '#/components/schemas/metadata'
+    salePrice:
+      type: object
+      properties:
+        discountAmount:
+          minimum: 0
+          description: Discount expressed as a fixed amount.
+          type: number
+        discountRate:
+          minimum: 0
+          maximum: 100
+          description: Discount expressed as a percentage of the original price.
+          type: number
+        description:
+          description: Additional information about the discount.
+          type: string
+    metadata:
+      type: object
+      properties:
+        createdAt:
+          description: Date and time when the price was created.
+          type: string
+        modifiedAt:
+          description: Date and time when the price was last modified.
+          type: string
+        version:
+          minimum: 1
+          type: integer
+          description: Version of the price object. If provided optimistic locking will be enabled and it has to match version in the database
+    matchByContext:
+      title: Price matching (by session context) request body
+      type: object
+      properties:
+        items:
+          type: array
+          description: List of items (products or prices) for which the prices should be matched.
+          items:
+            type: object
+            properties:
+              itemId:
+                type: object
+                description: Product or price for which a price should be matched.
+                properties:
+                  itemType:
+                    type: string
+                    description: "Type of the referenced item. Possible values:\n* `PRODUCT`\n* `PRICE`\n* `SKU`\n\n  **The `SKU` value is in preview mode** - the system does not fully operate on the SKU concept yet."
+                  id:
+                    type: string
+                    description: Item's unique identifier, generated when the item is created.
+              quantity:
+                $ref: '#/components/schemas/matchMeasurementUnit'
+    errorMessage:
+      type: object
+      title: error
+      description: Schema for API-specific errors.
+      properties:
+        code:
+          minimum: 100
+          maximum: 599
+          description: Original HTTP error code, should be consistent with the response HTTP code.
+          type: integer
+        status:
+          description: Original HTTP error reason.
+          type: string
+        message:
+          description: Descriptive error message for debugging
+          type: string
+        details:
+          description: List of problems causing this error.
+          type: array
+          items:
+            title: errorDetail
+            description: schema for specific error cause
+            type: string
+        errorCode:
+          type: string
+          description: Additional error code.
+    match:
+      title: Price matching (by criteria) request body
+      type: object
+      properties:
+        targetCurrency:
+          type: string
+          description: 'Code of the currency in which the prices should be matched, as defined in the Currency Service.
+
+
+            **Note**: If the matched price is defined in another currency, a currency exchange algorithm will be used, but only if exchange rates between the two currencies have been defined.'
+        siteCode:
+          type: string
+          description: Code of the site to which the matched prices should apply.
+        targetLocation:
+          type: object
+          required:
+          - countryCode
+          properties:
+            countryCode:
+              type: string
+              description: 'Code of the country for which the prices should be matched, as defined in the Country Service.
+
+
+                **Note**: If the matched price is defined for another country, a tax calculation algorithm will be used, but only if tax classes for the two countries have been defined for relevant products.'
+        items:
+          type: array
+          description: List of items (products or prices) for which the prices should be matched.
+          items:
+            type: object
+            properties:
+              itemId:
+                type: object
+                description: Product or price for which a price should be matched.
+                properties:
+                  itemType:
+                    type: string
+                    description: "Type of the referenced item. Possible values:\n* `PRODUCT`\n* `PRICE`\n* `SKU`\n\n  **The `SKU` value is in preview mode** - the system does not fully operate on the SKU concept yet."
+                  id:
+                    type: string
+                    description: Item's unique identifier, generated when the item is created.
+                required:
+                - itemType
+                - id
+              quantity:
+                type: object
+                description: Quantity of the product for which a matched price should be calculated.
+                required:
+                - quantity
+                properties:
+                  quantity:
+                    type: number
+                    description: Quantity of the product, expressed as a number.
+                  unitCode:
+                    type: string
+                    description: Code of the measurement unit, as defined in the Unit Handling Service. This atribute is optional, if not provided the price model unit will be used.
+            required:
+            - quantity
+        principal:
+          type: object
+          description: Customer or customer group for whom the matched prices should be valid.
+          properties:
+            id:
+              type: string
+              description: Unique identifier of the customer or customer group.
+            type:
+              type: string
+              description: "Customer or customer group for whom the matched should be valid. Possible values:\n* `CUSTOMER`\n* `GROUP`\n\n  **The `GROUP` value is in preview mode** - the system does not fully operate on the customer groups concept yet."
+        useFallback:
+          type: boolean
+          description: 'If no price that matches the criteria is found for the specified site, the price matching functionality will try to find the best price for the `main` site. To enable this option, this field needs to be set to `true`.
+
+
+            **Note**: Using the fallback mechanism may impact the performance as the price matching has to run a second time. If the fallback mechanism is used, the response''s `siteCode` field will be set to `main`.'
+        legalEntityId:
+          type: string
+          description: 'Legal entity for which price lists are included in the price match.
+
+            **Note**: Price lists for the entity''s parent legal entities are also included.'
+      required:
+      - targetCurrency
+      - siteCode
+      - targetLocation
+      - items
+    matchMeasurementUnit:
+      type: object
+      description: Measurement unit for which the price is defined.
+      title: ''
+      properties:
+        quantity:
+          minimum: 0
+          description: Quantity of the measurement unit.
+          type: number
+        unitCode:
+          description: Code of the measurement unit, as defined in the Unit Handling Service. This attribute is optional, if not provided the price model unit will be used.
+          type: string
+      required:
+      - quantity
+    matchResponse:
+      title: matchResponse
+      type: object
+      properties:
+        priceId:
+          type: string
+          description: 'Price''s unique identifier, generated when the price is created.
+
+            '
+        priceListId:
+          type: string
+          description: 'Price list''s unique identifier. The property is populated only in case when the return price belongs to any price list.
+
+            '
+        itemRef:
+          type: object
+          description: Item (product or price) for which the price was matched.
+          properties:
+            itemType:
+              type: string
+              description: "Type of the retrieved item. Possible values:\n* `PRODUCT`\n* `SKU`\n\n  **The `SKU` value is in preview mode** - the system does not fully operate on the SKU concept yet."
+            id:
+              type: string
+              description: 'Item''s unique identifier, generated when the item is created.
+
+                '
+        site:
+          type: object
+          description: Site to which the matched price applies.
+          properties:
+            code:
+              type: string
+              description: Code of the site to which the matched price applies.
+            includesTax:
+              type: boolean
+              description: 'Flag indicating whether prices assigned to the site are expressed as net or gross.
+
+
+                | Value | Description |
+
+                | --- | --- |
+
+                | `true` | Prices are expressed as gross values. |
+
+                | `false` | Prices are expressed as net values. |
+
+
+                **Note**: If not specified, the retrieved price is net or gross depending on the `includesTax` field in the price''s model.'
+        currency:
+          type: string
+          description: Currency related to the price.
+        location:
+          type: object
+          description: Location for which the matched price is defined.
+          properties:
+            countryCode:
+              type: string
+              description: Code of the country to which the matched price applies.
+        originalValue:
+          type: number
+          description: 'Represents an original value without any discounts for a single unit of the requested item (PRODUCT or SKU). The value is a gross price (if includesTax is true) or net price (if includesTax is false).
+
+
+            It''s worth to mention that the cent part is not limited just to two digits. For example, if the price is for one piece of screw, it could look like this: 0.0000317'
+        effectiveValue:
+          type: number
+          description: 'Represents a value with a discount (if applicable) for a single unit of the requested item (PRODUCT or SKU). The value is a gross price (if includesTax is true) or net price (if includesTax is false).
+
+
+            It''s worth to mention that the cent part is not limited just to two digits. For example, if the price is for one piece of screw, it could look like this: 0.0000317'
+        totalValue:
+          type: number
+          description: 'Represents a total value with a discount (if applicable) for all units of the requested item (PRODUCT or SKU). The value is a gross price (if includesTax is true) or net price (if includesTax is false).
+
+
+            It''s worth to mention that the cent part is not limited just to two digits. For example, if the price is for one piece of screw, it could look like this: 0.0000317'
+        quantity:
+          $ref: '#/components/schemas/measurementUnit'
+        salePrice:
+          $ref: '#/components/schemas/salePrice'
+        includesTax:
+          type: boolean
+          description: 'Flag indicating whether prices assigned to the price model are expressed as net or gross.
+
+
+            | Value | Description |
+
+            | --- | --- |
+
+            | `true` | Prices are expressed as gross values. |
+
+            | `false` | Prices are expressed as net values. |'
+        priceModel:
+          $ref: '#/components/schemas/priceModelRetrieval'
+        tax:
+          type: object
+          description: Sales tax applicable to the product.
+          properties:
+            taxClass:
+              type: string
+              description: 'Tax class''s code, as defined in the Tax Service.
+
+                '
+            taxRate:
+              type: number
+              description: Tax rate expressed as a number.
+            prices:
+              type: object
+              description: Tax details containing all prices with tax.
+              properties:
+                originalValue:
+                  type: object
+                  description: Original price with taxes.
+                  properties:
+                    netValue:
+                      type: number
+                    grossValue:
+                      type: number
+                    taxValue:
+                      type: number
+                effectiveValue:
+                  type: object
+                  description: Effective price with taxes.
+                  properties:
+                    netValue:
+                      type: number
+                    grossValue:
+                      type: number
+                    taxValue:
+                      type: number
+                totalValue:
+                  type: object
+                  description: Total price with taxes.
+                  properties:
+                    netValue:
+                      type: number
+                    grossValue:
+                      type: number
+                    taxValue:
+                      type: number
+        mixins:
+          type: object
+          description: Custom price attributes.
+          additionalProperties: true
+        metadata:
+          type: object
+          properties:
+            version:
+              type: string
+              description: Version of the price object.
+            createdAt:
+              type: string
+              description: Date and time when the matched price was created.
+            modifiedAt:
+              type: string
+              description: Date and time when the matched price was last modified.
+        tierValues:
+          type: array
+          description: A price tiers values for a matched price
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: Identifier of a tier
+              priceValue:
+                type: number
+                description: A price value for a particular tier
+    measurementUnit:
+      type: object
+      description: Measurement unit for which the price is defined.
+      properties:
+        quantity:
+          minimum: 0
+          description: Quantity of the measurement unit.
+          type: number
+        unitCode:
+          description: Code of the measurement unit, as defined in the Unit Handling Service.
+          type: string
+      required:
+      - quantity
+      - unitCode
+      title: ''
+  responses:
+    Unauthorized_401:
+      description: Given request is unauthorized - the authorization token is invalid or has expired. Details are provided in the response payload.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            Access token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+    Forbidden_403:
+      description: Given authorization scopes are not sufficient and do not match the scopes required by the endpoint.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Insufficient permissions:
+              value:
+                code: 403
+                status: Forbidden
+                message: The access to the requested resource has been forbidden by the server.
+    InternalServiceError_500:
+      description: Some server-side error occurred. Details are provided in the response payload.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Internal service error:
+              value:
+                code: 500
+                status: Internal Server Error
+                message: A server-side exception occurred that prevented the system from correctly returning the result.
+  examples:
+    BadRequest400_AmbiguousTenant:
+      value:
+        code: 400
+        status: Bad Request
+        message: Tenant in the header is not matching with the one provided in the URI.
+  parameters:
+    trait_tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'Your Emporix tenant''s name.
+
+
+        **Note**: The tenant should always be written in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            price.price_manage: Needed to manage prices.
+            price.price_read: Needed to retrieve prices.
+            price.price_own: Needed to calculate product prices (legacy).
+            price.prod_price_calculate: Needed to calculate prices and synchronize sale prices (legacy).
+            price.price_delete_all: Needed to delete all prices at once (legacy).
+            price.price_match_own: Needed to use the price matching functionality based on information from the session context.
+            price.pricemodel_manage: Needed to manage price models.
+            price.pricemodel_read: Needed to retrieve price models.
+            price.price_manage_by_vendor: Needed to manage prices belonging to the vendor.
+    CustomerAccessToken:
+      type: http
+      scheme: bearer
+x-refined-from:
+- emporix-price-service-openapi.yml
+- emporix-price-service-openapi.yml

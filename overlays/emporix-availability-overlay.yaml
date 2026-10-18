@@ -1,0 +1,46 @@
+overlay: 1.0.0
+info:
+  title: Emporix Availability Service overlay
+  version: 1.0.0
+  x-generated: '2026-10-18'
+  x-method: generated
+  x-source: mcp/emporix-tool-crosswalk.yml
+extends: ../openapi/_original/emporix-availability-openapi.yml
+actions:
+- target: $.info
+  update:
+    x-provider: Emporix
+    x-documentation: https://developer.emporix.io/api-references
+    x-llms-txt: https://developer.emporix.io/llms.txt
+    x-docs-mcp: https://developer.emporix.io/~gitbook/mcp
+  description: Provider metadata and agent-facing entry points.
+- target: $.paths['/availability/{tenant}/availability/site/{site}'].get
+  update:
+    x-mcp-tools:
+    - product/get-availabilities-by-site
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: GET-availability-retrieve-availability-site backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/availability/{tenant}/availability/search'].post
+  update:
+    x-mcp-tools:
+    - product/get-availabilities-by-product-ids
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: POST-availability-search-products-site backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/availability/{tenant}/availability/{productId}/{site}'].post
+  update:
+    x-mcp-tools:
+    - product/upsert-availability
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: POST-availability-add-product backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/availability/{tenant}/availability/{productId}/{site}'].put
+  update:
+    x-mcp-tools:
+    - product/upsert-availability
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: PUT-availability-update-product backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/availability/{tenant}/availability/{productId}/{site}'].delete
+  update:
+    x-mcp-tools:
+    - product/delete-availability
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: DELETE-availability-remove-product backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).

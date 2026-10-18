@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-quote-slot-schema.json",
+  "title": "Quote slot request schema",
+  "description": "Example of payload for shipping cost calculation.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-shipping-openapi.yml#/components/schemas/QuoteSlot",
+  "type": "object",
+  "properties": {
+    "customerId": {
+      "description": "Customer unique identifier.",
+      "type": "string"
+    },
+    "cartTotal": {
+      "description": "Total amount for the given cart.",
+      "type": "object",
+      "required": [
+        "amount",
+        "currency"
+      ],
+      "properties": {
+        "amount": {
+          "description": "Amount in specified currency.",
+          "type": "number",
+          "minimum": 0
+        },
+        "currency": {
+          "type": "string",
+          "description": "Three-letter currency code, compliant with the ISO 4217 standard.",
+          "pattern": "[A-Z]{3}"
+        }
+      }
+    },
+    "shipFromAddress": {
+      "$ref": "#/$defs/Address"
+    },
+    "shipToAddress": {
+      "$ref": "#/$defs/Address"
+    },
+    "slotId": {
+      "type": "string",
+      "description": "The `slotId`` which the quote should be calculated for."
+    },
+    "deliveryWindowId": {
+      "type": "string",
+      "description": "The delivery window id which the slot with selected shipping method exists for."
+    }
+  },
+  "required": [
+    "cartTotal",
+    "slotId",
+    "deliveryWindowId"
+  ],
+  "$defs": {
+    "Address": {
+      "title": "Address",
+      "description": "Address of billing or delivery that contains customer or company name and location including street, street number, zipcode, and country.",
+      "type": "object",
+      "properties": {
+        "street": {
+          "description": "Name of the street.",
+          "type": "string"
+        },
+        "streetNumber": {
+          "type": "string"
+        },
+        "extraLine1": {
+          "type": "string"
+        },
+        "extraLine2": {
+          "type": "string"
+        },
+        "extraLine3": {
+          "type": "string"
+        },
+        "extraLine4": {
+          "type": "string"
+        },
+        "zipCode": {
+          "maxLength": 9,
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "zipCode",
+        "country"
+      ]
+    }
+  }
+}

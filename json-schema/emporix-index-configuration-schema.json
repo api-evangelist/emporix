@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-index-configuration-schema.json",
+  "title": "IndexConfiguration",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-indexing-service-openapi.yml#/components/schemas/IndexConfiguration",
+  "allOf": [
+    {
+      "$ref": "#/$defs/IndexPublicConfiguration"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "writeKey": {
+          "type": "string",
+          "description": "API key used for write purposes. For `BATTERY_INCLUDED`, this key is validated before the configuration is created or updated."
+        },
+        "excludedMixinKeys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional list of root product mixin keys to exclude from indexing. When set, the specified mixin keys are omitted from both the non-localized and localized portions of the indexed document. Applies only to the `BATTERY_INCLUDED` provider."
+        },
+        "includedMixinPaths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Optional allowlist of product mixin paths to include in indexing for the `BATTERY_INCLUDED` provider. Patterns are matched against full dot-notation paths rooted at the mixin key, for example `class_EA673_toolsClassification.sk.OnlineIsService_P`.\n`*` matches within a single path segment, `**` matches across one or more path segments, and matching is case sensitive.\nIf a matched path points to an object, the entire subtree under that object is included. When this field is absent or an empty list, path filtering is inactive and existing `excludedMixinKeys` behavior applies.\n`includedMixinPaths` and `excludedMixinKeys` are mutually exclusive when `includedMixinPaths` is non-empty. Malformed glob patterns are rejected with a validation error on configuration writes."
+        }
+      },
+      "required": [
+        "provider"
+      ]
+    }
+  ],
+  "$defs": {
+    "IndexPublicConfiguration": {
+      "title": "IndexPublicConfiguration",
+      "type": "object",
+      "properties": {
+        "searchKey": {
+          "type": "string",
+          "description": "API Key used for search purposes."
+        },
+        "applicationId": {
+          "type": "string",
+          "description": "Application id of an indexer provider."
+        },
+        "indexName": {
+          "type": "string",
+          "description": "Identifier of an index."
+        },
+        "provider": {
+          "type": "string",
+          "description": "Index provider name. Supported providers: `ALGOLIA` (https://www.algolia.com), `BATTERY_INCLUDED` (https://www.batteryincluded.io). Only one provider can be active per tenant at a time.",
+          "enum": [
+            "ALGOLIA",
+            "BATTERY_INCLUDED"
+          ]
+        },
+        "active": {
+          "type": "boolean",
+          "description": "Indicates if the configuration is active or not."
+        }
+      }
+    }
+  }
+}

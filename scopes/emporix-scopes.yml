@@ -1,0 +1,1197 @@
+generated: '2026-10-18'
+method: derived
+source: openapi/emporix-ai-rag-indexer-openapi.yml, openapi/emporix-ai-service-openapi.yml,
+  openapi/emporix-audit-logs-changelog-openapi.yml, openapi/emporix-availability-openapi.yml,
+  openapi/emporix-brand-service-openapi.yml, openapi/emporix-cart-openapi.yml, openapi/emporix-catalog-openapi.yml,
+  openapi/emporix-category-tree-openapi.yml, openapi/emporix-client-management-openapi.yml,
+  openapi/emporix-configuration-service-openapi.yml, openapi/emporix-country-service-openapi.yml,
+  openapi/emporix-coupon-openapi.yml, openapi/emporix-currency-service-openapi.yml, openapi/emporix-customer-segments-openapi.yml,
+  openapi/emporix-customer-service-openapi.yml, openapi/emporix-fee-openapi.yml, openapi/emporix-iam-openapi.yml,
+  openapi/emporix-import-service-openapi.yml, openapi/emporix-indexing-service-openapi.yml,
+  openapi/emporix-label-service-openapi.yml, openapi/emporix-media-openapi.yml, openapi/emporix-order-openapi.yml,
+  openapi/emporix-payment-gateway-openapi.yml, openapi/emporix-price-service-openapi.yml, openapi/emporix-product-service-openapi.yml,
+  openapi/emporix-quote-openapi.yml, openapi/emporix-returns-openapi.yml, openapi/emporix-reward-points-openapi.yml,
+  openapi/emporix-schema-openapi.yml, openapi/emporix-search-service-openapi.yml, openapi/emporix-sequential-id-openapi.yml,
+  openapi/emporix-session-context-openapi.yml, openapi/emporix-shipping-openapi.yml, openapi/emporix-shopping-list-openapi.yml,
+  openapi/emporix-site-settings-service-openapi.yml, openapi/emporix-tax-service-openapi.yml,
+  openapi/emporix-unit-handling-service-openapi.yml, openapi/emporix-vendor-service-openapi.yml,
+  openapi/emporix-webhook-service-openapi.yml
+schemes:
+- name: OAuth2
+  source: openapi/emporix-ai-rag-indexer-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-ai-service-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-audit-logs-changelog-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-availability-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-brand-service-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-cart-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-catalog-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-category-tree-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-client-management-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-configuration-service-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-country-service-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-coupon-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-currency-service-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-customer-segments-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-customer-service-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-fee-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-iam-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-import-service-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-indexing-service-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-label-service-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-media-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-order-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-payment-gateway-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-price-service-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-product-service-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-quote-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-returns-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-reward-points-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-schema-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-search-service-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-sequential-id-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-session-context-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: oAuth2
+  source: openapi/emporix-shipping-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-shopping-list-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-site-settings-service-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-tax-service-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-unit-handling-service-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-vendor-service-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+- name: OAuth2
+  source: openapi/emporix-webhook-service-openapi.yml
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://api.emporix.io/oauth/token
+scopes:
+- scope: ai.agent_manage
+  description: Needed to manage AI agents.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-ai-rag-indexer-openapi.yml
+  - openapi/emporix-ai-service-openapi.yml
+- scope: ai.agent_read
+  description: Needed to read AI agents.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-ai-rag-indexer-openapi.yml
+  - openapi/emporix-ai-service-openapi.yml
+- scope: ai.agentexecution_manage
+  description: Needed to execute agentic chat.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-ai-service-openapi.yml
+- scope: ai.agentexecution_manage_own
+  description: Needed to execute agentic chat by customers.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-ai-service-openapi.yml
+- scope: ai.completion_manage
+  description: Needed to execute actions related to the AI completions.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-ai-rag-indexer-openapi.yml
+  - openapi/emporix-ai-service-openapi.yml
+- scope: ai.text_manage
+  description: Needed to execute actions related to the text generation.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-ai-rag-indexer-openapi.yml
+  - openapi/emporix-ai-service-openapi.yml
+- scope: availability.availability_manage
+  description: Needed to manage availabilities.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-availability-openapi.yml
+- scope: availability.availability_manage_by_vendor
+  description: Needed to manage availabilities belonging to the vendor.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-availability-openapi.yml
+- scope: availability.availability_view
+  description: Needed to view availabilities.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-availability-openapi.yml
+- scope: availability.availability_view_by_vendor
+  description: Needed to view availabilities belonging to the vendor.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-availability-openapi.yml
+- scope: brand.brand_delete
+  sources:
+  - openapi/emporix-brand-service-openapi.yml
+- scope: brand.brand_manage
+  description: Needed to manage brands.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-brand-service-openapi.yml
+- scope: cart.cart_manage
+  description: Needed to manage carts. This scope is only required for OAuth2 authorization
+    method to authorize the request with the `access_token`.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-cart-openapi.yml
+- scope: cart.cart_manage_external_prices
+  description: Needed to manage external prices, products, fees and discounts. It's required
+    only when an external price, product, fee or discount is provided.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-cart-openapi.yml
+- scope: catalog.catalog_manage
+  description: Manage catalog
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-catalog-openapi.yml
+- scope: catalog.catalog_view
+  description: View catalog
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-catalog-openapi.yml
+- scope: category.category_manage
+  description: Manage a category
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-category-tree-openapi.yml
+- scope: category.category_publish
+  description: Publish a category
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-category-tree-openapi.yml
+- scope: category.category_read_unpublished
+  description: Read unpublished categories
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-category-tree-openapi.yml
+- scope: category.category_unpublish
+  description: Unpublish a category
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-category-tree-openapi.yml
+- scope: changelog.changelog_manage
+  description: Needed to manage changelog resources. Also grants read access.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-audit-logs-changelog-openapi.yml
+- scope: changelog.changelog_read
+  description: Needed to retrieve changelog history.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-audit-logs-changelog-openapi.yml
+- scope: configuration.configuration_manage
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-configuration-service-openapi.yml
+- scope: configuration.configuration_view
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-configuration-service-openapi.yml
+- scope: country.country_manage
+  description: Needed to manage countries
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-country-service-openapi.yml
+- scope: country.country_read
+  description: Needed to read countries
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-country-service-openapi.yml
+- scope: country.region_read
+  description: Needed to read regions
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-country-service-openapi.yml
+- scope: coupon.coupon_manage
+  description: Needed to manage coupons.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-coupon-openapi.yml
+- scope: coupon.coupon_read
+  description: Needed to read coupons.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-coupon-openapi.yml
+- scope: coupon.coupon_redeem
+  description: Needed to redeem coupons.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-coupon-openapi.yml
+- scope: coupon.coupon_redeem_on_behalf
+  description: Needed to redeem coupons on behalf of another customer.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-coupon-openapi.yml
+- scope: currency.currency_manage
+  description: The scope allows you to create, update, and delete currencies and currency exchanges
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-currency-service-openapi.yml
+- scope: currency.currency_read
+  description: The scope allows you to retrieve currencies and currency exchanges.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-currency-service-openapi.yml
+- scope: custom.{lowerCaseType}_manage
+  description: Manage custom instances of a given type. For example, for type `DOCUMENT` → `custom.document_manage`.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-schema-openapi.yml
+- scope: custom.{lowerCaseType}_manage_own
+  description: Allows to manage only your own custom instances of a given type. For example,
+    for type `DOCUMENT` → `custom.document_manage_own`.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-schema-openapi.yml
+- scope: custom.{lowerCaseType}_read
+  description: Read custom instances of a given type. For example, for type `DOCUMENT` → `custom.document_read`.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-schema-openapi.yml
+- scope: custom.{lowerCaseType}_read_own
+  description: Allows to read only your own custom instances of a given type. For example, for
+    type `DOCUMENT` → `custom.document_read_own`.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-schema-openapi.yml
+- scope: customer.customer_manage
+  description: Needed to manage customer profiles.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-customer-service-openapi.yml
+- scope: customer.customer_manage_own
+  description: Needed by customer to manage customer profiles from the same company.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-customer-service-openapi.yml
+- scope: customer.customer_read
+  description: Needed to retrieve customer profiles.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-customer-service-openapi.yml
+- scope: customer.customer_read_own
+  description: Needed by customer to retrieve customer profiles from the same company.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-customer-service-openapi.yml
+- scope: customer.import_manage
+  description: Needed to configure password migration retention and import customers in bulk.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-customer-service-openapi.yml
+- scope: customer.import_read
+  description: Needed to retrieve password migration retention configuration.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-customer-service-openapi.yml
+- scope: customermanagement.contactassignment_manage
+  description: Needed to manage contact assignments.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-client-management-openapi.yml
+- scope: customermanagement.contactassignment_read
+  description: Needed to read contact assignments.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-client-management-openapi.yml
+- scope: customermanagement.legalentity_manage
+  description: Needed to manage legal entities.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-client-management-openapi.yml
+- scope: customermanagement.legalentity_read
+  description: Needed to read legal entities.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-client-management-openapi.yml
+- scope: customermanagement.legalentity_read_own
+  description: Needed to read legal entities by customer.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-client-management-openapi.yml
+- scope: customermanagement.location_manage
+  description: Needed to manage locations.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-client-management-openapi.yml
+- scope: customermanagement.location_read
+  description: Needed to read locations.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-client-management-openapi.yml
+- scope: customersegment.segment_manage
+  description: Needed to create or update customer segments.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-customer-segments-openapi.yml
+- scope: customersegment.segment_read
+  description: Needed to read customer segments.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-customer-segments-openapi.yml
+- scope: customersegment.segment_read_own
+  description: Needed to read own customer segments.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-customer-segments-openapi.yml
+- scope: fee.fee_create
+  description: Needed to create a fee.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-fee-openapi.yml
+- scope: fee.fee_delete
+  description: Needed to delete a fee.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-fee-openapi.yml
+- scope: fee.fee_update
+  description: Needed to update a fee.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-fee-openapi.yml
+- scope: fee.item_create
+  description: Needed to create an item fee.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-fee-openapi.yml
+- scope: fee.item_delete
+  description: Needed to delete an item fee.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-fee-openapi.yml
+- scope: fee.item_update
+  description: Needed to update an item fee.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-fee-openapi.yml
+- scope: iam.access_manage
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-iam-openapi.yml
+- scope: iam.access_read
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-iam-openapi.yml
+- scope: iam.assignment_create_own
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-iam-openapi.yml
+- scope: iam.assignment_delete_own
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-iam-openapi.yml
+- scope: iam.assignment_manage
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-iam-openapi.yml
+- scope: iam.group_manage
+  sources:
+  - openapi/emporix-iam-openapi.yml
+- scope: iam.group_read
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-iam-openapi.yml
+- scope: iam.group_read_own
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-iam-openapi.yml
+- scope: iam.permission_create
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-iam-openapi.yml
+- scope: iam.permission_delete
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-iam-openapi.yml
+- scope: iam.permission_read
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-iam-openapi.yml
+- scope: iam.permission_update
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-iam-openapi.yml
+- scope: iam.resource_read
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-iam-openapi.yml
+- scope: iam.role_create
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-iam-openapi.yml
+- scope: iam.role_delete
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-iam-openapi.yml
+- scope: iam.role_read
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-iam-openapi.yml
+- scope: iam.role_update
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-iam-openapi.yml
+- scope: iam.scope_manage
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-iam-openapi.yml
+- scope: iam.scope_read
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-iam-openapi.yml
+- scope: iam.scope_read_own
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-iam-openapi.yml
+- scope: iam.template_read
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-iam-openapi.yml
+- scope: iam.user_create
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-iam-openapi.yml
+- scope: iam.user_delete
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-iam-openapi.yml
+- scope: iam.user_read
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-iam-openapi.yml
+- scope: iam.user_read_own
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-iam-openapi.yml
+- scope: iam.user_update
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-iam-openapi.yml
+- scope: importtool.import_trigger
+  description: Needed to trigger, schedule, monitor, and cancel import runs and to read configurations,
+    streams, schedules, runs, and imported data.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-import-service-openapi.yml
+- scope: indexing.search_manage
+  description: Needed to manage an index provider configuration
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-indexing-service-openapi.yml
+- scope: indexing.search_view
+  description: Needed to read an index provider configuration
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-indexing-service-openapi.yml
+- scope: label.label_manage
+  description: Needed to manage labels and label medias.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-label-service-openapi.yml
+- scope: label.label_read
+  description: Needed to read labels.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-label-service-openapi.yml
+- scope: media.asset_manage
+  description: Needed to manage assets.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-media-openapi.yml
+- scope: media.asset_manage_by_vendor
+  description: Needed to manage assets that belong to the vendor.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-media-openapi.yml
+- scope: media.asset_manage_by_vendor - allows to create an asset for products which belong
+    to the vendor
+  sources:
+  - openapi/emporix-media-openapi.yml
+- scope: media.asset_read
+  description: Needed to read assets.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-media-openapi.yml
+- scope: media.asset_read_by_vendor
+  description: Needed to read assets that belong to the vendor.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-media-openapi.yml
+- scope: media.asset_read_by_vendor - allows to read assets which belong to the vendor
+  sources:
+  - openapi/emporix-media-openapi.yml
+- scope: order.history_view
+  description: Needed to view order when logged as a customer.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-order-openapi.yml
+- scope: order.order_create
+  description: Needed to create new order by merchant.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-order-openapi.yml
+- scope: order.order_delete
+  description: Needed to delete an order.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-order-openapi.yml
+- scope: order.order_manage_by_vendor
+  description: The scope allows vendor to manage order with assigned vendor.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-order-openapi.yml
+- scope: order.order_post
+  description: Needed to create new order as a customer.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-order-openapi.yml
+- scope: order.order_read
+  description: Needed to read order.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-order-openapi.yml
+- scope: order.order_read_by_vendor
+  description: The scope allows vendor to read order with assigned vendor.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-order-openapi.yml
+- scope: order.order_read_le
+  description: Needed to read legal entity orders.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-order-openapi.yml
+- scope: order.order_readascustomer
+  description: Needed to read an order as a customer.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-order-openapi.yml
+- scope: order.order_update
+  description: Needed to update an order.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-order-openapi.yml
+- scope: order.order_update_completed
+  description: Needed to update an order with a `completed` status.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-order-openapi.yml
+- scope: order.order_updateascustomer
+  description: Needed to update an order as a customer.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-order-openapi.yml
+- scope: payment-gateway.authorize_manage
+  description: Needed to perform a payment authorization flow by a tenant employee.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-payment-gateway-openapi.yml
+- scope: payment-gateway.cancel_manage
+  description: Needed to perform a payment cancel flow by a tenant employee.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-payment-gateway-openapi.yml
+- scope: payment-gateway.capture_manage
+  description: Needed to perform a payment capture flow by a tenant employee.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-payment-gateway-openapi.yml
+- scope: payment-gateway.paymentmodes_manage
+  description: Needed to manage payment modes by a tenant employee.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-payment-gateway-openapi.yml
+- scope: payment-gateway.paymentmodes_read
+  description: Needed for reading payment modes by a tenant employee.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-payment-gateway-openapi.yml
+- scope: payment-gateway.paymenttransactions_read
+  description: Needed to read all transaction details by a tenant employee.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-payment-gateway-openapi.yml
+- scope: payment-gateway.refund_manage
+  description: Needed to perform a payment refund flow by a tenant employee.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-payment-gateway-openapi.yml
+- scope: price.price_delete_all
+  description: Needed to delete all prices at once (legacy).
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-price-service-openapi.yml
+- scope: price.price_manage
+  description: Needed to manage prices.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-price-service-openapi.yml
+- scope: price.price_manage_by vendor
+  sources:
+  - openapi/emporix-price-service-openapi.yml
+- scope: price.price_manage_by_vendor
+  description: Needed to manage prices belonging to the vendor.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-price-service-openapi.yml
+- scope: price.price_match_own
+  description: Needed to use the price matching functionality based on information from the
+    session context.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-price-service-openapi.yml
+- scope: price.price_own
+  description: Needed to calculate product prices (legacy).
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-price-service-openapi.yml
+- scope: price.price_read
+  description: Needed to retrieve prices.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-price-service-openapi.yml
+- scope: price.pricelist_manage
+  sources:
+  - openapi/emporix-price-service-openapi.yml
+- scope: price.pricelist_read
+  sources:
+  - openapi/emporix-price-service-openapi.yml
+- scope: price.pricemodel_manage
+  description: Needed to manage price models.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-price-service-openapi.yml
+- scope: price.pricemodel_manage_admin
+  sources:
+  - openapi/emporix-price-service-openapi.yml
+- scope: price.pricemodel_read
+  description: Needed to retrieve price models.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-price-service-openapi.yml
+- scope: price.prod_price_calculate
+  description: Needed to calculate prices and synchronize sale prices (legacy).
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-price-service-openapi.yml
+- scope: product.price_manage
+  description: Needed to manage product prices.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-product-service-openapi.yml
+- scope: product.product_manage
+  description: Needed to manage products.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-product-service-openapi.yml
+- scope: product.product_manage_by_vendor
+  description: The scope allows vendor to manage products with assigned vendor.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-product-service-openapi.yml
+- scope: product.product_publish
+  description: Needed to publish products.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-product-service-openapi.yml
+- scope: product.product_read_by_vendor
+  description: The scope allows vendor to read products with assigned vendor.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-product-service-openapi.yml
+- scope: product.product_read_unpublished
+  description: Needed to retrieve unpublished products.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-product-service-openapi.yml
+- scope: product.product_template_manage
+  description: Needed for updating and removing a product template.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-product-service-openapi.yml
+- scope: product.product_template_read
+  description: Needed for reading product templates.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-product-service-openapi.yml
+- scope: product.product_unpublish
+  description: Needed to unpublish products.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-product-service-openapi.yml
+- scope: quote.quote_manage
+  description: Needed to manage quotes.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-quote-openapi.yml
+- scope: quote.quote_manage_own
+  description: Needed to manage own quotes by the customer.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-quote-openapi.yml
+- scope: quote.quote_read
+  description: Needed to retrieve quotes.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-quote-openapi.yml
+- scope: quote.quote_read_own
+  description: Needed to retrieve own quotes by the customer.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-quote-openapi.yml
+- scope: returns.returns_manage
+  description: Needed to manage returns by a tenant employee (all tenant returns).
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-returns-openapi.yml
+- scope: returns.returns_manage_own
+  description: Needed to manage returns by a customer (only customer's own returns).
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-returns-openapi.yml
+- scope: returns.returns_read
+  description: Needed for reading returns by a tenant employee (all tenant returns).
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-returns-openapi.yml
+- scope: returns.returns_read_own
+  description: Needed for reading returns by a customer (only customer's own returns).
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-returns-openapi.yml
+- scope: rewardspoints.rewardpoints_manage
+  description: Needed to manage reward points
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-reward-points-openapi.yml
+- scope: rewardspoints.rewardpoints_view
+  description: Nedeed to view reward points information
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-reward-points-openapi.yml
+- scope: schema.custominstance_manage
+  description: Manage custom instances of any custom schema type.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-schema-openapi.yml
+- scope: schema.custominstance_read
+  description: Read custom instances of any custom schema type.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-schema-openapi.yml
+  - openapi/emporix-search-service-openapi.yml
+- scope: schema.schema_manage
+  description: Required for managing schemas.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-schema-openapi.yml
+- scope: schema.schema_read
+  description: Required for reading schemas.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-schema-openapi.yml
+- scope: search.search_manage
+  description: Needed to create, update, and delete saved searches and search indexes.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-search-service-openapi.yml
+- scope: search.search_read
+  description: Needed to search documents, to read saved searches, and to read search indexes
+    and index jobs.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-search-service-openapi.yml
+- scope: sequentialid.schema_manage
+  description: schema_manage
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-sequential-id-openapi.yml
+- scope: sequentialid.schema_view
+  description: schema_view
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-sequential-id-openapi.yml
+- scope: sessioncontext.context_manage
+  description: Manage session context
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-session-context-openapi.yml
+- scope: shipping.shipping_manage
+  description: Needed to manage shipping settings.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-shipping-openapi.yml
+- scope: shipping.shipping_read
+  description: Needed to read shipping settings.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-shipping-openapi.yml
+- scope: shoppinglist.shoppinglist_delete
+  description: Needed to delete shopping lists.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-shopping-list-openapi.yml
+- scope: shoppinglist.shoppinglist_manage
+  description: Needed to manage shopping lists.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-shopping-list-openapi.yml
+- scope: shoppinglist.shoppinglist_read
+  description: Needed to retrieve shopping lists.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-shopping-list-openapi.yml
+- scope: site.site_manage
+  description: Needed to manage sites.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-site-settings-service-openapi.yml
+- scope: site.site_read
+  description: Needed to retrieve information about sites.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-site-settings-service-openapi.yml
+- scope: tax.tax_manage
+  description: Needed to create, update, and delete tax configurations.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-tax-service-openapi.yml
+- scope: tax.tax_read
+  description: Needed to retrieve tax configurations.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-tax-service-openapi.yml
+- scope: unithandling.unit_manage
+  description: Needed to manage measurement units.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-unit-handling-service-openapi.yml
+- scope: vendor.vendor_manage
+  description: Needed to manage vendors and locations
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-vendor-service-openapi.yml
+- scope: vendor.vendor_read
+  description: Needed to read vendors and locations
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-vendor-service-openapi.yml
+- scope: webhook.subscription_manage
+  description: Needed to manage subscriptions.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-webhook-service-openapi.yml
+- scope: webhook.subscription_read
+  description: Needed to read subscriptions.
+  flows:
+  - clientCredentials
+  sources:
+  - openapi/emporix-webhook-service-openapi.yml

@@ -1,0 +1,234 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-discount-response-schema.json",
+  "title": "discountResponse",
+  "description": "Discount details.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-cart-openapi.yml#/components/schemas/discountResponse",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Discount's unique identifier."
+    },
+    "yrn": {
+      "$ref": "#/$defs/YRN"
+    },
+    "couponYrn": {
+      "$ref": "#/$defs/YRN"
+    },
+    "code": {
+      "maxLength": 150,
+      "description": "Discount code generated when a discount coupon is created through the Coupon Service.",
+      "type": "string"
+    },
+    "amount": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Discount expressed as fixed amount.",
+      "format": "double"
+    },
+    "currency": {
+      "type": "string",
+      "pattern": "[A-Z]{3}",
+      "description": "Three-letter currency code, compliant with the ISO 4217 standard.",
+      "minLength": 3,
+      "maxLength": 3
+    },
+    "discountRate": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Discount expressed as a percentage of the price.",
+      "format": "double"
+    },
+    "name": {
+      "maxLength": 150,
+      "description": "Discount's displayed name.",
+      "type": "string"
+    },
+    "calculationType": {
+      "type": "string",
+      "maxLength": 30,
+      "default": "ApplyDiscountBeforeTax",
+      "description": "Calculation type specifies how the discount should be calculated. Can be set to one of the following:\n* `ApplyDiscountBeforeTax`\n* `ApplyDiscountAfterTax`",
+      "enum": [
+        "ApplyDiscountBeforeTax",
+        "ApplyDiscountAfterTax"
+      ]
+    },
+    "discountCalculationType": {
+      "type": "string",
+      "description": "Determines whether the coupon is applied to the total or subtotal value of the order.",
+      "enum": [
+        "SUBTOTAL",
+        "TOTAL"
+      ]
+    },
+    "valid": {
+      "default": true,
+      "description": "Flag indicating whether the discount is valid. \nInvalid discounts are not taken into account when the cart is calculated.",
+      "type": "boolean"
+    },
+    "links": {
+      "minItems": 2,
+      "type": "array",
+      "description": "Links to Coupon Service endpoints used to validate and redeem the discount.",
+      "items": {
+        "$ref": "#/$defs/link"
+      }
+    },
+    "discountValidationDetails": {
+      "$ref": "#/$defs/discountValidationDetails"
+    },
+    "vendorRestricted": {
+      "type": "boolean",
+      "default": false,
+      "description": "Indicates whether the discount is limited to the vendors in `restrictions.vendors`."
+    },
+    "restrictions": {
+      "$ref": "#/$defs/discountRestrictions"
+    },
+    "discountIndex": {
+      "type": "integer",
+      "description": "The index of the discount. It represents the discount position in the cart discounts array."
+    }
+  },
+  "required": [
+    "code"
+  ],
+  "$defs": {
+    "YRN": {
+      "type": "string",
+      "title": "YRN",
+      "description": "A unique identifier of a global resource, which stores information about the resource, such as its type, ID or name of the tenant.",
+      "minLength": 1
+    },
+    "discountRestrictions": {
+      "description": "Restrictions copied from the coupon.",
+      "type": "object",
+      "properties": {
+        "validFrom": {
+          "type": "string",
+          "description": "Start of the discount validity period."
+        },
+        "validUntil": {
+          "type": "string",
+          "description": "End of the discount validity period."
+        },
+        "minOrderValue": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/price"
+            },
+            {
+              "description": "Minimum order value copied from the coupon. When `vendorRestricted` is `true`, this value is checked against the total of the matching vendor items."
+            }
+          ]
+        },
+        "includedCategories": {
+          "type": "array",
+          "description": "Categories to which the discount applies.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "excludedCategories": {
+          "type": "array",
+          "description": "Categories to which the discount does not apply.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "segments": {
+          "type": "array",
+          "description": "Customer segments to which the discount applies.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "vendors": {
+          "type": "array",
+          "description": "Vendor identifiers to which the discount applies.",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "discountValidationDetails": {
+      "description": "",
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "link": {
+      "description": "",
+      "type": "object",
+      "properties": {
+        "rel": {
+          "type": "string",
+          "maxLength": 50,
+          "description": "Action to be done using the endpoint provided in the `href` field.",
+          "enum": [
+            "validate",
+            "redeem"
+          ]
+        },
+        "title": {
+          "maxLength": 100,
+          "description": "Detailed link description.",
+          "type": "string"
+        },
+        "href": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "Endpoint used to validate or redeem the discount."
+        },
+        "type": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Content type."
+        }
+      },
+      "required": [
+        "rel",
+        "href",
+        "type"
+      ]
+    },
+    "price": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "number",
+          "minimum": 0,
+          "format": "double",
+          "description": "Price."
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "[A-Z]{3}",
+          "minLength": 3,
+          "maxLength": 3,
+          "description": "Three-letter currency code, compliant with the ISO 4217 standard."
+        }
+      },
+      "required": [
+        "amount",
+        "currency"
+      ],
+      "description": ""
+    }
+  }
+}

@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-customer-assignment-b2-cresponse-schema.json",
+  "title": "CustomerAssignmentB2CResponse",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-customer-segments-openapi.yml#/components/schemas/CustomerAssignmentB2CResponse",
+  "allOf": [
+    {
+      "type": "object",
+      "properties": {
+        "customer": {
+          "$ref": "#/$defs/Customer"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "properties": {
+        "assignmentType": {
+          "type": "string",
+          "enum": [
+            "MANUAL",
+            "AUTOMATIC"
+          ]
+        }
+      }
+    },
+    {
+      "$ref": "#/$defs/CustomerAssignmentUpsert"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "metadata": {
+          "$ref": "#/$defs/MetadataResponse"
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "Customer": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier of an existing customer."
+        },
+        "firstName": {
+          "type": "string",
+          "description": "Customer's first name."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "Customer's last name."
+        },
+        "email": {
+          "type": "string",
+          "description": "Customer's e-mail address."
+        }
+      }
+    },
+    "CustomerAssignmentUpsert": {
+      "type": "object",
+      "description": "",
+      "properties": {
+        "mixins": {
+          "type": "object",
+          "description": "A key-value map of additional attributes.",
+          "additionalProperties": true
+        },
+        "metadata": {
+          "$ref": "#/$defs/MetadataUpdate"
+        }
+      }
+    },
+    "MetadataCreate": {
+      "type": "object",
+      "properties": {
+        "mixins": {
+          "type": "object",
+          "description": "A key-value map, where key is a mixin name and value is a link to the mixin schema.",
+          "additionalProperties": true
+        }
+      }
+    },
+    "MetadataResponse": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "createdAt": {
+              "description": "The creation date.",
+              "type": "string",
+              "format": "date-time"
+            },
+            "modifiedAt": {
+              "description": "The modification date.",
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        },
+        {
+          "$ref": "#/$defs/MetadataUpdate"
+        }
+      ]
+    },
+    "MetadataUpdate": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "integer",
+              "description": "The document version number."
+            }
+          }
+        },
+        {
+          "$ref": "#/$defs/MetadataCreate"
+        }
+      ]
+    }
+  }
+}

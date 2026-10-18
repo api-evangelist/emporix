@@ -1,0 +1,600 @@
+openapi: 3.2.0
+info:
+  title: Emporix Quote reason API
+  version: ''
+  contact:
+    email: documentation@emporix.com
+  description: 'Operations tagged Quote reason across 2 of this provider''s published API definitions: emporix-quote-openapi.yml, emporix-quote-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Quote reason
+paths:
+  /quote/{tenant}/quote-reasons:
+    post:
+      tags:
+      - Quote reason
+      summary: Creating a reason for changing the quote status
+      description: 'Creating reasons for the ''CHANGE'' or ''DECLINE'' types of quote statuses.
+
+        The reason for the quote status change serves to provide more descriptive information why the status has been changed. This option is available both for merchants and customers, depending on who updates the status of the quote.'
+      operationId: POST-quote-create-quote-reason
+      parameters:
+      - name: tenant
+        in: path
+        description: 'Your Emporix tenant name.
+
+
+          **Note**: The tenant name should always be written in lowercase.
+
+          '
+        required: true
+        schema:
+          type: string
+          example: saasdev2
+      - $ref: '#/components/parameters/trait_contentLanguage_header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuoteReasonCreateRequest'
+            example:
+              code: PRICE_TOO_HIGH
+              type: CHANGE
+              message:
+                en: The price is too high
+                de: Der Preis ist zu hoch
+        required: true
+      responses:
+        '201':
+          description: The request was successful. Quote reason was created and its id is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuoteReasonIdResponse'
+              example:
+                id: 642c1ff3c78f9b2958d17c18
+        '400':
+          $ref: '#/components/responses/Bad_request_400'
+        '401':
+          $ref: '#/components/responses/Unathorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '409':
+          $ref: '#/components/responses/Conflict_409'
+      security:
+      - OAuth2:
+        - quote.quote_manage
+    get:
+      tags:
+      - Quote reason
+      summary: Retrieving reasons for changing the quote status
+      description: Retrieves a full list of reasons for changing the quote status with details.
+      operationId: GET-quote-list-reasons
+      parameters:
+      - name: tenant
+        in: path
+        description: 'Your Emporix tenant name.
+
+
+          **Note**: The tenant name should always be written in lowercase.
+
+          '
+        required: true
+        schema:
+          type: string
+          example: saasdev2
+      - $ref: '#/components/parameters/trait_acceptLanguage_header'
+      - $ref: '#/components/parameters/X-Total-Count'
+      - $ref: '#/components/parameters/trait_paged_pageSize'
+      - $ref: '#/components/parameters/trait_paged_pageNumber'
+      - $ref: '#/components/parameters/trait_sort'
+      - $ref: '#/components/parameters/trait_q_param'
+      - $ref: '#/components/parameters/trait_fields'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QuoteReasonResponse'
+              example:
+              - id: 642c1ff3c78f9b2958d17c18
+                code: PRICE_TOO_HIGH
+                message:
+                  en: The price is too high
+                  de: Der Preis ist zu hoch
+                type: CHANGE
+                metadata:
+                  version: 1
+                  createdAt: '2023-02-23T09:36:55.929Z'
+                  modifiedAt: '2023-02-23T09:38:49.196Z'
+        '400':
+          $ref: '#/components/responses/Bad_request_400'
+        '401':
+          $ref: '#/components/responses/Unathorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+      security:
+      - OAuth2:
+        - quote.quote_read
+        - quote.quote_read_own
+    servers:
+    - url: https://api.emporix.io
+  /quote/{tenant}/quote-reasons/{quoteReasonId}:
+    get:
+      tags:
+      - Quote reason
+      summary: Retrieving a quote reason
+      description: Retrieves a quote reason with details by its unique identifier.
+      operationId: GET-quote-retrieve-reason
+      parameters:
+      - name: tenant
+        in: path
+        description: 'Your Emporix tenant name.
+
+
+          **Note**: The tenant name should always be written in lowercase.
+
+          '
+        required: true
+        schema:
+          type: string
+          example: saasdev2
+      - name: quoteReasonId
+        in: path
+        description: 'Quote reason unique identifier generated when the quote reason is created.
+
+          '
+        required: true
+        schema:
+          type: string
+          example: 642c1ff3c78f9b2958d17c18
+      - $ref: '#/components/parameters/trait_acceptLanguage_header'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuoteReasonResponse'
+              example:
+                id: 642c1ff3c78f9b2958d17c18
+                code: PRICE_TOO_HIGH
+                message:
+                  en: The price is too high
+                  de: Der Preis ist zu hoch
+                type: CHANGE
+                metadata:
+                  version: 1
+                  createdAt: '2023-02-23T09:36:55.929Z'
+                  modifiedAt: '2023-02-23T09:38:49.196Z'
+        '400':
+          $ref: '#/components/responses/Bad_request_400'
+        '401':
+          $ref: '#/components/responses/Unathorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '404':
+          $ref: '#/components/responses/Not_Found_404'
+      security:
+      - OAuth2:
+        - quote.quote_read
+        - quote.quote_read_own
+    put:
+      tags:
+      - Quote reason
+      summary: Updating the reason for changing the quote status
+      description: Updating the reason for changing the quote status.
+      operationId: PUT-quote-update-reason
+      parameters:
+      - name: tenant
+        in: path
+        description: 'Your Emporix tenant name.
+
+
+          **Note**: The tenant name should always be written in lowercase.
+
+          '
+        required: true
+        schema:
+          type: string
+          example: saasdev2
+      - name: quoteReasonId
+        in: path
+        description: 'Quote reason unique identifier generated when the quote reason is created.
+
+          '
+        required: true
+        schema:
+          type: string
+          example: 642c1ff3c78f9b2958d17c18
+      - $ref: '#/components/parameters/trait_contentLanguage_header'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuoteReasonUpdateRequest'
+            example:
+              code: PRICE_TOO_HIGH
+              type: CHANGE
+              message:
+                en: The price is too high
+                de: Der Preis ist zu hoch
+              metadata:
+                version: 1
+        required: true
+      responses:
+        '204':
+          description: The request was successful. Quote reason has been updated.
+        '400':
+          $ref: '#/components/responses/Bad_request_400'
+        '401':
+          $ref: '#/components/responses/Unathorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '404':
+          $ref: '#/components/responses/Not_Found_404'
+        '409':
+          $ref: '#/components/responses/Conflict_409'
+      security:
+      - OAuth2:
+        - quote.quote_manage
+    delete:
+      summary: Deleting the reason for changing the quote status
+      tags:
+      - Quote reason
+      operationId: DELETE-quote-remove-reason
+      parameters:
+      - name: tenant
+        in: path
+        description: 'Your Emporix tenant name.
+
+
+          **Note**: The tenant name should always be written in lowercase.
+
+          '
+        required: true
+        schema:
+          type: string
+          example: saasdev2
+      - name: quoteReasonId
+        in: path
+        description: 'Quote reason unique identifier generated when the quote reason is created.
+
+          '
+        required: true
+        schema:
+          type: string
+          example: 642c1ff3c78f9b2958d17c18
+      description: Deletes the reason provided for the quote status change with a specific reason ID.
+      security:
+      - OAuth2:
+        - quote.quote_manage
+      responses:
+        '204':
+          description: Quote reason has been deleted successfully.
+        '401':
+          $ref: '#/components/responses/Unathorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    QuoteReasonCreateRequest:
+      type: object
+      description: The schema specifies the attributes that must be provided when creating a quote reason.
+      properties:
+        id:
+          type: string
+          description: The ID for a quote reason can either be manually provided at the time of the quote reason creation, or is automatically generated if not provided.
+        type:
+          type: string
+          description: Type of the quote reason.
+          enum:
+          - CHANGE
+          - DECLINE
+        code:
+          type: string
+          description: Code of the reason for the quote status change.
+        message:
+          type: object
+          additionalProperties:
+            type: string
+          description: Localized message in the form of a map of translations.
+      required:
+      - type
+      - code
+      - message
+    ErrorResponse:
+      required:
+      - code
+      - message
+      - status
+      type: object
+      properties:
+        resourceId:
+          type:
+          - string
+          - 'null'
+        code:
+          type: integer
+          format: int32
+        status:
+          type: string
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            type: string
+    QuoteReasonIdResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID of the generated document.
+      example:
+        id: 642c1ff3c78f9b2958d17c18
+      description: ID of the generated quote reason.
+    QuoteReasonUpdateRequest:
+      type: object
+      description: The schema specifies the attributes that must be provided when creating a quote reason.
+      properties:
+        type:
+          type: string
+          description: Type of the quote reason.
+          enum:
+          - CHANGE
+          - DECLINE
+        code:
+          type: string
+          description: Code of the reason for the quote status change.
+        message:
+          type: object
+          additionalProperties:
+            type: string
+          description: Localized message in the form of a map of translations.
+        metadata:
+          type: object
+          description: The Quote Reason metadata details
+          properties:
+            version:
+              type: integer
+              description: Version of the quote reason that is used for the optimistic locking handling
+          required:
+          - version
+      required:
+      - type
+      - code
+      - message
+      - metadata
+    QuoteReasonResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The quote reason ID.
+        type:
+          type: string
+          enum:
+          - CHANGE
+          - DECLINE
+          description: Type of the quote reason.
+        message:
+          oneOf:
+          - type: object
+            additionalProperties:
+              type: string
+          - type: string
+          description: Localized message - can be either string or map with languages as map's keys accordingly to specified 'Accept-Language' header.
+        code:
+          type: string
+          description: Code of the reason for the quote status change.
+        metadata:
+          type: object
+          description: The Quote Reason metadata details.
+          properties:
+            version:
+              type: integer
+              description: Version of the quote reason that is used for the optimistic locking handling.
+            createdAt:
+              type: string
+              format: date-time
+              description: The Quote Reason creation timestamp.
+            modifiedAt:
+              type: string
+              format: date-time
+              description: The Quote Reason modification timestamp.
+  responses:
+    Not_Found_404:
+      description: Given resource cannot be found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            Quote does not exists:
+              value:
+                resourceId: 084bcag6-66b8-4ddd-9489-65c5f6449e94
+                code: 404
+                status: Not Found
+                message: Error while getting resource
+                details:
+                - Resource with id '084bcaf6-66b8-4ddd-9489-65c5f6449e94' not found
+    Unathorized_401:
+      description: Given request is unauthorized - the authorization token is invalid or has expired. It usually means that tenant from the token does not match tenant from path.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid Access Token:
+              value:
+                fault:
+                  faultstring: Invalid Access Token
+                  detail:
+                    errorcode: keymanagement.service.invalid_access_token
+            Unauthorized:
+              value: {}
+    Conflict_409:
+      description: Conflict.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            code: 409
+            status: Conflict
+            message: Duplicated key
+    Forbidden_403:
+      description: Permission denied due to insufficient rights. This may happen when request does not contain sufficient scopes for given query values.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            Forbidden:
+              value:
+                code: 403
+                status: Forbidden
+                message: You need a scope for this action.
+                details:
+                - 'Required scope(s): quote.quote_manage'
+    Bad_request_400:
+      description: Unsupported language provided.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              status:
+                type: string
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: string
+          examples:
+            Unsupported language:
+              value:
+                code: 400
+                status: Bad Request
+                message: Language header validation failed
+                details:
+                - 'Following languages are not supported: ''ru'''
+  parameters:
+    trait_fields:
+      name: fields
+      in: query
+      description: 'Fields to be returned in the response.
+
+
+        When this parameter is passed, only the `id` and `{fieldName}` are retrieved for each entry.
+
+        You can specify multiple fields by separating them with commas.
+
+        '
+      schema:
+        type: string
+        example: code,message
+    X-Total-Count:
+      name: X-Total-Count
+      in: header
+      required: false
+      schema:
+        type: boolean
+        example: true
+        default: false
+      description: 'Flag indicating whether the total number of retrieved items should be returned.
+
+        '
+    trait_acceptLanguage_header:
+      name: Accept-Language
+      in: header
+      required: false
+      schema:
+        type: string
+      description: 'List of language codes acceptable for the response. You can specify factors that indicate which language should be retrieved if the one with a higher factor was not found in the localized fields. If a value is specified, then it must be present in the tenant configuration.
+
+        * If the header is set to a particular language or a list of languages, all localized fields are retrieved as strings.
+
+        * If the header is set to `*`, all localized fields are retrieved as maps of translations, where the keys are language codes and values are the fields in their respective languages.
+
+        * If the header is empty, localized fields are retrieved in the default language defined in the Configuration Service.
+
+        '
+    trait_sort:
+      name: sort
+      in: query
+      description: "List of properties used to sort the results, separated by colons. The order of properties indicates their priority in sorting.\n\nPossible values:\n* `{fieldName}`\n* `{fieldName}:asc`\n* `{fieldName}:desc`\n\n**Note:** If you want to sort the results by localized properties, the possible values are:\n  * `{fieldName}.{language}`\n  * `{fieldName}.{language}:asc`\n  * `{fieldName}.{language}:desc`\n\nIf the sorting direction is not specified, the fields are sorted in ascending order."
+      schema:
+        type: string
+    trait_paged_pageNumber:
+      name: pageNumber
+      in: query
+      description: 'Page number to be retrieved. The number of the first page is 1.
+
+        '
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    trait_contentLanguage_header:
+      in: header
+      name: Content-Language
+      required: true
+      description: The Content-Language request HTTP header defines language(s) of the payload.
+      schema:
+        type: string
+        example: de
+    trait_paged_pageSize:
+      name: pageSize
+      in: query
+      description: 'Number of items to be retrieved per page.
+
+        '
+      schema:
+        default: 60
+        minimum: 1
+        type: integer
+    trait_q_param:
+      name: q
+      in: query
+      description: "A standard query parameter is used to search for specific values.\n\n* Searching for items by string-based properties:\n  * By a field value: `q=siteCode:main`, where `siteCode` is the field name, and `main` is its desired value.\n  * By a localized field value: `q=items.product.name.en:apple_lobo`, where `name` is the field name of product, `en` is the language code, and `apple_lobo` is the field value expressed in the specified language. **Note**: This query works only for localized fields, which are stored in a map format, where `key` is the language code and `value` is the translation to particular language.\n* Searching for items by a number-based property:\n  * With a specific value: `q=items.quantity.quantity:20`\n  * With a value greater than: `q=items.quantity.quantity:>20`\n  * With a value lower than: `q=items.quantity.quantity:<20`\n  * With a value greater than or equal to: `q=items.quantity.quantity:>=20`\n  * With a value lower than or equal to: `q=items.quantity.quantity:<=20`\n  * With a value within a range of values: `q=items.quantity.quantity:(>=10 AND <=20)`\\\n   where `items.quantity.quantity` is the name of the number-based field, and `20` is its querying value.\n* Searching for items by a date-based property: All number-based property queries are also valid for dates. In that case, the date should be placed within double quotes: `q=metadataCreatedAt:(>=\"2021-05-18T07:27:27.455Z\" AND <\"2021-05-20T07:27:27.455Z\")`\n* Searching for items by a boolean-based property: `q=description.multiLanguage:true`, where `description.multiLanguage` is the boolean field name, and `true` is its desired value.\n* Searching for items with a nonexistent or empty property: `q=description.en:null`, where `description.en` is the field that has its value set to `null`.\n* Searching for items with an existing property: `q=mixins.mixinName:exists`, where the specific mixin named `mixinName` exists in the database.\n* Searching for items by multiple specific values: `q=id:(5c3325baa9812100098ff48f,5c3325d1a9812100098ff494)`, where `id` is the field name, and strings within the bracket are the desired values.\n* Searching for items by multiple fields: `q=id:5c3325baa9812100098ff48f siteCode:main` where `id` and `siteCode` are field names. All objects that contain the specified values are returned. Multiple fields (separated by space) can be specified. Multiple values for each field can also be specified in the format presented earlier.\n* Searching for items with string-based properties conforming to a regex: `q=siteCode:~ain` or `q=code:(~U PL)` - in case of searching for strings with space, where `siteCode` is the name of the field, and `ain` or `U PL` is its querying regex.\n* Searching for items with a localized string-based property conforming to a regex: `items.product.name.en:~(Yoghurt im)` - where `name` is the product field name, `en` is the desired language, and `Joghurt im` is the search term.\n"
+      schema:
+        type: string
+        example: siteCode:{main}
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            quote.quote_read: Needed to retrieve quotes.
+            quote.quote_read_own: Needed to retrieve own quotes by the customer.
+            quote.quote_manage: Needed to manage quotes.
+            quote.quote_manage_own: Needed to manage own quotes by the customer.
+x-refined-from:
+- emporix-quote-openapi.yml
+- emporix-quote-openapi.yml

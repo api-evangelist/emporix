@@ -1,0 +1,94 @@
+overlay: 1.0.0
+info:
+  title: Emporix Import Service overlay
+  version: 1.0.0
+  x-generated: '2026-10-18'
+  x-method: generated
+  x-source: mcp/emporix-tool-crosswalk.yml
+extends: ../openapi/_original/emporix-import-service-openapi.yml
+actions:
+- target: $.info
+  update:
+    x-provider: Emporix
+    x-documentation: https://developer.emporix.io/api-references
+    x-llms-txt: https://developer.emporix.io/llms.txt
+    x-docs-mcp: https://developer.emporix.io/~gitbook/mcp
+  description: Provider metadata and agent-facing entry points.
+- target: $.paths['/importtool/{tenant}/configs'].get
+  update:
+    x-mcp-tools:
+    - importtool/list-import-jobs
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: GET-importtool-list-configs backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/importtool/{tenant}/configs/{id}'].get
+  update:
+    x-mcp-tools:
+    - importtool/get-import-job
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: GET-importtool-get-config backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/importtool/{tenant}/configs/{configId}/schedule'].get
+  update:
+    x-mcp-tools:
+    - importtool/get-import-schedule
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: GET-importtool-get-schedule backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/importtool/{tenant}/configs/{configId}/schedule'].put
+  update:
+    x-mcp-tools:
+    - importtool/set-import-schedule
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: PUT-importtool-schedule-job backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/importtool/{tenant}/configs/{configId}/schedule'].delete
+  update:
+    x-mcp-tools:
+    - importtool/delete-import-schedule
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: deleteSchedule backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/importtool/{tenant}/configs/{configId}/runs'].post
+  update:
+    x-mcp-tools:
+    - importtool/trigger-import-run
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: POST-importtool-trigger-run backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/importtool/{tenant}/configs/{configId}/runs'].get
+  update:
+    x-mcp-tools:
+    - importtool/list-import-runs
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: GET-importtool-list-runs backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/importtool/{tenant}/runs/{runId}'].get
+  update:
+    x-mcp-tools:
+    - importtool/get-import-run
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: GET-importtool-get-run backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/importtool/{tenant}/runs/{runId}/cancel'].post
+  update:
+    x-mcp-tools:
+    - importtool/cancel-import-run
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: POST-importtool-cancel-run backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/importtool/{tenant}/runs/{runId}/errors'].get
+  update:
+    x-mcp-tools:
+    - importtool/get-import-run-errors
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: GET-importtool-list-run-errors backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/importtool/{tenant}/data/records'].get
+  update:
+    x-mcp-tools:
+    - importtool/search-imported-data
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: GET-importtool-search-data-records backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/importtool/{tenant}/stats'].get
+  update:
+    x-mcp-tools:
+    - importtool/get-import-stats
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: GET-importtool-stats backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).
+- target: $.paths['/importtool/{tenant}/runs/{runId}/retry'].post
+  update:
+    x-mcp-tools:
+    - importtool/retry-failed-records
+    x-mcp-endpoint: https://api.emporix.io/mcp/{domain}/{TENANT}/{MCP_TOKEN}/mcp
+  description: POST-importtool-retry-run backs documented Emporix MCP tool(s) (see mcp/emporix-tool-crosswalk.yml).

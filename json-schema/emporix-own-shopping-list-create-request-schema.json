@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-own-shopping-list-create-request-schema.json",
+  "title": "ownShoppingListCreateRequest",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-shopping-list-openapi.yml#/components/schemas/ownShoppingListCreateRequest",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/shoppinglistItem"
+      }
+    },
+    "mixins": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Map of custom shopping lists attributes.\n"
+    },
+    "metadata": {
+      "properties": {
+        "mixins": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Mixins schemas"
+        }
+      }
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "$defs": {
+    "shoppinglistItem": {
+      "title": "ShoppinglistItem",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "productId": {
+          "type": "string"
+        },
+        "quantity": {
+          "type": "number"
+        },
+        "cuttingOption": {
+          "type": "string"
+        },
+        "servicePackagingOption": {
+          "type": "string"
+        },
+        "comment": {
+          "type": "string"
+        },
+        "mixins": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "productId",
+        "quantity"
+      ]
+    }
+  }
+}

@@ -1,0 +1,14 @@
+generated: '2026-10-18'
+method: searched
+source: https://developer.emporix.io/api-documentation/standard-practices/bulk-request-limits.md
+name: Emporix rate limits
+limit_count: 1
+limits:
+- name: Bulk request limit
+  limit_text: "Our default maximum batch size is **200** items"
+  limit: 200
+  window: per-request
+  scope: per-endpoint
+  endpoint: "Bulk endpoints supporting multiple changes"
+  evidence: "Our default maximum batch size is 200 items. If there are exceptions to it and an endpoint uses a different limit, the API reference for that endpoint specifies it."
+note: "No general API rate limits documented. Only bulk request limits found."

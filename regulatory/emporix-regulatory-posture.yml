@@ -1,0 +1,106 @@
+generated: '2026-10-18'
+method: searched
+probe: true
+source: https://www.emporix.com/privacy-policy
+description: >-
+  Horizontal regulatory signals HARVESTED from what Emporix publishes. Nothing here decides which
+  regime applies. The evidence comes from the GDPR privacy policy at www.emporix.com/privacy-policy
+  (controller Emporix AG, Zug, Switzerland; DPO reachable at privacy@emporix.com) and the SafeBase-hosted
+  Emporix Trust Center at security.emporix.com, which publishes a subprocessor list and shows SOC 2 and
+  HIPAA certification tiles. The developer portal Terms of Use (developer.emporix.io/policies/terms-of-use)
+  showed no signal language. The privacy policy covers data portability and Art. 22 automated
+  decision-making only as restated GDPR data-subject rights. Neither is a cloud-switching (exit
+  assistance) commitment or an AI-transparency disclosure, so neither is recorded as one. The Trust
+  Center's Incident Response section is hidden and holds only SafeBase's default placeholder text, so
+  no incident-notification commitment is recorded. No accessibility, SBOM, support-lifetime, GPC,
+  transparency-report or data-residency statement was found.
+signals:
+  data_subject_request:
+    url: https://www.emporix.com/privacy-policy
+    section: Rights of the data subject
+    contact: privacy@emporix.com
+    note: >-
+      Lists GDPR rights (information, rectification, restriction, erasure, portability, objection,
+      consent withdrawal, automated decisions). The channel is email to the controller or the
+      designated DPO. No request portal or API is documented.
+    evidence:
+      - source: https://www.emporix.com/privacy-policy
+        http_status: 200
+        fetched: '2026-10-18'
+        quote: >-
+          When your personal data is processed, you are a data subject within the meaning of the GDPR
+          and have the following rights:
+      - source: https://www.emporix.com/privacy-policy
+        http_status: 200
+        fetched: '2026-10-18'
+        quote: >-
+          You have the right to receive your personal data given to the data controller in a structured
+          and machine-readable format.
+  subprocessors:
+    url: https://security.emporix.com/
+    section: Subprocessors
+    note: >-
+      The Trust Center (title "Emporix Trust Center | Powered by SafeBase") embeds a subprocessor list
+      with a location and the processed data for each entry. Read from the page's server-rendered data
+      on a plain GET. A headless render hit a Cloudflare challenge.
+    entries:
+      - {vendor: Google Cloud, location: EU, purpose: 'Direct use for our services'}
+      - {vendor: Cloudinary, location: EU, purpose: 'Optional use for our services'}
+      - {vendor: Mailjet, location: EU, purpose: 'Optional use for our services'}
+      - {vendor: MongoDB, location: EU, purpose: 'Direct use for our services'}
+      - {vendor: Algolia, location: EU}
+      - {vendor: Netlify, location: EU}
+      - {vendor: Atlassian, location: EU}
+      - {vendor: HubSpot, location: EU}
+      - {vendor: CRIF, location: EU}
+      - {vendor: 'Emporix (affiliates)', location: 'PL, UK, RO, EU'}
+      - {vendor: Spreedly, location: EU, purpose: 'Directly, used for some services'}
+      - {vendor: Onfleet, location: EU}
+      - {vendor: Google Ads, location: EU}
+      - {vendor: Zoom, location: EU}
+      - {vendor: LinkedIn, location: EU}
+      - {vendor: DocuSign, location: EU}
+      - {vendor: Calendly, location: EU}
+      - {vendor: Google Workspace, location: EU}
+      - {vendor: Slack, location: EU}
+      - {vendor: SafeBase, location: EU}
+      - {vendor: Ory Corp, location: EU, purpose: 'Direct use for our services'}
+      - {vendor: Make, location: EU, purpose: 'Optional use for our services'}
+      - {vendor: Hookdeck, location: EU, purpose: 'Direct use for our services'}
+      - {vendor: New Relic, location: EU, purpose: 'Direct use for our services'}
+      - {vendor: Svix, location: 'US, EU Servers', purpose: 'Directly, used for some services'}
+      - {vendor: Channable, location: EU, purpose: 'Directly, used for some services'}
+      - {vendor: BatteryIncluded, location: EU, purpose: 'Directly, used for some services'}
+    evidence:
+      - source: https://security.emporix.com/
+        http_status: 200
+        fetched: '2026-10-18'
+        quote: >-
+          Provides hardware infrastructure for our services and API security management via Google Apigee
+      - source: https://www.emporix.com/privacy-policy
+        http_status: 200
+        fetched: '2026-10-18'
+        quote: >-
+          For this reason, we work to the highest security standards at Emporix and are certified in
+          accordance with ISO 27001 and conform to the SOC2 guidelines.
+  data_retention:
+    url: https://www.emporix.com/privacy-policy
+    section: Duration of storage
+    stated_period: 'after seven days at the latest'
+    note: >-
+      Covers website log files and marketing surfaces only. No retention period is stated for
+      platform (tenant) data.
+    evidence:
+      - source: https://www.emporix.com/privacy-policy
+        http_status: 200
+        fetched: '2026-10-18'
+        quote: >-
+          If the data is stored in log files, this is the case after seven days at the latest. Storage
+          beyond this is possible. In this case, the IP addresses of the users are deleted or anonymised
+          so that an assignment of the calling client is not possible.
+      - source: https://www.emporix.com/privacy-policy
+        http_status: 200
+        fetched: '2026-10-18'
+        quote: >-
+          We store your activities and personal data published via our corporate web profile until you
+          withdraw your consent. In addition, we comply with the statutory retention periods.

@@ -1,0 +1,764 @@
+openapi: 3.2.0
+info:
+  title: Emporix Shipping Methods API
+  version: ''
+  contact:
+    name: Emporix
+    url: https://emporix.com
+    email: documentation@emporix.com
+  description: 'Operations tagged Shipping Methods across 2 of this provider''s published API definitions: emporix-shipping-openapi.yml, emporix-shipping-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- oAuth2: []
+tags:
+- name: Shipping Methods
+  description: Manage shipping methods
+paths:
+  /shipping/{tenant}/{site}/zones/{zoneId}/methods:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    - $ref: '#/components/parameters/site'
+    - $ref: '#/components/parameters/zoneId'
+    post:
+      tags:
+      - Shipping Methods
+      summary: Creating a shipping method
+      operationId: POST-shipping-create-shipping-method
+      description: Creates a new shipping method for the specified site and shipping zone.
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/site'
+      - $ref: '#/components/parameters/zoneId'
+      - $ref: '#/components/parameters/content-language'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Method'
+            examples:
+              Method with name as a String:
+                $ref: '#/components/examples/MethodString'
+              Method with name as a Map:
+                $ref: '#/components/examples/MethodMap'
+      responses:
+        '201':
+          description: Resource successfully created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceCreatedResponse'
+              examples:
+                method creation response:
+                  $ref: '#/components/examples/MethodCreationResponse'
+        '400':
+          $ref: '#/components/responses/method_400'
+        '401':
+          $ref: '#/components/responses/unauthorized_401'
+        '403':
+          $ref: '#/components/responses/yaasAware_403'
+        '404':
+          $ref: '#/components/responses/notFound_404'
+        '409':
+          $ref: '#/components/responses/method_409'
+        '500':
+          $ref: '#/components/responses/internalError_500'
+      security:
+      - oAuth2:
+        - shipping.shipping_manage
+    get:
+      tags:
+      - Shipping Methods
+      summary: Retrieving shipping methods
+      operationId: GET-shipping-list-all-shipping-methods
+      description: Retrieves shipping methods for the specified site and shipping zone.
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/site'
+      - $ref: '#/components/parameters/zoneId'
+      - $ref: '#/components/parameters/active'
+      - $ref: '#/components/parameters/expand'
+      - $ref: '#/components/parameters/accept-language'
+      responses:
+        '200':
+          description: Resource successfully retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Methods'
+              examples:
+                Methods with name as a String:
+                  $ref: '#/components/examples/MethodsString'
+                Methods with name as a Map:
+                  $ref: '#/components/examples/MethodsMap'
+        '400':
+          $ref: '#/components/responses/method_400'
+        '401':
+          $ref: '#/components/responses/unauthorized_401'
+        '404':
+          $ref: '#/components/responses/notFound_404'
+        '500':
+          $ref: '#/components/responses/internalError_500'
+      security:
+      - oAuth2: []
+    servers:
+    - url: https://api.emporix.io
+  /shipping/{tenant}/{site}/zones/{zoneId}/methods/{methodId}:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    - $ref: '#/components/parameters/zoneId'
+    - $ref: '#/components/parameters/methodId'
+    get:
+      tags:
+      - Shipping Methods
+      summary: Retrieving a shipping method
+      operationId: GET-shipping-retrieve-shipping-method
+      description: Retrieves the specified shipping method's details.
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/site'
+      - $ref: '#/components/parameters/zoneId'
+      - $ref: '#/components/parameters/methodId'
+      - $ref: '#/components/parameters/accept-language'
+      responses:
+        '200':
+          description: Resource successfully retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Method'
+              examples:
+                Method with name as a String:
+                  $ref: '#/components/examples/MethodString'
+                Method with name as a Map:
+                  $ref: '#/components/examples/MethodMap'
+        '400':
+          $ref: '#/components/responses/method_400'
+        '401':
+          $ref: '#/components/responses/unauthorized_401'
+        '404':
+          $ref: '#/components/responses/method_notFound_404'
+        '500':
+          $ref: '#/components/responses/internalError_500'
+      security:
+      - oAuth2: []
+    put:
+      tags:
+      - Shipping Methods
+      summary: Updating a shipping method
+      operationId: PUT-shipping-update-shipping-method
+      description: Fully updates the specified shipping method.
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/site'
+      - $ref: '#/components/parameters/zoneId'
+      - $ref: '#/components/parameters/methodId'
+      - $ref: '#/components/parameters/content-language'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Method'
+            examples:
+              Method update payload with name as a String:
+                $ref: '#/components/examples/MethodString'
+              Method update payload with name as a Map:
+                $ref: '#/components/examples/MethodMap'
+      responses:
+        '200':
+          description: Resource successfully updated.
+        '400':
+          $ref: '#/components/responses/method_400'
+        '401':
+          $ref: '#/components/responses/unauthorized_401'
+        '403':
+          $ref: '#/components/responses/yaasAware_403'
+        '404':
+          $ref: '#/components/responses/method_notFound_404'
+        '500':
+          $ref: '#/components/responses/internalError_500'
+      security:
+      - oAuth2:
+        - shipping.shipping_manage
+    patch:
+      tags:
+      - Shipping Methods
+      summary: Partially updating a shipping method
+      operationId: PATCH-shipping-update-shipping-method
+      description: Partially updates the specified shipping method.
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/site'
+      - $ref: '#/components/parameters/zoneId'
+      - $ref: '#/components/parameters/methodId'
+      - $ref: '#/components/parameters/content-language'
+      requestBody:
+        description: Partial update operation will update only fields which are in the payload.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Method'
+            examples:
+              Method update payload with name as a String:
+                $ref: '#/components/examples/MethodString'
+              Method update payload with name as a Map:
+                $ref: '#/components/examples/MethodMap'
+      responses:
+        '200':
+          description: Resource successfully updated.
+        '400':
+          $ref: '#/components/responses/method_400'
+        '401':
+          $ref: '#/components/responses/unauthorized_401'
+        '403':
+          $ref: '#/components/responses/yaasAware_403'
+        '404':
+          $ref: '#/components/responses/method_notFound_404'
+        '500':
+          $ref: '#/components/responses/internalError_500'
+      security:
+      - oAuth2:
+        - shipping.shipping_manage
+    delete:
+      tags:
+      - Shipping Methods
+      summary: Deleting a shipping method
+      operationId: DELETE-shipping-remove-shipping-method
+      description: Deletes the specified shipping method.
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/site'
+      - $ref: '#/components/parameters/zoneId'
+      - $ref: '#/components/parameters/methodId'
+      responses:
+        '204':
+          description: Resource successfully deleted.
+        '401':
+          $ref: '#/components/responses/unauthorized_401'
+        '403':
+          $ref: '#/components/responses/yaasAware_403'
+        '404':
+          $ref: '#/components/responses/method_notFound_404'
+        '500':
+          $ref: '#/components/responses/internalError_500'
+      security:
+      - oAuth2:
+        - shipping.shipping_manage
+    servers:
+    - url: https://api.emporix.io
+components:
+  responses:
+    method_notFound_404:
+      description: 'The requested resource does not exist.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Not Found:
+              value:
+                status: 404
+                message: A method with id 'fedex-2dayground' does not exist.
+                type: resource_not_found
+    notFound_404:
+      description: 'The requested resource does not exist.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Not Found:
+              value:
+                status: 404
+                message: The requested URI does not map to a single element resource.
+                errorCode: ENTITY-GET-404001
+                moreInfo: ''
+                type: element_resource_non_existing
+    yaasAware_403:
+      description: 'Given authorization scopes are not sufficient and do not match required scopes.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Forbidden:
+              value:
+                status: 403
+                message: User not authorized.
+                type: Forbidden
+                details:
+                - Missing required scopes
+    unauthorized_401:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+    method_400:
+      description: Request syntactically incorrect. Details of the error are included in the response payload.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Bad request:
+              value:
+                status: 400
+                message: validation_violation.
+                type: validation_violation
+                details:
+                - field: name
+                  message: name This field is required. Please provide either value in the content language or a translation map.
+                  type: invalid_field
+                - field: id
+                  message: id must not be null
+                  type: missing_field
+                - field: fees
+                  message: fees may not be empty
+                  type: invalid_field
+    method_409:
+      description: 'Creation failed because there was a conflict with another resource. Details of the error are included in the response payload.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Conflict:
+              value:
+                status: 409
+                message: A method with id 'fedex-42dayground' already exists.
+                type: conflict_resource
+    internalError_500:
+      description: 'Some server side error occurred.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Internal Server Error:
+              value:
+                status: 500
+                message: Something went wrong while processing the request. Please contact the administrator.
+                errorCode: ENTITY-500001
+                moreInfo: ''
+                type: internal_service_error
+  parameters:
+    expand:
+      description: '* **methods**: To return zones with expanded shipping methods.
+
+        * **fees**: To expand the configured fees for those shipping methods.'
+      name: expand
+      in: query
+      required: false
+      schema:
+        type: string
+        example: methods,fees
+    methodId:
+      description: Delivery method's unique identifier.
+      name: methodId
+      in: path
+      required: true
+      schema:
+        type: string
+    content-language:
+      in: header
+      name: Content-Language
+      required: false
+      description: 'The Content-Language request HTTP header defines language of the payload.
+
+        When the Content-Language header is empty, all localized fields in a payload should be in a map format,
+
+        where the key is a language code and the value is a translation.'
+      schema:
+        type: string
+        example: fr
+    site:
+      description: 'Site unique identifier. A site is a specific shop.
+
+
+        If the tenant owns only one shop, the value should be set to `main`.
+
+        '
+      name: site
+      in: path
+      required: true
+      schema:
+        type: string
+    tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: The tenant should always be written in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+    active:
+      description: 'If set to `true`, only active methods are returned. If set to `false`, only the inactive methods are returned.
+
+        If not specified, both active and inactive methods are returned.'
+      name: active
+      in: query
+      required: false
+      schema:
+        type: string
+    zoneId:
+      description: Shipping zone's unique identifier.
+      name: zoneId
+      in: path
+      required: true
+      schema:
+        type: string
+    accept-language:
+      in: header
+      name: Accept-Language
+      required: false
+      description: 'The Accept-Language request HTTP header defines which languages the client is able to understand, and which locale variant is preferred.
+
+        It can be a priority list working as a fallback mechanism.
+
+        If the Accept-Language header is empty, all languages for localized fields are returned in a map format where the key is language code and the value is a translation.'
+      schema:
+        type: string
+        example: fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7
+  schemas:
+    MonetaryAmount:
+      title: Monetary amount
+      description: Amount of money in a given currency.
+      type: object
+      properties:
+        currency:
+          description: Three-letter currency code, compliant with the ISO 4217 standard.
+          type: string
+        amount:
+          type: number
+          minimum: 0
+          description: Amount in specified currency.
+      required:
+      - currency
+      - amount
+    Method:
+      title: Shipping method
+      description: Shipping methods define the types of deliveries and properties such as delivery fees.
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          $ref: '#/components/schemas/LocalizedValue'
+        maxOrderValue:
+          $ref: '#/components/schemas/MonetaryAmount'
+        active:
+          description: Flag indicating whether the shipping method is active.
+          type: boolean
+        fees:
+          $ref: '#/components/schemas/Fees'
+        shippingTaxCode:
+          description: Shipping method's tax code.
+          type: string
+        shippingGroupId:
+          description: Shipping groups unique identifier.
+          type: string
+      required:
+      - id
+      - name
+      - fees
+    LocalizedValue:
+      oneOf:
+      - type: string
+        description: String value in the specified language.
+        example: FedEx 2Day
+      - type: object
+        additionalProperties:
+          type: string
+        description: 'Map of translations in form of language:translation pairs.
+
+          The keys (languages) should be ISO language codes.'
+        example:
+          en: FedEx 2Day
+    ResourceCreatedResponse:
+      title: Resource created
+      description: Link to created resource with unique resource identifier.
+      type: object
+      properties:
+        id:
+          type: string
+          description: Created resource’s unique identifier.
+    errorMessage:
+      title: error
+      description: Schema for API specified errors.
+      type: object
+      properties:
+        status:
+          minimum: 100
+          maximum: 599
+          description: original HTTP error code, should be consistent with the response HTTP code
+          type: integer
+        type:
+          pattern: '[a-z]+[a-z_]*[a-z]+'
+          description: classification of the error type, lower case with underscore eg validation_failure
+          type: string
+        message:
+          description: descriptive error message for debugging
+          type: string
+        moreInfo:
+          type: string
+          description: link to documentation to investigate further and finding support
+        errorCode:
+          type: string
+          description: The error code which specify the problem
+        details:
+          description: list of problems causing this error
+          type: array
+          items:
+            title: errorDetail
+            description: schema for specific error cause
+            anyOf:
+            - type: string
+            - type: object
+              properties:
+                field:
+                  description: a bean notation expression specifying the element in request data causing the error, eg shipTo[0].country, this can be empty if violation was not field specific
+                  type: string
+                type:
+                  pattern: '[a-z]+[a-z_]*[a-z]+'
+                  description: classification of the error detail type, lower case with underscore eg missing_value, this value must be always interpreted in context of the general error type.
+                  type: string
+                message:
+                  description: descriptive error detail message for debugging
+                  type: string
+                moreInfo:
+                  type: string
+                  description: link to documentation to investigate further and finding support for error detail
+      required:
+      - status
+      - type
+    Methods:
+      title: Collection of shipping methods
+      type: array
+      items:
+        $ref: '#/components/schemas/Method'
+    Fees:
+      title: Collection of fees
+      type: array
+      items:
+        $ref: '#/components/schemas/Fee'
+    Fee:
+      title: Fee
+      description: Fee is a shipping cost for a given shipping method and parameters.
+      type: object
+      properties:
+        cost:
+          $ref: '#/components/schemas/MonetaryAmount'
+        minOrderValue:
+          $ref: '#/components/schemas/MonetaryAmount'
+        shippingGroupId:
+          description: Shipping group unique identifier.
+          type: string
+      required:
+      - cost
+      - minOrderValue
+  examples:
+    MethodsString:
+      value:
+      - id: fedex-2dayground
+        name: FedEx 2Day
+        active: true
+        maxOrderValue:
+          amount: 5000
+          currency: EUR
+        fees:
+        - minOrderValue:
+            amount: 0
+            currency: EUR
+          cost:
+            amount: 10
+            currency: EUR
+        - minOrderValue:
+            amount: 50
+            currency: EUR
+          cost:
+            amount: 9
+            currency: EUR
+          shippingGroupId: group1
+        - minOrderValue:
+            amount: 200
+            currency: EUR
+          cost:
+            amount: 8
+            currency: EUR
+          shippingGroupId: group2
+      - id: ups-standard
+        name: UPS Standard
+        fees:
+        - minOrderValue:
+            amount: 0
+            currency: EUR
+          cost:
+            amount: 5
+            currency: EUR
+        - minOrderValue:
+            amount: 50
+            currency: EUR
+          cost:
+            amount: 2
+            currency: EUR
+          shippingGroupId: group3
+    MethodCreationResponse:
+      value:
+        id: fedex-2dayground
+    MethodsMap:
+      value:
+      - id: fedex-2dayground
+        name:
+          en: FedEx 2Day
+          de: FedEx 2Tage
+        active: true
+        maxOrderValue:
+          amount: 5000
+          currency: EUR
+        fees:
+        - minOrderValue:
+            amount: 0
+            currency: EUR
+          cost:
+            amount: 10
+            currency: EUR
+        - minOrderValue:
+            amount: 50
+            currency: EUR
+          cost:
+            amount: 9
+            currency: EUR
+          shippingGroupId: group1
+        - minOrderValue:
+            amount: 200
+            currency: EUR
+          cost:
+            amount: 8
+            currency: EUR
+          shippingGroupId: group2
+      - id: ups-standard
+        name:
+          en: ups-standard
+          de: Ups-Standard
+        fees:
+        - minOrderValue:
+            amount: 0
+            currency: EUR
+          cost:
+            amount: 5
+            currency: EUR
+        - minOrderValue:
+            amount: 50
+            currency: EUR
+          cost:
+            amount: 2
+            currency: EUR
+          shippingGroupId: group3
+    MethodString:
+      value:
+        id: fedex-2dayground
+        name: FedEx 2Day
+        active: true
+        maxOrderValue:
+          amount: 5000
+          currency: EUR
+        fees:
+        - minOrderValue:
+            amount: 0
+            currency: EUR
+          cost:
+            amount: 10
+            currency: EUR
+        - minOrderValue:
+            amount: 50
+            currency: EUR
+          cost:
+            amount: 9
+            currency: EUR
+          shippingGroupId: group1
+        - minOrderValue:
+            amount: 200
+            currency: EUR
+          cost:
+            amount: 8
+            currency: EUR
+          shippingGroupId: group2
+    MethodMap:
+      value:
+        id: fedex-2dayground
+        name:
+          en: FedEx 2Day
+          de: FedEx 2Tage
+        active: true
+        maxOrderValue:
+          amount: 5000
+          currency: EUR
+        fees:
+        - minOrderValue:
+            amount: 0
+            currency: EUR
+          cost:
+            amount: 10
+            currency: EUR
+        - minOrderValue:
+            amount: 50
+            currency: EUR
+          cost:
+            amount: 9
+            currency: EUR
+          shippingGroupId: group1
+        - minOrderValue:
+            amount: 200
+            currency: EUR
+          cost:
+            amount: 8
+            currency: EUR
+          shippingGroupId: group2
+  securitySchemes:
+    oAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            shipping.shipping_manage: Needed to manage shipping settings.
+            shipping.shipping_read: Needed to read shipping settings.
+x-refined-from:
+- emporix-shipping-openapi.yml
+- emporix-shipping-openapi.yml

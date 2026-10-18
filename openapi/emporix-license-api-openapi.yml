@@ -1,0 +1,199 @@
+openapi: 3.2.0
+info:
+  title: Emporix License API
+  version: ''
+  contact:
+    name: Emporix
+    url: https://emporix.com
+    email: documentation@emporix.com
+  description: 'Operations tagged License across 2 of this provider''s published API definitions: emporix-import-service-openapi.yml, emporix-import-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2:
+  - importtool.import_trigger
+tags:
+- name: License
+  description: Read the tenant's import limits.
+paths:
+  /importtool/{tenant}/license:
+    parameters:
+    - $ref: '#/components/parameters/trait_tenant'
+    get:
+      summary: Retrieving import limits
+      description: 'Retrieves the tenant''s import limits. If an import exceeds `maxRecordsPerEntity`, excess records
+
+        are skipped and the run finishes with the `PARTIAL` status. If `maxConcurrentImports` runs are
+
+        already executing, an additional run waits in the `QUEUED` status until one of the tenant''s runs
+
+        finishes.
+
+
+        Contact Emporix Support to have a limit raised.'
+      operationId: GET-importtool-license
+      tags:
+      - License
+      security:
+      - OAuth2:
+        - importtool.import_trigger
+      responses:
+        '200':
+          description: The request was successful. The limits are returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportLicense'
+              examples:
+                Import license response:
+                  $ref: '#/components/examples/ImportLicense_Example'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '500':
+          $ref: '#/components/responses/InternalServiceError_500'
+    servers:
+    - url: https://api.emporix.io
+components:
+  responses:
+    Unauthorized_401:
+      description: Given request is unauthorized - the authorization token is invalid or has expired. Details will be provided in the response payload.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            Access token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+    Forbidden_403:
+      description: Given authorization scopes are not sufficient and do not match scopes required by the endpoint.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Access to resource is forbidden:
+              $ref: '#/components/examples/Forbidden403_Example'
+    InternalServiceError_500:
+      description: Internal Service Error occurred.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Internal service error:
+              $ref: '#/components/examples/InternalServiceError500_Example'
+  examples:
+    ImportLicense_Example:
+      value:
+        maxRecordsPerEntity: 10000
+        maxConcurrentImports: 2
+        batchSize: 100
+        workers: 1
+    Forbidden403_Example:
+      value:
+        status: forbidden
+        code: 403
+        message: The access to the requested resource has been forbidden.
+        details:
+        - Missing required scopes
+    InternalServiceError500_Example:
+      value:
+        status: internal_service_error
+        code: 500
+        message: A server-side exception occurred that prevented the system from correctly returning the result.
+        details:
+        - https://pattern.yaas.io/errortypes.html
+  schemas:
+    ImportLicense:
+      title: Import limits
+      type: object
+      description: The import limits that apply to the tenant.
+      properties:
+        maxRecordsPerEntity:
+          type: integer
+          description: The maximum number of records a single run may write per target type. Records beyond the limit are skipped and the run finishes as `PARTIAL`.
+          example: 10000
+        maxConcurrentImports:
+          type: integer
+          description: The maximum number of runs that can execute at once for the tenant. A run requested beyond this limit is not rejected. It waits in the `QUEUED` status until one of the tenant's runs finishes.
+          example: 2
+        batchSize:
+          type: integer
+          description: The number of records written to the target per request.
+          example: 100
+        workers:
+          type: integer
+          description: The number of target writes performed in parallel.
+          example: 1
+    errorMessage:
+      title: Error
+      description: Schema for specific API errors.
+      type: object
+      properties:
+        code:
+          type: integer
+          description: HTTP status code.
+          minimum: 100
+          maximum: 599
+        status:
+          description: HTTP status.
+          type: string
+        message:
+          description: Descriptive error message for debugging.
+          type: string
+        details:
+          description: List of problems causing this error.
+          type: array
+          items:
+            title: Error Detail
+            description: Error details.
+            type: string
+      required:
+      - status
+      - code
+      - message
+  parameters:
+    trait_tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'The tenant you want to access.
+
+        '
+      schema:
+        type: string
+        example: mytenant
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            importtool.import_trigger: Needed to trigger, schedule, monitor, and cancel import runs and to read configurations, streams, schedules, runs, and imported data.
+x-refined-from:
+- emporix-import-service-openapi.yml
+- emporix-import-service-openapi.yml

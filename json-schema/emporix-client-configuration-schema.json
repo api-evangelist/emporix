@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-client-configuration-schema.json",
+  "title": "ClientConfiguration",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-configuration-service-openapi.yml#/components/schemas/ClientConfiguration",
+  "allOf": [
+    {
+      "$ref": "#/$defs/BaseConfiguration"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "The client configuration unique identifier.",
+          "minLength": 1
+        },
+        "client": {
+          "type": "string",
+          "description": "The client to which the configuration applies.",
+          "minLength": 1
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "BaseConfiguration": {
+      "title": "BaseConfiguration",
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "description": "Configuration key.",
+          "minLength": 1
+        },
+        "value": {
+          "description": "Configuration value. It can be any valid JSON object.",
+          "oneOf": [
+            {
+              "type": "object"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            {
+              "type": "boolean"
+            }
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "description": "Configuration version."
+        },
+        "description": {
+          "type": "string",
+          "description": "Describes purpose of the configuration."
+        },
+        "secured": {
+          "type": "boolean",
+          "description": "Flag indicating whether the configuration should be encrypted. It works only if `value` field is of `string` type.",
+          "default": false
+        },
+        "restricted": {
+          "type": "boolean",
+          "description": "Flag indicating whether the configuration should be restricted. When configuration is rectricted then it cannot be deleted. When this property is set to `true` then it cannot be unset.",
+          "default": false
+        },
+        "readOnly": {
+          "type": "boolean",
+          "description": "Flag indicating whether the configuration should be readOnly. When configuration is readOnly then it cannot be updated.",
+          "default": false
+        },
+        "schemaUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL of Json Schema for validation purpose. When configuration is created this value can be provided and then each update operation will be validated against this schema. This property cannot be updated so once set it cannot be unset. The Json Schema should contain one root property named `value` in order to work correctly. An example of a valid schema: `{ \"$schema\": \"http://json-schema.org/draft-07/schema#\", \"type\": \"object\", \"required\": [\"value\"], \"properties\": { \"value\": { \"type\": \"boolean\" } } }` "
+        }
+      },
+      "required": [
+        "key",
+        "value"
+      ]
+    }
+  }
+}

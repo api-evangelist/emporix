@@ -1,0 +1,1094 @@
+openapi: 3.2.0
+info:
+  title: Emporix Tool API
+  version: ''
+  contact:
+    name: Emporix
+    url: https://emporix.com
+    email: documentation@emporix.com
+  description: 'Operations tagged Tool across 2 of this provider''s published API definitions: emporix-ai-service-openapi.yml, emporix-ai-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+tags:
+- name: Tool
+  description: Manage Tools
+paths:
+  /ai-service/{tenant}/agentic/tools:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    - $ref: '#/components/parameters/qParam'
+    - $ref: '#/components/parameters/pageSize'
+    - $ref: '#/components/parameters/pageNumber'
+    - $ref: '#/components/parameters/sort'
+    - $ref: '#/components/parameters/fields'
+    - $ref: '#/components/parameters/header_xTotalCount'
+    - $ref: '#/components/parameters/expandTool'
+    get:
+      summary: Listing tools
+      operationId: GET-ai-list-tools
+      responses:
+        '200':
+          description: List of tools.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NativeToolsResponse'
+              examples:
+                Tools Response:
+                  $ref: '#/components/examples/SlackNativeToolsResponse'
+        '400':
+          $ref: '#/components/responses/400_resp_common'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_resp_common'
+      description: Retrieves tools based on the provided query.
+      security:
+      - OAuth2:
+        - ai.agent_read
+      tags:
+      - Tool
+    servers:
+    - url: https://api.emporix.io
+  /ai-service/{tenant}/agentic/tools/search:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    post:
+      parameters:
+      - $ref: '#/components/parameters/pageSize'
+      - $ref: '#/components/parameters/pageNumber'
+      - $ref: '#/components/parameters/sort'
+      - $ref: '#/components/parameters/fields'
+      - $ref: '#/components/parameters/header_xTotalCount'
+      - $ref: '#/components/parameters/expandTool'
+      summary: Searching tools
+      operationId: POST-ai-search-tools
+      responses:
+        '200':
+          description: List of tools.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NativeToolsResponse'
+              examples:
+                Tools Response:
+                  $ref: '#/components/examples/SlackNativeToolsResponse'
+        '400':
+          $ref: '#/components/responses/400_resp_common'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_resp_common'
+      requestBody:
+        $ref: '#/components/requestBodies/QParamSearchBody'
+      description: Searches for tools based on the provided query.
+      security:
+      - OAuth2:
+        - ai.agent_read
+      tags:
+      - Tool
+    servers:
+    - url: https://api.emporix.io
+  /ai-service/{tenant}/agentic/tools/{toolId}:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    - schema:
+        type: string
+      name: toolId
+      in: path
+      required: true
+    get:
+      parameters:
+      - $ref: '#/components/parameters/fields'
+      - $ref: '#/components/parameters/expandTool'
+      summary: Retrieving tool by ID
+      operationId: GET-ai-retrieve-tool
+      responses:
+        '200':
+          description: A single tool.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/SlackNativeToolResponse'
+                - $ref: '#/components/schemas/RagCustomNativeToolResponse'
+                - $ref: '#/components/schemas/RagEmporixNativeToolResponse'
+                - $ref: '#/components/schemas/TeamsNativeToolResponse'
+              examples:
+                Tool Response:
+                  $ref: '#/components/examples/SlackNativeToolResponse'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_resp_common'
+        '404':
+          $ref: '#/components/responses/404_resp_common'
+      description: Retrieves the tool by given ID.
+      security:
+      - OAuth2:
+        - ai.agent_read
+      tags:
+      - Tool
+    put:
+      summary: Upserting tool
+      parameters:
+      - $ref: '#/components/parameters/forceDisable'
+      operationId: PUT-ai-upsert-tool
+      responses:
+        '201':
+          description: ID of created tool.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdResponse'
+              examples:
+                Id Of Created Tool:
+                  $ref: '#/components/examples/IdResponse'
+        '204':
+          description: The resource has been successfully updated.
+        '400':
+          $ref: '#/components/responses/400_resp_common'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_resp_common'
+        '404':
+          $ref: '#/components/responses/404_resp_common'
+        '409':
+          $ref: '#/components/responses/409_resp_common'
+      description: 'Updates or creates a specified tool by replacing all of its existing data with data from the request body.
+
+        If the `metadata.version` is provided then optimistic locking is enabled and version must match the version in the database.'
+      security:
+      - OAuth2:
+        - ai.agent_manage
+      requestBody:
+        $ref: '#/components/requestBodies/toolUpsertBody'
+      tags:
+      - Tool
+    patch:
+      summary: Partially updating tool
+      parameters:
+      - $ref: '#/components/parameters/forceDisable'
+      operationId: PATCH-ai-update-tool
+      responses:
+        '204':
+          description: No Content
+        '400':
+          $ref: '#/components/responses/400_resp_common'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_resp_common'
+        '404':
+          $ref: '#/components/responses/404_resp_common'
+      description: 'Partially updates a single tool document with given information.
+
+        Single update may contain multiple partial updates in the form of an array. It contains the allowed operations list:
+
+        - `add` (adding an item to the items list)
+
+        - `remove` (removing an item from the items list)
+
+        - `replace` (replacing an item with given ID with new definition)'
+      security:
+      - OAuth2:
+        - ai.agent_manage
+      requestBody:
+        $ref: '#/components/requestBodies/toolPatchBody'
+      tags:
+      - Tool
+    delete:
+      parameters:
+      - $ref: '#/components/parameters/force'
+      summary: Deleting tool
+      operationId: DELETE-ai-delete-tool
+      responses:
+        '204':
+          description: Given tool has been deleted.
+        '400':
+          $ref: '#/components/responses/400_resp_common'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_resp_common'
+        '404':
+          $ref: '#/components/responses/404_resp_common'
+      description: 'Deletes tool by given ID.
+
+
+        ***Important***: If tool is being used by an agent then delete operation is not possible without `force` flag set to `true`.'
+      security:
+      - OAuth2:
+        - ai.agent_manage
+      tags:
+      - Tool
+    servers:
+    - url: https://api.emporix.io
+components:
+  parameters:
+    qParam:
+      in: query
+      name: q
+      description: 'A standard query parameter is used to search for specific values.
+
+
+        See: [Standard Practices - Query parameter](https://developer.emporix.io/api-documentation/standard-practices/q-param)
+
+        '
+      schema:
+        type: string
+    forceDisable:
+      schema:
+        type: boolean
+      in: query
+      name: force
+      example: false
+      description: Allows you to disable a given entity even if it is used as a dependency in other entries. In that case, cascade disable is performed.
+    sort:
+      schema:
+        type: string
+      in: query
+      name: sort
+      description: List of properties used to sort the results, separated by colons.
+    expandTool:
+      schema:
+        type: string
+        enum:
+        - token
+      in: query
+      name: expand
+      description: Fields to be expanded in the response. It means that instead of the object IDs, the whole objects are returned in the response.
+    fields:
+      schema:
+        type: string
+      in: query
+      name: fields
+      description: Fields to be returned in the response.
+    header_xTotalCount:
+      schema:
+        type: boolean
+      in: header
+      name: X-Total-Count
+      description: Flag indicating whether the total number of retrieved results should be returned.
+    path_tenant:
+      name: tenant
+      in: path
+      required: true
+      schema:
+        type: string
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: The tenant name should always be provided in lowercase.
+
+        '
+    force:
+      schema:
+        type: boolean
+      in: query
+      name: force
+      example: false
+      description: Allows you to remove a given entity even if it is used as a dependency in other entries. In that case, the removed entity is unassigned from other entries.
+    pageNumber:
+      schema:
+        type: string
+      in: query
+      name: pageNumber
+      description: The page number to be retrieved. The size of the pages should be specified by the `pageSize` parameter.
+    pageSize:
+      schema:
+        type: string
+      in: query
+      name: pageSize
+      description: The number of documents to be retrieved per page.
+  schemas:
+    ErrorMessage:
+      type: object
+      properties:
+        code:
+          type: integer
+        type:
+          type: string
+        message:
+          type: string
+        moreInfo:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              type:
+                type: string
+              message:
+                type: string
+              moreInfo:
+                type: string
+      description: ''
+    RagCustomNativeToolConfigResponse:
+      allOf:
+      - $ref: '#/components/schemas/RagCustomNativeToolConfig'
+      - type: object
+        properties:
+          databaseConfig:
+            $ref: '#/components/schemas/RagCustomDatabaseNativeToolConfigResponse'
+          embeddingConfig:
+            $ref: '#/components/schemas/RagCustomEmbeddingNativeToolConfigResponse'
+    OpenAiRagEmporixEmbeddingNativeToolConfigResponse:
+      allOf:
+      - $ref: '#/components/schemas/OpenAiRagEmporixEmbeddingNativeToolConfig'
+      - type: object
+        properties:
+          token:
+            $ref: '#/components/schemas/ExpandableTokenResponse'
+    QParamSearchBody:
+      type: object
+      properties:
+        q:
+          type: string
+          description: "A standard query parameter is used to search for specific values. \n\nSee: [Standard Practices - Query parameter](https://developer.emporix.io/api-documentation/standard-practices/q-param)\n"
+    IdWrapperRequest:
+      type: object
+      properties:
+        id:
+          type: string
+      required:
+      - id
+    RagEmporixNativeToolRequest:
+      allOf:
+      - $ref: '#/components/schemas/BaseNativeTool'
+      - type: object
+        properties:
+          type:
+            description: For `RagEmporixNativeTool`, it has to be set to `rag_emporix`.
+            example: rag_emporix
+          config:
+            $ref: '#/components/schemas/RagEmporixNativeToolConfigRequest'
+          metadata:
+            $ref: '#/components/schemas/MetadataRequest'
+        required:
+        - config
+    EmporixOpenAiRagEmporixEmbeddingNativeToolConfig:
+      type: object
+      properties:
+        provider:
+          allOf:
+          - $ref: '#/components/schemas/RagLlmProvider'
+          description: For this type, it should be set to 'emporix_openai'.
+      required:
+      - provider
+    RagCustomEmbeddingNativeToolConfigRequest:
+      allOf:
+      - $ref: '#/components/schemas/RagCustomEmbeddingNativeToolConfig'
+      - type: object
+        properties:
+          token:
+            $ref: '#/components/schemas/IdWrapperRequest'
+        required:
+        - token
+    OpenAiRagEmporixEmbeddingNativeToolConfig:
+      type: object
+      properties:
+        provider:
+          allOf:
+          - $ref: '#/components/schemas/RagLlmProvider'
+          description: For this type, it should be set to 'emporix_openai'.
+        model:
+          type: string
+          description: OpenAI LLM model to be used for generating embeddings for indexed products and user's input query.
+        dimensions:
+          type: integer
+          description: Number of dimensions of embedding.
+          minimum: 128
+          maximum: 4096
+      required:
+      - provider
+      - model
+      - dimensions
+    RagLlmProvider:
+      type: string
+      enum:
+      - emporix_openai
+      - openai
+      - self_hosted_ollama
+    ExpandedTokenResponse:
+      allOf:
+      - $ref: '#/components/schemas/IdResponse'
+      - type: object
+        properties:
+          name:
+            type: string
+            description: Name of the token.
+          metadata:
+            $ref: '#/components/schemas/MetadataResponse'
+    IdResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Identifier of the resource.
+    RagEmporixNativeToolConfigRequest:
+      allOf:
+      - $ref: '#/components/schemas/RagEmporixNativeToolConfig'
+      - type: object
+        properties:
+          embeddingConfig:
+            oneOf:
+            - $ref: '#/components/schemas/EmporixOpenAiRagEmporixEmbeddingNativeToolConfig'
+            - $ref: '#/components/schemas/OpenAiRagEmporixEmbeddingNativeToolConfigRequest'
+            - $ref: '#/components/schemas/SelfHostedOllamaRagEmporixEmbeddingNativeToolConfigRequest'
+        required:
+        - embeddingConfig
+    NativeToolType:
+      type: string
+      enum:
+      - slack
+      - rag_custom
+      - rag_emporix
+      - teams
+      description: 'Type of the native tool. Possible values:
+
+        * `slack`
+
+        * `rag_custom`
+
+        * `rag_emporix`
+
+        * `teams`'
+    SelfHostedOllamaRagEmporixEmbeddingNativeToolConfigRequest:
+      allOf:
+      - $ref: '#/components/schemas/SelfHostedOllamaRagEmporixEmbeddingNativeToolConfig'
+      - type: object
+        properties:
+          token:
+            $ref: '#/components/schemas/IdWrapperRequest'
+        required:
+        - token
+    SlackAllowedOperations:
+      type: string
+      enum:
+      - sendMessage
+      - createChannel
+      - inviteParticipants
+      - collaborateOnChannel
+      description: Slack native tool operation identifier.
+    RagCustomNativeToolRequest:
+      allOf:
+      - $ref: '#/components/schemas/BaseNativeTool'
+      - type: object
+        properties:
+          type:
+            description: For `RagCustomNativeTool`, it has to be set to `rag_custom`.
+            example: rag_custom
+          config:
+            $ref: '#/components/schemas/RagCustomNativeToolConfigRequest'
+          metadata:
+            $ref: '#/components/schemas/MetadataRequest'
+        required:
+        - config
+    TeamsNativeToolRequest:
+      allOf:
+      - $ref: '#/components/schemas/BaseNativeTool'
+      - type: object
+        properties:
+          type:
+            description: For TeamsNativeTool it has to be set to `teams`.
+            example: teams
+          config:
+            $ref: '#/components/schemas/TeamsNativeToolConfigRequest'
+          metadata:
+            $ref: '#/components/schemas/MetadataRequest'
+        required:
+        - config
+    RagEntityType:
+      type: string
+      enum:
+      - product
+      description: Type of the entity which is stored in the given collection.
+    BaseNativeTool:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/NativeToolType'
+        name:
+          type: string
+          description: Name of the tool.
+        enabled:
+          type: boolean
+          description: An indicator whether the tool is enabled.
+          default: false
+      required:
+      - type
+      - name
+    RagCustomEmbeddingNativeToolConfigResponse:
+      allOf:
+      - $ref: '#/components/schemas/RagCustomEmbeddingNativeToolConfig'
+      - type: object
+        properties:
+          token:
+            $ref: '#/components/schemas/ExpandableTokenResponse'
+    ExpandableTokenResponse:
+      oneOf:
+      - $ref: '#/components/schemas/IdResponse'
+      - $ref: '#/components/schemas/ExpandedTokenResponse'
+      description: The full response representing token. If the `expand=token` is **not** used, then only `id` field is returned, otherwise all fields are returned.
+    ErrorMessageFault:
+      type: object
+      properties:
+        fault:
+          type: object
+          properties:
+            faultstring:
+              type: string
+            detail:
+              type: object
+              properties:
+                errorcode:
+                  type: string
+    RagEmporixNativeToolConfig:
+      type: object
+      properties:
+        prompt:
+          type: string
+          description: The prompt for an agent. It should define when and why this tool is to be called.
+        entityType:
+          type: string
+          description: 'Type of the entity which is stored in the given collection. Supported predefined types: [ORDER, PRODUCT] and custom entity types.'
+        indexedFields:
+          type: array
+          description: This field specifies the fields of the given entityType that are used for generating embeddings. The provided values are then concatenated and converted to embeddings.
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: It can act as an alias for the field key. For example, if the 'name.en' key is provided then its alias could be 'English Name' and that value is used in embedding input.
+              key:
+                type: string
+                description: Unique value representing the entityType key.
+            required:
+            - key
+        filterFields:
+          type: array
+          description: This field specifies the fields of the given entityType that are used for filtering the data before performing actual search.
+          items:
+            type: object
+            properties:
+              description:
+                type: string
+                description: It should contain the description of the field, so LLM is able to know when to use this field in order to filter the data. For enums, possible values should be specified here.
+              key:
+                type: string
+                description: Unique value representing the entityType key.
+            required:
+            - key
+      required:
+      - prompt
+      - entityType
+      - indexedFields
+    OpenAiRagEmporixEmbeddingNativeToolConfigRequest:
+      allOf:
+      - $ref: '#/components/schemas/OpenAiRagEmporixEmbeddingNativeToolConfig'
+      - type: object
+        properties:
+          token:
+            $ref: '#/components/schemas/IdWrapperRequest'
+        required:
+        - token
+    SlackNativeToolConfigRequest:
+      allOf:
+      - $ref: '#/components/schemas/SlackNativeToolConfigResponse'
+      - type: object
+        properties:
+          botToken:
+            type: string
+            description: OAuth token used to authenticate the Slack bot within the specified workspace. Required for performing authorized actions on behalf of the bot. Format usually starts with `xoxb-...`. It is required only for creation, for update operation it can be omitted.
+        required:
+        - botToken
+    RagEmporixNativeToolConfigResponse:
+      allOf:
+      - $ref: '#/components/schemas/RagEmporixNativeToolConfig'
+      - type: object
+        properties:
+          embeddingConfig:
+            oneOf:
+            - $ref: '#/components/schemas/EmporixOpenAiRagEmporixEmbeddingNativeToolConfig'
+            - $ref: '#/components/schemas/OpenAiRagEmporixEmbeddingNativeToolConfigResponse'
+            - $ref: '#/components/schemas/SelfHostedOllamaRagEmporixEmbeddingNativeToolConfigResponse'
+    RagCustomEmbeddingNativeToolConfig:
+      type: object
+      properties:
+        model:
+          type: string
+          description: Name of the OpenAI LLM model which should be used to create embedding of user's input in order to perform search operation.
+      required:
+      - model
+    SlackNativeToolRequest:
+      allOf:
+      - $ref: '#/components/schemas/BaseNativeTool'
+      - type: object
+        properties:
+          type:
+            description: For SlackNativeTool it has to be set to `slack`.
+            example: slack
+          config:
+            $ref: '#/components/schemas/SlackNativeToolConfigRequest'
+          metadata:
+            $ref: '#/components/schemas/MetadataRequest'
+        required:
+        - config
+    SelfHostedOllamaRagEmporixEmbeddingNativeToolConfig:
+      type: object
+      properties:
+        provider:
+          allOf:
+          - $ref: '#/components/schemas/RagLlmProvider'
+          description: For this type, it should be set to 'self_hosted_ollama'.
+        model:
+          type: string
+          description: Ollama LLM model to be used for generating embeddings for indexed products and user's input query.
+        dimensions:
+          type: integer
+          description: Number of dimensions of embedding.
+          minimum: 128
+          maximum: 4096
+        url:
+          type: string
+          description: Base URL where Ollama is hosted.
+      required:
+      - provider
+      - model
+      - dimensions
+      - url
+    RagCustomDatabaseNativeToolConfigResponse:
+      allOf:
+      - $ref: '#/components/schemas/RagCustomDatabaseNativeToolConfig'
+      - type: object
+        properties:
+          token:
+            $ref: '#/components/schemas/ExpandableTokenResponse'
+    SlackNativeToolResponse:
+      allOf:
+      - $ref: '#/components/schemas/BaseNativeTool'
+      - type: object
+        properties:
+          id:
+            type: string
+            description: Unique identifier of the tool.
+          type:
+            description: For SlackNativeTool it has to be set to `slack`.
+            example: slack
+          config:
+            $ref: '#/components/schemas/SlackNativeToolConfigResponse'
+          metadata:
+            $ref: '#/components/schemas/MetadataResponse'
+    RagCustomDatabaseNativeToolConfigRequest:
+      allOf:
+      - $ref: '#/components/schemas/RagCustomDatabaseNativeToolConfig'
+      - type: object
+        properties:
+          token:
+            $ref: '#/components/schemas/IdWrapperRequest'
+        required:
+        - token
+    RagCustomNativeToolResponse:
+      allOf:
+      - $ref: '#/components/schemas/BaseNativeTool'
+      - type: object
+        properties:
+          id:
+            type: string
+            description: Unique identifier of the tool.
+          type:
+            description: For `RagCustomNativeTool`, it has to be set to `rag_custom`.
+            example: rag_custom
+          config:
+            $ref: '#/components/schemas/RagCustomNativeToolConfigResponse'
+          metadata:
+            $ref: '#/components/schemas/MetadataResponse'
+    TeamsAllowedOperations:
+      type: string
+      enum:
+      - sendMessage
+      - createChat
+      - createChannel
+      - inviteParticipants
+      - collaborateOnChannel
+      - collaborateOnChat
+      description: MS Teams native tool operation identifier.
+    TeamsNativeToolConfigRequest:
+      allOf:
+      - $ref: '#/components/schemas/TeamsNativeToolConfigResponse'
+    SelfHostedOllamaRagEmporixEmbeddingNativeToolConfigResponse:
+      allOf:
+      - $ref: '#/components/schemas/SelfHostedOllamaRagEmporixEmbeddingNativeToolConfig'
+      - type: object
+        properties:
+          token:
+            $ref: '#/components/schemas/ExpandableTokenResponse'
+    RagCustomNativeToolConfigRequest:
+      allOf:
+      - $ref: '#/components/schemas/RagCustomNativeToolConfig'
+      - type: object
+        properties:
+          databaseConfig:
+            $ref: '#/components/schemas/RagCustomDatabaseNativeToolConfigRequest'
+          embeddingConfig:
+            $ref: '#/components/schemas/RagCustomEmbeddingNativeToolConfigRequest'
+        required:
+        - databaseConfig
+        - embeddingConfig
+    RagCustomDatabaseType:
+      type: string
+      enum:
+      - qdrant
+      description: Type of the database.
+    TeamsNativeToolResponse:
+      allOf:
+      - $ref: '#/components/schemas/BaseNativeTool'
+      - type: object
+        properties:
+          id:
+            type: string
+            description: Unique identifier of the tool.
+          type:
+            description: For TeamsNativeTool it has to be set to `teams`.
+            example: teams
+          config:
+            $ref: '#/components/schemas/TeamsNativeToolConfigResponse'
+          metadata:
+            $ref: '#/components/schemas/MetadataResponse'
+    RagEmporixNativeToolResponse:
+      allOf:
+      - $ref: '#/components/schemas/BaseNativeTool'
+      - type: object
+        properties:
+          id:
+            type: string
+            description: Unique identifier of the tool.
+          type:
+            description: For `RagEmporixNativeTool`, it has to be set to `rag_emporix`.
+            example: rag_emporix
+          config:
+            $ref: '#/components/schemas/RagEmporixNativeToolConfigResponse'
+          metadata:
+            $ref: '#/components/schemas/MetadataResponse'
+    TeamsNativeToolConfigResponse:
+      type: object
+      description: Configuration of an MS Teams native tool instance.
+      properties:
+        teamId:
+          type: string
+          description: Microsoft Teams team ID the tool is bound to.
+        tenantId:
+          type: string
+          description: Customer Azure AD tenant ID for the Teams workspace.
+        defaultInboundAgentId:
+          type: string
+          description: Agent ID that handles inbound Teams replies when no conversation-specific owner is set.
+        allowedOperations:
+          type: array
+          items:
+            $ref: '#/components/schemas/TeamsAllowedOperations'
+          description: Operations the tool instance exposes to assigned agents. At least one value is required when the tool is enabled.
+      required:
+      - teamId
+    SlackNativeToolConfigResponse:
+      type: object
+      description: Configuration of a Slack native tool instance.
+      properties:
+        teamId:
+          type: string
+          description: Unique identifier of the Slack workspace (team) associated with the request. Used to distinguish the source Slack environment when handling events or API calls.
+        defaultInboundAgentId:
+          type: string
+          description: Agent ID that handles inbound Slack replies when no conversation-specific routing context exists yet.
+        allowedOperations:
+          type: array
+          items:
+            $ref: '#/components/schemas/SlackAllowedOperations'
+          description: Operations the tool instance exposes to assigned agents. At least one value is required when the tool is enabled.
+      required:
+      - teamId
+    NativeToolsResponse:
+      type: array
+      description: List of native tools which agents should have access to.
+      items:
+        oneOf:
+        - $ref: '#/components/schemas/SlackNativeToolResponse'
+        - $ref: '#/components/schemas/RagCustomNativeToolResponse'
+        - $ref: '#/components/schemas/RagEmporixNativeToolResponse'
+        - $ref: '#/components/schemas/TeamsNativeToolResponse'
+    RagCustomDatabaseNativeToolConfig:
+      type: object
+      properties:
+        url:
+          type: string
+          description: URL of the database.
+        type:
+          allOf:
+          - $ref: '#/components/schemas/RagCustomDatabaseType'
+        entityType:
+          allOf:
+          - $ref: '#/components/schemas/RagEntityType'
+        collectionName:
+          type: string
+          description: Name of the database collection.
+      required:
+      - url
+      - type
+      - entityType
+      - collectionName
+    PatchRequest:
+      type: array
+      description: Partial update operation list.
+      items:
+        type: object
+        properties:
+          op:
+            anyOf:
+            - enum:
+              - ADD
+              - REMOVE
+              - REPLACE
+            type: string
+          path:
+            type: string
+            example: /name
+          value:
+            anyOf:
+            - type: string
+              description: Value of the string type.
+            - type: object
+              description: Any part of the details object.
+        required:
+        - op
+        - path
+    RagCustomNativeToolConfig:
+      type: object
+      properties:
+        prompt:
+          type: string
+          description: The prompt for an agent. It should define when and why this tool is to be called.
+        maxResults:
+          type: integer
+          default: 5
+          description: The maximum number of results found in the Vector Database.
+      required:
+      - prompt
+    MetadataResponse:
+      allOf:
+      - $ref: '#/components/schemas/MetadataRequest'
+      - type: object
+        properties:
+          createdAt:
+            description: 'Date and time when the object was created. The value is approved as an ISO-8601 representation of an Instant. For example: `2022-04-30T13:18:02.379Z`'
+            type: string
+          modifiedAt:
+            description: 'Date and time when the object was last modified. The value is approved as an ISO-8601 representation of an Instant. For example: `2022-04-30T13:18:02.379Z`'
+            type: string
+        required:
+        - version
+        - createdAt
+        - modifiedAt
+    MetadataRequest:
+      type: object
+      properties:
+        version:
+          minimum: 1
+          type: integer
+          description: Version of the object. The version is required during the update operation because of the optimistic locking mechanism.
+      required:
+      - version
+  examples:
+    TeamsNativeToolRequest:
+      value:
+        name: MS Teams Collaboration Tool
+        enabled: true
+        type: teams
+        config:
+          teamId: 19:team-id@thread.tacv2
+          tenantId: aad-tenant-id
+          defaultInboundAgentId: generic-agent-id
+          allowedOperations:
+          - sendMessage
+          - collaborateOnChannel
+          - inviteParticipants
+    SlackNativeToolResponse:
+      value:
+        id: slack-1
+        name: Slack Native Tool
+        enabled: true
+        type: slack
+        config:
+          teamId: '12345'
+          defaultInboundAgentId: slack-agent-id
+          allowedOperations:
+          - sendMessage
+          - collaborateOnChannel
+          - inviteParticipants
+    SlackNativeToolRequest:
+      value:
+        name: Slack Native Tool
+        enabled: true
+        type: slack
+        config:
+          teamId: '12345'
+          botToken: xoxb-35354
+          defaultInboundAgentId: slack-agent-id
+          allowedOperations:
+          - sendMessage
+          - collaborateOnChannel
+          - inviteParticipants
+    IdResponse:
+      value:
+        id: a81bc81b-dead-4e5d-abff-90865d1e13b1
+    SlackNativeToolsResponse:
+      value:
+      - id: slack-1
+        name: Slack Native Tool
+        enabled: true
+        type: slack
+        config:
+          teamId: '12345'
+          defaultInboundAgentId: slack-agent-id
+          allowedOperations:
+          - sendMessage
+          - collaborateOnChannel
+  responses:
+    409_resp_common:
+      description: "There are three possible reasons:\n 1. Resource with given code already exists, please choose unique code for your resource\n 2. Optimistic locking failed. If user sends metadata/version attribute which is outdated (someone else updated resource in the time user was performing his changes). User should retrieve the latest product data and retry the request.\n 3. Optimistic locking failed. User did not provide metadata/version attribute in update request, but someone else updated product while it was internally handled by product service. Resending the same request can result in successful update, but the update can override recently persisted changes.\n"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Resource conflict:
+              value:
+                code: 409
+                status: Conflict
+                message: Conflict - a resource with given code or id has already exist.
+    403_resp_common:
+      description: Authorization scopes of the access token are not sufficient and do not match the scopes required by the endpoint.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Access forbidden:
+              value:
+                code: 403
+                status: Forbidden
+                message: The access to the requested resource has been forbidden by the server.
+    400_resp_common:
+      description: The request was syntactically incorrect.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Code must not be null:
+              value:
+                code: 400
+                status: Bad Request
+                message: Validation problem with request body.
+                details:
+                - message: code must not be null nor blank
+    401_resp_common:
+      description: The authorization token is invalid or has expired.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessageFault'
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            Access token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+    404_resp_common:
+      description: Example response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Resource not found:
+              value:
+                resourceId: 628cd20c6e8b2432b6346ca6
+                code: 404
+                status: Not Found
+                message: The resource with id 628cd20c6e8b2432b6346ca6 has not been found.
+  requestBodies:
+    toolPatchBody:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PatchRequest'
+          examples:
+            Multiple update list:
+              value:
+              - op: REPLACE
+                path: /config/botToken
+                value: New bot token
+              - op: REPLACE
+                path: /name
+                value: New slack name
+            Change name:
+              value:
+              - op: REPLACE
+                path: /name
+                value: New slack name
+    QParamSearchBody:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/QParamSearchBody'
+          examples:
+            Search Request:
+              value:
+                q: name:~Complaint
+    toolUpsertBody:
+      content:
+        application/json:
+          schema:
+            oneOf:
+            - $ref: '#/components/schemas/SlackNativeToolRequest'
+            - $ref: '#/components/schemas/RagCustomNativeToolRequest'
+            - $ref: '#/components/schemas/RagEmporixNativeToolRequest'
+            - $ref: '#/components/schemas/TeamsNativeToolRequest'
+          examples:
+            Create Slack Tool:
+              $ref: '#/components/examples/SlackNativeToolRequest'
+            Create Teams Tool:
+              $ref: '#/components/examples/TeamsNativeToolRequest'
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes:
+            ai.text_manage: Needed to execute actions related to the text generation.
+            ai.completion_manage: Needed to execute actions related to the AI completions.
+            ai.agentexecution_manage: Needed to execute agentic chat.
+            ai.agentexecution_manage_own: Needed to execute agentic chat by customers.
+            ai.agent_read: Needed to read AI agents.
+            ai.agent_manage: Needed to manage AI agents.
+          tokenUrl: https://api.emporix.io/oauth/token
+x-refined-from:
+- emporix-ai-service-openapi.yml
+- emporix-ai-service-openapi.yml

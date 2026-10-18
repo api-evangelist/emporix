@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-fee-schema.json",
+  "title": "Fee",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-fee-openapi.yml#/components/schemas/Fee",
+  "type": "object",
+  "properties": {
+    "id": {
+      "description": "Unique identifier of the fee.",
+      "type": "string"
+    },
+    "name": {
+      "description": "The localized fee name.",
+      "$ref": "#/$defs/Localized"
+    },
+    "description": {
+      "description": "The localized fee description.",
+      "$ref": "#/$defs/Localized"
+    },
+    "code": {
+      "maxLength": 100,
+      "description": "The code-name, unique for the tenant.",
+      "type": "string"
+    },
+    "feeType": {
+      "description": "'PERCENT' for relative values, 'ABSOLUTE' for float values or 'ABSOLUTE_MULTIPLY_ITEMQUANTITY' for float values to be multiplied by the quantity of the item.",
+      "enum": [
+        "PERCENT",
+        "ABSOLUTE",
+        "ABSOLUTE_MULTIPLY_ITEMQUANTITY"
+      ],
+      "type": "string"
+    },
+    "feePercentage": {
+      "minimum": 0,
+      "description": "The fee rate in percentage. Required if feeType is 'PERCENT'.",
+      "type": "number"
+    },
+    "feeAbsolute": {
+      "description": "The fee as an absolute amount. Required if type is 'ABSOLUTE'.",
+      "$ref": "#/$defs/monetaryAmount"
+    },
+    "itemType": {
+      "description": "The itemtype the fee can belong to. It could be a product or\npaymenttype. ",
+      "enum": [
+        "PRODUCT",
+        "PAYMENTTYPE"
+      ],
+      "type": "string"
+    },
+    "siteCode": {
+      "description": "The SiteCode the fee belongs to.",
+      "type": "string"
+    },
+    "active": {
+      "description": "Flag indicating whether the fee is currently active or not.",
+      "type": "boolean"
+    },
+    "taxable": {
+      "description": "Flag indicating whether the fee is taxable or not.",
+      "type": "boolean"
+    },
+    "taxCode": {
+      "description": "The tax code. When 'taxable' is set to true, the taxCode is mandatory",
+      "type": "string"
+    },
+    "activeTimespan": {
+      "$ref": "#/$defs/timespan"
+    },
+    "yrn": {
+      "$ref": "#/$defs/YRN"
+    }
+  },
+  "required": [
+    "name",
+    "code",
+    "feeType",
+    "active",
+    "siteCode"
+  ],
+  "$defs": {
+    "Localized": {
+      "description": "The localized value in the form of map (language, value) or string.",
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "string in the specified language."
+        },
+        {
+          "type": "object",
+          "description": "Map of translations in form of language:translation pairs.\nThe keys (languages) should be ISO language codes.\nThe values (in specific languages) should be strings in specified language.",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "YRN": {
+      "type": "string",
+      "title": "YRN",
+      "description": "A unique identifier of a global resource, which stores information about the resource, such as its type, ID or name of the tenant.",
+      "minLength": 1
+    },
+    "monetaryAmount": {
+      "title": "Monetary Amount",
+      "description": "Schema defining monetary amount in given currency.",
+      "type": "object",
+      "properties": {
+        "amount": {
+          "description": "The amount in the specified currency",
+          "type": "number"
+        },
+        "currency": {
+          "pattern": "^[a-zA-Z]{3}$",
+          "description": "ISO 4217 currency code, e.g.: USD, EUR, CHF",
+          "type": "string"
+        }
+      },
+      "required": [
+        "amount",
+        "currency"
+      ]
+    },
+    "timespan": {
+      "description": "Restricts the active fees to be only applied in the specified\ntimespan.",
+      "title": "Timespan",
+      "type": "object",
+      "properties": {
+        "startDate": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "endDate": {
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "startDate",
+        "endDate"
+      ]
+    }
+  }
+}

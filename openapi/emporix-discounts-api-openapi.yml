@@ -1,0 +1,630 @@
+openapi: 3.2.0
+info:
+  title: Emporix Discounts API
+  version: ''
+  contact:
+    email: documentation@emporix.com
+  description: 'Operations tagged Discounts across 2 of this provider''s published API definitions: emporix-cart-openapi.yml, emporix-cart-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Discounts
+  description: Manage Discounts
+paths:
+  /cart/{tenant}/carts/{cartId}/discounts:
+    parameters:
+    - $ref: '#/components/parameters/cartId'
+    - $ref: '#/components/parameters/trait_tenant'
+    post:
+      tags:
+      - Discounts
+      responses:
+        '201':
+          description: The request was successful. The discount has been applied to cart.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/appliedDiscount'
+              examples:
+                Response example:
+                  value:
+                    yrn: '{discountYrn}'
+                    discountId: '1'
+                    discountIndex: 0
+          headers:
+            Location:
+              description: Location of the newly created discount.
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/trait_400'
+        '401':
+          $ref: '#/components/responses/trait_401'
+        '403':
+          $ref: '#/components/responses/trait_403'
+        '404':
+          $ref: '#/components/responses/trait_notFound_404'
+        '409':
+          $ref: '#/components/responses/trait_add_discount_conflict_409'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  code:
+                    type: number
+                    description: Original HTTP error code. It should be consistent with the HTTP response code.
+                  status:
+                    type: string
+                    minLength: 1
+                    description: Classification of the error.
+                  message:
+                    type: string
+                    minLength: 1
+                    description: Descriptive error message for debugging purposes.
+              examples:
+                Wrong discount currency:
+                  value:
+                    code: 500
+                    status: Internal Server Error
+                    message: Discount currency is CAD and is not equal to cart currency EUR.
+                Discount already applied:
+                  value:
+                    code: 500
+                    status: Internal Server Error
+                    message: Discount code DEVIZU already exists in cart.
+      description: Applies a discount on the specified cart. Multiple discount coupons can be applied to cart, but you need to send a separate request for each discount coupon.
+      operationId: POST-cart-apply-discount
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/discount'
+            examples:
+              Full payload example:
+                value:
+                  code: DEVIZU
+                  amount: 10
+                  currency: EUR
+                  name: Thanksgiving coupon for all orders
+                  calculationType: ApplyDiscountBeforeTax
+                  links:
+                  - title: THANKSGIVING10
+                    rel: validate
+                    type: application/json
+                    href: https://api.emporix.io/couponcart/{tenant}/coupons/THANKSGIVING10
+                  - title: THANKSGIVING10 redeem
+                    rel: redeem
+                    type: application/json
+                    href: https://api.emporix.io/couponcart/{tenant}/coupons/THANKSGIVING10/redemptions
+              Coupon-code-only payload example:
+                value:
+                  code: CVMTRE
+        required: false
+      security:
+      - OAuth2:
+        - cart.cart_manage
+      - CustomerAccessToken: []
+      parameters:
+      - $ref: '#/components/parameters/trait_tenant'
+      summary: Applying a discount to cart
+    delete:
+      tags:
+      - Discounts
+      responses:
+        '204':
+          description: The request was successful. Discounts have been removed.
+        '400':
+          $ref: '#/components/responses/trait_400'
+        '401':
+          $ref: '#/components/responses/trait_401'
+        '403':
+          $ref: '#/components/responses/trait_403'
+        '404':
+          $ref: '#/components/responses/trait_notFound_404'
+        '500':
+          $ref: '#/components/responses/trait_500'
+      description: Removes all discounts applied to the specified cart.
+      operationId: DELETE-cart-remove-all-discounts
+      security:
+      - OAuth2:
+        - cart.cart_manage
+      - CustomerAccessToken: []
+      parameters:
+      - $ref: '#/components/parameters/trait_tenant'
+      - schema:
+          type: string
+          example: code1,code2
+        in: query
+        name: codes
+        description: Discount codes, listed with commas, specify the discounts slated for deletion. If no codes are provided, all discounts will be removed.
+      summary: Removing all discounts from cart
+    get:
+      tags:
+      - Discounts
+      summary: Returning all discounts from the cart
+      operationId: GET-cart-list-all-discounts
+      responses:
+        '200':
+          description: The request was successful. Cart discounts items are returned.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/discountResponse'
+        '403':
+          $ref: '#/components/responses/trait_403'
+        '404':
+          $ref: '#/components/responses/trait_notFound_404'
+        '500':
+          $ref: '#/components/responses/trait_500'
+      description: Returns all discounts of the specified cart.
+      security:
+      - OAuth2:
+        - cart.cart_manage
+    servers:
+    - url: https://api.emporix.io
+  /cart/{tenant}/carts/{cartId}/discounts/{discountIndex}:
+    parameters:
+    - name: cartId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Cart’s unique identifier generated when a cart is created.
+    - name: tenant
+      in: path
+      required: true
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: The tenant should always be written in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+    - schema:
+        type: string
+      name: discountIndex
+      in: path
+      required: true
+    delete:
+      tags:
+      - Discounts
+      responses:
+        '204':
+          description: The request was successful. The discount has been removed from cart.
+        '400':
+          $ref: '#/components/responses/trait_400'
+        '401':
+          $ref: '#/components/responses/trait_401'
+        '403':
+          $ref: '#/components/responses/trait_403'
+        '404':
+          $ref: '#/components/responses/trait_notFound_404'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+      description: Delete the discount in the cart by the provided discount Index.
+      operationId: DELETE-cart-remove-discount
+      security:
+      - OAuth2:
+        - cart.cart_manage
+      - CustomerAccessToken: []
+      parameters:
+      - $ref: '#/components/parameters/trait_tenant'
+      summary: Removing a discount from cart
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    discountValidationDetails:
+      description: ''
+      type: object
+      properties:
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            type: string
+    ErrorMessage:
+      title: error
+      description: Schema for API-specific errors.
+      type: object
+      properties:
+        code:
+          description: Original HTTP error code. It should be consistent with the HTTP response code.
+          type: integer
+        status:
+          description: HTTP Status
+          type: string
+        message:
+          description: Descriptive error message for debugging purposes.
+          type: string
+    discount:
+      description: ''
+      type: object
+      title: ''
+      properties:
+        id:
+          type: string
+          description: Discount unique identifier.
+        couponYrn:
+          $ref: '#/components/schemas/YRN'
+        code:
+          type: string
+          maxLength: 150
+          description: Discount code generated when a discount coupon is created through the Coupon Service.
+          minLength: 1
+        currency:
+          type: string
+          pattern: '[A-Z]{3}'
+          description: Three-letter currency code, compliant with the ISO 4217 standard.
+          minLength: 3
+          maxLength: 3
+        amount:
+          type: number
+          minimum: 0
+          description: Discount expressed as fixed amount.
+          format: double
+        name:
+          maxLength: 150
+          description: Discount displayed name.
+          type: string
+        discountRate:
+          type: number
+          minimum: 0
+          description: Discount expressed as a percentage of the price.
+          format: double
+        discountCalculationType:
+          type: string
+          default: SUBTOTAL
+          description: Determines whether the coupon is applied to the total or subtotal value of the order.
+          enum:
+          - SUBTOTAL
+          - TOTAL
+        links:
+          minItems: 2
+          type: array
+          description: Links to Coupon Service endpoints used to validate and redeem the discount.
+          items:
+            $ref: '#/components/schemas/link'
+        calculationType:
+          type: string
+          maxLength: 30
+          default: ApplyDiscountBeforeTax
+          deprecated: true
+          enum:
+          - ApplyDiscountBeforeTax
+          - ApplyDiscountAfterTax
+          description: 'Calculation type specifies how the discount should be calculated. It can be set to one of the following:
+
+            * `ApplyDiscountBeforeTax`
+
+            * `ApplyDiscountAfterTax`
+
+
+            The field is **deprecated** and is not used in calculatedPrice fields. The calculated price takes into account site''s settings
+
+            where:
+
+            * `includesTax=true` results in `ApplyDiscountAfterTax`
+
+            * `includesTax=false` results in `ApplyDiscountBeforeTax`'
+      required:
+      - code
+    YRN:
+      type: string
+      title: YRN
+      description: A unique identifier of a global resource, which stores information about the resource, such as its type, ID or name of the tenant.
+      minLength: 1
+    price:
+      type: object
+      properties:
+        amount:
+          type: number
+          minimum: 0
+          format: double
+          description: Price.
+        currency:
+          type: string
+          pattern: '[A-Z]{3}'
+          minLength: 3
+          maxLength: 3
+          description: Three-letter currency code, compliant with the ISO 4217 standard.
+      required:
+      - amount
+      - currency
+      description: ''
+    discountResponse:
+      description: Discount details.
+      type: object
+      properties:
+        id:
+          type: string
+          description: Discount's unique identifier.
+        yrn:
+          $ref: '#/components/schemas/YRN'
+        couponYrn:
+          $ref: '#/components/schemas/YRN'
+        code:
+          maxLength: 150
+          description: Discount code generated when a discount coupon is created through the Coupon Service.
+          type: string
+        amount:
+          type: number
+          minimum: 0
+          description: Discount expressed as fixed amount.
+          format: double
+        currency:
+          type: string
+          pattern: '[A-Z]{3}'
+          description: Three-letter currency code, compliant with the ISO 4217 standard.
+          minLength: 3
+          maxLength: 3
+        discountRate:
+          type: number
+          minimum: 0
+          description: Discount expressed as a percentage of the price.
+          format: double
+        name:
+          maxLength: 150
+          description: Discount's displayed name.
+          type: string
+        calculationType:
+          type: string
+          maxLength: 30
+          default: ApplyDiscountBeforeTax
+          description: 'Calculation type specifies how the discount should be calculated. Can be set to one of the following:
+
+            * `ApplyDiscountBeforeTax`
+
+            * `ApplyDiscountAfterTax`'
+          enum:
+          - ApplyDiscountBeforeTax
+          - ApplyDiscountAfterTax
+        discountCalculationType:
+          type: string
+          description: Determines whether the coupon is applied to the total or subtotal value of the order.
+          enum:
+          - SUBTOTAL
+          - TOTAL
+        valid:
+          default: true
+          description: "Flag indicating whether the discount is valid. \nInvalid discounts are not taken into account when the cart is calculated."
+          type: boolean
+        links:
+          minItems: 2
+          type: array
+          description: Links to Coupon Service endpoints used to validate and redeem the discount.
+          items:
+            $ref: '#/components/schemas/link'
+        discountValidationDetails:
+          $ref: '#/components/schemas/discountValidationDetails'
+        vendorRestricted:
+          type: boolean
+          default: false
+          description: Indicates whether the discount is limited to the vendors in `restrictions.vendors`.
+        restrictions:
+          $ref: '#/components/schemas/discountRestrictions'
+        discountIndex:
+          type: integer
+          description: The index of the discount. It represents the discount position in the cart discounts array.
+      required:
+      - code
+    appliedDiscount:
+      type: object
+      properties:
+        yrn:
+          $ref: '#/components/schemas/YRN'
+        discountId:
+          type: string
+          format: double
+        discountIndex:
+          type: integer
+          description: The index of the discount that represents the number in the discounts array. It can be used for the discount removal from the cart.
+      required:
+      - yrn
+      - discountId
+      - discountIndex
+    link:
+      description: ''
+      type: object
+      properties:
+        rel:
+          type: string
+          maxLength: 50
+          description: Action to be done using the endpoint provided in the `href` field.
+          enum:
+          - validate
+          - redeem
+        title:
+          maxLength: 100
+          description: Detailed link description.
+          type: string
+        href:
+          type: string
+          maxLength: 2000
+          description: Endpoint used to validate or redeem the discount.
+        type:
+          type: string
+          maxLength: 500
+          description: Content type.
+          example: application/json
+      required:
+      - rel
+      - href
+      - type
+    discountRestrictions:
+      description: Restrictions copied from the coupon.
+      type: object
+      properties:
+        validFrom:
+          type: string
+          description: Start of the discount validity period.
+        validUntil:
+          type: string
+          description: End of the discount validity period.
+        minOrderValue:
+          allOf:
+          - $ref: '#/components/schemas/price'
+          - description: Minimum order value copied from the coupon. When `vendorRestricted` is `true`, this value is checked against the total of the matching vendor items.
+        includedCategories:
+          type: array
+          description: Categories to which the discount applies.
+          items:
+            type: string
+        excludedCategories:
+          type: array
+          description: Categories to which the discount does not apply.
+          items:
+            type: string
+        segments:
+          type: array
+          description: Customer segments to which the discount applies.
+          items:
+            type: string
+        vendors:
+          type: array
+          description: Vendor identifiers to which the discount applies.
+          items:
+            type: string
+  responses:
+    trait_403:
+      description: Given authorization scopes are not sufficient and do not match scopes required by the endpoint.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            insufficient_permissions:
+              value:
+                status: Forbidden
+                code: 403
+                message: User not authorized.
+    trait_add_discount_conflict_409:
+      description: The request could not be completed due to a conflict with the current state of the target resource.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            conflict:
+              value:
+                code: 409
+                status: Conflict
+                message: 'Another discount already exists in cart. Discount code found: 15OFF'
+    trait_401:
+      description: 'Given request is unauthorized - the authorization token is invalid or has expired.
+
+
+        Details will be provided in the response payload.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Access Token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+    trait_notFound_404:
+      description: The requested resource does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            cart_not_found:
+              value:
+                code: 404
+                status: Not Found
+                message: Cart with code 612cc4783cff1d66f699b6a1 not found.
+            cart_item_not_found:
+              value:
+                code: 404
+                status: Not Found
+                message: Cart item not found in cart 612cda543cff1d66f699b6a2 with code 0
+    trait_500:
+      description: Some server-side error occurred. Details will be provided in the response payload.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            internal_service_error:
+              value:
+                status: Internal Server Error
+                code: 500
+                message: Something went wrong while processing the request. The error has been logged under code 20210819_095055_677_vwurkrl.
+    trait_400:
+      description: The request was syntactically incorrect. Details will be provided in the response payload.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            invalid_header:
+              value:
+                code: 400
+                status: BAD_REQUEST
+                message: There are validation problems, see details section for more information
+  parameters:
+    cartId:
+      name: cartId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Cart unique identifier generated when a cart is created.
+    trait_tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: The tenant should always be written in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            cart.cart_manage: Needed to manage carts. This scope is only required for OAuth2 authorization method to authorize the request with the `access_token`.
+            cart.cart_manage_external_prices: Needed to manage external prices, products, fees and discounts. It's required only when an external price, product, fee or discount is provided.
+    CustomerAccessToken:
+      type: http
+      scheme: bearer
+x-refined-from:
+- emporix-cart-openapi.yml
+- emporix-cart-openapi.yml

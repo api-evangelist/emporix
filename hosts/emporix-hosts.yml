@@ -1,0 +1,195 @@
+generated: '2026-10-18'
+method: derived
+source: the pre-flight dossier, apis.yml pointers, spec servers, well-known, vendors -- nothing fetched here
+generator: derive-hosts.py
+summary:
+  hosts: 14
+  own: 5
+  other_domain: 5
+  platform: 4
+  roles:
+  - api
+  - collections
+  - community
+  - identity
+  - other
+  - portal
+  - source
+  - status
+  - support
+  - website
+hosts:
+- host: api.emporix.com
+  found_by:
+  - contract-discovery
+  types: []
+  serves: []
+  registrable_domain: emporix.com
+  role: api
+  relation: own
+- host: api.emporix.io
+  found_by:
+  - apis[]
+  - contract-discovery
+  types: []
+  serves:
+  - api
+  registrable_domain: emporix.io
+  role: api
+  relation: other-domain
+- host: app.emporix.io
+  found_by:
+  - pointer
+  - probed
+  - docs-index
+  - well-known
+  types:
+  - Login
+  serves:
+  - docs
+  registrable_domain: emporix.io
+  role: identity
+  relation: other-domain
+- host: community.emporix.io
+  found_by:
+  - pointer
+  - probed
+  - contract-discovery
+  - well-known
+  types:
+  - Community
+  serves: []
+  registrable_domain: emporix.io
+  role: community
+  relation: other-domain
+- host: developer.emporix.io
+  found_by:
+  - pointer
+  - apis[]
+  - probed
+  - docs-index
+  - contract-discovery
+  - well-known
+  - vendor-detect
+  types:
+  - DeveloperPortal
+  - Documentation
+  - APIReference
+  - GettingStarted
+  - ChangeLog
+  - SDKs
+  - LLMsTxt
+  - TermsOfService
+  serves:
+  - docs
+  - documentation
+  - hosting
+  vendor: gitbook
+  registrable_domain: emporix.io
+  role: portal
+  relation: other-domain
+- host: emporix.com
+  found_by:
+  - probed
+  - site-links
+  - well-known
+  types: []
+  serves: []
+  registrable_domain: emporix.com
+  role: other
+  relation: own
+- host: github.com
+  found_by:
+  - pointer
+  types:
+  - GitHubOrganization
+  serves: []
+  registrable_domain: github.com
+  role: source
+  relation: platform
+- host: security.emporix.com
+  found_by:
+  - pointer
+  - probed
+  - site-links
+  - well-known
+  types:
+  - Compliance
+  serves: []
+  platform: app.safebase.io
+  registrable_domain: emporix.com
+  role: other
+  relation: own
+- host: status.emporix.io
+  found_by:
+  - pointer
+  types:
+  - StatusPage
+  serves: []
+  registrable_domain: emporix.io
+  role: status
+  relation: other-domain
+- host: support.emporix.com
+  found_by:
+  - pointer
+  - probed
+  - contract-discovery
+  - well-known
+  types:
+  - Support
+  serves: []
+  registrable_domain: emporix.com
+  role: support
+  relation: own
+- host: www.emporix.com
+  found_by:
+  - pointer
+  - probed
+  - well-known
+  - vendor-detect
+  types:
+  - Website
+  - Blog
+  - Newsroom
+  - AboutUs
+  - Contact
+  - Partners
+  - PrivacyPolicy
+  - Imprint
+  serves:
+  - cdn
+  - hosting
+  vendor: cloudflare
+  registrable_domain: emporix.com
+  role: website
+  relation: own
+- host: www.linkedin.com
+  found_by:
+  - pointer
+  types:
+  - LinkedIn
+  serves: []
+  registrable_domain: linkedin.com
+  role: other
+  relation: platform
+- host: www.postman.com
+  found_by:
+  - pointer
+  - vendor-detect
+  types:
+  - Postman
+  serves:
+  - api-collections
+  vendor: postman
+  registrable_domain: postman.com
+  role: collections
+  relation: platform
+- host: www.youtube.com
+  found_by:
+  - pointer
+  types:
+  - YouTube
+  serves: []
+  registrable_domain: youtube.com
+  role: other
+  relation: platform

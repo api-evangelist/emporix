@@ -1,0 +1,524 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-parent-variant-product-with-id-schema.json",
+  "title": "parentVariantProductWithId",
+  "description": "Products of the PARENT_VARIANT type.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-product-service-openapi.yml#/components/schemas/parentVariantProductWithId",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "#/$defs/parentVariantProductCreation"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "yrn": {
+          "$ref": "#/$defs/YRN"
+        },
+        "media": {
+          "$ref": "#/$defs/productMedia"
+        },
+        "metadata": {
+          "$ref": "#/$defs/productMetadataGet"
+        },
+        "customerSegmentIds": {
+          "type": "array",
+          "description": "Customer segment IDs assigned to the product.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "categoryIds": {
+          "type": "array",
+          "description": "Category IDs assigned to the product.",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "YRN": {
+      "title": "YRN (attribute)",
+      "type": "string",
+      "description": "In YaaS, a global resource identifier is a Uniform Resource Name (URN) with a custom YaaS schema and is called a YaaS Resource Name, or YRN.\n\nIt is a unique identifier, which stores information about a resource, such as its type, ID or name of the tenant."
+    },
+    "brand": {
+      "type": "object",
+      "description": "Brand data expanded from `brandId`.",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "localizedName": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "localizedDescription": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "image": {
+          "type": "string",
+          "format": "uri"
+        },
+        "cloudinaryUrl": {
+          "type": "string",
+          "format": "uri"
+        },
+        "mediaId": {
+          "type": "string"
+        }
+      }
+    },
+    "id": {
+      "type": "string",
+      "description": "Unique resource identifier."
+    },
+    "label": {
+      "type": "object",
+      "description": "Label data expanded from `labelIds`.",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "$ref": "#/$defs/localizedValue"
+        },
+        "image": {
+          "type": "string",
+          "format": "uri"
+        },
+        "cloudinaryUrl": {
+          "type": "string",
+          "format": "uri"
+        },
+        "mediaId": {
+          "type": "string"
+        },
+        "overlay": {
+          "$ref": "#/$defs/labelOverlay"
+        }
+      }
+    },
+    "labelOverlay": {
+      "type": "object",
+      "description": "Overlay metadata for a label.",
+      "additionalProperties": false,
+      "properties": {
+        "isTrue": {
+          "type": "boolean"
+        },
+        "position": {
+          "type": "number"
+        }
+      }
+    },
+    "localizedValue": {
+      "description": "Localized value which can have different structure which depends on provided `Content-Language` header.",
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "parentVariantProduct": {
+      "type": "object",
+      "description": "Products of the PARENT_VARIANT type.",
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "$ref": "#/$defs/productCore"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "metadata": {
+              "$ref": "#/$defs/productMetadataCore"
+            },
+            "template": {
+              "$ref": "#/$defs/template"
+            },
+            "variantAttributes": {
+              "$ref": "#/$defs/variantAttributes"
+            }
+          },
+          "required": [
+            "name",
+            "code",
+            "template",
+            "productType",
+            "variantAttributes"
+          ]
+        }
+      ]
+    },
+    "parentVariantProductCreation": {
+      "type": "object",
+      "description": "Creating products of the PARENT_VARIANT type.",
+      "allOf": [
+        {
+          "$ref": "#/$defs/parentVariantProduct"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "maxLength": 32,
+              "description": "Custom product identifier. If not provided, it is automatically generated."
+            },
+            "productType": {
+              "$ref": "#/$defs/productType"
+            }
+          }
+        }
+      ]
+    },
+    "productCore": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/localizedValue",
+          "description": "Product name."
+        },
+        "code": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Unique product identifier, defined by the user."
+        },
+        "description": {
+          "$ref": "#/$defs/localizedValue",
+          "description": "Product description."
+        },
+        "vendor": {
+          "$ref": "#/$defs/vendor"
+        },
+        "taxClasses": {
+          "$ref": "#/$defs/taxClasses"
+        },
+        "published": {
+          "$ref": "#/$defs/published"
+        },
+        "weightDependent": {
+          "type": "boolean",
+          "description": "Mark the product as weight-dependent if the line item price could change after packaging, as this is necessary to ensure that credit card payments can be authorized."
+        },
+        "mixins": {
+          "$ref": "#/$defs/productMixins"
+        },
+        "relatedItems": {
+          "description": "List of items in a relationship with the main product. Assuming that in the system the following relation types are defined: `ACCESSORY` and `CONSUMABLE`, the two products: `Printer` and `Ink` exist, then the `Ink` product can be used as a related item with type `CONSUMABLE` for the Printer product.\nIn order to find all printers for which the ink is defined as a `CONSUMABLE` then `q-param` can be used:\n`products?q=relatedItems.type:CONSUMABLE relatedItems.refId:Ink_Id`\n",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relatedItem"
+          }
+        },
+        "brandId": {
+          "type": "string",
+          "description": "ID of brand."
+        },
+        "brand": {
+          "$ref": "#/$defs/brand"
+        },
+        "labelIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Collection of label IDs."
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/label"
+          }
+        }
+      }
+    },
+    "productMedia": {
+      "type": "array",
+      "uniqueItems": false,
+      "description": "Media files attached to the product.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "yrn": {
+            "$ref": "#/$defs/YRN"
+          },
+          "contentType": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "uploadLink": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "cloudinaryUrl": {
+            "type": "string"
+          },
+          "uncommittedMedia": {
+            "type": "boolean"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "customAttributes": {
+            "type": "object"
+          },
+          "mixins": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Custom media attributes."
+          }
+        }
+      }
+    },
+    "productMetadataCore": {
+      "type": "object",
+      "description": "Metadata request.",
+      "additionalProperties": false,
+      "properties": {
+        "mixins": {
+          "type": "object",
+          "description": "Links to the mixin schemas.",
+          "additionalProperties": true
+        }
+      }
+    },
+    "productMetadataGet": {
+      "type": "object",
+      "description": "Metadata for GET requests.",
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "$ref": "#/$defs/productMetadataWithVersion"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "classificationMixins": {
+              "type": "array",
+              "description": "List of mixin schemas used for classification.",
+              "items": {
+                "type": "object",
+                "description": "Mixin schema.",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Name of the mixin",
+                    "pattern": "^[a-zA-Z0-9_]\\S*$"
+                  },
+                  "mixinPath": {
+                    "type": "string",
+                    "description": "The mixins path that should be used when defining attributes on a product. It's built based on the following pattern - `class_<sourceCategory.code>_<name>`."
+                  },
+                  "schemaUrl": {
+                    "type": "string",
+                    "description": "URL of the mixin schema defined on the category level.",
+                    "pattern": "^https?://[^\\s/$.?#].\\S*$"
+                  },
+                  "usedSchemaUrl": {
+                    "type": "string",
+                    "description": "If given mixin has been already used in the product, then this field contains the URL of the used mixin schema.",
+                    "pattern": "^https?://[^\\s/$.?#].\\S*$"
+                  },
+                  "obsoleteSchemaUrlUsed": {
+                    "type": "boolean",
+                    "description": "Indicates whether the used mixin schema is obsolete - `usedSchemaUrl` differs from `schemaUrl`."
+                  },
+                  "required": {
+                    "type": "boolean",
+                    "description": "Indicates whether the mixin is required."
+                  },
+                  "sourceCategoryId": {
+                    "type": "string",
+                    "description": "Unique identifier of the category from which the mixin comes from. Can be this category ID or one of the parent categories IDs."
+                  }
+                }
+              }
+            },
+            "createdAt": {
+              "type": "string",
+              "description": "Creation date in the ISO 8601 standard."
+            },
+            "modifiedAt": {
+              "type": "string",
+              "description": "Modification date in the ISO 8601 standard."
+            }
+          }
+        }
+      ]
+    },
+    "productMetadataWithVersion": {
+      "type": "object",
+      "description": "Metadata with the version information.",
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "$ref": "#/$defs/productMetadataCore"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "number",
+              "description": "Version of the document"
+            }
+          }
+        }
+      ]
+    },
+    "productMixins": {
+      "type": "object",
+      "description": "Custom product attributes, keyed by mixin name.\n\nOn a partial update, omitted mixin names remain on the product. Sent fields are merged recursively. A `null` value does not remove a mixin. To remove a mixin, send a full product replacement and omit the mixin name.",
+      "additionalProperties": true
+    },
+    "productType": {
+      "type": "string",
+      "description": "Indicates the product type, which is immutable. Once the product type is set, it cannot be updated.\n",
+      "default": "BASIC",
+      "enum": [
+        "BASIC",
+        "BUNDLE",
+        "PARENT_VARIANT",
+        "VARIANT",
+        "DYNAMIC_VARIANT"
+      ]
+    },
+    "published": {
+      "type": "boolean",
+      "description": "Flag indicating whether the product has been published or not.",
+      "default": false
+    },
+    "relatedItem": {
+      "title": "relatedItem",
+      "type": "object",
+      "properties": {
+        "refId": {
+          "type": "string",
+          "description": "Identifier of a product which is in the relationship with the main product. The product identifier has to exist. "
+        },
+        "type": {
+          "type": "string",
+          "description": "A relation type. The type has to exist in the system. All relation types are defined in configuration service under `relation_types` key."
+        }
+      },
+      "required": [
+        "refId",
+        "type"
+      ]
+    },
+    "taxClasses": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Map of key-value pairs that associates tax classes with locations (countries). The key of the map should be specified as the existing location/country identifier (see the country-service). The value of the map entry should contain a tax class code (see the tax-service).\nInformation about the association is required for price matching mechanism (see the price-service#MatchPrice)."
+    },
+    "template": {
+      "type": "object",
+      "description": "Indicates the template that has been used during the product creation. After assigning a template to the product, the new attributes can be defined under the `productTemplateAttributes` key in the `mixins` field. In case of variant attributes, the attributes should be defined under `productVariantAttributes`. The attributes are then validated in accordance with their definition in the template. \n\n**Note:** The template with defined variant attributes can be used only in PARENT_VARIANT and VARIANT types of product.\n",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Identifier of the product template."
+        },
+        "version": {
+          "type": "string",
+          "description": "Product template version."
+        }
+      },
+      "required": [
+        "id",
+        "version"
+      ]
+    },
+    "value": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            }
+          ]
+        }
+      }
+    },
+    "values": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/value"
+      }
+    },
+    "variantAttributes": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/values"
+      },
+      "description": "This field contains all information about attributes and their values that are used for creating variants. It is presented in the form of a map, where 'key' is the name of the attribute and 'value' is the list of values of that attribute. The attributes and their values are based on their definitions in the `template` element assigned to the parent variant. Each attribute defined in the product template is flagged as a `variantAttribute`. Only the attributes that have this flag set as `true` can be used in the `variantAttributes` field."
+    },
+    "vendor": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "An identifier of a vendor to whom the product belongs."
+        },
+        "name": {
+          "type": "string",
+          "description": "Vendor name."
+        }
+      },
+      "required": [
+        "id"
+      ]
+    }
+  }
+}

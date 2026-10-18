@@ -1,0 +1,258 @@
+openapi: 3.2.0
+info:
+  title: Emporix Approval API
+  version: ''
+  contact:
+    name: Emporix
+    url: https://emporix.com
+    email: documentation@emporix.com
+  description: 'Operations tagged Approval across 2 of this provider''s published API definitions: emporix-approval-service-openapi.yml, emporix-approval-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+tags:
+- name: Approval
+paths:
+  /approval/{tenant}/approval/permitted:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    post:
+      summary: Checking the resource approval
+      responses:
+        '200':
+          $ref: '#/components/responses/ApprovalPermittedResponse_200'
+        '400':
+          $ref: '#/components/responses/approvals_response_BadRequest_400'
+        '401':
+          $ref: '#/components/responses/common_response_Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/common_response_Forbidden_403'
+      description: 'Checks the approval for given resource. The endpoint verifies whether a user is authorized to perform a specific action on a given resource within a tenant. The user must be a *Requestor* or an *Approver* to have the required `approval.approval_read_own` scope.
+
+
+        In case of any validation problems, the below `errorCodes` can be returned:
+
+        - **APPROVAL-400011**: Requested user is not assigned to any company'
+      operationId: POST-approval-check-approval
+      requestBody:
+        $ref: '#/components/requestBodies/approvalPermittedRequestBody'
+      parameters:
+      - $ref: '#/components/parameters/path_tenant'
+      security:
+      - CustomerAccessToken: []
+      tags:
+      - Approval
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    coreErrorMessage:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: HTTP Status Code.
+        status:
+          type: string
+          description: HTTP Status.
+        message:
+          type: string
+          description: Error message.
+        errorCode:
+          type: string
+          description: code of the error.
+        details:
+          description: Details information.
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              type:
+                type: string
+              message:
+                type: string
+              moreInfo:
+                type: string
+    approvalPermittedResponse:
+      title: approval permitted response
+      allOf:
+      - type: object
+        description: Base schema for approval permitted response.
+        properties:
+          action:
+            $ref: '#/components/schemas/approvalAction'
+          status:
+            $ref: '#/components/schemas/approvalStatus'
+          permitted:
+            type: boolean
+            description: Indicates if the operation is permitted.
+          approvalId:
+            type: string
+            description: Identifier of the approval.
+        required:
+        - permitted
+        - action
+    approvalStatus:
+      title: A status of the approval
+      description: Base schema for the approval status.
+      type: string
+      enum:
+      - PENDING
+      - APPROVED
+      - CLOSED
+      - EXPIRED
+      - DECLINED
+    resourceType:
+      title: A type of a resource
+      description: "Type of resource under approval.  \n"
+      type: string
+      enum:
+      - CART
+      - QUOTE
+    approvalPermittedRequest:
+      title: approval permitted request
+      type: object
+      properties:
+        resourceType:
+          $ref: '#/components/schemas/resourceType'
+        resourceId:
+          type: string
+          description: An identifier of the resource for approval.
+        action:
+          $ref: '#/components/schemas/approvalAction'
+      required:
+      - resourceType
+      - resourceId
+      - action
+    approvalAction:
+      title: An approval action
+      description: Base schema for an approval action type.
+      type: string
+      enum:
+      - CHECKOUT
+  responses:
+    approvals_response_BadRequest_400:
+      description: Bad request due to validation, incorrect parameters, etc.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/coreErrorMessage'
+          examples:
+            Bad request:
+              value:
+                code: 400
+                status: Bad Request
+                message: Problem with validation
+                details:
+                - message: 'resourceType: cannot be null'
+                errorCode: APPROVAL-400001
+    common_response_Unauthorized_401:
+      description: Unauthorized.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            Access token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+    common_response_Forbidden_403:
+      description: Access forbidden. The caller is not allowed to access this resource.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/coreErrorMessage'
+          examples:
+            Forbidden:
+              value:
+                code: 403
+                status: Forbidden
+                message: The access to the requested resource has been forbidden by the server.
+    ApprovalPermittedResponse_200:
+      description: Approval permitted response.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/approvalPermittedResponse'
+          examples:
+            Action permitted - approval exists:
+              value:
+                status: APPROVED
+                action: CHECKOUT
+                permitted: true
+                approvalId: 64ef8d12b6385140afea1603
+            Action permitted for admin user - approval does not exist:
+              value:
+                action: CHECKOUT
+                permitted: true
+            Action denied - approval exists:
+              value:
+                status: PENDING
+                action: CHECKOUT
+                permitted: false
+                approvalId: 64ef8d12b6385140afea1603
+            Action denied if approval is not defined:
+              value:
+                action: CHECKOUT
+                permitted: false
+  parameters:
+    path_tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'Your Emporix tenant name.
+
+        **Note**: The tenant name should always be written in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+  requestBodies:
+    approvalPermittedRequestBody:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/approvalPermittedRequest'
+          examples:
+            Check if action is permitted (cart):
+              value:
+                resourceId: cartId
+                resourceType: CART
+                action: CHECKOUT
+            Check if action is permitted (quote):
+              value:
+                resourceId: quoteId
+                resourceType: QUOTE
+                action: CHECKOUT
+  securitySchemes:
+    CustomerAccessToken:
+      type: http
+      scheme: bearer
+      description: To generate a customer access token, go to the [Logging in a customer](https://developer.emporix.io/api-documentation/api-guides/companies-and-customers/customer-management/api-reference/authentication-and-authorization#post-customer-tenant-login) endpoint.
+x-refined-from:
+- emporix-approval-service-openapi.yml
+- emporix-approval-service-openapi.yml

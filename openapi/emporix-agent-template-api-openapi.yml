@@ -1,0 +1,1072 @@
+openapi: 3.2.0
+info:
+  title: Emporix Agent Template API
+  version: ''
+  contact:
+    name: Emporix
+    url: https://emporix.com
+    email: documentation@emporix.com
+  description: 'Operations tagged Agent Template across 2 of this provider''s published API definitions: emporix-ai-service-openapi.yml, emporix-ai-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+tags:
+- name: Agent Template
+  description: Manage Agent Templates
+paths:
+  /ai-service/{tenant}/agentic/templates:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    - $ref: '#/components/parameters/qParam'
+    - $ref: '#/components/parameters/pageSize'
+    - $ref: '#/components/parameters/pageNumber'
+    - $ref: '#/components/parameters/sort'
+    - $ref: '#/components/parameters/fields'
+    - $ref: '#/components/parameters/expand'
+    - $ref: '#/components/parameters/header_xTotalCount'
+    - $ref: '#/components/parameters/header_Accept-Language'
+    get:
+      summary: Listing available agent templates
+      operationId: GET-ai-list-templates
+      responses:
+        '200':
+          description: List of available agent templates.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AgentTemplateResponse'
+              examples:
+                Agent Templates Response:
+                  $ref: '#/components/examples/AgentTemplatesResponse'
+        '400':
+          $ref: '#/components/responses/401_resp_common'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_resp_common'
+      description: Retrieves agent templates which can be later use as a base for custom agents.
+      security:
+      - OAuth2:
+        - ai.agent_read
+      tags:
+      - Agent Template
+    servers:
+    - url: https://api.emporix.io
+  /ai-service/{tenant}/agentic/templates/search:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    - $ref: '#/components/parameters/pageSize'
+    - $ref: '#/components/parameters/pageNumber'
+    - $ref: '#/components/parameters/sort'
+    - $ref: '#/components/parameters/fields'
+    - $ref: '#/components/parameters/expand'
+    - $ref: '#/components/parameters/header_xTotalCount'
+    - $ref: '#/components/parameters/header_Accept-Language'
+    post:
+      summary: Searching agent templates
+      operationId: POST-ai-search-templates
+      responses:
+        '200':
+          description: List of available agent templates.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AgentTemplateResponse'
+              examples:
+                Agent Templates Response:
+                  $ref: '#/components/examples/AgentTemplatesResponse'
+        '400':
+          $ref: '#/components/responses/400_resp_common'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_resp_common'
+      description: Searches for agent templates based on the provided query.
+      security:
+      - OAuth2:
+        - ai.agent_read
+      requestBody:
+        $ref: '#/components/requestBodies/QParamSearchBody'
+      tags:
+      - Agent Template
+    servers:
+    - url: https://api.emporix.io
+  /ai-service/{tenant}/agentic/templates/{templateId}/agents:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    - $ref: '#/components/parameters/header_Content-Language'
+    - schema:
+        type: string
+      name: templateId
+      in: path
+      required: true
+    post:
+      summary: Creating agent instance based on a template
+      operationId: POST-ai-clone-template
+      requestBody:
+        $ref: '#/components/requestBodies/AgentFromTemplateRequest'
+      responses:
+        '201':
+          description: ID of the created agent.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdResponse'
+              examples:
+                Agent Based on Template Response:
+                  $ref: '#/components/examples/IdResponse'
+        '400':
+          $ref: '#/components/responses/401_resp_common'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_resp_common'
+        '404':
+          $ref: '#/components/responses/403_resp_common'
+      description: 'Creates an instance of the agent based of the given agent template.
+
+
+        **Info:** Only active templates can be cloned.'
+      security:
+      - OAuth2:
+        - ai.agent_manage
+      tags:
+      - Agent Template
+    servers:
+    - url: https://api.emporix.io
+components:
+  requestBodies:
+    AgentFromTemplateRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AgentFromTemplateRequest'
+          examples:
+            Search Request:
+              value:
+                name:
+                  en: Complaint Agent
+                description:
+                  de: Agent which is responsible for reading emails and base on that resolve the customer's complaints
+                userPrompt: Use get-order tool to fetch order.
+                id: a81bc81b-dead-4e5d-abff-90865d1e13b1
+    QParamSearchBody:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/QParamSearchBody'
+          examples:
+            Search Request:
+              value:
+                q: name:~Complaint
+  parameters:
+    qParam:
+      in: query
+      name: q
+      description: 'A standard query parameter is used to search for specific values.
+
+
+        See: [Standard Practices - Query parameter](https://developer.emporix.io/api-documentation/standard-practices/q-param)
+
+        '
+      schema:
+        type: string
+    expand:
+      schema:
+        type: string
+        enum:
+        - oauth
+        - mcpServers
+        - nativeTools
+        - token
+      in: query
+      name: expand
+      description: Fields to be expanded in the response. It means that instead of the object IDs, the whole objects are returned in the response.
+    sort:
+      schema:
+        type: string
+      in: query
+      name: sort
+      description: List of properties used to sort the results, separated by colons.
+    header_Accept-Language:
+      name: Accept-Language
+      in: header
+      required: false
+      schema:
+        type: string
+      description: 'List of language codes acceptable for the response. You can specify factors that indicate which language should be retrieved if the one with a higher factor was not found in the localized fields.
+
+
+        * If the header is set to a particular language or a list of languages, all localized fields are retrieved as strings.
+
+        * If the header is set to `*`, all localized fields are retrieved as maps of translations, where the keys are language codes and values are the fields in their respective languages.
+
+        * If the header is empty, localized fields are retrieved in the default language defined in the Configuration Service.
+
+        '
+    header_xTotalCount:
+      schema:
+        type: boolean
+      in: header
+      name: X-Total-Count
+      description: Flag indicating whether the total number of retrieved results should be returned.
+    path_tenant:
+      name: tenant
+      in: path
+      required: true
+      schema:
+        type: string
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: The tenant name should always be provided in lowercase.
+
+        '
+    header_Content-Language:
+      name: Content-Language
+      in: header
+      required: false
+      schema:
+        type: string
+      description: 'List of languages in which localized fields in the request body are provided.
+
+
+        * If the header is set to `*`, the localized fields should be provided as maps of translations, where the keys are language codes and values are the fields in their respective languages.
+
+        * If the header is set to a specific language, the localized fields should be provided as strings.
+
+        * If the header is empty, the endpoint assumes that the localized fields are provided in the default language defined in the Configuration Service.
+
+
+        **Note**: You can provide the localized fields only in languages defined in the Configuration Service. In case the fields are provided in languages that are not defined in the Configuration Service, the request is rejected.
+
+        '
+    pageNumber:
+      schema:
+        type: string
+      in: query
+      name: pageNumber
+      description: The page number to be retrieved. The size of the pages should be specified by the `pageSize` parameter.
+    pageSize:
+      schema:
+        type: string
+      in: query
+      name: pageSize
+      description: The number of documents to be retrieved per page.
+    fields:
+      schema:
+        type: string
+      in: query
+      name: fields
+      description: Fields to be returned in the response.
+  schemas:
+    ErrorMessage:
+      type: object
+      properties:
+        code:
+          type: integer
+        type:
+          type: string
+        message:
+          type: string
+        moreInfo:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              type:
+                type: string
+              message:
+                type: string
+              moreInfo:
+                type: string
+      description: ''
+    McpServerType:
+      type: string
+      enum:
+      - custom
+      - predefined
+      - dynamic
+      description: Type of the MCP server attachment on an agent. The `custom` type references a tenant-managed MCP server with a URL. The `predefined` type references an Emporix domain MCP server. The `dynamic` type references a tenant-managed dynamic MCP server and may include an optional tool-name allow-list.
+    BaseForAgentAndTemplateAndHandOff:
+      type: object
+      properties:
+        name:
+          type: object
+          description: Localized name of the agent.
+          additionalProperties:
+            type: string
+        description:
+          type: object
+          description: Description of the agent.
+          additionalProperties:
+            type: string
+    RagCustomNativeToolConfigResponse:
+      allOf:
+      - $ref: '#/components/schemas/RagCustomNativeToolConfig'
+      - type: object
+        properties:
+          databaseConfig:
+            $ref: '#/components/schemas/RagCustomDatabaseNativeToolConfigResponse'
+          embeddingConfig:
+            $ref: '#/components/schemas/RagCustomEmbeddingNativeToolConfigResponse'
+    OpenAiRagEmporixEmbeddingNativeToolConfigResponse:
+      allOf:
+      - $ref: '#/components/schemas/OpenAiRagEmporixEmbeddingNativeToolConfig'
+      - type: object
+        properties:
+          token:
+            $ref: '#/components/schemas/ExpandableTokenResponse'
+    CustomMcpServerResponse:
+      allOf:
+      - $ref: '#/components/schemas/BaseManagedMcpServer'
+      - type: object
+        description: An object representing customer's own implementation of the MCP server.
+        properties:
+          id:
+            type: string
+            description: Unique identifier of the MCP server.
+          type:
+            allOf:
+            - $ref: '#/components/schemas/ManagedMcpServerType'
+            description: Type of the managed MCP server resource.
+            example: custom
+          config:
+            $ref: '#/components/schemas/McpServerConfigResponse'
+          metadata:
+            $ref: '#/components/schemas/MetadataResponse'
+    QParamSearchBody:
+      type: object
+      properties:
+        q:
+          type: string
+          description: "A standard query parameter is used to search for specific values. \n\nSee: [Standard Practices - Query parameter](https://developer.emporix.io/api-documentation/standard-practices/q-param)\n"
+    McpToolInvocationResponse:
+      type: object
+      properties:
+        functionId:
+          type: string
+          description: Identifier of the Automation function to invoke when the tool is called.
+        method:
+          $ref: '#/components/schemas/McpToolInvocationMethod'
+        argsLocation:
+          $ref: '#/components/schemas/McpToolInvocationArgsLocation'
+    CustomMcpServerTransportType:
+      type: string
+      enum:
+      - streamable_http
+      - sse
+      description: Type of the communication between the agent and the MCP server. The `streamable_http` protocol is recommended, since the `sse` protocol is deprecated as transport for custom MCP servers.
+    EmporixOpenAiRagEmporixEmbeddingNativeToolConfig:
+      type: object
+      properties:
+        provider:
+          allOf:
+          - $ref: '#/components/schemas/RagLlmProvider'
+          description: For this type, it should be set to 'emporix_openai'.
+      required:
+      - provider
+    RagLlmProvider:
+      type: string
+      enum:
+      - emporix_openai
+      - openai
+      - self_hosted_ollama
+    OpenAiRagEmporixEmbeddingNativeToolConfig:
+      type: object
+      properties:
+        provider:
+          allOf:
+          - $ref: '#/components/schemas/RagLlmProvider'
+          description: For this type, it should be set to 'emporix_openai'.
+        model:
+          type: string
+          description: OpenAI LLM model to be used for generating embeddings for indexed products and user's input query.
+        dimensions:
+          type: integer
+          description: Number of dimensions of embedding.
+          minimum: 128
+          maximum: 4096
+      required:
+      - provider
+      - model
+      - dimensions
+    ExpandedTokenResponse:
+      allOf:
+      - $ref: '#/components/schemas/IdResponse'
+      - type: object
+        properties:
+          name:
+            type: string
+            description: Name of the token.
+          metadata:
+            $ref: '#/components/schemas/MetadataResponse'
+    DynamicMcpServerResponse:
+      allOf:
+      - $ref: '#/components/schemas/BaseManagedMcpServer'
+      - type: object
+        properties:
+          id:
+            type: string
+            description: Unique identifier of the MCP server.
+          type:
+            allOf:
+            - $ref: '#/components/schemas/ManagedMcpServerType'
+            description: For dynamic MCP servers it has to be set to `dynamic`.
+            example: dynamic
+          tools:
+            type: array
+            description: 'List of tools exposed by this MCP server.
+
+
+              **The `tools` field is in preview mode** - some of the features may not be fully operational yet.'
+            items:
+              $ref: '#/components/schemas/McpToolResponse'
+          metadata:
+            $ref: '#/components/schemas/MetadataResponse'
+    IdResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Identifier of the resource.
+    McpToolInvocationArgsLocation:
+      type: string
+      enum:
+      - body
+      - query
+      description: Location of the tool arguments in the HTTP request. Defaults to `body` when omitted.
+    AgentMcpServerResponse:
+      type: object
+      required:
+      - type
+      properties:
+        type:
+          $ref: '#/components/schemas/McpServerType'
+        mcpServer:
+          allOf:
+          - $ref: '#/components/schemas/McpServerResponse'
+          - description: Present for `custom` and `dynamic` attachments. If `expand=mcpServer` is **not** used, then only the `id` field is returned, otherwise all fields are returned.
+        domain:
+          enum:
+          - customer
+          - extensibility
+          - order
+          - product
+          - frontend
+          description: Present for `predefined` attachments.
+        tools:
+          type: array
+          description: Tool-name allow-list. Present for `predefined` attachments and for `dynamic` attachments when a subset is configured. Omitted on `dynamic` means all enabled tools on the MCP server.
+          items:
+            type: string
+    McpServerResponse:
+      oneOf:
+      - $ref: '#/components/schemas/CustomMcpServerResponse'
+      - $ref: '#/components/schemas/DynamicMcpServerResponse'
+    NativeToolType:
+      type: string
+      enum:
+      - slack
+      - rag_custom
+      - rag_emporix
+      - teams
+      description: 'Type of the native tool. Possible values:
+
+        * `slack`
+
+        * `rag_custom`
+
+        * `rag_emporix`
+
+        * `teams`'
+    SlackAllowedOperations:
+      type: string
+      enum:
+      - sendMessage
+      - createChannel
+      - inviteParticipants
+      - collaborateOnChannel
+      description: Slack native tool operation identifier.
+    BaseForAgentAndTemplate:
+      allOf:
+      - $ref: '#/components/schemas/BaseForAgentAndTemplateAndHandOff'
+      - type: object
+        properties:
+          requiredScopes:
+            type: array
+            description: 'Defines which caller types are allowed to execute the agent.
+
+              Authorization is evaluated with OR semantics: access is granted if the caller
+
+              matches at least one configured value.
+
+              If this field is missing or empty, no scope-based restriction is applied.
+
+
+              Matching rules:
+
+              - anonymous: always grants access.
+
+              - customer: requires scope `ai.agentexecution_manage_own`.
+
+              - employee: requires scope `ai.agentexecution_manage`.
+
+              - integration: requires scope `ai.agentexecution_manage`.
+
+
+              If no configured value matches, request is rejected with 403 Forbidden.
+
+              '
+            items:
+              type: string
+              enum:
+              - anonymous
+              - customer
+              - employee
+              - integration
+          userPrompt:
+            type: string
+            description: LLM Prompt which describes how agent should work in a detailed way, which tools it could use to solve problems etc; it can contain examples and step by step guidance.
+          icon:
+            type: string
+            description: The fa class of react icon.
+          tags:
+            type: array
+            items:
+              type: string
+              description: Markers that allow you to categorize the agent.
+          outputFormat:
+            type: string
+            description: 'Optional JSON Schema (provided as a JSON string) that constrains the structure of the agent''s generated output. Use this when you need predictable, machine-readable output instead of free-form text.
+
+              '
+            example: '{"type":"object","properties":{"answer":{"type":"string"}},"required":["answer"]}'
+          enabled:
+            type: boolean
+            description: Indicates whether the agent is enabled.
+            default: false
+        required:
+        - name
+    RagEntityType:
+      type: string
+      enum:
+      - product
+      description: Type of the entity which is stored in the given collection.
+    McpToolInvocationMethod:
+      type: string
+      enum:
+      - GET
+      - POST
+      - PUT
+      - PATCH
+      - DELETE
+      description: HTTP method used to invoke the Automation function.
+    BaseNativeTool:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/NativeToolType'
+        name:
+          type: string
+          description: Name of the tool.
+        enabled:
+          type: boolean
+          description: An indicator whether the tool is enabled.
+          default: false
+      required:
+      - type
+      - name
+    RagCustomEmbeddingNativeToolConfigResponse:
+      allOf:
+      - $ref: '#/components/schemas/RagCustomEmbeddingNativeToolConfig'
+      - type: object
+        properties:
+          token:
+            $ref: '#/components/schemas/ExpandableTokenResponse'
+    AgentMcpServersResponse:
+      type: array
+      description: List of MCP servers which agents should have access to.
+      items:
+        $ref: '#/components/schemas/AgentMcpServerResponse'
+    ExpandableTokenResponse:
+      oneOf:
+      - $ref: '#/components/schemas/IdResponse'
+      - $ref: '#/components/schemas/ExpandedTokenResponse'
+      description: The full response representing token. If the `expand=token` is **not** used, then only `id` field is returned, otherwise all fields are returned.
+    ErrorMessageFault:
+      type: object
+      properties:
+        fault:
+          type: object
+          properties:
+            faultstring:
+              type: string
+            detail:
+              type: object
+              properties:
+                errorcode:
+                  type: string
+    RagEmporixNativeToolConfig:
+      type: object
+      properties:
+        prompt:
+          type: string
+          description: The prompt for an agent. It should define when and why this tool is to be called.
+        entityType:
+          type: string
+          description: 'Type of the entity which is stored in the given collection. Supported predefined types: [ORDER, PRODUCT] and custom entity types.'
+        indexedFields:
+          type: array
+          description: This field specifies the fields of the given entityType that are used for generating embeddings. The provided values are then concatenated and converted to embeddings.
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: It can act as an alias for the field key. For example, if the 'name.en' key is provided then its alias could be 'English Name' and that value is used in embedding input.
+              key:
+                type: string
+                description: Unique value representing the entityType key.
+            required:
+            - key
+        filterFields:
+          type: array
+          description: This field specifies the fields of the given entityType that are used for filtering the data before performing actual search.
+          items:
+            type: object
+            properties:
+              description:
+                type: string
+                description: It should contain the description of the field, so LLM is able to know when to use this field in order to filter the data. For enums, possible values should be specified here.
+              key:
+                type: string
+                description: Unique value representing the entityType key.
+            required:
+            - key
+      required:
+      - prompt
+      - entityType
+      - indexedFields
+    McpToolResponse:
+      type: object
+      description: 'Tool definition for a dynamic MCP server.
+
+
+        **Dynamic MCP tools are in preview mode** - some of the features may not be fully operational yet.'
+      properties:
+        name:
+          type: string
+          description: Unique name of the tool. Contains only letters, numbers, and underscores.
+        description:
+          type: string
+          description: Human-readable description of the tool.
+        prompt:
+          type: string
+          description: Prompt that defines when and why the agent should call this tool.
+        enabled:
+          type: boolean
+          description: An indicator whether the tool is enabled.
+        config:
+          $ref: '#/components/schemas/McpToolConfigResponse'
+    RagEmporixNativeToolConfigResponse:
+      allOf:
+      - $ref: '#/components/schemas/RagEmporixNativeToolConfig'
+      - type: object
+        properties:
+          embeddingConfig:
+            oneOf:
+            - $ref: '#/components/schemas/EmporixOpenAiRagEmporixEmbeddingNativeToolConfig'
+            - $ref: '#/components/schemas/OpenAiRagEmporixEmbeddingNativeToolConfigResponse'
+            - $ref: '#/components/schemas/SelfHostedOllamaRagEmporixEmbeddingNativeToolConfigResponse'
+    RagCustomEmbeddingNativeToolConfig:
+      type: object
+      properties:
+        model:
+          type: string
+          description: Name of the OpenAI LLM model which should be used to create embedding of user's input in order to perform search operation.
+      required:
+      - model
+    SelfHostedOllamaRagEmporixEmbeddingNativeToolConfig:
+      type: object
+      properties:
+        provider:
+          allOf:
+          - $ref: '#/components/schemas/RagLlmProvider'
+          description: For this type, it should be set to 'self_hosted_ollama'.
+        model:
+          type: string
+          description: Ollama LLM model to be used for generating embeddings for indexed products and user's input query.
+        dimensions:
+          type: integer
+          description: Number of dimensions of embedding.
+          minimum: 128
+          maximum: 4096
+        url:
+          type: string
+          description: Base URL where Ollama is hosted.
+      required:
+      - provider
+      - model
+      - dimensions
+      - url
+    BaseManagedMcpServer:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the MCP server.
+        enabled:
+          type: boolean
+          description: An indicator whether the MCP server is enabled.
+          default: false
+        transport:
+          $ref: '#/components/schemas/CustomMcpServerTransportType'
+    RagCustomDatabaseNativeToolConfigResponse:
+      allOf:
+      - $ref: '#/components/schemas/RagCustomDatabaseNativeToolConfig'
+      - type: object
+        properties:
+          token:
+            $ref: '#/components/schemas/ExpandableTokenResponse'
+    SlackNativeToolResponse:
+      allOf:
+      - $ref: '#/components/schemas/BaseNativeTool'
+      - type: object
+        properties:
+          id:
+            type: string
+            description: Unique identifier of the tool.
+          type:
+            description: For SlackNativeTool it has to be set to `slack`.
+            example: slack
+          config:
+            $ref: '#/components/schemas/SlackNativeToolConfigResponse'
+          metadata:
+            $ref: '#/components/schemas/MetadataResponse'
+    RagCustomNativeToolResponse:
+      allOf:
+      - $ref: '#/components/schemas/BaseNativeTool'
+      - type: object
+        properties:
+          id:
+            type: string
+            description: Unique identifier of the tool.
+          type:
+            description: For `RagCustomNativeTool`, it has to be set to `rag_custom`.
+            example: rag_custom
+          config:
+            $ref: '#/components/schemas/RagCustomNativeToolConfigResponse'
+          metadata:
+            $ref: '#/components/schemas/MetadataResponse'
+    McpToolConfigResponse:
+      type: object
+      properties:
+        requiredScopes:
+          type: array
+          description: OAuth scopes required to invoke the tool.
+          items:
+            type: string
+        inputSchema:
+          type: string
+          description: JSON Schema document describing the tool input, provided as a JSON string.
+        invocation:
+          $ref: '#/components/schemas/McpToolInvocationResponse'
+    RagCustomNativeToolConfig:
+      type: object
+      properties:
+        prompt:
+          type: string
+          description: The prompt for an agent. It should define when and why this tool is to be called.
+        maxResults:
+          type: integer
+          default: 5
+          description: The maximum number of results found in the Vector Database.
+      required:
+      - prompt
+    McpServerConfig:
+      type: object
+      properties:
+        url:
+          type: string
+          description: URL of the MCP server.
+        authorizationHeaderName:
+          type: string
+          description: Name of the header required for authorization, e.g. `Authorization`.
+      required:
+      - url
+    TeamsAllowedOperations:
+      type: string
+      enum:
+      - sendMessage
+      - createChat
+      - createChannel
+      - inviteParticipants
+      - collaborateOnChannel
+      - collaborateOnChat
+      description: MS Teams native tool operation identifier.
+    ManagedMcpServerType:
+      type: string
+      enum:
+      - custom
+      - dynamic
+      description: "Type of the managed MCP server resource. Possible values:\n* `custom`\n* `dynamic`\n\n  **The `dynamic` value is in preview mode** - some of the features may not be fully operational yet."
+    SelfHostedOllamaRagEmporixEmbeddingNativeToolConfigResponse:
+      allOf:
+      - $ref: '#/components/schemas/SelfHostedOllamaRagEmporixEmbeddingNativeToolConfig'
+      - type: object
+        properties:
+          token:
+            $ref: '#/components/schemas/ExpandableTokenResponse'
+    RagCustomDatabaseType:
+      type: string
+      enum:
+      - qdrant
+      description: Type of the database.
+    TeamsNativeToolResponse:
+      allOf:
+      - $ref: '#/components/schemas/BaseNativeTool'
+      - type: object
+        properties:
+          id:
+            type: string
+            description: Unique identifier of the tool.
+          type:
+            description: For TeamsNativeTool it has to be set to `teams`.
+            example: teams
+          config:
+            $ref: '#/components/schemas/TeamsNativeToolConfigResponse'
+          metadata:
+            $ref: '#/components/schemas/MetadataResponse'
+    RagEmporixNativeToolResponse:
+      allOf:
+      - $ref: '#/components/schemas/BaseNativeTool'
+      - type: object
+        properties:
+          id:
+            type: string
+            description: Unique identifier of the tool.
+          type:
+            description: For `RagEmporixNativeTool`, it has to be set to `rag_emporix`.
+            example: rag_emporix
+          config:
+            $ref: '#/components/schemas/RagEmporixNativeToolConfigResponse'
+          metadata:
+            $ref: '#/components/schemas/MetadataResponse'
+    NativeToolsResponse:
+      type: array
+      description: List of native tools which agents should have access to.
+      items:
+        oneOf:
+        - $ref: '#/components/schemas/SlackNativeToolResponse'
+        - $ref: '#/components/schemas/RagCustomNativeToolResponse'
+        - $ref: '#/components/schemas/RagEmporixNativeToolResponse'
+        - $ref: '#/components/schemas/TeamsNativeToolResponse'
+    TeamsNativeToolConfigResponse:
+      type: object
+      description: Configuration of an MS Teams native tool instance.
+      properties:
+        teamId:
+          type: string
+          description: Microsoft Teams team ID the tool is bound to.
+        tenantId:
+          type: string
+          description: Customer Azure AD tenant ID for the Teams workspace.
+        defaultInboundAgentId:
+          type: string
+          description: Agent ID that handles inbound Teams replies when no conversation-specific owner is set.
+        allowedOperations:
+          type: array
+          items:
+            $ref: '#/components/schemas/TeamsAllowedOperations'
+          description: Operations the tool instance exposes to assigned agents. At least one value is required when the tool is enabled.
+      required:
+      - teamId
+    SlackNativeToolConfigResponse:
+      type: object
+      description: Configuration of a Slack native tool instance.
+      properties:
+        teamId:
+          type: string
+          description: Unique identifier of the Slack workspace (team) associated with the request. Used to distinguish the source Slack environment when handling events or API calls.
+        defaultInboundAgentId:
+          type: string
+          description: Agent ID that handles inbound Slack replies when no conversation-specific routing context exists yet.
+        allowedOperations:
+          type: array
+          items:
+            $ref: '#/components/schemas/SlackAllowedOperations'
+          description: Operations the tool instance exposes to assigned agents. At least one value is required when the tool is enabled.
+      required:
+      - teamId
+    RagCustomDatabaseNativeToolConfig:
+      type: object
+      properties:
+        url:
+          type: string
+          description: URL of the database.
+        type:
+          allOf:
+          - $ref: '#/components/schemas/RagCustomDatabaseType'
+        entityType:
+          allOf:
+          - $ref: '#/components/schemas/RagEntityType'
+        collectionName:
+          type: string
+          description: Name of the database collection.
+      required:
+      - url
+      - type
+      - entityType
+      - collectionName
+    AgentTemplateResponse:
+      allOf:
+      - $ref: '#/components/schemas/BaseForAgentAndTemplate'
+      - type: object
+        properties:
+          templatePrompt:
+            type: string
+            description: Immutable LLM base prompt which is concatenated with the `userPrompt`.
+          id:
+            type: string
+            description: Identifier of the agent.
+          nativeTools:
+            $ref: '#/components/schemas/NativeToolsResponse'
+          mcpServers:
+            $ref: '#/components/schemas/AgentMcpServersResponse'
+    MetadataResponse:
+      allOf:
+      - $ref: '#/components/schemas/MetadataRequest'
+      - type: object
+        properties:
+          createdAt:
+            description: 'Date and time when the object was created. The value is approved as an ISO-8601 representation of an Instant. For example: `2022-04-30T13:18:02.379Z`'
+            type: string
+          modifiedAt:
+            description: 'Date and time when the object was last modified. The value is approved as an ISO-8601 representation of an Instant. For example: `2022-04-30T13:18:02.379Z`'
+            type: string
+        required:
+        - version
+        - createdAt
+        - modifiedAt
+    MetadataRequest:
+      type: object
+      properties:
+        version:
+          minimum: 1
+          type: integer
+          description: Version of the object. The version is required during the update operation because of the optimistic locking mechanism.
+      required:
+      - version
+    McpServerConfigResponse:
+      allOf:
+      - $ref: '#/components/schemas/McpServerConfig'
+      - type: object
+        properties:
+          authorizationHeaderToken:
+            $ref: '#/components/schemas/ExpandableTokenResponse'
+    AgentFromTemplateRequest:
+      allOf:
+      - $ref: '#/components/schemas/BaseForAgentAndTemplateAndHandOff'
+      - type: object
+        properties:
+          userPrompt:
+            type: string
+            description: LLM Prompt which describes how agent should work in a detailed way, which tools it could use to solve problems etc; it can contain examples and step by step guidance.
+      required:
+      - name
+      - description
+      - userPrompt
+  responses:
+    403_resp_common:
+      description: Authorization scopes of the access token are not sufficient and do not match the scopes required by the endpoint.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Access forbidden:
+              value:
+                code: 403
+                status: Forbidden
+                message: The access to the requested resource has been forbidden by the server.
+    400_resp_common:
+      description: The request was syntactically incorrect.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Code must not be null:
+              value:
+                code: 400
+                status: Bad Request
+                message: Validation problem with request body.
+                details:
+                - message: code must not be null nor blank
+    401_resp_common:
+      description: The authorization token is invalid or has expired.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessageFault'
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            Access token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+  examples:
+    AgentTemplatesResponse:
+      value:
+      - id: '123'
+        name:
+          en: Complaint Handler
+        description:
+          en: A specialized agent template for handling customer complaints
+        userPrompt: First, determine if the user request is really a complaint.
+        templatePrompt: You are a complaint resolution specialist. Your goal is to understand customer complaints and provide appropriate solutions.
+        type: complaint
+        enabled: true
+        tags:
+        - productivity
+        icon: fa-productivity
+        mcpServers:
+        - domain: customer
+          type: predefined
+          tools:
+          - delete-customer
+          - get-locations
+    IdResponse:
+      value:
+        id: a81bc81b-dead-4e5d-abff-90865d1e13b1
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes:
+            ai.text_manage: Needed to execute actions related to the text generation.
+            ai.completion_manage: Needed to execute actions related to the AI completions.
+            ai.agentexecution_manage: Needed to execute agentic chat.
+            ai.agentexecution_manage_own: Needed to execute agentic chat by customers.
+            ai.agent_read: Needed to read AI agents.
+            ai.agent_manage: Needed to manage AI agents.
+          tokenUrl: https://api.emporix.io/oauth/token
+x-refined-from:
+- emporix-ai-service-openapi.yml
+- emporix-ai-service-openapi.yml

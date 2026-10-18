@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-match-schema.json",
+  "title": "Price matching (by criteria) request body",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-price-service-openapi.yml#/components/schemas/match",
+  "type": "object",
+  "properties": {
+    "targetCurrency": {
+      "type": "string",
+      "description": "Code of the currency in which the prices should be matched, as defined in the Currency Service.\n\n**Note**: If the matched price is defined in another currency, a currency exchange algorithm will be used, but only if exchange rates between the two currencies have been defined."
+    },
+    "siteCode": {
+      "type": "string",
+      "description": "Code of the site to which the matched prices should apply."
+    },
+    "targetLocation": {
+      "type": "object",
+      "required": [
+        "countryCode"
+      ],
+      "properties": {
+        "countryCode": {
+          "type": "string",
+          "description": "Code of the country for which the prices should be matched, as defined in the Country Service.\n\n**Note**: If the matched price is defined for another country, a tax calculation algorithm will be used, but only if tax classes for the two countries have been defined for relevant products."
+        }
+      }
+    },
+    "items": {
+      "type": "array",
+      "description": "List of items (products or prices) for which the prices should be matched.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "itemId": {
+            "type": "object",
+            "description": "Product or price for which a price should be matched.",
+            "properties": {
+              "itemType": {
+                "type": "string",
+                "description": "Type of the referenced item. Possible values:\n* `PRODUCT`\n* `PRICE`\n* `SKU`\n\n  **The `SKU` value is in preview mode** - the system does not fully operate on the SKU concept yet."
+              },
+              "id": {
+                "type": "string",
+                "description": "Item's unique identifier, generated when the item is created."
+              }
+            },
+            "required": [
+              "itemType",
+              "id"
+            ]
+          },
+          "quantity": {
+            "type": "object",
+            "description": "Quantity of the product for which a matched price should be calculated.",
+            "required": [
+              "quantity"
+            ],
+            "properties": {
+              "quantity": {
+                "type": "number",
+                "description": "Quantity of the product, expressed as a number."
+              },
+              "unitCode": {
+                "type": "string",
+                "description": "Code of the measurement unit, as defined in the Unit Handling Service. This atribute is optional, if not provided the price model unit will be used."
+              }
+            }
+          }
+        },
+        "required": [
+          "quantity"
+        ]
+      }
+    },
+    "principal": {
+      "type": "object",
+      "description": "Customer or customer group for whom the matched prices should be valid.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier of the customer or customer group."
+        },
+        "type": {
+          "type": "string",
+          "description": "Customer or customer group for whom the matched should be valid. Possible values:\n* `CUSTOMER`\n* `GROUP`\n\n  **The `GROUP` value is in preview mode** - the system does not fully operate on the customer groups concept yet."
+        }
+      }
+    },
+    "useFallback": {
+      "type": "boolean",
+      "description": "If no price that matches the criteria is found for the specified site, the price matching functionality will try to find the best price for the `main` site. To enable this option, this field needs to be set to `true`.\n\n**Note**: Using the fallback mechanism may impact the performance as the price matching has to run a second time. If the fallback mechanism is used, the response's `siteCode` field will be set to `main`."
+    },
+    "legalEntityId": {
+      "type": "string",
+      "description": "Legal entity for which price lists are included in the price match.\n**Note**: Price lists for the entity's parent legal entities are also included."
+    }
+  },
+  "required": [
+    "targetCurrency",
+    "siteCode",
+    "targetLocation",
+    "items"
+  ]
+}

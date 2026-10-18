@@ -1,0 +1,241 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-access-control-query-document-schema.json",
+  "title": "AccessControlQueryDocument",
+  "description": "Definition of access control",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-iam-openapi.yml#/components/schemas/AccessControlQueryDocument",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Assignment unique identifier generated when the assignment is created."
+    },
+    "roleId": {
+      "type": "string",
+      "deprecated": true,
+      "description": "Role unique identifier associated with this access control."
+    },
+    "resourceId": {
+      "type": "string",
+      "deprecated": true,
+      "description": "Resource unique identifier associated with this access control."
+    },
+    "domains": {
+      "type": "array",
+      "description": "Domain identifiers associated with this access control.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "name": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Localized resource name in the form of a map of translations."
+    },
+    "role": {
+      "$ref": "#/$defs/RoleQueryDocument"
+    },
+    "resource": {
+      "$ref": "#/$defs/ResourceQueryDocument"
+    },
+    "metadata": {
+      "$ref": "#/$defs/AccessControlMetadataQueryDocument"
+    },
+    "scopes": {
+      "type": "array",
+      "description": "A list of resolved scopes for a particular access control.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "restrictionAware": {
+      "type": "boolean",
+      "description": "Determines whether this access control generates scopes with restriction suffixes when assigned to a group that has restrictions defined. When `true`, the generated scopes will include restrictions (e.g. order.`order_manage--DE`) based on the group's restrictions list. When `false`, scopes are generated without restriction suffixes regardless of the group's restrictions."
+    },
+    "restrictedTo": {
+      "type": "string",
+      "enum": [
+        "CUSTOMER",
+        "EMPLOYEE"
+      ],
+      "description": "Restricts the type of group this access control can be assigned to.\n* `CUSTOMER` - the access control can be assigned only to groups of `CUSTOMER` user type.\n* `EMPLOYEE` - the access control can be assigned only to groups of `EMPLOYEE` user type.\n\nIf this property is not present, the access control can be assigned to any group regardless of its user type.\n"
+    },
+    "predefined": {
+      "type": "boolean",
+      "readOnly": true,
+      "description": "Indicated whether this access control is predefined in the system or was created by a user."
+    },
+    "vendorAware": {
+      "type": "boolean",
+      "readOnly": true,
+      "description": "Indicated whether this access control is associated with vendor scopes."
+    }
+  },
+  "$defs": {
+    "AccessControlMetadataQueryDocument": {
+      "required": [
+        "createdAt",
+        "version"
+      ],
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "description": "Access control document version.",
+          "format": "int32"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the access control was created.",
+          "format": "date-time"
+        },
+        "modifiedAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the access control was last modified.",
+          "format": "date-time"
+        }
+      },
+      "description": "Access control metadata."
+    },
+    "ResourceQueryDocument": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Resource unique identifier generated when the resource is created."
+        },
+        "name": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Localized resource name in the form of a map of translations."
+        },
+        "description": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Localized resource description in the form of a map of translations."
+        },
+        "code": {
+          "type": "string",
+          "description": "Resource unique code identifier."
+        },
+        "metadata": {
+          "$ref": "#/$defs/ResourcesMetadataQueryDocument"
+        }
+      },
+      "description": "Resource definition associated with this access control."
+    },
+    "ResourcesMetadataQueryDocument": {
+      "required": [
+        "createdAt",
+        "version"
+      ],
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "description": "Resource document version.",
+          "format": "int32"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the resource was created.",
+          "format": "date-time"
+        },
+        "modifiedAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the resource was last modified.",
+          "format": "date-time"
+        }
+      },
+      "description": "Resource metadata."
+    },
+    "RolePermissionsDocument": {
+      "type": "object",
+      "description": "Role permissions list.",
+      "title": "",
+      "properties": {
+        "applicablePermissionResources": {
+          "type": "array",
+          "description": "Allows you to allowlist resources that the permission is applicable to. Can only contain resources specified in the permission document under `applicableResources`.\n",
+          "items": {
+            "type": "string"
+          }
+        },
+        "id": {
+          "type": "string",
+          "description": "Reference to the permission document with specific resources defined."
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "RoleQueryDocument": {
+      "type": "object",
+      "description": "Role definition associated with this access control.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Role unique identifier generated when the role is created."
+        },
+        "name": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Localized role name in the form of a map of translations."
+        },
+        "description": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Localized role description in the form of a map of translations."
+        },
+        "permissions": {
+          "type": "array",
+          "description": "Permissions unique identifier list declared for this role.",
+          "items": {
+            "$ref": "#/$defs/RolePermissionsDocument"
+          }
+        },
+        "metadata": {
+          "$ref": "#/$defs/RolesMetadata"
+        }
+      }
+    },
+    "RolesMetadata": {
+      "required": [
+        "createdAt",
+        "version"
+      ],
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "description": "Role document version.",
+          "format": "int32"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the role was created.",
+          "format": "date-time"
+        },
+        "modifiedAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the role was last modified.",
+          "format": "date-time"
+        }
+      }
+    }
+  }
+}

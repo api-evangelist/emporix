@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-access-control-upsert-request-schema.json",
+  "title": "AccessControlUpsertRequest",
+  "description": "Payload for creating or updating an access control.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-iam-openapi.yml#/components/schemas/AccessControlUpsertRequest",
+  "type": "object",
+  "required": [
+    "scopes"
+  ],
+  "properties": {
+    "name": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Localized name as a map of language codes to text."
+    },
+    "description": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Localized description as a map of language codes to text."
+    },
+    "scopes": {
+      "type": "array",
+      "description": "Scope codes for this access control. Must not be empty.",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "domains": {
+      "type": "array",
+      "description": "Domain identifiers for the access control.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "restrictedTo": {
+      "type": "string",
+      "enum": [
+        "CUSTOMER",
+        "EMPLOYEE"
+      ],
+      "description": "Restricts the type of group this access control can be assigned to.\n* `CUSTOMER` - the access control can be assigned only to groups of `CUSTOMER` user type.\n* `EMPLOYEE` - the access control can be assigned only to groups of `EMPLOYEE` user type.\n\nIf this property is not present, the access control can be assigned to any group regardless of its user type.\n\n**Note**: This property is immutable. It can only be set when the access control is created and cannot be changed afterwards.\n"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Metadata for optimistic locking on updates. Only `version` is supported.",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Document version. When provided on update, must match the stored version."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

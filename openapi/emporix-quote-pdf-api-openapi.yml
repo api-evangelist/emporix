@@ -1,0 +1,202 @@
+openapi: 3.2.0
+info:
+  title: Emporix Quote pdf API
+  version: ''
+  contact:
+    email: documentation@emporix.com
+  description: 'Operations tagged Quote pdf across 2 of this provider''s published API definitions: emporix-quote-openapi.yml, emporix-quote-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Quote pdf
+paths:
+  /quote/{tenant}/quotes/{quoteId}/pdf:
+    post:
+      tags:
+      - Quote pdf
+      summary: Creating a quote PDF
+      description: 'Generates a pdf for a given quote and returns its contents.
+
+
+        When the request uses a B2B customer token, the quote must be linked to the legal entity from the token; otherwise, the request fails with the `404` status code.'
+      operationId: POST-quote-generate-quote-pdf
+      parameters:
+      - name: tenant
+        in: path
+        description: 'Your Emporix tenant name.
+
+
+          **Note**: The tenant name should always be written in lowercase.
+
+          '
+        required: true
+        schema:
+          type: string
+          example: saasdev2
+      - name: quoteId
+        in: path
+        description: 'Quote unique identifier generated when the quote is created.
+
+          '
+        required: true
+        schema:
+          type: string
+          example: 084bcaf5-66b8-4ddd-9489-65c5f6449e94
+      - $ref: '#/components/parameters/trait_acceptLanguage_header'
+      responses:
+        '200':
+          description: The request was successful. Generated pdf is returned.
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        '400':
+          $ref: '#/components/responses/Bad_request_400'
+        '401':
+          $ref: '#/components/responses/Unathorized_401'
+        '403':
+          description: Permission denied due to insufficient rights. This may happen when request does not contain sufficient scopes for given query values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                Forbidden:
+                  value:
+                    code: 403
+                    status: Forbidden
+                    message: You need a scope for this action.
+                    details:
+                    - 'Required scope(s): quote.quote_manage'
+        '404':
+          $ref: '#/components/responses/Not_Found_404'
+      security:
+      - OAuth2:
+        - quote.quote_manage
+        - quote.quote_manage_own
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    ErrorResponse:
+      required:
+      - code
+      - message
+      - status
+      type: object
+      properties:
+        resourceId:
+          type:
+          - string
+          - 'null'
+        code:
+          type: integer
+          format: int32
+        status:
+          type: string
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            type: string
+  responses:
+    Not_Found_404:
+      description: Given resource cannot be found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            Quote does not exists:
+              value:
+                resourceId: 084bcag6-66b8-4ddd-9489-65c5f6449e94
+                code: 404
+                status: Not Found
+                message: Error while getting resource
+                details:
+                - Resource with id '084bcaf6-66b8-4ddd-9489-65c5f6449e94' not found
+    Unathorized_401:
+      description: Given request is unauthorized - the authorization token is invalid or has expired. It usually means that tenant from the token does not match tenant from path.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid Access Token:
+              value:
+                fault:
+                  faultstring: Invalid Access Token
+                  detail:
+                    errorcode: keymanagement.service.invalid_access_token
+            Unauthorized:
+              value: {}
+    Bad_request_400:
+      description: Unsupported language provided.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              status:
+                type: string
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: string
+          examples:
+            Unsupported language:
+              value:
+                code: 400
+                status: Bad Request
+                message: Language header validation failed
+                details:
+                - 'Following languages are not supported: ''ru'''
+  parameters:
+    trait_acceptLanguage_header:
+      name: Accept-Language
+      in: header
+      required: false
+      schema:
+        type: string
+      description: 'List of language codes acceptable for the response. You can specify factors that indicate which language should be retrieved if the one with a higher factor was not found in the localized fields. If a value is specified, then it must be present in the tenant configuration.
+
+        * If the header is set to a particular language or a list of languages, all localized fields are retrieved as strings.
+
+        * If the header is set to `*`, all localized fields are retrieved as maps of translations, where the keys are language codes and values are the fields in their respective languages.
+
+        * If the header is empty, localized fields are retrieved in the default language defined in the Configuration Service.
+
+        '
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            quote.quote_read: Needed to retrieve quotes.
+            quote.quote_read_own: Needed to retrieve own quotes by the customer.
+            quote.quote_manage: Needed to manage quotes.
+            quote.quote_manage_own: Needed to manage own quotes by the customer.
+x-refined-from:
+- emporix-quote-openapi.yml
+- emporix-quote-openapi.yml

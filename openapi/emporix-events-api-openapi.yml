@@ -1,0 +1,444 @@
+openapi: 3.2.0
+info:
+  title: Emporix Events API
+  version: ''
+  contact:
+    email: documentation@emporix.com
+  description: 'Operations tagged Events across 2 of this provider''s published API definitions: emporix-webhook-service-openapi.yml, emporix-webhook-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Events
+paths:
+  /webhook/{tenant}/event-subscriptions:
+    parameters:
+    - name: tenant
+      in: path
+      required: true
+      schema:
+        type: string
+      description: 'Your Emporix tenant''s name. **Note**: The tenant should always be written in lowercase.'
+    patch:
+      summary: Subscribing and unsubscribing from events
+      operationId: PATCH-webhook-manage-event-subscriptions
+      responses:
+        '207':
+          $ref: '#/components/responses/MultiStatus_207'
+        '400':
+          $ref: '#/components/responses/BadRequest_400'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '404':
+          $ref: '#/components/responses/NotFound_404'
+        '409':
+          $ref: '#/components/responses/Conflict_409'
+        '500':
+          $ref: '#/components/responses/InternalServerError_500'
+      description: 'Updates the list of subscriptions by either subscribing to or unsubscribing from specified events.
+
+
+        To receive events with fewer fields, you can specify the names of fields that you want to exclude in the ''fieldsToUnsubscribe'' array.
+
+        To re-include the previously excluded fields, you can provide their names in the ''fieldsToSubscribe'' array.'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookSubscriptionUpdate'
+            examples:
+              Request example:
+                $ref: '#/components/examples/UpdateSubscriptions'
+        description: ''
+      security:
+      - OAuth2:
+        - webhook.subscription_manage
+      tags:
+      - Events
+    get:
+      parameters:
+      - name: Accept-Language
+        in: header
+        description: 'List of language codes acceptable for the response. You can specify factors that indicate which language should be retrieved if the one with a higher factor was not found in the localized fields.
+
+          The specified languages need to be defined in the Configuration Service under `project_lang` key. Otherwise they will be ignored.
+
+
+          **Note**: If not specified, localized fields will be retrieved in the default language configured by the tenant in the Configuration Service.
+
+          '
+        schema:
+          type: string
+          example: fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7
+        required: false
+      summary: Retrieving all subscriptions
+      operationId: GET-webhook-list-all-event-subscriptions
+      responses:
+        '200':
+          description: The request was successful. An event catalog with associated subscription details is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookSubscriptions'
+              examples:
+                Response example:
+                  $ref: '#/components/examples/Subscriptions'
+        '400':
+          $ref: '#/components/responses/BadRequest_400'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '404':
+          $ref: '#/components/responses/NotFound_404'
+        '500':
+          $ref: '#/components/responses/InternalServerError_500'
+      description: 'Retrieves all events with associated subscription details.
+
+
+        **Note**: Events that have no past subscription information will contain empty metadata.
+
+        Fields that are referenced in the ''excludedFields'' array will be filtered out from the event payload. The absence of a field in ''excludedFields'' means it will be automatically included in the event payload.'
+      security:
+      - OAuth2:
+        - webhook.subscription_read
+      tags:
+      - Events
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    ErrorMessage:
+      title: Error message
+      description: Object returned in error responses.
+      type: object
+      properties:
+        code:
+          description: Original HTTP error code. Must be consistent with the response HTTP code.
+          type: integer
+        status:
+          type: string
+        message:
+          description: Descriptive error message for debugging.
+          type: string
+        details:
+          description: List of problems causing the error.
+          type: array
+          items:
+            type: string
+      required:
+      - code
+      - status
+    WebhookSubscriptionUpdate:
+      title: Webhook subscription update
+      type: array
+      description: Subscription changes.
+      items:
+        $ref: '#/components/schemas/WebhookSubscriptionUpdateItem'
+    UpdateSubscriptionResponse:
+      title: Update subscription result response
+      type: object
+      description: Object containing the result of event subscription.
+      properties:
+        eventType:
+          type: string
+        code:
+          type: integer
+        status:
+          type: string
+        message:
+          type: string
+    WebhookEvent:
+      title: Webhook event
+      type: object
+      description: Events that you can subscribe to.
+      properties:
+        type:
+          type: string
+          description: Unique identifier of the event.
+          example: product.created
+        description:
+          type: object
+          description: Map of key-value pairs containing localized descriptions of the event, which includes information on when the event is emitted.
+          additionalProperties:
+            type: string
+        eventSchema:
+          type: object
+          description: Schema of the event.
+        name:
+          type: object
+          description: Map of key-value pairs containing localized names of the event.
+          additionalProperties:
+            type: string
+        group:
+          type: object
+          description: Map of key-value pairs containing the localized name of a group the event belongs to.
+          additionalProperties:
+            type: string
+    WebhookSubscriptionUpdateItem:
+      title: Webhook subscription update item
+      type: object
+      description: 'Object used to subscribe to/unsubscribe from an event. '
+      properties:
+        eventType:
+          type: string
+          description: Unique identifier of the event.
+          example: product.updated
+        action:
+          type: string
+          enum:
+          - SUBSCRIBE
+          - UNSUBSCRIBE
+          description: Indicates whether the event should be subscribed to or unsubscribed from.
+        metadata:
+          $ref: '#/components/schemas/MetadataForUpdate'
+        fieldsToUnsubscribe:
+          type: array
+          description: Fields to exclude from notification.
+          items:
+            type: string
+        fieldsToSubscribe:
+          type: array
+          description: Fields to re-include in the notification. To be used when user wants to subscribe to previously unsubscribed fields.
+          items:
+            type: string
+      required:
+      - eventType
+    WebhookSubscriptions:
+      title: Webhook subscriptions
+      type: array
+      description: Details of the event subscription.
+      items:
+        $ref: '#/components/schemas/WebhookSubscription'
+    MetadataForUpdate:
+      title: Metadata for update
+      description: Auditing details.
+      type: object
+      properties:
+        version:
+          type: integer
+          description: Version of the document.
+          minimum: 1
+    Metadata:
+      title: Metadata
+      description: Auditing details.
+      type: object
+      properties:
+        createdAt:
+          type: string
+          description: Date and time when the document was created.
+          format: date-time
+        modifiedAt:
+          type: string
+          description: Date and time when the document was last modified.
+          format: date-time
+        version:
+          type: integer
+          description: Version of the document.
+          minimum: 1
+    WebhookSubscription:
+      title: Webhook subscription
+      type: object
+      description: Subscription per event.
+      properties:
+        event:
+          $ref: '#/components/schemas/WebhookEvent'
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+        subscription:
+          type: string
+          description: Status of the subscription.
+          enum:
+          - SUBSCRIBED
+          - UNSUBSCRIBED
+          - NONE
+        excludedFields:
+          type: array
+          description: 'If `subscription` is of type `SUBSCRIBED`, `excludedFields` will contain the list of keys from the "event.eventSchema" that the user has previously unsubscribed from. Note: Only root level fields are supported.'
+          items:
+            type: string
+  examples:
+    AmbiguousTenant_400:
+      value:
+        code: 400
+        status: Bad Request
+        message: Tenant in the header is not matching with the one provided in the URI.
+    Subscriptions:
+      value:
+      - event:
+          type: product.updated
+          eventSchema:
+            id: String
+            name: LocalizedString
+            description: LocalizedString
+            productType: String
+          name:
+            en: Updated
+          group:
+            en: Product
+          description:
+            en: The event is emitted when a product is being updated.
+        metadata:
+          version: 1
+          createdAt: '2022-03-31T13:13:25.816Z'
+          modifiedAt: '2022-03-31T13:13:25.816Z'
+        subscription: SUBSCRIBED
+        excludedFields:
+        - description
+    NotFound_404:
+      value:
+        code: 404
+        status: Not Found
+        message: No catalog events found.
+    Conflict_409:
+      value:
+        code: 409
+        status: Conflict
+        message: The resource already exists.
+    PatchSubscription_207MultiStatusResponse:
+      value:
+      - eventType: product.created
+        code: 200
+        status: OK
+      - eventType: product.updated
+        code: 200
+        status: OK
+      - eventType: product.deleted
+        code: 409
+        status: CONFLICT
+        message: Unique constraint violation for provided eventType and metadata version. It is possible to update an eventsubscription only by always providing the latest version. Fetch the event subscriptions to get the latest version.
+    UpdateSubscriptions:
+      value:
+      - eventType: product.created
+        action: SUBSCRIBE
+        fieldsToSubscribe:
+        - name
+        fieldsToUnsubscribe:
+        - description
+        metadata:
+          version: 1
+      - eventType: product.updated
+        action: UNSUBSCRIBE
+        metadata:
+          version: 2
+    InsufficientPermissions_403:
+      value:
+        code: 403
+        status: Forbidden
+        message: The access to the requested resource has been forbidden by the server.
+    DestinationUrlValidationError_400:
+      value:
+        code: 400
+        status: Bad Request
+        message: There is a validation error. Please check the details.
+        details:
+        - 'destinationUrl: The resource specified by the URL is not accessible. For a webhook to be accessible, it needs to respond with any successful status for either `HEAD` or `OPTIONS` request.'
+    InternalServerError_500:
+      value:
+        code: 500
+        status: Internal Server Error
+        message: A server-side exception occurred that prevented the system from correctly returning the result.
+  responses:
+    MultiStatus_207:
+      description: Multi Status response containing individual results for each subscription request.
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/UpdateSubscriptionResponse'
+          examples:
+            UpdateEventSubscriptionsMultiStatusResponseExample:
+              $ref: '#/components/examples/PatchSubscription_207MultiStatusResponse'
+    BadRequest_400:
+      description: Request was syntactically incorrect. Details are provided in the response payload.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            BadRequestExample:
+              $ref: '#/components/examples/AmbiguousTenant_400'
+            DestinationUrlValidationError:
+              $ref: '#/components/examples/DestinationUrlValidationError_400'
+    NotFound_404:
+      description: The requested resource does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            NotFoundExample:
+              $ref: '#/components/examples/NotFound_404'
+    InternalServerError_500:
+      description: Some server-side error occurred. Details are provided in the response payload.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            InternalServerErrorExample:
+              $ref: '#/components/examples/InternalServerError_500'
+    Forbidden_403:
+      description: Given authorization scopes are not sufficient and do not match the scopes required by the endpoint.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            InsufficientPermissionsExample:
+              $ref: '#/components/examples/InsufficientPermissions_403'
+    Unauthorized_401:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            Access token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+    Conflict_409:
+      description: Conflict. Returned when creating a webhook configuration for a type that is already configured, or when a legacy event-type PATCH path is used while multiple `eventsConfiguration` entries exist for that event type.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            ConflictExample:
+              $ref: '#/components/examples/Conflict_409'
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes:
+            webhook.subscription_read: Needed to read subscriptions.
+            webhook.subscription_manage: Needed to manage subscriptions.
+          tokenUrl: https://api.emporix.io/oauth/token
+x-refined-from:
+- emporix-webhook-service-openapi.yml
+- emporix-webhook-service-openapi.yml

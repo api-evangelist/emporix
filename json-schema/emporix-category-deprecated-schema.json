@@ -1,0 +1,272 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-category-deprecated-schema.json",
+  "title": "CategoryDeprecated",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-category-tree-openapi.yml#/components/schemas/CategoryDeprecated",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Category unique identifier generated when the category is created."
+    },
+    "parentId": {
+      "type": "string",
+      "description": "Unique identifier of the parent category."
+    },
+    "name": {
+      "description": "Category name.",
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "Category name in the default language."
+        },
+        {
+          "type": "object",
+          "description": "Map of translations.\nThe keys should be ISO language codes.\nThe values should be category names in specified languages."
+        }
+      ]
+    },
+    "code": {
+      "type": "string",
+      "description": "Unique category identifier, defined by the user."
+    },
+    "description": {
+      "description": "Category description.",
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "Category description in the default language."
+        },
+        {
+          "type": "object",
+          "description": "Map of translations.\nThe keys should be ISO language codes.\nThe values should be category descriptions in specified languages."
+        }
+      ]
+    },
+    "media": {
+      "type": "array",
+      "description": "Media files attached to the category.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Media file's unique identifier generated when the media file is created."
+          },
+          "url": {
+            "type": "string",
+            "description": "Media file's URL."
+          },
+          "tags": {
+            "type": "array",
+            "description": "List of media file tags.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "contentType": {
+            "type": "string",
+            "description": "Media file's MIME type."
+          },
+          "stored": {
+            "type": "boolean",
+            "description": "Flag indicating whether the media file is stored in the Category Service."
+          },
+          "uploadLink": {
+            "type": "string",
+            "description": "URL where the media file is uploaded, with the file extension specified."
+          },
+          "mixins": {
+            "type": "object",
+            "description": "Custom media attributes."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "position": {
+      "minimum": 0,
+      "type": "integer",
+      "description": "Position in the category tree (on the same category level)."
+    },
+    "published": {
+      "type": "boolean",
+      "description": "Flag indicating whether the category has been published or not."
+    },
+    "ecn": {
+      "type": "array",
+      "description": "List of external category numbers (ECNs). ",
+      "items": {
+        "type": "string"
+      }
+    },
+    "subcategories": {
+      "type": "array",
+      "description": "List of direct subcategories.",
+      "items": {
+        "$ref": "#/$defs/CategoryDeprecated"
+      }
+    },
+    "assignments": {
+      "type": "array",
+      "description": "List of resources assigned to the category.",
+      "items": {
+        "$ref": "#/$defs/AssignmentDeprecated"
+      }
+    }
+  },
+  "$defs": {
+    "AssignmentDeprecated": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Assignment unique identifier generated when a resource is assigned to a category."
+        },
+        "ref": {
+          "required": [
+            "id",
+            "type",
+            "url"
+          ],
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Resource’s unique identifier generated when the resource is created."
+            },
+            "type": {
+              "type": "string",
+              "description": "Type of assignment. When assigning products to categories, the value should be set to `product`."
+            },
+            "url": {
+              "type": "string",
+              "description": "Resource URL generated when the resource is created."
+            }
+          },
+          "description": "Reference to the resource."
+        }
+      },
+      "description": "Assignment of a resource (such as a product) to a category."
+    },
+    "CategoryDeprecated": {
+      "title": "",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Category unique identifier generated when the category is created."
+        },
+        "parentId": {
+          "type": "string",
+          "description": "Unique identifier of the parent category."
+        },
+        "name": {
+          "description": "Category name.",
+          "oneOf": [
+            {
+              "type": "string",
+              "description": "Category name in the default language."
+            },
+            {
+              "type": "object",
+              "description": "Map of translations.\nThe keys should be ISO language codes.\nThe values should be category names in specified languages."
+            }
+          ]
+        },
+        "code": {
+          "type": "string",
+          "description": "Unique category identifier, defined by the user."
+        },
+        "description": {
+          "description": "Category description.",
+          "oneOf": [
+            {
+              "type": "string",
+              "description": "Category description in the default language."
+            },
+            {
+              "type": "object",
+              "description": "Map of translations.\nThe keys should be ISO language codes.\nThe values should be category descriptions in specified languages."
+            }
+          ]
+        },
+        "media": {
+          "type": "array",
+          "description": "Media files attached to the category.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Media file's unique identifier generated when the media file is created."
+              },
+              "url": {
+                "type": "string",
+                "description": "Media file's URL."
+              },
+              "tags": {
+                "type": "array",
+                "description": "List of media file tags.",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "contentType": {
+                "type": "string",
+                "description": "Media file's MIME type."
+              },
+              "stored": {
+                "type": "boolean",
+                "description": "Flag indicating whether the media file is stored in the Category Service."
+              },
+              "uploadLink": {
+                "type": "string",
+                "description": "URL where the media file is uploaded, with the file extension specified."
+              },
+              "mixins": {
+                "type": "object",
+                "description": "Custom media attributes."
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "position": {
+          "minimum": 0,
+          "type": "integer",
+          "description": "Position in the category tree (on the same category level)."
+        },
+        "published": {
+          "type": "boolean",
+          "description": "Flag indicating whether the category has been published or not."
+        },
+        "ecn": {
+          "type": "array",
+          "description": "List of external category numbers (ECNs). ",
+          "items": {
+            "type": "string"
+          }
+        },
+        "subcategories": {
+          "type": "array",
+          "description": "List of direct subcategories.",
+          "items": {
+            "$ref": "#/$defs/CategoryDeprecated"
+          }
+        },
+        "assignments": {
+          "type": "array",
+          "description": "List of resources assigned to the category.",
+          "items": {
+            "$ref": "#/$defs/AssignmentDeprecated"
+          }
+        }
+      },
+      "description": ""
+    }
+  }
+}

@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-availability-with-bundle-schema.json",
+  "title": "AvailabilityWithBundle",
+  "description": "Availability details.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-availability-openapi.yml#/components/schemas/AvailabilityWithBundle",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier of the availability.\n\n**Note**: The value should be provided in the `site`:`productId` format."
+    },
+    "site": {
+      "type": "string",
+      "description": "Site code, defined when the site is created. The value should match the `site` query/path parameter value."
+    },
+    "stockLevel": {
+      "type": "number",
+      "description": "Stock level of the product, expressed as a number."
+    },
+    "available": {
+      "type": "boolean",
+      "description": "Flag indicating whether the product is available."
+    },
+    "productId": {
+      "type": "string",
+      "description": "Unique identifier of the product, generated when the product is created through the Product Service."
+    },
+    "vendorId": {
+      "type": "string",
+      "description": "Id of a vendor to which the availability belongs."
+    },
+    "popularity": {
+      "type": "integer",
+      "description": "Popularity of the product, expressed as a number."
+    },
+    "distributionChannel": {
+      "$ref": "#/$defs/DistributionChannel"
+    },
+    "bundleAvailabilities": {
+      "$ref": "#/$defs/AvailabilityList"
+    },
+    "mixins": {
+      "type": "object",
+      "description": "The field contains mixins values.",
+      "additionalProperties": true
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "mixins": {
+          "type": "object",
+          "description": "Links to the mixin schemas.",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Date and time when the availability was created."
+        },
+        "modifiedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Date and time when the availability was last updated."
+        }
+      }
+    }
+  },
+  "$defs": {
+    "Availability": {
+      "description": "Availability details.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier of the availability.\n\n**Note**: The value should be provided in the `site`:`productId` format."
+        },
+        "site": {
+          "type": "string",
+          "description": "Site code, defined when the site is created. The value should match the `site` query/path parameter value."
+        },
+        "stockLevel": {
+          "type": "number",
+          "description": "Stock level of the product, expressed as a number."
+        },
+        "available": {
+          "type": "boolean",
+          "description": "Flag indicating whether the product is available."
+        },
+        "productId": {
+          "type": "string",
+          "description": "Unique identifier of the product, generated when the product is created through the Product Service."
+        },
+        "vendorId": {
+          "type": "string",
+          "description": "Id of a vendor to which the availability belongs."
+        },
+        "popularity": {
+          "type": "integer",
+          "description": "Popularity of the product, expressed as a number."
+        },
+        "distributionChannel": {
+          "$ref": "#/$defs/DistributionChannel"
+        },
+        "mixins": {
+          "type": "object",
+          "description": "The field contains mixins values.",
+          "additionalProperties": true
+        },
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "mixins": {
+              "type": "object",
+              "description": "Links to the mixin schemas.",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "createdAt": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Date and time when the availability was created."
+            },
+            "modifiedAt": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Date and time when the availability was last updated."
+            }
+          }
+        }
+      }
+    },
+    "AvailabilityList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Availability"
+      }
+    },
+    "DistributionChannel": {
+      "type": "string",
+      "description": "Name of the product distribution channel.",
+      "enum": [
+        "ASSORTMENT",
+        "HOME_DELIVERY",
+        "PICKUP"
+      ]
+    }
+  }
+}

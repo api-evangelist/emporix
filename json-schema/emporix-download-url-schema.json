@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-download-url-schema.json",
+  "title": "Download URL",
+  "description": "URL that returns the stored file.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-media-openapi.yml#/components/schemas/DownloadUrl",
+  "type": "object",
+  "properties": {
+    "provider": {
+      "type": "string",
+      "enum": [
+        "GCS",
+        "CLOUDINARY",
+        "LINK"
+      ],
+      "description": "Storage that holds the file.\n* `GCS` — private blob. The URL is a signed download and includes `expiresAt`.\n* `CLOUDINARY` — public blob. The URL is permanent.\n* `LINK` — the URL stored on the asset.\n"
+    },
+    "url": {
+      "type": "string",
+      "description": "URL of the stored file."
+    },
+    "expiresAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date and time when a private signed URL stops working. Returned as an ISO-8601 string.\nPresent for `GCS` only.\n"
+    }
+  },
+  "required": [
+    "provider",
+    "url"
+  ]
+}

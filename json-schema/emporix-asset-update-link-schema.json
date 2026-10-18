@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-asset-update-link-schema.json",
+  "title": "Asset Update Link Payload",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-media-openapi.yml#/components/schemas/AssetUpdateLink",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "#/$defs/Asset"
+    }
+  ],
+  "properties": {
+    "url": {
+      "type": "string",
+      "description": "Resource link."
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "LINK"
+      ],
+      "description": "Asset type. This property is immutable."
+    },
+    "metadata": {
+      "$ref": "#/$defs/MetadataUpdate"
+    }
+  },
+  "required": [
+    "access",
+    "url",
+    "type"
+  ],
+  "$defs": {
+    "Asset": {
+      "title": "Asset",
+      "type": "object",
+      "properties": {
+        "access": {
+          "type": "string",
+          "enum": [
+            "PUBLIC",
+            "PRIVATE"
+          ],
+          "description": "Access type of the asset. This property is immutable. \n- `PUBLIC`: Blob assets are stored in Cloudinary and are accessible through a permanent external URL.\n- `PRIVATE`: Blob assets are stored in Google Cloud Storage. Retrieve their content through `/media/{tenant}/assets/{assetId}/download` or request a temporary signed URL through `/media/{tenant}/assets/{assetId}/download-url`.\n"
+        },
+        "refIds": {
+          "type": "array",
+          "description": "List of references.",
+          "items": {
+            "$ref": "#/$defs/RefId"
+          }
+        },
+        "mixins": {
+          "type": "object",
+          "description": "Custom asset attributes."
+        },
+        "metadata": {
+          "$ref": "#/$defs/MetadataCreate"
+        }
+      }
+    },
+    "MetadataCreate": {
+      "type": "object",
+      "properties": {
+        "mixins": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "A key-value map, where key is a mixin name and value is a link to the mixin schema. Must be provided together with the corresponding mixin values in the `mixins` object."
+        }
+      }
+    },
+    "MetadataUpdate": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "version": {
+              "minimum": 1,
+              "type": "integer",
+              "description": "Version of the document."
+            }
+          },
+          "required": [
+            "version"
+          ]
+        },
+        {
+          "$ref": "#/$defs/MetadataCreate"
+        }
+      ]
+    },
+    "RefId": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Reference type. Can be one of the predefined types: `BRAND`, `CATEGORY`, `LABEL`, `PRODUCT`, `MODULE`, `AGENT` or any custom schema type.\n"
+        },
+        "id": {
+          "type": "string",
+          "description": "Reference Id."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,13 @@
+generated: '2026-10-18'
+method: searched
+source: https://developer.emporix.io/api-documentation/quickstart/api-intro.md
+families:
+- name: Headless Frontend
+  description: "Headless storefront with dynamic journey control"
+  type: web_components
+  evidence: "Frontend component mentioned as part of ACE Platform"
+- name: Value Stream Modeller
+  description: "No-code visual workflow modeller"
+  type: visual_builder
+  evidence: "No-Code Value Stream Modeller mentioned as part of ACE Platform"
+note: "Emporix platform includes headless frontend and visual workflow components as part of its ACE Platform."

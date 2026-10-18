@@ -1,0 +1,916 @@
+openapi: 3.2.0
+info:
+  title: Emporix Config API
+  version: ''
+  contact:
+    email: documentation@emporix.com
+  description: 'Operations tagged Config across 2 of this provider''s published API definitions: emporix-webhook-service-openapi.yml, emporix-webhook-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Config
+paths:
+  /webhook/{tenant}/config:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    post:
+      summary: Creating a single webhook config
+      responses:
+        '201':
+          $ref: '#/components/responses/CreateConfigResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest_400'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '409':
+          $ref: '#/components/responses/Conflict_409'
+        '500':
+          $ref: '#/components/responses/InternalServerError_500'
+      description: 'Creates a new webhook config for a given tenant. Currently the service supports the following webhook providers:
+
+
+        * Svix Emporix Shared Account
+
+        * Svix Custom Account
+
+        * HTTP Webhook Strategy
+
+
+        **NOTE**
+
+        At any time, a tenant can have only one webhook configuration of each type: `svix`, `svix_shared`, and `http`. If a configuration of the requested type already exists, the request returns a `409 Conflict` response. To change the configuration, update or delete the existing one.
+
+
+        **NOTE**
+
+        For HTTP configurations, `eventsConfiguration` can contain multiple entries for the same `eventType`. The server assigns a stable `id` to each entry. Omit `id` on create; client-supplied entry ids are rejected with `400`. Each entry may include an optional JsonPath `filter` and optional `excludedFields`.
+
+
+        **NOTE**
+
+        Svix supports a maximum message payload size of approximately 350kb. However, it is generally advisable to keep webhook payloads small, ideally under 40kb. For larger message sizes, consider using the HTTP Webhook Strategy.'
+      operationId: POST-webhook-create-config
+      security:
+      - OAuth2:
+        - webhook.subscription_manage
+      tags:
+      - Config
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookConfigCreation'
+            examples:
+              SVIX_SHARED:
+                value:
+                  code: svix_shared
+                  active: true
+                  provider: SVIX_SHARED
+                  configuration: {}
+              SVIX:
+                value:
+                  code: svix
+                  active: true
+                  provider: SVIX
+                  configuration:
+                    apiKey: SARFJ353DSTGSd3w3cZXX
+              HTTP:
+                value:
+                  code: http
+                  active: true
+                  provider: HTTP
+                  configuration:
+                    secretKey: password123
+                    destinationUrl: https://gcp.cloudfunctions.net/webhook?name=General
+                    headers:
+                      header1:
+                        value: value1
+                      header2:
+                        value: value2
+                    eventsConfiguration:
+                    - eventType: PRODUCT.CREATED
+                      destinationUrl: https://gcp.cloudfunctions.net/webhook?name=Detailed
+                      secretKey: admin123
+                      filter: $[?(@.code == 'abc')]
+                      excludedFields:
+                      - metadata
+                      headers:
+                        header3:
+                          value: value3
+                        header4:
+                          value: value4
+                    - eventType: PRODUCT.CREATED
+                      destinationUrl: https://gcp.cloudfunctions.net/webhook?name=Second
+                      excludedFields: []
+        description: ''
+    get:
+      summary: Retrieving a list of webhook configs
+      operationId: GET-webhook-list-configs
+      responses:
+        '200':
+          $ref: '#/components/responses/WebhookConfigsResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '500':
+          $ref: '#/components/responses/InternalServerError_500'
+      tags:
+      - Config
+      description: 'Retrieves a list of webhook configurations for a given tenant. A tenant can have at most one configuration per type: `svix`, `svix_shared`, and `http`.'
+      security:
+      - OAuth2:
+        - webhook.subscription_read
+    servers:
+    - url: https://api.emporix.io
+  /webhook/{tenant}/config/{code}:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    - $ref: '#/components/parameters/path_code'
+    put:
+      summary: Updating a single webhook config
+      responses:
+        '204':
+          description: No content
+        '400':
+          $ref: '#/components/responses/BadRequest_400'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '409':
+          $ref: '#/components/responses/Conflict_409'
+        '500':
+          $ref: '#/components/responses/InternalServerError_500'
+      description: 'Updates a webhook config for a given tenant. Currently the service supports the following webhook providers:
+
+
+        * Svix Emporix Shared Account
+
+        * Svix Custom Account
+
+        * HTTP Webhook Strategy
+
+
+        **NOTE**
+
+        For HTTP configurations, `eventsConfiguration` can contain multiple entries for the same `eventType`. Existing entry `id` values must be preserved when updating known entries. Legacy payloads without entry ids are still accepted; the server assigns ids to id-less entries (and reuses an existing id when both the stored config and the payload have exactly one entry for that event type).'
+      operationId: PUT-webhook-update-config
+      security:
+      - OAuth2:
+        - webhook.subscription_manage
+      tags:
+      - Config
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookConfigUpdate'
+            examples:
+              SVIX_SHARED:
+                value:
+                  active: true
+                  provider: SVIX_SHARED
+                  configuration: {}
+              SVIX:
+                value:
+                  active: true
+                  provider: SVIX
+                  configuration:
+                    apiKey: SARFJ353DSTGSd3w3cZXX
+              HTTP:
+                value:
+                  active: true
+                  provider: HTTP
+                  configuration:
+                    destinationUrl: https://gcp.cloudfunctions.net/webhook?name=General
+                    eventsConfiguration:
+                    - id: 3f1a2b4c-5d6e-7f80-91a2-b3c4d5e6f708
+                      name: ERP integration
+                      eventType: PRODUCT.CREATED
+                      destinationUrl: https://gcp.cloudfunctions.net/webhook?name=Detailed
+                      filter: $[?(@.code == 'abc')]
+                      excludedFields:
+                      - metadata
+                    - id: 8a9b0c1d-2e3f-4a5b-6c7d-8e9f0a1b2c3d
+                      eventType: PRODUCT.CREATED
+                      destinationUrl: https://gcp.cloudfunctions.net/webhook?name=Second
+                      excludedFields: []
+        description: ''
+    patch:
+      summary: Partially updating a webhook config
+      operationId: PATCH-webhook-update-config
+      responses:
+        '204':
+          description: No content
+        '400':
+          $ref: '#/components/responses/BadRequest_400'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '409':
+          $ref: '#/components/responses/Conflict_409'
+        '500':
+          $ref: '#/components/responses/InternalServerError_500'
+      description: 'Partially updates a webhook config for a given tenant. Single update may contain multiple partial updates in the form of an array. Following operations are allowed:
+
+        * `REMOVE` - removing an item from the list
+
+        * `UPSERT` - adding or updating given property
+
+
+        For HTTP `eventsConfiguration`:
+
+        * Create a new entry with `UPSERT` on `/configuration/http/eventsConfigurationEntry` (no id segment). Do not send `id` in the body — the server generates it. `REMOVE` is not supported on this path.
+
+        * Address an existing entry by id with `/configuration/http/eventsConfigurationEntry/{entryId}` (and field subpaths for `destinationUrl`, `secretKey`, `headers`, `filter`, `excludedFields`, `name`, and `active`).
+
+        * Deactivate a single endpoint with `UPSERT` on `/configuration/http/eventsConfigurationEntry/{entryId}/active` and value `false`. Events for a deactivated endpoint are dropped without filter evaluation, delivery, or retries; other endpoints are not affected. Set the value back to `true` to resume deliveries.
+
+        * Legacy `/configuration/http/eventsConfiguration/{eventType}` paths remain supported when at most one entry exists for that event type and return `409 Conflict` when multiple entries exist.
+
+        * Create/update requests return `400 Bad Request` when the body supplies a client-minted entry id or the JsonPath `filter` is invalid.'
+      security:
+      - OAuth2:
+        - webhook.subscription_manage
+      tags:
+      - Config
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookConfigPartialUpdates'
+            examples:
+              Multiple Update List:
+                value:
+                - op: UPSERT
+                  path: /active
+                  value: true
+                - op: UPSERT
+                  path: /configuration/svix/apiKey
+                  value: SARFJ353DSTGSd3w3cZXX
+              Active:
+                value:
+                - op: UPSERT
+                  path: /active
+                  value: true
+              Configuration Svix:
+                value:
+                - op: UPSERT
+                  path: /configuration
+                  value:
+                    apiKey: SARFJ353DSTGSd3w3cZXX
+              Configuration Svix Api Key:
+                value:
+                - op: UPSERT
+                  path: /configuration/svix/apiKey
+                  value: SARFJ353DSTGSd3w3cZXX
+              Configuration Http Headers:
+                value:
+                - op: UPSERT
+                  path: /configuration/http/headers
+                  value:
+                    header1:
+                      value: value1
+                    header2:
+                      value: value2
+              Configuration Http Destination Url:
+                value:
+                - op: UPSERT
+                  path: /configuration/http/destinationUrl
+                  value: https://gcp.cloudfunctions.net/webhook?name=General
+              Configuration Http Secret Key:
+                value:
+                - op: UPSERT
+                  path: /configuration/http/secretKey
+                  value: password123
+              Configuration Http:
+                value:
+                - op: UPSERT
+                  path: /configuration
+                  value:
+                    destinationUrl: https://gcp.cloudfunctions.net/webhook?name=General
+              Upsert Configuration Event Types:
+                value:
+                - op: UPSERT
+                  path: /configuration/http/eventsConfiguration
+                  value:
+                  - eventType: PRODUCT.CREATED
+                    destinationUrl: https://gcp.cloudfunctions.net/webhook?name=Detailed
+                    filter: $[?(@.code == 'abc')]
+                    excludedFields:
+                    - metadata
+                  - eventType: PRODUCT.CREATED
+                    destinationUrl: https://gcp.cloudfunctions.net/webhook?name=Second
+                    excludedFields: []
+                  - eventType: RETURN.DELETED
+                    destinationUrl: https://gcp.cloudfunctions.net/webhook?name=Detailed
+              Remove Configuration Event Types:
+                value:
+                - op: REMOVE
+                  path: /configuration/http/eventsConfiguration
+              Upsert Configuration Event Type:
+                value:
+                - op: UPSERT
+                  path: /configuration/http/eventsConfiguration/product.created
+                  value:
+                    eventType: PRODUCT.CREATED
+                    destinationUrl: https://gcp.cloudfunctions.net/webhook?name=Detailed
+              Remove Configuration Event Type:
+                value:
+                - op: REMOVE
+                  path: /configuration/http/eventsConfiguration/product.created
+              Upsert Configuration Event Type Destination Url:
+                value:
+                - op: UPSERT
+                  path: /configuration/http/eventsConfiguration/product.created/destinationUrl
+                  value: https://gcp.cloudfunctions.net/webhook?name=Detailed
+              Upsert Configuration Event Type Secret Key:
+                value:
+                - op: UPSERT
+                  path: /configuration/http/eventsConfiguration/product.created/secretKey
+                  value: password123
+              Upsert Configuration Event Type Headers:
+                value:
+                - op: UPSERT
+                  path: /configuration/http/eventsConfiguration/product.created/headers
+                  value:
+                    header1:
+                      value: value1
+                    header2:
+                      value: value2
+              Create Configuration Event Entry:
+                value:
+                - op: UPSERT
+                  path: /configuration/http/eventsConfigurationEntry
+                  value:
+                    name: ERP integration
+                    eventType: PRODUCT.CREATED
+                    destinationUrl: https://gcp.cloudfunctions.net/webhook?name=New
+                    filter: $[?(@.status == 'DECLINED')]
+                    excludedFields:
+                    - mixins
+              Upsert Configuration Event Entry:
+                value:
+                - op: UPSERT
+                  path: /configuration/http/eventsConfigurationEntry/3f1a2b4c-5d6e-7f80-91a2-b3c4d5e6f708
+                  value:
+                    eventType: PRODUCT.CREATED
+                    destinationUrl: https://gcp.cloudfunctions.net/webhook?name=Detailed
+                    filter: $[?(@.status == 'NEW')]
+                    excludedFields:
+                    - mixins
+              Remove Configuration Event Entry:
+                value:
+                - op: REMOVE
+                  path: /configuration/http/eventsConfigurationEntry/3f1a2b4c-5d6e-7f80-91a2-b3c4d5e6f708
+              Upsert Configuration Event Entry Destination Url:
+                value:
+                - op: UPSERT
+                  path: /configuration/http/eventsConfigurationEntry/3f1a2b4c-5d6e-7f80-91a2-b3c4d5e6f708/destinationUrl
+                  value: https://gcp.cloudfunctions.net/webhook?name=Detailed
+              Upsert Configuration Event Entry Filter:
+                value:
+                - op: UPSERT
+                  path: /configuration/http/eventsConfigurationEntry/3f1a2b4c-5d6e-7f80-91a2-b3c4d5e6f708/filter
+                  value: $[?(@.status == 'NEW')]
+              Upsert Configuration Event Entry Excluded Fields:
+                value:
+                - op: UPSERT
+                  path: /configuration/http/eventsConfigurationEntry/3f1a2b4c-5d6e-7f80-91a2-b3c4d5e6f708/excludedFields
+                  value:
+                  - mixins
+              Upsert Configuration Event Entry Name:
+                value:
+                - op: UPSERT
+                  path: /configuration/http/eventsConfigurationEntry/3f1a2b4c-5d6e-7f80-91a2-b3c4d5e6f708/name
+                  value: ERP integration
+              Deactivate Configuration Event Entry:
+                value:
+                - op: UPSERT
+                  path: /configuration/http/eventsConfigurationEntry/3f1a2b4c-5d6e-7f80-91a2-b3c4d5e6f708/active
+                  value: false
+        description: ''
+    get:
+      summary: Retrieving a webhook config
+      operationId: GET-webhook-retrieve-config
+      responses:
+        '200':
+          $ref: '#/components/responses/WebhookConfigResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '404':
+          $ref: '#/components/responses/NotFound_404'
+        '500':
+          $ref: '#/components/responses/InternalServerError_500'
+      tags:
+      - Config
+      description: Retrieves a webhook configuration for a given tenant.
+      security:
+      - OAuth2:
+        - webhook.subscription_read
+    delete:
+      parameters:
+      - name: force
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+        description: This flag set to "true" allows to delete active config
+      summary: Removing a webhook config
+      operationId: DELETE-webhook-remove-config
+      responses:
+        '204':
+          description: No content
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '500':
+          $ref: '#/components/responses/InternalServerError_500'
+      tags:
+      - Config
+      description: Removes a webhook configuration for a given tenant.
+      security:
+      - OAuth2:
+        - webhook.subscription_manage
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    EmptyConfiguration:
+      type: object
+      description: SVIX_SHARED config
+    SvixConfig:
+      type: object
+      properties:
+        apiKey:
+          type: string
+          description: API Key for connecting to SVIX. This API Key will be then used in `Authorization` header while sending requests to SVIX, so the value should include `Bearer` prefix if necessary.
+      description: SVIX config
+    ErrorMessage:
+      title: Error message
+      description: Object returned in error responses.
+      type: object
+      properties:
+        code:
+          description: Original HTTP error code. Must be consistent with the response HTTP code.
+          type: integer
+        status:
+          type: string
+        message:
+          description: Descriptive error message for debugging.
+          type: string
+        details:
+          description: List of problems causing the error.
+          type: array
+          items:
+            type: string
+      required:
+      - code
+      - status
+    WebhookConfigUpdate:
+      allOf:
+      - $ref: '#/components/schemas/AbstractWebhookConfig'
+      - type: object
+        required:
+        - provider
+        properties:
+          configuration:
+            $ref: '#/components/schemas/Configuration'
+    HttpConfig:
+      type: object
+      properties:
+        secretKey:
+          type: string
+          description: Optional secret key which could be used to sign the message. This secret is used in `HMAC SHA 256` algorithm which encrypts the payload. Then this value is encoded to `BASE256` and included in `emporix-event-signature` header of HTTP request.
+        destinationUrl:
+          type: string
+          description: Destination URL where event should be sent.
+        headers:
+          allOf:
+          - $ref: '#/components/schemas/HttpHeadersConfig'
+          description: List of key-value pairs which can decorate outgoing HTTP POST request as headers. The size limit for this list is `10`.
+        eventsConfiguration:
+          $ref: '#/components/schemas/EventsConfiguration'
+      description: HTTP config
+    WebhookConfigCreation:
+      allOf:
+      - $ref: '#/components/schemas/WebhookConfigUpdate'
+      - type: object
+        required:
+        - code
+        properties:
+          code:
+            allOf:
+            - $ref: '#/components/schemas/ConfigCode'
+    Configuration:
+      type: object
+      oneOf:
+      - $ref: '#/components/schemas/EmptyConfiguration'
+      - $ref: '#/components/schemas/SvixConfig'
+      - $ref: '#/components/schemas/HttpConfig'
+    AbstractWebhookConfig:
+      type: object
+      properties:
+        active:
+          type: boolean
+          description: Indicates whether a given configuration is active. Only one configuration can be active at a time.
+        provider:
+          $ref: '#/components/schemas/Provider'
+          description: Indicates which provider should be used.
+    EventConfiguration:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Stable server-generated identifier of this event configuration entry. Omit on create; client-supplied ids are rejected with `400`. On update, known ids must refer to existing entries; unknown ids are rejected with `400`. Ids are immutable once assigned.
+        name:
+          type: string
+          maxLength: 255
+          description: Optional user-facing label for this entry (for example "ERP integration"). Purely descriptive — it has no impact on delivery. Maximum 255 characters.
+        eventType:
+          type: string
+          description: Unique identifier of the event. Multiple entries may share the same `eventType`.
+        secretKey:
+          type: string
+          description: Optional secret key which could be used to sign the message. This secret is used in `HMAC SHA 256` algorithm which encrypts the payload. Then this value is encoded to `BASE256` and included in `emporix-event-signature` header of HTTP request. It has higher priority than `secretKey` on root level. Each event can have defined a separated secret key.
+        destinationUrl:
+          type: string
+          description: Destination URL where event should be sent. It has higher priority than `destinationUrl` on root level. Each event can have defined a separated destination url.
+        headers:
+          allOf:
+          - $ref: '#/components/schemas/HttpHeadersConfig'
+          description: List of key-value pairs which can decorate outgoing HTTP POST request as headers. The size limit for this list is `10`. It has higher priority than `headers` on root level. Each event can have defined a separated headers.
+        filter:
+          type: string
+          description: 'Optional Jayway JsonPath predicate evaluated against the event payload. When omitted or empty, the entry matches every event of the given `eventType`. Invalid expressions are rejected with `400`. Examples: `$[?(@.status == ''DECLINED'')]`, `$[?(@.total.amount > 100)]`.'
+        excludedFields:
+          type: array
+          items:
+            type: string
+          description: Optional per-entry field exclusion list. Only non-blank top-level field names are allowed. Omit or set to `null` to inherit the event-subscription `excludedFields`. An empty array `[]` overrides the subscription exclusions with no exclusions for this target.
+        active:
+          type: boolean
+          default: true
+          description: Per-endpoint activation switch. When `false`, events for this endpoint are dropped without filter evaluation, delivery, or retries; other endpoints are not affected. Omitted means active.
+    HttpHeaderConfigValue:
+      type: object
+      properties:
+        value:
+          type: string
+    WebhookConfigPartialUpdate:
+      type: object
+      properties:
+        op:
+          type: string
+          enum:
+          - REMOVE
+          - UPSERT
+          description: Kind of the update operation
+        path:
+          type: string
+          enum:
+          - /active
+          - /configuration
+          - /configuration/svix/apiKey
+          - /configuration/http/headers
+          - /configuration/http/destinationUrl
+          - /configuration/http/secretKey
+          - /configuration/http/eventsConfiguration
+          - /configuration/http/eventsConfiguration/{eventType}
+          - /configuration/http/eventsConfiguration/{eventType}/destinationUrl
+          - /configuration/http/eventsConfiguration/{eventType}/secretKey
+          - /configuration/http/eventsConfiguration/{eventType}/headers
+          - /configuration/http/eventsConfigurationEntry
+          - /configuration/http/eventsConfigurationEntry/{entryId}
+          - /configuration/http/eventsConfigurationEntry/{entryId}/destinationUrl
+          - /configuration/http/eventsConfigurationEntry/{entryId}/secretKey
+          - /configuration/http/eventsConfigurationEntry/{entryId}/headers
+          - /configuration/http/eventsConfigurationEntry/{entryId}/filter
+          - /configuration/http/eventsConfigurationEntry/{entryId}/excludedFields
+          - /configuration/http/eventsConfigurationEntry/{entryId}/name
+          - /configuration/http/eventsConfigurationEntry/{entryId}/active
+          description: 'Path identifying which properties should be updated.
+
+            Use `UPSERT` on `/configuration/http/eventsConfigurationEntry` (no id) to create a new entry — body must omit `id` (server-generated); `REMOVE` on this path is rejected.
+
+            Prefer `/configuration/http/eventsConfigurationEntry/{entryId}` paths to address a specific existing entry.
+
+            Use `UPSERT` on `/configuration/http/eventsConfigurationEntry/{entryId}/active` with a boolean value to deactivate (`false`) or reactivate (`true`) a single endpoint without removing it; the value is required.
+
+            Legacy `/configuration/http/eventsConfiguration/{eventType}` paths remain supported when at most one entry exists for that event type; they return `409` when multiple entries exist.
+
+            Create/update can return `400` for a client-supplied entry id or an invalid JsonPath `filter`.'
+        value:
+          type: object
+          anyOf:
+          - $ref: '#/components/schemas/SvixConfig'
+          - $ref: '#/components/schemas/HttpConfig'
+          - type: string
+            description: Svix Api Key
+          - type: boolean
+            description: Active flag (config-level on `/active`, per-endpoint on `/configuration/http/eventsConfigurationEntry/{entryId}/active`)
+          - type: string
+            description: Destination URL where event should be sent
+          - type: string
+            description: Secret key needed to sign messages sent via HTTP requests.
+          - type: string
+            description: JsonPath filter expression
+          - type: array
+            items:
+              type: string
+            description: Per-entry excluded fields
+          - $ref: '#/components/schemas/EventsConfiguration'
+          - $ref: '#/components/schemas/EventConfiguration'
+      required:
+      - op
+      - path
+    HttpHeadersConfig:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/HttpHeaderConfigValue'
+    Provider:
+      type: string
+      enum:
+      - SVIX_SHARED
+      - SVIX
+      - HTTP
+      description: 'Webhook provider strategy. Maps to configuration types as follows:
+
+
+        * `SVIX` – `svix`
+
+        * `SVIX_SHARED` – `svix_shared`
+
+        * `HTTP` – `http`'
+    ConfigurationGet:
+      oneOf:
+      - type: object
+        properties:
+          destinationUrl:
+            type: string
+            description: Destination URL where event should be sent.
+          secretKeyExists:
+            type: boolean
+            description: Information if secret key for securing the messages has been provided.
+          headers:
+            allOf:
+            - $ref: '#/components/schemas/HttpHeadersConfig'
+            description: List of key-value pairs which can decorate outgoing HTTP POST request as headers.
+          eventsConfiguration:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: string
+                  description: Stable server-generated identifier of this event configuration entry.
+                eventType:
+                  type: string
+                  description: Type of the event. Multiple entries may share the same `eventType`.
+                destinationUrl:
+                  type: string
+                  description: Destination URL where event should be sent.
+                secretKeyExists:
+                  type: boolean
+                  description: Information if secret key for securing the messages has been provided.
+                headers:
+                  allOf:
+                  - $ref: '#/components/schemas/HttpHeadersConfig'
+                  description: List of key-value pairs which can decorate outgoing HTTP POST request as headers.
+                filter:
+                  type: string
+                  description: Optional Jayway JsonPath predicate. When omitted, the entry matches every event of the given `eventType`.
+                excludedFields:
+                  type: array
+                  items:
+                    type: string
+                  description: Per-entry field exclusion list. Omitted or `null` means inherit the event-subscription exclusions. An empty array `[]` overrides with no exclusions for this target.
+                active:
+                  type: boolean
+                  description: Per-endpoint activation switch. Always returned as an explicit boolean; entries created before the flag existed report `true`. When `false`, events for this endpoint are dropped without filter evaluation, delivery, or retries.
+    WebhookConfigPartialUpdates:
+      type: array
+      items:
+        $ref: '#/components/schemas/WebhookConfigPartialUpdate'
+    EventsConfiguration:
+      type: array
+      description: List of HTTP event-specific configuration entries. Multiple entries for the same `eventType` are allowed. Uniqueness is by entry `id`. Duplicate entry ids are rejected with `400`.
+      items:
+        $ref: '#/components/schemas/EventConfiguration'
+    ConfigCode:
+      type: string
+      description: Unique identifier of the webhook configuration type.
+  responses:
+    WebhookConfigResponse:
+      description: Returning a webhook config.
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/AbstractWebhookConfig'
+            - type: object
+              properties:
+                code:
+                  $ref: '#/components/schemas/ConfigCode'
+                configuration:
+                  $ref: '#/components/schemas/ConfigurationGet'
+          examples:
+            WebhookConfigExample:
+              $ref: '#/components/examples/WebhookConfigExample'
+    BadRequest_400:
+      description: Request was syntactically incorrect. Details are provided in the response payload.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            BadRequestExample:
+              $ref: '#/components/examples/AmbiguousTenant_400'
+            DestinationUrlValidationError:
+              $ref: '#/components/examples/DestinationUrlValidationError_400'
+    NotFound_404:
+      description: The requested resource does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            NotFoundExample:
+              $ref: '#/components/examples/NotFound_404'
+    InternalServerError_500:
+      description: Some server-side error occurred. Details are provided in the response payload.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            InternalServerErrorExample:
+              $ref: '#/components/examples/InternalServerError_500'
+    Forbidden_403:
+      description: Given authorization scopes are not sufficient and do not match the scopes required by the endpoint.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            InsufficientPermissionsExample:
+              $ref: '#/components/examples/InsufficientPermissions_403'
+    CreateConfigResponse:
+      description: Result of creating config
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: string
+            example:
+              code: svix
+    WebhookConfigsResponse:
+      description: Returning list of webhook configs.
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              allOf:
+              - $ref: '#/components/schemas/AbstractWebhookConfig'
+              - type: object
+                properties:
+                  code:
+                    $ref: '#/components/schemas/ConfigCode'
+                  configuration:
+                    $ref: '#/components/schemas/ConfigurationGet'
+          examples:
+            WebhookConfigsExample:
+              $ref: '#/components/examples/WebhookConfigsExample'
+    Unauthorized_401:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            Access token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+    Conflict_409:
+      description: Conflict. Returned when creating a webhook configuration for a type that is already configured, or when a legacy event-type PATCH path is used while multiple `eventsConfiguration` entries exist for that event type.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            ConflictExample:
+              $ref: '#/components/examples/Conflict_409'
+  examples:
+    AmbiguousTenant_400:
+      value:
+        code: 400
+        status: Bad Request
+        message: Tenant in the header is not matching with the one provided in the URI.
+    WebhookConfigsExample:
+      value:
+      - code: svix_shared
+        provider: SVIX_SHARED
+        active: true
+      - code: svix
+        provider: SVIX
+        active: false
+      - code: http
+        provider: HTTP
+        active: false
+    NotFound_404:
+      value:
+        code: 404
+        status: Not Found
+        message: No catalog events found.
+    WebhookConfigExample:
+      value:
+        code: svix_shared
+        provider: SVIX_SHARED
+        active: true
+    Conflict_409:
+      value:
+        code: 409
+        status: Conflict
+        message: The resource already exists.
+    InsufficientPermissions_403:
+      value:
+        code: 403
+        status: Forbidden
+        message: The access to the requested resource has been forbidden by the server.
+    DestinationUrlValidationError_400:
+      value:
+        code: 400
+        status: Bad Request
+        message: There is a validation error. Please check the details.
+        details:
+        - 'destinationUrl: The resource specified by the URL is not accessible. For a webhook to be accessible, it needs to respond with any successful status for either `HEAD` or `OPTIONS` request.'
+    InternalServerError_500:
+      value:
+        code: 500
+        status: Internal Server Error
+        message: A server-side exception occurred that prevented the system from correctly returning the result.
+  parameters:
+    path_code:
+      name: code
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Unique identifier of the webhook configuration type.
+    path_tenant:
+      name: tenant
+      in: path
+      required: true
+      schema:
+        type: string
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: The tenant name should always be provided in lowercase.
+
+        '
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes:
+            webhook.subscription_read: Needed to read subscriptions.
+            webhook.subscription_manage: Needed to manage subscriptions.
+          tokenUrl: https://api.emporix.io/oauth/token
+x-refined-from:
+- emporix-webhook-service-openapi.yml
+- emporix-webhook-service-openapi.yml

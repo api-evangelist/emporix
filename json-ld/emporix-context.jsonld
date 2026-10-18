@@ -1,0 +1,834 @@
+{
+  "@context": {
+    "@vocab": "https://emporix.com/schema#",
+    "schema": "https://schema.org/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "dcterms": "http://purl.org/dc/terms/",
+    "emporix": "https://emporix.com/schema#",
+    "MetadataFilter": "emporix:MetadataFilter",
+    "key": {
+      "@id": "emporix:key",
+      "@type": "xsd:string"
+    },
+    "name": {
+      "@id": "emporix:name",
+      "@type": "xsd:string"
+    },
+    "description": {
+      "@id": "emporix:description",
+      "@type": "xsd:string"
+    },
+    "type": {
+      "@id": "emporix:type",
+      "@type": "xsd:string"
+    },
+    "ErrorMessage": "emporix:ErrorMessage",
+    "code": {
+      "@id": "emporix:code",
+      "@type": "xsd:integer"
+    },
+    "message": {
+      "@id": "emporix:message",
+      "@type": "xsd:string"
+    },
+    "moreInfo": {
+      "@id": "emporix:moreInfo",
+      "@type": "xsd:string"
+    },
+    "details": {
+      "@id": "emporix:details",
+      "@container": "@list"
+    },
+    "ErrorMessageFault": "emporix:ErrorMessageFault",
+    "fault": {
+      "@id": "emporix:fault"
+    },
+    "AgenticRequest": "emporix:AgenticRequest",
+    "agentId": {
+      "@id": "emporix:agentId",
+      "@type": "xsd:string"
+    },
+    "attachments": {
+      "@id": "emporix:attachments",
+      "@container": "@list"
+    },
+    "AgentType": "emporix:AgentType",
+    "TextGenerationRequest": "emporix:TextGenerationRequest",
+    "id": {
+      "@id": "emporix:id",
+      "@type": "xsd:string"
+    },
+    "prompt": {
+      "@id": "emporix:prompt",
+      "@type": "xsd:string"
+    },
+    "maxTokens": {
+      "@id": "emporix:maxTokens",
+      "@type": "xsd:integer"
+    },
+    "IdResponse": "emporix:IdResponse",
+    "NativeToolType": "emporix:NativeToolType",
+    "BaseNativeTool": "emporix:BaseNativeTool",
+    "enabled": {
+      "@id": "emporix:enabled",
+      "@type": "xsd:boolean"
+    },
+    "RagCustomEmbeddingNativeToolConfig": "emporix:RagCustomEmbeddingNativeToolConfig",
+    "model": {
+      "@id": "emporix:model",
+      "@type": "xsd:string"
+    },
+    "RagCustomDatabaseType": "emporix:RagCustomDatabaseType",
+    "RagEntityType": "emporix:RagEntityType",
+    "RagCustomDatabaseNativeToolConfig": "emporix:RagCustomDatabaseNativeToolConfig",
+    "url": {
+      "@id": "emporix:url",
+      "@type": "xsd:string"
+    },
+    "entityType": {
+      "@id": "emporix:entityType"
+    },
+    "collectionName": {
+      "@id": "emporix:collectionName",
+      "@type": "xsd:string"
+    },
+    "RagCustomNativeToolConfig": "emporix:RagCustomNativeToolConfig",
+    "maxResults": {
+      "@id": "emporix:maxResults",
+      "@type": "xsd:integer"
+    },
+    "RagLlmProvider": "emporix:RagLlmProvider",
+    "EmporixOpenAiRagEmporixEmbeddingNativeToolConfig": "emporix:EmporixOpenAiRagEmporixEmbeddingNativeToolConfig",
+    "provider": {
+      "@id": "emporix:provider"
+    },
+    "OpenAiRagEmporixEmbeddingNativeToolConfig": "emporix:OpenAiRagEmporixEmbeddingNativeToolConfig",
+    "dimensions": {
+      "@id": "emporix:dimensions",
+      "@type": "xsd:integer"
+    },
+    "SelfHostedOllamaRagEmporixEmbeddingNativeToolConfig": "emporix:SelfHostedOllamaRagEmporixEmbeddingNativeToolConfig",
+    "RagEmporixNativeToolConfig": "emporix:RagEmporixNativeToolConfig",
+    "indexedFields": {
+      "@id": "emporix:indexedFields",
+      "@container": "@list"
+    },
+    "filterFields": {
+      "@id": "emporix:filterFields",
+      "@container": "@list"
+    },
+    "SlackAllowedOperations": "emporix:SlackAllowedOperations",
+    "SlackNativeToolConfigResponse": "emporix:SlackNativeToolConfigResponse",
+    "teamId": {
+      "@id": "emporix:teamId",
+      "@type": "xsd:string"
+    },
+    "defaultInboundAgentId": {
+      "@id": "emporix:defaultInboundAgentId",
+      "@type": "xsd:string"
+    },
+    "allowedOperations": {
+      "@id": "emporix:allowedOperations",
+      "@container": "@list"
+    },
+    "TeamsAllowedOperations": "emporix:TeamsAllowedOperations",
+    "TeamsNativeToolConfigResponse": "emporix:TeamsNativeToolConfigResponse",
+    "tenantId": {
+      "@id": "emporix:tenantId",
+      "@type": "xsd:string"
+    },
+    "ConversationResponse": "emporix:ConversationResponse",
+    "conversationId": {
+      "@id": "emporix:conversationId",
+      "@type": "xsd:string"
+    },
+    "conversationName": {
+      "@id": "emporix:conversationName",
+      "@type": "xsd:string"
+    },
+    "contextRef": {
+      "@id": "emporix:contextRef",
+      "@type": "xsd:string"
+    },
+    "channelId": {
+      "@id": "emporix:channelId",
+      "@type": "xsd:string"
+    },
+    "sessionId": {
+      "@id": "emporix:sessionId",
+      "@type": "xsd:string"
+    },
+    "lastMessageAt": {
+      "@id": "emporix:lastMessageAt",
+      "@type": "xsd:dateTime"
+    },
+    "McpServerConfig": "emporix:McpServerConfig",
+    "authorizationHeaderName": {
+      "@id": "emporix:authorizationHeaderName",
+      "@type": "xsd:string"
+    },
+    "BaseManagedMcpServer": "emporix:BaseManagedMcpServer",
+    "transport": {
+      "@id": "emporix:transport",
+      "@type": "@id"
+    },
+    "ManagedMcpServerType": "emporix:ManagedMcpServerType",
+    "McpToolInvocationMethod": "emporix:McpToolInvocationMethod",
+    "McpToolInvocationArgsLocation": "emporix:McpToolInvocationArgsLocation",
+    "McpToolInvocationRequest": "emporix:McpToolInvocationRequest",
+    "functionId": {
+      "@id": "emporix:functionId",
+      "@type": "xsd:string"
+    },
+    "method": {
+      "@id": "emporix:method",
+      "@type": "@id"
+    },
+    "argsLocation": {
+      "@id": "emporix:argsLocation",
+      "@type": "@id"
+    },
+    "McpToolInvocationResponse": "emporix:McpToolInvocationResponse",
+    "McpToolConfigRequest": "emporix:McpToolConfigRequest",
+    "requiredScopes": {
+      "@id": "emporix:requiredScopes",
+      "@container": "@list"
+    },
+    "inputSchema": {
+      "@id": "emporix:inputSchema",
+      "@type": "xsd:string"
+    },
+    "invocation": {
+      "@id": "emporix:invocation",
+      "@type": "@id"
+    },
+    "McpToolConfigResponse": "emporix:McpToolConfigResponse",
+    "McpToolRequest": "emporix:McpToolRequest",
+    "config": {
+      "@id": "emporix:config",
+      "@type": "@id"
+    },
+    "McpToolResponse": "emporix:McpToolResponse",
+    "CommerceEventsResponse": "emporix:CommerceEventsResponse",
+    "events": {
+      "@id": "emporix:events",
+      "@container": "@list"
+    },
+    "McpServerType": "emporix:McpServerType",
+    "CustomMcpServerTransportType": "emporix:CustomMcpServerTransportType",
+    "BaseAgentMcpServer": "emporix:BaseAgentMcpServer",
+    "AgentMcpServerResponse": "emporix:AgentMcpServerResponse",
+    "mcpServer": {
+      "@id": "emporix:mcpServer"
+    },
+    "domain": {
+      "@id": "emporix:domain"
+    },
+    "tools": {
+      "@id": "emporix:tools",
+      "@container": "@list"
+    },
+    "BaseLlm": "emporix:BaseLlm",
+    "temperature": {
+      "@id": "emporix:temperature",
+      "@type": "xsd:decimal"
+    },
+    "SelfHostedParams": "emporix:SelfHostedParams",
+    "fileProcessingConfig": {
+      "@id": "emporix:fileProcessingConfig",
+      "@type": "@id"
+    },
+    "FileProcessingConfig": "emporix:FileProcessingConfig",
+    "useResponsesApi": {
+      "@id": "emporix:useResponsesApi",
+      "@type": "xsd:boolean"
+    },
+    "extraModelKey": {
+      "@id": "emporix:extraModelKey",
+      "@type": "xsd:string"
+    },
+    "ApiKeyLlmProvider": "emporix:ApiKeyLlmProvider",
+    "ModelResponse": "emporix:ModelResponse",
+    "thinking": {
+      "@id": "emporix:thinking",
+      "@type": "xsd:boolean"
+    },
+    "ProviderModelsResponse": "emporix:ProviderModelsResponse",
+    "models": {
+      "@id": "emporix:models",
+      "@container": "@list"
+    },
+    "OAuth": "emporix:OAuth",
+    "clientId": {
+      "@id": "emporix:clientId",
+      "@type": "xsd:string"
+    },
+    "grantType": {
+      "@id": "emporix:grantType",
+      "@type": "xsd:string"
+    },
+    "scope": {
+      "@id": "emporix:scope",
+      "@type": "xsd:string"
+    },
+    "BaseToken": "emporix:BaseToken",
+    "IdWrapperRequest": "emporix:IdWrapperRequest",
+    "NativeToolReferenceRequest": "emporix:NativeToolReferenceRequest",
+    "TriggerType": "emporix:TriggerType",
+    "CommerceEventsTriggerType": "emporix:CommerceEventsTriggerType",
+    "CommerceEventTriggerFilterLogicalOperator": "emporix:CommerceEventTriggerFilterLogicalOperator",
+    "CommerceEventTriggerLeafFilterNoRight": "emporix:CommerceEventTriggerLeafFilterNoRight",
+    "left": {
+      "@id": "emporix:left",
+      "@type": "xsd:string"
+    },
+    "op": {
+      "@id": "emporix:op",
+      "@type": "xsd:string"
+    },
+    "CommerceEventTriggerLeafFilterScalarRight": "emporix:CommerceEventTriggerLeafFilterScalarRight",
+    "right": {
+      "@id": "emporix:right",
+      "@type": "@id"
+    },
+    "CommerceEventTriggerLeafFilterArrayRight": "emporix:CommerceEventTriggerLeafFilterArrayRight",
+    "CommerceEventTriggerCompoundFilter": "emporix:CommerceEventTriggerCompoundFilter",
+    "conditions": {
+      "@id": "emporix:conditions",
+      "@container": "@list"
+    },
+    "BaseForAgentAndTemplateAndHandOff": "emporix:BaseForAgentAndTemplateAndHandOff",
+    "AgentVersionMetadata": "emporix:AgentVersionMetadata",
+    "version": {
+      "@id": "emporix:version",
+      "@type": "xsd:integer"
+    },
+    "modifiedAt": {
+      "@id": "emporix:modifiedAt",
+      "@type": "xsd:string"
+    },
+    "modifiedBy": {
+      "@id": "emporix:modifiedBy",
+      "@type": "@id"
+    },
+    "changeNote": {
+      "@id": "emporix:changeNote",
+      "@type": "xsd:string"
+    },
+    "ModifiedBy": "emporix:ModifiedBy",
+    "firstName": {
+      "@id": "emporix:firstName",
+      "@type": "xsd:string"
+    },
+    "lastName": {
+      "@id": "emporix:lastName",
+      "@type": "xsd:string"
+    },
+    "MetadataRequest": "emporix:MetadataRequest",
+    "JobStatus": "emporix:JobStatus",
+    "JobType": "emporix:JobType",
+    "Job": "emporix:Job",
+    "agentType": {
+      "@id": "emporix:agentType",
+      "@type": "@id"
+    },
+    "status": {
+      "@id": "emporix:status",
+      "@type": "@id"
+    },
+    "exportResult": {
+      "@id": "emporix:exportResult",
+      "@type": "@id"
+    },
+    "importResult": {
+      "@id": "emporix:importResult",
+      "@type": "@id"
+    },
+    "commerceEvent": {
+      "@id": "emporix:commerceEvent",
+      "@type": "xsd:string"
+    },
+    "metadata": {
+      "@id": "emporix:metadata",
+      "@type": "@id"
+    },
+    "ImportResult": "emporix:ImportResult",
+    "summary": {
+      "@id": "emporix:summary"
+    },
+    "ExportResult": "emporix:ExportResult",
+    "data": {
+      "@id": "emporix:data",
+      "@type": "xsd:string"
+    },
+    "checksum": {
+      "@id": "emporix:checksum",
+      "@type": "xsd:string"
+    },
+    "ImportedEntity": "emporix:ImportedEntity",
+    "state": {
+      "@id": "emporix:state",
+      "@type": "xsd:string"
+    },
+    "ImportDetails": "emporix:ImportDetails",
+    "objectId": {
+      "@id": "emporix:objectId",
+      "@type": "xsd:string"
+    },
+    "objectName": {
+      "@id": "emporix:objectName",
+      "@type": "xsd:string"
+    },
+    "JobIdResponse": "emporix:JobIdResponse",
+    "jobId": {
+      "@id": "emporix:jobId",
+      "@type": "xsd:string"
+    },
+    "ChatResponse": "emporix:ChatResponse",
+    "ChatStreamTokenData": "emporix:ChatStreamTokenData",
+    "content": {
+      "@id": "emporix:content",
+      "@type": "xsd:string"
+    },
+    "ChatStreamThinkingData": "emporix:ChatStreamThinkingData",
+    "ChatStreamToolMetaData": "emporix:ChatStreamToolMetaData",
+    "tool_name": {
+      "@id": "emporix:tool_name",
+      "@type": "xsd:string"
+    },
+    "tool_call_id": {
+      "@id": "emporix:tool_call_id",
+      "@type": "xsd:string"
+    },
+    "ChatStreamToolResultData": "emporix:ChatStreamToolResultData",
+    "output": {
+      "@id": "emporix:output"
+    },
+    "ChatStreamDoneData": "emporix:ChatStreamDoneData",
+    "agent_id": {
+      "@id": "emporix:agent_id",
+      "@type": "xsd:string"
+    },
+    "agent_type": {
+      "@id": "emporix:agent_type",
+      "@type": "xsd:string"
+    },
+    "session_id": {
+      "@id": "emporix:session_id",
+      "@type": "xsd:string"
+    },
+    "ChatStreamErrorData": "emporix:ChatStreamErrorData",
+    "AttachmentResponse": "emporix:AttachmentResponse",
+    "LogSeverity": "emporix:LogSeverity",
+    "AgentLogMessageResponse": "emporix:AgentLogMessageResponse",
+    "timestamp": {
+      "@id": "emporix:timestamp",
+      "@type": "xsd:dateTime"
+    },
+    "severity": {
+      "@id": "emporix:severity",
+      "@type": "@id"
+    },
+    "agentVersion": {
+      "@id": "emporix:agentVersion",
+      "@type": "xsd:integer"
+    },
+    "requestId": {
+      "@id": "emporix:requestId",
+      "@type": "xsd:string"
+    },
+    "isBusinessLog": {
+      "@id": "emporix:isBusinessLog",
+      "@type": "xsd:boolean"
+    },
+    "AgentRequestResponse": "emporix:AgentRequestResponse",
+    "triggerAgentId": {
+      "@id": "emporix:triggerAgentId",
+      "@type": "xsd:string"
+    },
+    "collaborationAgents": {
+      "@id": "emporix:collaborationAgents",
+      "@container": "@list"
+    },
+    "messages": {
+      "@id": "emporix:messages",
+      "@container": "@list"
+    },
+    "duration": {
+      "@id": "emporix:duration",
+      "@type": "xsd:integer"
+    },
+    "promptTokens": {
+      "@id": "emporix:promptTokens",
+      "@type": "xsd:integer"
+    },
+    "completionTokens": {
+      "@id": "emporix:completionTokens",
+      "@type": "xsd:integer"
+    },
+    "AgentSessionResponse": "emporix:AgentSessionResponse",
+    "agents": {
+      "@id": "emporix:agents",
+      "@container": "@list"
+    },
+    "GenerationResponse": "emporix:GenerationResponse",
+    "result": {
+      "@id": "emporix:result",
+      "@type": "xsd:string"
+    },
+    "CompletionRequest": "emporix:CompletionRequest",
+    "QParamSearchBody": "emporix:QParamSearchBody",
+    "q": {
+      "@id": "emporix:q",
+      "@type": "xsd:string"
+    },
+    "DataWithChecksum": "emporix:DataWithChecksum",
+    "ExportRequest": "emporix:ExportRequest",
+    "agentIds": {
+      "@id": "emporix:agentIds",
+      "@container": "@list"
+    },
+    "AnalyticsSeverityCounts": "emporix:AnalyticsSeverityCounts",
+    "info": {
+      "@id": "emporix:info",
+      "@type": "xsd:integer"
+    },
+    "warning": {
+      "@id": "emporix:warning",
+      "@type": "xsd:integer"
+    },
+    "error": {
+      "@id": "emporix:error",
+      "@type": "xsd:integer"
+    },
+    "AnalyticsSessionSeverityCounts": "emporix:AnalyticsSessionSeverityCounts",
+    "success": {
+      "@id": "emporix:success",
+      "@type": "xsd:integer"
+    },
+    "AnalyticsLogMetrics": "emporix:AnalyticsLogMetrics",
+    "total": {
+      "@id": "emporix:total",
+      "@type": "xsd:integer"
+    },
+    "bySeverity": {
+      "@id": "emporix:bySeverity",
+      "@type": "@id"
+    },
+    "errorRate": {
+      "@id": "emporix:errorRate",
+      "@type": "xsd:decimal"
+    },
+    "AnalyticsSessionMetrics": "emporix:AnalyticsSessionMetrics",
+    "AnalyticsResolutionEfficiency": "emporix:AnalyticsResolutionEfficiency",
+    "requestsPerSession": {
+      "@id": "emporix:requestsPerSession",
+      "@type": "xsd:decimal"
+    },
+    "totalRequests": {
+      "@id": "emporix:totalRequests",
+      "@type": "xsd:integer"
+    },
+    "totalSessions": {
+      "@id": "emporix:totalSessions",
+      "@type": "xsd:integer"
+    },
+    "AnalyticsRequestTrendPoint": "emporix:AnalyticsRequestTrendPoint",
+    "date": {
+      "@id": "emporix:date",
+      "@type": "xsd:dateTime"
+    },
+    "errors": {
+      "@id": "emporix:errors",
+      "@type": "xsd:integer"
+    },
+    "AnalyticsSessionTrendPoint": "emporix:AnalyticsSessionTrendPoint",
+    "errorSessions": {
+      "@id": "emporix:errorSessions",
+      "@type": "xsd:integer"
+    },
+    "AgentAnalyticsResponse": "emporix:AgentAnalyticsResponse",
+    "requests": {
+      "@id": "emporix:requests",
+      "@type": "@id"
+    },
+    "sessions": {
+      "@id": "emporix:sessions",
+      "@type": "@id"
+    },
+    "resolutionEfficiency": {
+      "@id": "emporix:resolutionEfficiency",
+      "@type": "@id"
+    },
+    "requestTrend": {
+      "@id": "emporix:requestTrend",
+      "@container": "@list"
+    },
+    "sessionTrend": {
+      "@id": "emporix:sessionTrend",
+      "@container": "@list"
+    },
+    "AnalyticsPeriod": "emporix:AnalyticsPeriod",
+    "label": {
+      "@id": "emporix:label",
+      "@type": "xsd:string"
+    },
+    "start": {
+      "@id": "emporix:start",
+      "@type": "xsd:dateTime"
+    },
+    "end": {
+      "@id": "emporix:end",
+      "@type": "xsd:dateTime"
+    },
+    "AgentExecutionSeries": "emporix:AgentExecutionSeries",
+    "counts": {
+      "@id": "emporix:counts",
+      "@container": "@list"
+    },
+    "ExecutionsResponse": "emporix:ExecutionsResponse",
+    "granularity": {
+      "@id": "emporix:granularity",
+      "@type": "xsd:string"
+    },
+    "periods": {
+      "@id": "emporix:periods",
+      "@container": "@list"
+    },
+    "series": {
+      "@id": "emporix:series",
+      "@container": "@list"
+    },
+    "coreErrorMessage": "emporix:coreErrorMessage",
+    "errorCode": {
+      "@id": "emporix:errorCode",
+      "@type": "xsd:string"
+    },
+    "genericApprovalForCreate": "emporix:genericApprovalForCreate",
+    "action": {
+      "@id": "emporix:action",
+      "@type": "@id"
+    },
+    "approver": {
+      "@id": "emporix:approver"
+    },
+    "comment": {
+      "@id": "emporix:comment",
+      "@type": "xsd:string"
+    },
+    "address": "emporix:address",
+    "contactName": {
+      "@id": "emporix:contactName",
+      "@type": "xsd:string"
+    },
+    "companyName": {
+      "@id": "emporix:companyName",
+      "@type": "xsd:string"
+    },
+    "street": {
+      "@id": "emporix:street",
+      "@type": "xsd:string"
+    },
+    "streetNumber": {
+      "@id": "emporix:streetNumber",
+      "@type": "xsd:string"
+    },
+    "streetAppendix": {
+      "@id": "emporix:streetAppendix",
+      "@type": "xsd:string"
+    },
+    "zipCode": {
+      "@id": "emporix:zipCode",
+      "@type": "xsd:string"
+    },
+    "city": {
+      "@id": "emporix:city",
+      "@type": "xsd:string"
+    },
+    "country": {
+      "@id": "emporix:country",
+      "@type": "xsd:string"
+    },
+    "contactPhone": {
+      "@id": "emporix:contactPhone",
+      "@type": "xsd:string"
+    },
+    "shipping": "emporix:shipping",
+    "methodId": {
+      "@id": "emporix:methodId",
+      "@type": "xsd:string"
+    },
+    "zoneId": {
+      "@id": "emporix:zoneId",
+      "@type": "xsd:string"
+    },
+    "methodName": {
+      "@id": "emporix:methodName",
+      "@type": "xsd:string"
+    },
+    "amount": {
+      "@id": "emporix:amount",
+      "@type": "xsd:decimal"
+    },
+    "shippingTaxCode": {
+      "@id": "emporix:shippingTaxCode",
+      "@type": "xsd:string"
+    },
+    "payment": "emporix:payment",
+    "paymentId": {
+      "@id": "emporix:paymentId",
+      "@type": "xsd:string"
+    },
+    "customAttributes": {
+      "@id": "emporix:customAttributes"
+    },
+    "paymentMethod": "emporix:paymentMethod",
+    "user": "emporix:user",
+    "userId": {
+      "@id": "emporix:userId",
+      "@type": "xsd:string"
+    },
+    "resourceType": "emporix:resourceType",
+    "approvalAction": "emporix:approvalAction",
+    "approvalStatus": "emporix:approvalStatus",
+    "legalEntity": "emporix:legalEntity",
+    "createdResource": "emporix:createdResource",
+    "resourceResponse": "emporix:resourceResponse",
+    "items": {
+      "@id": "emporix:items",
+      "@container": "@list"
+    },
+    "totalPrice": {
+      "@id": "emporix:totalPrice",
+      "@type": "@id"
+    },
+    "subTotalPrice": {
+      "@id": "emporix:subTotalPrice",
+      "@type": "@id"
+    },
+    "subtotalAggregate": {
+      "@id": "emporix:subtotalAggregate",
+      "@type": "@id"
+    },
+    "siteCode": {
+      "@id": "emporix:siteCode",
+      "@type": "xsd:string"
+    },
+    "deliveryWindow": {
+      "@id": "emporix:deliveryWindow",
+      "@type": "@id"
+    },
+    "resourceItem": "emporix:resourceItem",
+    "quantity": {
+      "@id": "emporix:quantity",
+      "@type": "xsd:decimal"
+    },
+    "itemPrice": {
+      "@id": "emporix:itemPrice",
+      "@type": "@id"
+    },
+    "itemYrn": {
+      "@id": "emporix:itemYrn",
+      "@type": "xsd:string"
+    },
+    "itemId": {
+      "@id": "emporix:itemId",
+      "@type": "xsd:string"
+    },
+    "resourceItemPrice": "emporix:resourceItemPrice",
+    "currency": {
+      "@id": "emporix:currency",
+      "@type": "xsd:string"
+    },
+    "unitPrice": {
+      "@id": "emporix:unitPrice",
+      "@type": "xsd:decimal"
+    },
+    "newUnitPrice": {
+      "@id": "emporix:newUnitPrice",
+      "@type": "xsd:decimal"
+    },
+    "calculatedPrice": {
+      "@id": "emporix:calculatedPrice",
+      "@type": "@id"
+    },
+    "price": "emporix:price",
+    "netValue": {
+      "@id": "emporix:netValue",
+      "@type": "xsd:decimal"
+    },
+    "grossValue": {
+      "@id": "emporix:grossValue",
+      "@type": "xsd:decimal"
+    },
+    "taxValue": {
+      "@id": "emporix:taxValue",
+      "@type": "xsd:decimal"
+    },
+    "taxablePrice": "emporix:taxablePrice",
+    "basicMetadata": "emporix:basicMetadata",
+    "approvalId": "emporix:approvalId",
+    "approvalPermittedRequest": "emporix:approvalPermittedRequest",
+    "resourceId": {
+      "@id": "emporix:resourceId",
+      "@type": "xsd:string"
+    },
+    "searchUsersRequest": "emporix:searchUsersRequest",
+    "ChangelogHistoryResponse": "emporix:ChangelogHistoryResponse",
+    "page": {
+      "@id": "emporix:page",
+      "@type": "xsd:integer"
+    },
+    "size": {
+      "@id": "emporix:size",
+      "@type": "xsd:integer"
+    },
+    "totalElements": {
+      "@id": "emporix:totalElements",
+      "@type": "xsd:integer"
+    },
+    "totalPages": {
+      "@id": "emporix:totalPages",
+      "@type": "xsd:integer"
+    },
+    "ChangelogChangeItem": "emporix:ChangelogChangeItem",
+    "at": {
+      "@id": "emporix:at",
+      "@type": "xsd:dateTime"
+    },
+    "entity": {
+      "@id": "emporix:entity",
+      "@type": "xsd:string"
+    },
+    "entityId": {
+      "@id": "emporix:entityId",
+      "@type": "xsd:string"
+    },
+    "paths": {
+      "@id": "emporix:paths"
+    },
+    "schemaVersion": {
+      "@id": "emporix:schemaVersion",
+      "@type": "xsd:string"
+    },
+    "actor": {
+      "@id": "emporix:actor",
+      "@type": "xsd:string"
+    },
+    "related": {
+      "@id": "emporix:related",
+      "@container": "@list"
+    }
+  },
+  "@type": "schema:Dataset",
+  "schema:name": "Emporix API JSON-LD context",
+  "schema:description": "A JSON-LD @context for the objects Emporix's own API contract declares: one class per component schema, one property per declared field, typed from the contract. Derived by script (derive-json-ld.py, 2026-10-18) from openapi/emporix-ai-rag-indexer-openapi.yml, openapi/emporix-ai-service-openapi.yml, openapi/emporix-approval-service-openapi.yml.",
+  "dcterms:created": "2026-10-18",
+  "dcterms:source": [
+    "openapi/emporix-ai-rag-indexer-openapi.yml",
+    "openapi/emporix-ai-service-openapi.yml",
+    "openapi/emporix-approval-service-openapi.yml",
+    "openapi/emporix-audit-logs-changelog-openapi.yml",
+    "openapi/emporix-availability-openapi.yml"
+  ]
+}

@@ -1,0 +1,769 @@
+openapi: 3.2.0
+info:
+  title: Emporix Search Indexes API
+  version: ''
+  contact:
+    name: Emporix
+    url: https://www.emporix.com/contact-us
+  description: 'Operations tagged Search Indexes across 2 of this provider''s published API definitions: emporix-search-service-openapi.yml, emporix-search-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Search Indexes
+paths:
+  /search/{tenant}/search/indexes:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    get:
+      summary: Retrieving all search indexes
+      operationId: GET-search-tenant-indexes
+      tags:
+      - Search Indexes
+      description: '!Preview
+
+
+        {% hint style="danger" %}
+
+        This functionality is in preview mode - some of the features may not be fully operational yet.
+
+        {% endhint %}
+
+
+        Retrieves the search indexes for every custom schema type on the tenant. Each item includes `type`.
+
+
+        When `sort` is omitted, indexes are ordered by `metadata.createdAt` descending. When the `X-Total-Count` request header is `true`, the response includes the `X-Total-Count` header with the number of indexes. The response body stays an array.'
+      security:
+      - OAuth2:
+        - search.search_read
+      parameters:
+      - $ref: '#/components/parameters/query_pageNumber'
+      - $ref: '#/components/parameters/query_pageSize'
+      - $ref: '#/components/parameters/query_sort_createdAt'
+      - $ref: '#/components/parameters/query_q'
+      - $ref: '#/components/parameters/query_fields_index'
+      - $ref: '#/components/parameters/header_Accept-Language'
+      - $ref: '#/components/parameters/header_X-Total-Count'
+      responses:
+        '200':
+          description: The request succeeded. The body is the current page of indexes.
+          headers:
+            X-Total-Count:
+              description: Number of indexes. Present only when the request `X-Total-Count` header is `true`.
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SearchIndex'
+              examples:
+                Indexes for a tenant:
+                  value:
+                  - id: vehicles
+                    type: VEHICLE
+                    name:
+                      en: Vehicles
+                    description:
+                      en: Search vehicles by name and power
+                    status: ready
+                    metadata:
+                      version: 1
+                      createdAt: '2026-03-12T10:00:00.000Z'
+                      modifiedAt: '2026-03-12T10:00:00.000Z'
+                  - id: bikes
+                    type: BIKE
+                    name:
+                      en: Bikes
+                    description:
+                      en: Search bikes by name
+                    status: ready
+                    metadata:
+                      version: 1
+                      createdAt: '2026-03-13T10:00:00.000Z'
+                      modifiedAt: '2026-03-13T10:00:00.000Z'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_search_read'
+        '500':
+          $ref: '#/components/responses/500_resp_common'
+    servers:
+    - url: https://api.emporix.io
+  /search/{tenant}/search/{type}/indexes:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    - $ref: '#/components/parameters/path_type'
+    get:
+      summary: Retrieving search indexes
+      operationId: GET-search-tenant-type-indexes
+      tags:
+      - Search Indexes
+      description: '!Preview
+
+
+        {% hint style="danger" %}
+
+        This functionality is in preview mode - some of the features may not be fully operational yet.
+
+        {% endhint %}
+
+
+        Retrieves the search indexes for one custom schema type.
+
+
+        When `sort` is omitted, indexes are ordered by `metadata.createdAt` descending. When the `X-Total-Count` request header is `true`, the response includes the `X-Total-Count` header with the number of indexes. The response body stays an array.'
+      security:
+      - OAuth2:
+        - search.search_read
+      parameters:
+      - $ref: '#/components/parameters/query_pageNumber'
+      - $ref: '#/components/parameters/query_pageSize'
+      - $ref: '#/components/parameters/query_sort_createdAt'
+      - $ref: '#/components/parameters/query_q'
+      - $ref: '#/components/parameters/query_fields_index'
+      - $ref: '#/components/parameters/header_Accept-Language'
+      - $ref: '#/components/parameters/header_X-Total-Count'
+      responses:
+        '200':
+          description: The request succeeded. The body is the current page of indexes.
+          headers:
+            X-Total-Count:
+              description: Number of indexes. Present only when the request `X-Total-Count` header is `true`.
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SearchIndex'
+              examples:
+                Indexes for a type:
+                  value:
+                  - id: vehicles
+                    type: VEHICLE
+                    name:
+                      en: Vehicles
+                    description:
+                      en: Search vehicles by name and power
+                    status: ready
+                    metadata:
+                      version: 1
+                      createdAt: '2026-03-12T10:00:00.000Z'
+                      modifiedAt: '2026-03-12T10:00:00.000Z'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_search_read'
+        '500':
+          $ref: '#/components/responses/500_resp_common'
+    servers:
+    - url: https://api.emporix.io
+  /search/{tenant}/search/{type}/indexes/{id}:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    - $ref: '#/components/parameters/path_type'
+    - $ref: '#/components/parameters/path_index_id'
+    put:
+      summary: Upserting a search index
+      operationId: PUT-search-tenant-type-indexes-id
+      tags:
+      - Search Indexes
+      description: '!Preview
+
+
+        {% hint style="danger" %}
+
+        This functionality is in preview mode - some of the features may not be fully operational yet.
+
+        {% endhint %}
+
+
+        Creates or updates the search index identified by `{id}` for one custom schema type. Unknown properties in the body are ignored.
+
+
+        A new index returns `202 Accepted` and the id of a job that builds the index. Saving an index whose status is `building` or `failed`, or whose field definition changed, also returns `202 Accepted` and starts an update job. An index whose status is `ready` and whose field definition is unchanged returns `204 No Content` and does not start a job. `name` and `description` can still change in that case. A job that is already in progress for this index returns `409 Conflict`.
+
+
+        `metadata` can be omitted when the index is created and when it is updated. A missing `metadata.version` still updates an existing index. When `metadata.version` is sent, it is the optimistic lock: a value that does not match the stored index returns `409 Conflict`.'
+      security:
+      - OAuth2:
+        - search.search_manage
+      parameters:
+      - $ref: '#/components/parameters/header_Content-Language'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IndexRequest'
+            examples:
+              Create an index:
+                value:
+                  name:
+                    en: Vehicles
+                  description:
+                    en: Search vehicles by name and power
+                  fields:
+                  - path: name.en
+                    text: true
+                    autocomplete: PREFIX
+                  - path: code
+                    text: true
+                    exact: true
+                  - path: mixins.brand.horsepower
+                    exact: true
+      responses:
+        '202':
+          description: The index build has started. The body is the job id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobId'
+              examples:
+                Job started:
+                  value:
+                    id: 66f1a2b3c4d5e6f708192a3b
+        '204':
+          description: The index is already ready and the field definition is unchanged. No job was started.
+        '400':
+          description: The index id or field list is invalid, or `metadata.version` is below 1.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+              examples:
+                Index fields are required:
+                  value:
+                    code: 400
+                    status: '400'
+                    message: Index fields are required.
+                Field does not exist:
+                  value:
+                    code: 400
+                    status: '400'
+                    message: Field 'name' does not exist.
+                Index id does not match the path:
+                  value:
+                    code: 400
+                    status: '400'
+                    message: Index id must match the path.
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_search_manage'
+        '409':
+          description: An index job is already in progress, or `metadata.version` does not match the stored index.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+              examples:
+                Job already in progress:
+                  value:
+                    code: 409
+                    status: '409'
+                    message: An index job is already in progress.
+        '500':
+          $ref: '#/components/responses/500_resp_common'
+    get:
+      summary: Retrieving a search index
+      operationId: GET-search-tenant-type-indexes-id
+      tags:
+      - Search Indexes
+      description: '!Preview
+
+
+        {% hint style="danger" %}
+
+        This functionality is in preview mode - some of the features may not be fully operational yet.
+
+        {% endhint %}
+
+
+        Retrieves one search index.'
+      security:
+      - OAuth2:
+        - search.search_read
+      parameters:
+      - $ref: '#/components/parameters/query_fields_index'
+      - $ref: '#/components/parameters/header_Accept-Language'
+      responses:
+        '200':
+          description: The index exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchIndex'
+              examples:
+                One index:
+                  value:
+                    id: vehicles
+                    type: VEHICLE
+                    name:
+                      en: Vehicles
+                    description:
+                      en: Search vehicles by name and power
+                    fields:
+                    - path: name.en
+                      text: true
+                      autocomplete: PREFIX
+                    - path: code
+                      text: true
+                      exact: true
+                    status: ready
+                    metadata:
+                      version: 1
+                      createdAt: '2026-03-12T10:00:00.000Z'
+                      modifiedAt: '2026-03-12T10:00:00.000Z'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_search_read'
+        '404':
+          description: No index with this id exists for the type.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          $ref: '#/components/responses/500_resp_common'
+    delete:
+      summary: Deleting a search index
+      operationId: DELETE-search-tenant-type-indexes-id
+      tags:
+      - Search Indexes
+      description: '!Preview
+
+
+        {% hint style="danger" %}
+
+        This functionality is in preview mode - some of the features may not be fully operational yet.
+
+        {% endhint %}
+
+
+        Starts deletion of one search index. The response is the id of the job that removes the index.'
+      security:
+      - OAuth2:
+        - search.search_manage
+      responses:
+        '202':
+          description: Index deletion has started. The body is the job id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobId'
+              examples:
+                Job started:
+                  value:
+                    id: 66f1a2b3c4d5e6f708192a3c
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_search_manage'
+        '404':
+          description: No index with this id exists for the type.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '409':
+          description: An index job is already in progress for this index.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+              examples:
+                Job already in progress:
+                  value:
+                    code: 409
+                    status: '409'
+                    message: An index job is already in progress.
+        '500':
+          $ref: '#/components/responses/500_resp_common'
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    ErrorMessage:
+      type: object
+      description: Error returned for a failed request.
+      properties:
+        code:
+          type: integer
+          description: HTTP status code.
+        status:
+          type: string
+          description: HTTP status code as text.
+        message:
+          type: string
+          description: Explanation of the failure.
+        details:
+          type: array
+          description: Field-level or scope-level messages, when the failure has more than one part.
+          items:
+            type: object
+            properties:
+              message:
+                type: string
+                description: One part of the failure.
+    ResourceMetadata:
+      type: object
+      description: Version and timestamps for a stored resource.
+      properties:
+        version:
+          type: integer
+          description: Stored version. The first version is 1.
+          example: 1
+        createdAt:
+          type: string
+          format: date-time
+          description: Time when the resource was created.
+          example: '2026-03-12T10:00:00.000Z'
+        modifiedAt:
+          type: string
+          format: date-time
+          description: Time when the resource was last modified.
+          example: '2026-03-12T10:04:00.000Z'
+    IndexField:
+      type: object
+      description: One field in a search index.
+      properties:
+        path:
+          type: string
+          description: Full stored field path. Use `name.en`, not `name`.
+          example: name.en
+        text:
+          type: boolean
+          description: Indexes a string for `TEXT` and `PHRASE` search, and for `WILDCARD` on the whole stored value. A wildcard match keeps the stored case.
+          example: true
+        autocomplete:
+          type: string
+          description: Indexes a string for `AUTOCOMPLETE`. `PREFIX` matches the start of a word. `NGRAM` matches a character sequence inside a word.
+          enum:
+          - PREFIX
+          - NGRAM
+          example: PREFIX
+        exact:
+          type: boolean
+          description: Indexes the field for equality, list, range, existence, and sort. Required for number, boolean, and date fields.
+          example: true
+      required:
+      - path
+    IndexRequest:
+      type: object
+      description: Definition of a search index. Unknown properties are ignored.
+      properties:
+        id:
+          type: string
+          description: Index id. Optional. When it is present, it must equal the `{id}` path parameter.
+          example: vehicles
+        name:
+          type: object
+          additionalProperties:
+            type: string
+          description: Localized name of the index.
+          example:
+            en: Vehicles
+        description:
+          type: object
+          additionalProperties:
+            type: string
+          description: Localized description of the index.
+          example:
+            en: Search vehicles by name and power
+        fields:
+          type: array
+          description: 'Fields to index. At least one field is required.
+
+
+            A string field needs `text`, `autocomplete`, or `exact`. A number, boolean, or date field supports only `exact` set to `true`. `time`, `list`, `object`, and `dictionary` fields cannot be indexed. A path must be a field defined on the schema type, or `metadata.createdAt`, or `metadata.modifiedAt`. Any other path is rejected.'
+          items:
+            $ref: '#/components/schemas/IndexField'
+        metadata:
+          $ref: '#/components/schemas/IndexMetadataRequest'
+      required:
+      - fields
+    ErrorMessageFault:
+      type: object
+      description: Authorization error returned by the API gateway.
+      properties:
+        fault:
+          type: object
+          properties:
+            faultstring:
+              type: string
+              description: Authorization failure.
+            detail:
+              type: object
+              properties:
+                errorcode:
+                  type: string
+                  description: Gateway error code.
+    IndexMetadataRequest:
+      type: object
+      description: 'Optimistic lock for an index update. The object can be omitted on create and on update. A missing object still updates an existing index.
+
+
+        When the object is sent, `version` is required. A value that does not match the stored index returns `409 Conflict`.'
+      properties:
+        version:
+          type: integer
+          minimum: 1
+          description: Current version of the index. The first stored version is 1.
+          example: 1
+      required:
+      - version
+    JobId:
+      type: object
+      description: Identifier of an index job.
+      properties:
+        id:
+          type: string
+          description: Job id.
+          example: 66f1a2b3c4d5e6f708192a3b
+    SearchIndex:
+      type: object
+      description: A search index.
+      properties:
+        id:
+          type: string
+          description: Index id.
+          example: vehicles
+        type:
+          type: string
+          description: Custom schema type this index belongs to.
+          example: VEHICLE
+        name:
+          type: object
+          additionalProperties:
+            type: string
+          description: Localized name. A specific `Accept-Language` value keeps one language. `*` keeps every stored language.
+          example:
+            en: Vehicles
+        description:
+          type: object
+          additionalProperties:
+            type: string
+          description: Localized description. A specific `Accept-Language` value keeps one language. `*` keeps every stored language.
+          example:
+            en: Search vehicles by name and power
+        fields:
+          type: array
+          description: Fields stored for this index.
+          items:
+            $ref: '#/components/schemas/IndexField'
+        status:
+          type: string
+          description: Build state of the index.
+          enum:
+          - building
+          - ready
+          - failed
+          example: ready
+        metadata:
+          $ref: '#/components/schemas/ResourceMetadata'
+  parameters:
+    header_X-Total-Count:
+      name: X-Total-Count
+      in: header
+      required: false
+      description: Flag indicating whether the total count of retrieved items should be returned.
+      schema:
+        default: false
+        type: boolean
+    query_fields_index:
+      name: fields
+      in: query
+      description: Comma-separated list of index properties to return. When the parameter is omitted, the index is returned in full.
+      schema:
+        type: string
+        example: id,name,status
+    query_q:
+      name: q
+      in: query
+      description: 'A standard query parameter is used to search for specific values.
+
+
+        See: [Standard practises - Query parameter](https://developer.emporix.io/api-documentation/standard-practices/q-param)'
+      schema:
+        type: string
+    header_Accept-Language:
+      name: Accept-Language
+      in: header
+      required: false
+      schema:
+        type: string
+      description: 'List of language codes acceptable for the response.
+
+
+        * If the header is set to a language or a list of languages, the service returns the first requested language that has a translation. Localized fields are maps with that language code as the key.
+
+        * If the header is set to `*`, localized fields are retrieved as maps of translations, where the keys are language codes and values are the fields in their respective languages.
+
+        * If the header is empty, localized fields are retrieved as maps containing a single translation, where the key is a language code and the value is the field in the specified language. The endpoint assumes that localized fields are to be retrieved in the tenant''s default language defined in the Configuration Service.
+
+        * If none of the requested languages has a translation, the localized fields are omitted from the response.
+
+        '
+    query_sort_createdAt:
+      name: sort
+      in: query
+      description: 'Comma-separated list of properties used to sort the results. The order of properties indicates their priority.
+
+
+        Possible values:
+
+
+        * `{fieldName}`
+
+        * `{fieldName}:ASC`
+
+        * `{fieldName}:DESC`
+
+
+        When the direction is omitted, the field is sorted in ascending order. When `sort` is omitted, results are ordered by `metadata.createdAt` descending.'
+      schema:
+        type: string
+        example: name:ASC
+    path_tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'Your Emporix tenant''s name.
+
+        **Note**: The tenant should always be written in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+    path_type:
+      name: type
+      in: path
+      required: true
+      description: 'Type of documents to search.
+
+
+        For now, only custom schema types are supported.
+
+        '
+      schema:
+        type: string
+        example: VEHICLE
+    query_pageNumber:
+      name: pageNumber
+      in: query
+      description: 'Page number to be retrieved. The number of the first page is 1.
+
+        '
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    query_pageSize:
+      name: pageSize
+      in: query
+      description: Number of items to be retrieved per page.
+      schema:
+        default: 60
+        minimum: 1
+        maximum: 2000
+        type: integer
+    header_Content-Language:
+      name: Content-Language
+      in: header
+      required: false
+      description: Language of the localized `name` and `description` in the request body. Each language key in those maps must be configured for the tenant.
+      schema:
+        type: string
+        example: en
+    path_index_id:
+      name: id
+      in: path
+      required: true
+      description: Index id. Use 1 to 66 characters. Allowed characters are letters, digits, underscore, and hyphen.
+      schema:
+        type: string
+        pattern: ^[\w-]{1,66}$
+        example: vehicles
+  responses:
+    403_search_manage:
+      description: The access token does not include `search.search_manage`.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Missing manage scope:
+              value:
+                code: 403
+                status: '403'
+                message: User not authorized.
+                details:
+                - message: Missing one of required scopes '[search.search_manage]'
+    500_resp_common:
+      description: A server-side error occurred.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Internal Server Error:
+              value:
+                code: 500
+                status: '500'
+                message: The server has encountered an error during processing the request data while trying to connect to the database.
+    401_resp_common:
+      description: The authorization token is invalid or has expired.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessageFault'
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            Access token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+    403_search_read:
+      description: The access token does not include `search.search_read`.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Missing search scope:
+              value:
+                code: 403
+                status: '403'
+                message: User not authorized.
+                details:
+                - message: Missing one of required scopes '[search.search_read]'
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            search.search_read: Needed to search documents, to read saved searches, and to read search indexes and index jobs.
+            search.search_manage: Needed to create, update, and delete saved searches and search indexes.
+            schema.custominstance_read: Needed to read every custom entity instance. When this scope is absent, `custom.{type}_read` or `custom.{type}_read_own` can still allow the search.
+x-refined-from:
+- emporix-search-service-openapi.yml
+- emporix-search-service-openapi.yml

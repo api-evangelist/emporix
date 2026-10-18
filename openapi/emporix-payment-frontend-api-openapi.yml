@@ -1,0 +1,299 @@
+openapi: 3.2.0
+info:
+  title: Emporix Payment - frontend API
+  version: ''
+  contact:
+    email: documentation@emporix.com
+  description: 'Operations tagged Payment - frontend across 2 of this provider''s published API definitions: emporix-payment-gateway-openapi.yml, emporix-payment-gateway-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Payment - frontend
+paths:
+  /payment-gateway/{tenant}/payment/frontend/initialize:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    post:
+      summary: Initializing a payment
+      operationId: POST-payment-gateway-initialize-payment-frontend
+      responses:
+        '200':
+          $ref: '#/components/responses/paymentInitializeResponse'
+        '400':
+          $ref: '#/components/responses/common_response_BadRequest_400'
+        '401':
+          $ref: '#/components/responses/common_response_Unauthorized_401'
+        '422':
+          $ref: '#/components/responses/common_response_Unprocessable_Entity_422'
+        '500':
+          $ref: '#/components/responses/common_response_InternalServerError_500'
+      tags:
+      - Payment - frontend
+      description: 'Initializes a payment by accepting a request sent from the frontend.
+
+        No scope is required.'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/initializePaymentRequest'
+    servers:
+    - url: https://api.emporix.io
+  /payment-gateway/{tenant}/payment/frontend/authorize:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    post:
+      summary: Authorizing a payment
+      operationId: POST-payment-gateway-authorize-payment-frontend
+      responses:
+        '200':
+          $ref: '#/components/responses/paymentAuthorizeResponse'
+        '400':
+          $ref: '#/components/responses/common_response_BadRequest_400'
+        '401':
+          $ref: '#/components/responses/common_response_Unauthorized_401'
+        '422':
+          $ref: '#/components/responses/common_response_Unprocessable_Entity_422'
+        '500':
+          $ref: '#/components/responses/common_response_InternalServerError_500'
+      tags:
+      - Payment - frontend
+      description: 'Authorize a payment by accepting a request sent from the frontend.
+
+        No scope is required.'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/authorizeFrontendPaymentRequest'
+    servers:
+    - url: https://api.emporix.io
+components:
+  responses:
+    paymentAuthorizeResponse:
+      description: Payment authorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/authorizePaymentResponse'
+          examples:
+            Authorize response:
+              value:
+                successful: true
+                paymentTransactionId: FTrjO4SrNF0Had7yBCeVU5ziqwL
+                requiresExternalPayment: true
+                externalPaymentRedirectURL: https://www.sandbox.paypal.com/checkoutnow?token=0SC35196GX656501J
+                externalPaymentParameters: {}
+    paymentInitializeResponse:
+      description: Payment initialized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/initializePaymentResponse'
+          examples:
+            Authorize response:
+              value:
+                successful: true
+                paymentTransactionId: FTrjO4SrNF0Had7yBCeVU5ziqwL
+                externalPaymentRedirectURL: https://www.sandbox.paypal.com/checkoutnow?token=0SC35196GX656501J
+                externalPaymentParameters: {}
+    common_response_BadRequest_400:
+      description: Bad request. The syntax of the request is incorrect.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/coreErrorMessage'
+          examples:
+            BadRequest:
+              value:
+                code: 400
+                timestamp: '2023-10-03T12:23:31.485306Z'
+                message: The syntax of the request is incorrect.
+    common_response_Unauthorized_401:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            Access token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+    common_response_Unprocessable_Entity_422:
+      description: Unprocessable Entity. The payment action is not supported.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/coreErrorMessage'
+          examples:
+            Unprocessable Entity:
+              value:
+                code: 422
+                timestamp: '2023-10-03T12:23:31.485306Z'
+                message: The payment action is not supported.
+    common_response_InternalServerError_500:
+      description: Internal Server Error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/coreErrorMessage'
+          examples:
+            Internal Server Error:
+              value:
+                code: 500
+                timestamp: '2023-10-03T12:23:31.485306Z'
+                message: Problem encountered while trying to connect to the database.
+  schemas:
+    initializePaymentRequest:
+      title: initializePaymentRequest
+      type: object
+      properties:
+        order:
+          type: object
+          properties:
+            id:
+              type: string
+              description: Identifier of an order for which the payment should be authorized.
+        paymentModeId:
+          type: string
+          description: Identifier of a payment mode configured in the payment-gateway service for a given tenant.
+        creditCardToken:
+          type: string
+          description: Indicates a payment method token, usually generated on a frontend site, when an user provides a credit card information.
+    authorizeFrontendPaymentRequest:
+      title: authorizeFrontendPaymentRequest
+      allOf:
+      - $ref: '#/components/schemas/initializePaymentRequest'
+      - type: object
+        properties:
+          threeDSToken:
+            type: string
+            description: Contains a token generated during the 3DS authentication process.
+          browserInfo:
+            type: string
+            description: Holds information related to the user's web browser.
+          clientIP:
+            type: string
+            description: Stores the IP address of the client or user making the request.
+    initializePaymentResponse:
+      title: initializePaymentResponse
+      type: object
+      properties:
+        successful:
+          type: boolean
+          description: Indicates if the authorization process finished with success.
+        paymentTransactionId:
+          type: string
+          description: 'Unique payment transaction identifier. '
+        authorizationToken:
+          type: string
+          description: Authorization token
+        externalPaymentRedirectURL:
+          type: string
+          description: Indicates a URL address where a user should be redirected in order to finish the authorization process.
+        externalPaymentHttpMethod:
+          type: string
+          description: Indicates a HTTP Method which should be used in order to finish the authorization process.
+        externalPaymentParameters:
+          type: object
+          additionalProperties:
+            type: string
+          description: 'Map of additional parameters that may be needed in order to complete the authorization flow. '
+    authorizePaymentResponse:
+      title: authorizePaymentResponse
+      allOf:
+      - $ref: '#/components/schemas/initializePaymentResponse'
+      - type: object
+        properties:
+          requiresExternalPayment:
+            type: boolean
+            description: Indicates if a redirect to an external site is required in order to finish the authorization flow.
+    coreErrorMessage:
+      anyOf:
+      - type: object
+        properties:
+          code:
+            type: integer
+            description: HTTP Status code.
+          timestamp:
+            type: string
+            description: Indicates a timestamp when the error occurred.
+          message:
+            type: string
+            description: Error message.
+      - type: object
+        properties:
+          type:
+            type: string
+            description: HTTP error type.
+          status:
+            type: integer
+            description: HTTP Status code.
+          message:
+            type: string
+            description: Error message.
+          moreInfo:
+            type: string
+            description: URL which additional information.
+          details:
+            type: array
+            items:
+              type: object
+              properties:
+                message:
+                  type: string
+                  description: Detailed message.
+  parameters:
+    path_tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'Your Emporix tenant''s name.
+
+        **Note**: The tenant name should always be written in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            payment-gateway.paymentmodes_read: Needed for reading payment modes by a tenant employee.
+            payment-gateway.paymentmodes_manage: Needed to manage payment modes by a tenant employee.
+            payment-gateway.authorize_manage: Needed to perform a payment authorization flow by a tenant employee.
+            payment-gateway.capture_manage: Needed to perform a payment capture flow by a tenant employee.
+            payment-gateway.refund_manage: Needed to perform a payment refund flow by a tenant employee.
+            payment-gateway.cancel_manage: Needed to perform a payment cancel flow by a tenant employee.
+            payment-gateway.paymenttransactions_read: Needed to read all transaction details by a tenant employee.
+x-refined-from:
+- emporix-payment-gateway-openapi.yml
+- emporix-payment-gateway-openapi.yml

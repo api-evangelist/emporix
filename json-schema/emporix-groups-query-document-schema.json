@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-groups-query-document-schema.json",
+  "title": "GroupsQueryDocument",
+  "description": "Definition of groups",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-iam-openapi.yml#/components/schemas/GroupsQueryDocument",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Group unique identifier generated when the group is created."
+    },
+    "name": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Localized group name in the form of a map of translations."
+    },
+    "description": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Localized group description in the form of a map of translations."
+    },
+    "vendorId": {
+      "type": "string",
+      "description": "An identifier of a vendor to whom the group belongs. Can only be set during creation and is immutable thereafter. A group with vendorId can only be assigned to users of type `EMPLOYEE`",
+      "readOnly": true
+    },
+    "accessControls": {
+      "type": "array",
+      "description": "Access control unique identifiers associated with this group.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "templates": {
+      "type": "array",
+      "description": "Template unique identifiers associated with this group.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "code": {
+      "type": "string"
+    },
+    "userType": {
+      "type": "string",
+      "description": "The group type determines if the group can consist of users of the `CUSTOMER` or the `EMPLOYEE` type."
+    },
+    "b2b": {
+      "type": "object",
+      "description": "additional properties for B2B",
+      "properties": {
+        "legalEntityId": {
+          "type": "string",
+          "description": "identifier of the assigned legal entity"
+        }
+      }
+    },
+    "restrictions": {
+      "$ref": "#/$defs/Restrictions"
+    },
+    "mixins": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Custom group attributes that need to be included directly in the `mixins` object."
+    },
+    "metadata": {
+      "$ref": "#/$defs/GroupsMetadataQueryDocument"
+    }
+  },
+  "$defs": {
+    "GroupsMetadataQueryDocument": {
+      "required": [
+        "createdAt",
+        "version"
+      ],
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "description": "Group document version.",
+          "format": "int32"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the group was created.",
+          "format": "date-time"
+        },
+        "modifiedAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the group was last modified.",
+          "format": "date-time"
+        }
+      },
+      "description": "Group metadata."
+    },
+    "Restrictions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "description": "Limits the visibility of the permission-aware entities for the user. \n\n**Purpose**: \nRestricts entity visibility based on scope permissions. Only users with matching restriction scopes can access entity with a specific restriction value.\n\n**Validation**: \nThe value must exist in the tenant's configured list of valid restrictions.\n**Site Synchronization**: \nWhen enabled via tenant configuration (`enableSyncBetweenRestrictionsAndSiteCodes` property), this field must match with the existing sites.\n"
+      }
+    }
+  }
+}

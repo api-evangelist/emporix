@@ -1,0 +1,449 @@
+openapi: 3.2.0
+info:
+  title: Emporix Referral Coupon Management API
+  version: ''
+  contact:
+    email: documentation@emporix.com
+  description: 'Operations tagged Referral Coupon Management across 2 of this provider''s published API definitions: emporix-coupon-openapi.yml, emporix-coupon-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Referral Coupon Management
+paths:
+  /coupon/{tenant}/referral-coupons/{customerNumber}:
+    parameters:
+    - $ref: '#/components/parameters/customer_number_path'
+    - $ref: '#/components/parameters/trait_tenant'
+    get:
+      summary: Retrieving customer's referral coupon
+      tags:
+      - Referral Coupon Management
+      responses:
+        '200':
+          description: The referral coupon has been successfully retrieved.
+          content:
+            application/json:
+              examples:
+                Redemption:
+                  $ref: '#/components/examples/referralCoupon'
+              schema:
+                $ref: '#/components/schemas/referralCoupon'
+        '204':
+          description: No content if there is no referral coupon
+        '400':
+          $ref: '#/components/responses/trait_queryable_400'
+        '401':
+          $ref: '#/components/responses/trait_unauthorized_401'
+        '404':
+          $ref: '#/components/responses/trait_notFound_404'
+        '500':
+          $ref: '#/components/responses/trait_internal_500'
+      description: 'Retrieves the referral coupon of a given customer in the database.
+
+
+        When the existing customer shares the referral code with a potential customer, the referred customer can benefit from the discount in a form of a fixed monetary amount.'
+      operationId: GET-coupon-retrieve-referral-coupon
+      security:
+      - OAuth2: []
+    post:
+      summary: Creating a referral coupon code for a given customer
+      tags:
+      - Referral Coupon Management
+      responses:
+        '200':
+          description: The referral coupon code has been successfully retrieved.
+          content:
+            application/json:
+              examples:
+                Redemption:
+                  $ref: '#/components/examples/referralCoupon'
+              schema:
+                $ref: '#/components/schemas/referralCoupon'
+        '400':
+          $ref: '#/components/responses/trait_queryable_400'
+        '401':
+          $ref: '#/components/responses/trait_unauthorized_401'
+        '404':
+          $ref: '#/components/responses/trait_notFound_404'
+        '500':
+          $ref: '#/components/responses/trait_internal_500'
+      description: 'Creates a referral coupon code for a specific customer in the database. If the coupon code exists, returns it without creating a new coupon.
+
+
+        **Note**: There can only be one referral coupon generated per customer.
+
+
+        When the existing customer shares the referral code with a potential customer, the referred customer can benefit from the discount in a form of a fixed monetary amount.'
+      operationId: POST-coupon-create-referral-coupon-code
+      security:
+      - OAuth2: []
+    servers:
+    - url: https://api.emporix.io
+components:
+  responses:
+    trait_internal_500:
+      description: 'Some server side error occurred.
+
+        '
+      content:
+        application/json:
+          schema:
+            title: error
+            description: Schema for API specified errors.
+            example:
+              status: 500
+              message: Something went wrong while processing the request. Please contact the administrator.
+              type: internal_service_error
+            type: object
+            properties:
+              status:
+                minimum: 100
+                maximum: 599
+                description: Original HTTP error code, should be consistent with the response HTTP code.
+                type: integer
+              type:
+                pattern: '[a-z]+[a-z_]*[a-z]+'
+                description: Classification of the error type, lower case with underscore eg validation_failure.
+                type: string
+              message:
+                description: Descriptive error message for debugging.
+                type: string
+              details:
+                description: List of problems causing this error.
+                type: array
+                items:
+                  title: errorDetail
+                  description: Schema for specific error cause.
+                  type: object
+                  properties:
+                    field:
+                      description: A bean notation expression specifying the element in request data causing the error, eg product.variants[3].name, this can be empty if violation was not field specific.
+                      type: string
+                    type:
+                      pattern: '[a-z]+[a-z_]*[a-z]+'
+                      description: Classification of the error detail type, lower case with underscore eg missing_value, this value must be always interpreted in context of the general error type.
+                      type: string
+                    message:
+                      description: Descriptive error detail message for debugging.
+                      type: string
+                    moreInfo:
+                      type: string
+                      description: Link to documentation to investigate further and finding support for error detail.
+                  required:
+                  - type
+            required:
+            - status
+            - type
+    trait_notFound_404:
+      description: 'The requested resource does not exist.
+
+        '
+      content:
+        application/json:
+          schema:
+            title: error
+            description: Schema for API specified errors.
+            example:
+              status: 404
+              message: The requested URI does not map to a single element resource.
+              type: element_resource_non_existing
+            type: object
+            properties:
+              status:
+                minimum: 100
+                maximum: 599
+                description: Original HTTP error code, should be consistent with the response HTTP code.
+                type: integer
+              type:
+                pattern: '[a-z]+[a-z_]*[a-z]+'
+                description: Classification of the error type, lower case with underscore eg validation_failure.
+                type: string
+              message:
+                description: Descriptive error message for debugging.
+                type: string
+            required:
+            - status
+            - type
+          examples:
+            Not found:
+              value:
+                type: resource_not_found
+                status: 404
+                message: Coupon with code MW2023_72 not found.
+    trait_unauthorized_401:
+      description: Example response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Unauthorized:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+    trait_queryable_400:
+      description: Request syntactically incorrect. Details of the error are included in the response payload.
+      content:
+        application/json:
+          schema:
+            title: error
+            description: Schema for API specified errors.
+            example:
+              status: 400
+              message: There are validation problems, see details section for more information.
+              type: validation_violation
+              details:
+              - field: q
+                message: not a valid query
+                type: invalid_query_parameter
+            type: object
+            properties:
+              status:
+                minimum: 100
+                maximum: 599
+                description: Original HTTP error code, should be consistent with the response HTTP code.
+                type: integer
+              type:
+                pattern: '[a-z]+[a-z_]*[a-z]+'
+                description: Classification of the error type, lower case with underscore eg validation_failure.
+                type: string
+              message:
+                description: Descriptive error message for debugging.
+                type: string
+              details:
+                description: List of problems causing this error.
+                type: array
+                items:
+                  title: errorDetail
+                  description: Schema for specific error cause.
+                  type: object
+                  properties:
+                    field:
+                      description: A bean notation expression specifying the element in request data causing the error, eg product.variants[3].name, this can be empty if violation was not field specific.
+                      type: string
+                    type:
+                      pattern: '[a-z]+[a-z_]*[a-z]+'
+                      description: Classification of the error detail type, lower case with underscore eg missing_value, this value must be always interpreted in context of the general error type.
+                      type: string
+                    message:
+                      description: Descriptive error detail message for debugging.
+                      type: string
+                    moreInfo:
+                      type: string
+                      description: Link to documentation to investigate further and finding support for error detail.
+                  required:
+                  - type
+            required:
+            - status
+            - type
+          examples:
+            Bad request:
+              value:
+                type: validation_violation
+                status: 400
+                message: The request violates validation constraints.
+                details:
+                - type: missing_payload
+                  message: Empty payload was sent
+                  moreInfo: ''
+  examples:
+    referralCoupon:
+      value:
+        allowAnonymous: true
+        code: REF_30
+        deleted: false
+        description: A referral Coupon
+        discountAbsolute:
+          amount: 8
+          currency: USD
+        discountType: ABSOLUTE
+        issuedTo: '61443563'
+        referralCoupon: true
+        maxRedemptions: -1
+        maxRedemptionsPerCustomer: -1
+        name: Empfehlungsgutschein John Doe (Emporix)
+        redemptionCount: 0
+        restrictions:
+          validFor: []
+        status: VALID
+        mixins:
+          couponCustomAttributes:
+            provenance: Winter Sale
+            suggestedAmount: 50
+        metadata:
+          version: 1
+          mixins:
+            couponCustomAttributes: https://res.cloudinary.com/saas-ag/raw/upload/emporix-docs/couponAttributes_v1.json
+  schemas:
+    currency-amount:
+      type: object
+      title: Money amount
+      description: Defines an amount in a specific currency.
+      properties:
+        amount:
+          type: number
+          default: 0
+          minimum: 0
+          description: Total amount in the specified currency.
+        currency:
+          type: string
+          default: USD
+          pattern: ^[A-Z]{3}$
+          description: 'ISO 4217 currency code, e.g.: USD, EUR, CHF.'
+    referralCouponProperty:
+      type: boolean
+      description: Indicates if the coupon is type of referral coupon. This property is read only.
+    referralCoupon:
+      title: Coupon
+      description: Coupons describe voucher alike commerce capabilities.
+      type: object
+      properties:
+        code:
+          type: string
+          description: 'e.g.: WINTER-SALE, 10OFF (read-only)'
+        name:
+          type: string
+          description: Coupon name.
+        description:
+          type: string
+          description: Coupon description.
+        discountType:
+          enum:
+          - PERCENT
+          - ABSOLUTE
+          - FREE_SHIPPING
+          description: '`PERCENT` for relative values, `ABSOLUTE` for float values, referring to a specific currency, `FREE_SHIPPING` for reducing the shipping cost to 0.
+
+            '
+          type: string
+        discountPercentage:
+          type: number
+          description: A discount percentage within the range [0.00, 100.00]. Must be specified only if type is `PERCENT`.
+          minimum: 0
+          maximum: 100
+        discountAbsolute:
+          allOf:
+          - $ref: '#/components/schemas/currency-amount'
+        allowAnonymous:
+          type: boolean
+          description: Specifies if the coupon can be redeemed by anonymous users.
+          default: false
+        maxRedemptions:
+          type: number
+          description: Maximum number of redemptions; -1 designates 'unlimited' (seller-only).
+          default: -1
+        maxRedemptionsPerCustomer:
+          type: number
+          description: Maximum number of redemptions per customer; -1 designates 'unlimited'. Cannot be specified for coupons which can be redeemed by anonymous users.
+          default: -1
+        restrictions:
+          type: object
+          properties:
+            validFor:
+              type: array
+              description: A list of customer identifiers for whom the coupon can be redeemed. Cannot be specified for coupons which can be redeemed by anonymous users.
+              items:
+                type: string
+            validFrom:
+              type: string
+              format: date-time
+              description: Must be provided in ISO 8601 format (http://www.iso.org/iso/home/standards/iso8601.htm), e.g. '2015-01-31T23:59:59.999Z'
+            validUntil:
+              type: string
+              format: date-time
+              description: Must be provided in ISO 8601 format (http://www.iso.org/iso/home/standards/iso8601.htm), e.g. '2015-01-31T23:59:59.999Z'
+            minOrderValue:
+              $ref: '#/components/schemas/currency-amount'
+        issuedTo:
+          type: string
+          description: The Id of the customer who originally received the coupon (seller-only).
+        referralCoupon:
+          $ref: '#/components/schemas/referralCouponProperty'
+        redemptionCount:
+          type: number
+          description: The number of times a specific coupon has been redeemed. Read-only, set through server (seller-only).
+        status:
+          enum:
+          - INACTIVE
+          - VALID
+          - EXPIRED
+          - USED
+          description: 'Current status of the coupon (read-only). `INACTIVE`: the coupon is only valid in the future; `VALID`: can be used; `EXPIRED`: the coupon validity period has expired; `USED`: the maximum number of redemptions for the coupon has been reached.'
+          type: string
+        deleted:
+          description: Flag to mark a coupon as deleted (a.k.a. Soft delete). It is a read-only and seller-only attribute
+          type: boolean
+        mixins:
+          type: object
+          description: The field contains mixins values.
+          additionalProperties: true
+        metadata:
+          type: object
+          additionalProperties: false
+          properties:
+            version:
+              description: Version of the document. Set to 0 after creating a document. Increments by 1 after every update.
+              type: number
+            mixins:
+              type: object
+              description: Links to the mixin schemas.
+              additionalProperties:
+                type: string
+              example:
+                couponCustomAttributes: https://res.cloudinary.com/saas-ag/raw/upload/emporix-docs/couponAttributes_v1.json
+      required:
+      - discountType
+      - issuedTo
+      - status
+      - name
+  parameters:
+    trait_tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'The tenant that the caller is acting upon.
+
+
+        Please note that this value is always lowercase.
+
+        '
+      schema:
+        minLength: 3
+        maxLength: 16
+        type: string
+    customer_number_path:
+      name: customerNumber
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Customer number (ID) of customer.
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            coupon.coupon_read: Needed to read coupons.
+            coupon.coupon_manage: Needed to manage coupons.
+            coupon.coupon_redeem: Needed to redeem coupons.
+            coupon.coupon_redeem_on_behalf: Needed to redeem coupons on behalf of another customer.
+x-refined-from:
+- emporix-coupon-openapi.yml
+- emporix-coupon-openapi.yml

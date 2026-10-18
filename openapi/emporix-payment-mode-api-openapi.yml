@@ -1,0 +1,484 @@
+openapi: 3.2.0
+info:
+  title: Emporix Payment mode API
+  version: ''
+  contact:
+    email: documentation@emporix.com
+  description: 'Operations tagged Payment mode across 2 of this provider''s published API definitions: emporix-payment-gateway-openapi.yml, emporix-payment-gateway-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Payment mode
+paths:
+  /payment-gateway/{tenant}/paymentmodes/config:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    post:
+      summary: Creating a single payment mode entity
+      responses:
+        '200':
+          $ref: '#/components/responses/paymentModeResponse'
+        '400':
+          $ref: '#/components/responses/common_response_BadRequest_400'
+        '401':
+          $ref: '#/components/responses/common_response_Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/common_response_Forbidden_403'
+        '409':
+          $ref: '#/components/responses/common_response_Conflict_409'
+        '500':
+          $ref: '#/components/responses/common_response_InternalServerError_500'
+      description: 'Creates a new payment mode for a given tenant. Currently the service supports the following payment methods:
+
+
+        * Payment methods supported by Spreedly: https://docs.spreedly.com/reference/supported-gateways/
+
+        * Saferpay: https://docs.saferpay.com/home/interfaces/payment-api
+
+        * Unzer Invoice: https://docs.unzer.com/payment-methods/unzer-invoice-upl/'
+      operationId: POST-payment-gateway-create-payment-mode
+      security:
+      - OAuth2:
+        - payment-gateway.paymentmodes_manage
+      tags:
+      - Payment mode
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/paymentModeRequest'
+            examples:
+              Creatng a Spreedly payment mode:
+                value:
+                  code: paypal
+                  active: true
+                  provider: SPREEDLY
+                  configuration:
+                    Spreedly/GatewayToken: KnQsG1FFJjfcKEUt5ObMilP2Rs4
+                    Spreedly/EnvironmentKey: Zrg5UfAqQefDY8KGvU5b9OKuxz
+                    Spreedly/AccessSecret: ZrvF6kkV4KgapqzXzR67SsTR4PMbCGTnXLMasskAXKWePSOgnU3XO4EpIvIPUDcF
+                    Spreedly/PaymentMethodType: paypal
+                    Spreedly/RedirectURL: https://storefront.emporix.io/exmporix/my-account/my-orders
+                    Spreedly/SignatureSecret: _eJMkqevWxAdq9qOyA7fjnfCseO7gIaG28rSRBHKJVeKHM6i_Uqt6fGa_cWhzGvc
+              Creating an invoice payment mode:
+                value:
+                  code: invoice
+                  active: true
+                  provider: INVOICE
+                  configuration: {}
+        description: ''
+    get:
+      summary: Retrieving a list of payment modes
+      operationId: GET-payment-gateway-list-payment-modes
+      responses:
+        '200':
+          $ref: '#/components/responses/getAllPaymentModes'
+        '401':
+          $ref: '#/components/responses/common_response_Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/common_response_Forbidden_403'
+        '500':
+          $ref: '#/components/responses/common_response_InternalServerError_500'
+      tags:
+      - Payment mode
+      description: Retrieves a list of configured payment modes for a given tenant.
+      security:
+      - OAuth2:
+        - payment-gateway.paymentmodes_read
+    servers:
+    - url: https://api.emporix.io
+  /payment-gateway/{tenant}/paymentmodes/config/{id}:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    - $ref: '#/components/parameters/path_paymentmode_id'
+    get:
+      summary: Retrieving a single payment mode
+      tags:
+      - Payment mode
+      responses:
+        '200':
+          $ref: '#/components/responses/paymentModeResponse'
+        '401':
+          $ref: '#/components/responses/common_response_Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/common_response_Forbidden_403'
+        '404':
+          $ref: '#/components/responses/common_response_NotFound_404'
+        '500':
+          $ref: '#/components/responses/common_response_InternalServerError_500'
+      operationId: GET-payment-gateway-retrieve-payment-mode
+      description: Retrieves a single payment mode configuration for a given tenant based on a payment mode identifier.
+      security:
+      - OAuth2:
+        - payment-gateway.paymentmodes_read
+    put:
+      summary: Updating a single payment mode
+      operationId: PUT-payment-gateway-update-payment-mode
+      responses:
+        '200':
+          $ref: '#/components/responses/paymentModeResponse'
+        '400':
+          $ref: '#/components/responses/common_response_BadRequest_400'
+        '401':
+          $ref: '#/components/responses/common_response_Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/common_response_Forbidden_403'
+        '404':
+          $ref: '#/components/responses/common_response_NotFound_404'
+        '500':
+          $ref: '#/components/responses/common_response_InternalServerError_500'
+      description: Updates a single payment mode for a given tenant based on a unique mode identifier.
+      security:
+      - OAuth2:
+        - payment-gateway.paymentmodes_manage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/paymentMethodUpdateRequest'
+            examples:
+              Update a payment mode:
+                value:
+                  active: true
+                  configuration:
+                    Spreedly/GatewayToken: KnQsG1FFJjfcKEUt5ObMilP2Rs4
+                    Spreedly/EnvironmentKey: Zrg5UfAqQefDY8KGvU5b9OKuxz
+                    Spreedly/AccessSecret: ZrvF6kkV4KgapqzXzR67SsTR4PMbCGTnXLMasskAXKWePSOgnU3XO4EpIvIPUDcF
+                    Spreedly/PaymentMethodType: paypal
+                    Spreedly/RedirectURL: https://storefront.emporix.io/exmporix/my-account/my-orders
+                    Spreedly/SignatureSecret: _eJMkqevWxAdq9qOyA7fjnfCseO7gIaG28rSRBHKJVeKHM6i_Uqt6fGa_cWhzGvc
+      tags:
+      - Payment mode
+    delete:
+      summary: Deleting a single payment mode
+      operationId: DELETE-payment-gateway-remove-payment-mode
+      responses:
+        '200':
+          description: OK
+        '400':
+          $ref: '#/components/responses/common_response_BadRequest_400'
+        '401':
+          $ref: '#/components/responses/common_response_Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/common_response_Forbidden_403'
+        '404':
+          $ref: '#/components/responses/common_response_NotFound_404'
+        '500':
+          $ref: '#/components/responses/common_response_InternalServerError_500'
+      description: Deletes a single payment mode for a given tenant based on a unique mode identifier.
+      security:
+      - OAuth2:
+        - payment-gateway.paymentmodes_manage
+      tags:
+      - Payment mode
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    paymentModesResponse:
+      title: paymentModesResponse
+      type: array
+      items:
+        $ref: '#/components/schemas/paymentModeResponse'
+    paymentMethodUpdateRequest:
+      title: paymentMethodUpdateRequest
+      type: object
+      properties:
+        active:
+          type: boolean
+          description: Indicates whether a give mode is active.
+        configuration:
+          type: object
+          additionalProperties:
+            type: string
+          description: "Map of configuration values for a particular gateway. Supported and required values for Spreedly: \n* `Spreedly/GatewayToken` - Indicates Spreedly gateway. \n* `Spreedly/EnvironmentKey` - Indicates Spreedly environment key.\n* `Spreedly/AccessSecret` - Indicates Spreedly access secret.\n* `Spreedly/PaymentMethodType` - Indicates payment method type, for example: paypal.\n* `Spreedly/RedirectURL` - Indicates a redirect URL where an end user should be redirected when a payment flow is finished. Usually it's a storefront URL.\n* `Spreedly/SignatureSecret` - Indicates a signature secret. The value is needed  for an offsite flow, when a confirmation callback is used.\n* `Spreedly/SCAProviderToken` - Indicates the Spreedly SCA (Strong Customer Authentication) provider token (3DS credit cart).\n  requestBodies: { }"
+    provider:
+      type: string
+      enum:
+      - INVOICE
+      - CASH_ON_DELIVERY
+      - SPREEDLY
+      - SPREEDLY_SAFERPAY
+      - UNZER
+    paymentModeRequest:
+      title: paymentModeRequest
+      type: object
+      required:
+      - code
+      - provider
+      properties:
+        code:
+          type: string
+          description: Indicates a code of a given method.
+        active:
+          type: boolean
+          description: Indicates whether a give mode is active.
+        provider:
+          allOf:
+          - $ref: '#/components/schemas/provider'
+          description: Indicates which provider should be used.
+        configuration:
+          type: object
+          additionalProperties:
+            type: string
+          description: "Map of configuration values for a particular gateway. Supported and required values for Spreedly: \n* `Spreedly/GatewayToken` - Indicates Spreedly gateway. Valid for `SPREEDLY`, `SPREEDLY_SAFERPAY`.\n* `Spreedly/EnvironmentKey` - Indicates Spreedly environment key. Valid for `SPREEDLY`, `SPREEDLY_SAFERPAY`.\n* `Spreedly/AccessSecret` - Indicates Spreedly access secret. Valid for `SPREEDLY`, `SPREEDLY_SAFERPAY`.\n* `Spreedly/PaymentMethodType` - Indicates payment method type, for example: paypal. Valid for `SPREEDLY`.\n* `Spreedly/RedirectURL` - Indicates a redirect URL where an end user should be redirected when a payment flow is finished. Usually it's a storefront URL. Valid for `SPREEDLY`.\n* `Spreedly/SignatureSecret` - Indicates a signature secret. The value is needed  for an offsite flow, when a confirmation callback is used. Valid for `SPREEDLY`.\n* `Spreedly/SCAProviderToken` - Indicates the Spreedly SCA (Strong Customer Authentication) provider token (3DS credit cart). Valid for `SPREEDLY`.\n* `Spreedly/ReceiverId` - Indicates the Spreedly Receiver identifier. Valid for `SPREEDLY_SAFERPAY`.\n* `Saferpay/BasicAuth` - Base64 encoded username and password of Saferpay account. Valid for `SPREEDLY_SAFERPAY`.\n* `Saferpay/CustomerId` - Saferpay customer ID. Valid for `SPREEDLY_SAFERPAY`.\n* `Saferpay/TerminalId` - Saferpay terminal ID. Valid for `SPREEDLY_SAFERPAY`.\n* `Saferpay/TestEnvironment` - Indicates if the configuration is done for test environment or a production one. If `true` then `https://test.saferpay.com` is used as a destination. Otherwise `https://www.saferpay.com` is used. Valid for `SPREEDLY_SAFERPAY`.\n* `Saferpay/RedirectUrl` - Indicates a redirect URL where an end user should be redirected when a payment flow is finished. Usually it's a storefront URL. Valid for `SPREEDLY_SAFERPAY`.\n* `Unzer/PaymentMethodType` - Indicates a payment method type. Currently supported value is `PAYLATER_INVOICE`. Valid for `UNZER`.\n* `Unzer/PublicKey` - Indicates a Unzer public key. Valid for `UNZER`.\n* `Unzer/PrivateKey` - Indicates a Unzer private key. Valid for `UNZER`.\n* `Unzer/CustomerType` - Indicates a customer type. Currently supported value is `B2C`. Valid for `UNZER`.\n  requestBodies: { }"
+    paymentModeResponse:
+      title: paymentModeResponse
+      type: object
+      properties:
+        id:
+          type: string
+          description: Indicates an autogenerated identifier of a given payment method.
+        code:
+          type: string
+          description: Indicates a code of a given method.
+        active:
+          type: boolean
+          description: Indicates whether a give mode is active.
+        provider:
+          allOf:
+          - $ref: '#/components/schemas/provider'
+          description: Indicates which provider should be used.
+        configuration:
+          type: object
+          additionalProperties:
+            type: string
+          description: "Map of configuration values for a particular gateway. Supported and required values for Spreedly: \n* `Spreedly/GatewayToken` - Indicates Spreedly gateway.\n* `Spreedly/EnvironmentKey` - Indicates Spreedly environment key.\n* `Spreedly/AccessSecret` - Indicates Spreedly access secret.\n* `Spreedly/PaymentMethodType` - Indicates payment method type, for example: paypal.\n* `Spreedly/RedirectURL` - Indicates a redirect URL where an end user should be redirected when a payment flow is finished. Usually it's a storefront URL.\n* `Spreedly/SignatureSecret` - Indicates a signature secret. The value is needed  for an offsite flow, when a confirmation callback is used."
+    coreErrorMessage:
+      anyOf:
+      - type: object
+        properties:
+          code:
+            type: integer
+            description: HTTP Status code.
+          timestamp:
+            type: string
+            description: Indicates a timestamp when the error occurred.
+          message:
+            type: string
+            description: Error message.
+      - type: object
+        properties:
+          type:
+            type: string
+            description: HTTP error type.
+          status:
+            type: integer
+            description: HTTP Status code.
+          message:
+            type: string
+            description: Error message.
+          moreInfo:
+            type: string
+            description: URL which additional information.
+          details:
+            type: array
+            items:
+              type: object
+              properties:
+                message:
+                  type: string
+                  description: Detailed message.
+  responses:
+    common_response_BadRequest_400:
+      description: Bad request. The syntax of the request is incorrect.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/coreErrorMessage'
+          examples:
+            BadRequest:
+              value:
+                code: 400
+                timestamp: '2023-10-03T12:23:31.485306Z'
+                message: The syntax of the request is incorrect.
+    common_response_Conflict_409:
+      description: Conflict. The resource already exists.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/coreErrorMessage'
+          examples:
+            Conflict:
+              value:
+                code: 409
+                timestamp: '2023-10-03T12:23:31.485306Z'
+                message: The resource already exists.
+    paymentModeResponse:
+      description: Payment mode configured in the payment-gateway service for a given tenant.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/paymentModeResponse'
+          examples:
+            Payment Mode:
+              value:
+                id: 92d77b2b-9385-43ad-a859-55176fbcbd36
+                code: credit_card
+                active: true
+                provider: SPREEDLY
+                configuration:
+                  Spreedly/GatewayToken: 5xGx9vcZlMe1AVuHQk00CZTS8YM
+                  Spreedly/EnvironmentKey: Zrg5UfAqQefDY8KGvU4b31Kuxz
+                  Spreedly/AccessSecret: ZbvF3kkV4KgapqzXzR67SsTR4IMbCGTnXLMasskPXKWePSOgnU3XO4EpIvIPUMcF
+                  Spreedly/PaymentMethodType: credit_card
+                  Spreedly/RedirectURL: https://example.com
+                  Spreedly/SCAProviderToken: Fnj4SPHmrrbCaHFkWjMItJWzNql
+    common_response_Unauthorized_401:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            Access token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+    common_response_Forbidden_403:
+      description: Access forbidden. The caller is not allowed to access this resource.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/coreErrorMessage'
+          examples:
+            Forbidden:
+              value:
+                status: 403
+                type: Forbidden
+                message: The access to the requested resource has been forbidden by the server.
+                details:
+                - message: Missing required scopes '[payment-gateway.authorize_manage]'
+    getAllPaymentModes:
+      description: Get all payment modes configured in the payment-gateway service for a given tenant.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/paymentModesResponse'
+          examples:
+            All payment modes:
+              value:
+              - id: 92d77b2b-9385-43ad-a859-55176fbcbd36
+                code: credit_card
+                active: true
+                provider: SPREEDLY
+                configuration:
+                  Spreedly/GatewayToken: 5xGx9vcZlMe1AVuHQk00CZTS8YM
+                  Spreedly/EnvironmentKey: Zrg5UfAqQefDY8KGvU4b31Kuxz
+                  Spreedly/AccessSecret: ZbvF3kkV4KgapqzXzR67SsTR4IMbCGTnXLMasskPXKWePSOgnU3XO4EpIvIPUMcF
+                  Spreedly/PaymentMethodType: credit_card
+                  Spreedly/RedirectURL: https://example.com
+                  Spreedly/SCAProviderToken: Fnj4SPHmrrbCaHFkWjMItJWzNql
+              - id: a8c96773-1cdf-4ea7-b1a2-1453d17f5324
+                code: sprel
+                active: true
+                provider: SPREEDLY
+                configuration:
+                  Spreedly/GatewayToken: 5xGx9vcZlMe1AVuHQk00CZTS8YM
+                  Spreedly/EnvironmentKey: Zrg5UfAqQefDY8KGvU4b31Kuxz
+                  Spreedly/AccessSecret: ZbvF3kkV4KgapqzXzR67SsTR4IMbCGTnXLMasskPXKWePSOgnU3XO4EpIvIPUMcF
+                  Spreedly/SignatureSecret: _eJMkqevWxXcq6qOyA1fjnfCseO7gISG28rSRBHKJVeKHM6i_Pqt6fGa_cWhzGvc
+                  Spreedly/PaymentMethodType: sprel
+                  Spreedly/RedirectURL: https://storefront.emporix.io/emporix/payment-callback
+              - id: ef48f439-1c2c-42ff-807d-ed4cac287741
+                code: paypal
+                siteCode: main
+                active: true
+                provider: SPREEDLY
+                configuration:
+                  Spreedly/GatewayToken: 5xGx9vcZlMe1AVuHQk00CZTS8YM
+                  Spreedly/EnvironmentKey: Zrg5UfAqQefDY8KGvU4b31Kuxz
+                  Spreedly/AccessSecret: ZbvF3kkV4KgapqzXzR67SsTR4IMbCGTnXLMasskPXKWePSOgnU3XO4EpIvIPUMcF
+                  Spreedly/PaymentMethodType: paypal
+                  Spreedly/RedirectURL: https://storefront.emporix.io/emporix/payment-callback
+                  Spreedly/SignatureSecret: _eJMkqevWxXcq9qOyA7fjnfCseO7gISG28rSRBHKPVeKDM6i_Uqt6fGa_cWhzGvc
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/paymentModeResponse'
+        multipart/form-data:
+          schema:
+            $ref: '#/components/schemas/paymentModesResponse'
+    common_response_InternalServerError_500:
+      description: Internal Server Error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/coreErrorMessage'
+          examples:
+            Internal Server Error:
+              value:
+                code: 500
+                timestamp: '2023-10-03T12:23:31.485306Z'
+                message: Problem encountered while trying to connect to the database.
+    common_response_NotFound_404:
+      description: Not found. The resource does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/coreErrorMessage'
+          examples:
+            NotFound:
+              value:
+                code: 404
+                timestamp: '2023-10-03T12:23:31.485306Z'
+                message: The resource does not exist.
+  parameters:
+    path_tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'Your Emporix tenant''s name.
+
+        **Note**: The tenant name should always be written in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+    path_paymentmode_id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Unique identifier of a payment mode.
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            payment-gateway.paymentmodes_read: Needed for reading payment modes by a tenant employee.
+            payment-gateway.paymentmodes_manage: Needed to manage payment modes by a tenant employee.
+            payment-gateway.authorize_manage: Needed to perform a payment authorization flow by a tenant employee.
+            payment-gateway.capture_manage: Needed to perform a payment capture flow by a tenant employee.
+            payment-gateway.refund_manage: Needed to perform a payment refund flow by a tenant employee.
+            payment-gateway.cancel_manage: Needed to perform a payment cancel flow by a tenant employee.
+            payment-gateway.paymenttransactions_read: Needed to read all transaction details by a tenant employee.
+x-refined-from:
+- emporix-payment-gateway-openapi.yml
+- emporix-payment-gateway-openapi.yml

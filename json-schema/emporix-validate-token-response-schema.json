@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-validate-token-response-schema.json",
+  "title": "ValidateTokenResponse",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-customer-management-openapi.yml#/components/schemas/ValidateTokenResponse",
+  "type": "object",
+  "x-stoplight": {
+    "id": "rjgbt7z8oqzgq"
+  },
+  "properties": {
+    "token_type": {
+      "type": "string",
+      "description": "Type of the token. Usually it's `Bearer`."
+    },
+    "expires_in": {
+      "type": "integer",
+      "format": "int32",
+      "description": "Specifies the token's expiration time, represented in seconds."
+    },
+    "scope": {
+      "type": "string",
+      "description": "A list of scopes assigned to the user."
+    },
+    "sessionId": {
+      "type": "string",
+      "x-stoplight": {
+        "id": "g9aiqlhvwrw1k"
+      },
+      "description": "Identifier of the user session."
+    },
+    "email": {
+      "type": "string",
+      "description": "Customer email used to login (generate the token)."
+    },
+    "legalEntityId": {
+      "type": "string",
+      "description": "Legal Entity ID."
+    }
+  }
+}

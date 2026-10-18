@@ -1,0 +1,702 @@
+openapi: 3.2.0
+info:
+  title: Emporix Delivery Times Slots Management API
+  version: ''
+  contact:
+    name: Emporix
+    url: https://emporix.com
+    email: documentation@emporix.com
+  description: 'Operations tagged Delivery Times Slots Management across 2 of this provider''s published API definitions: emporix-shipping-openapi.yml, emporix-shipping-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- oAuth2: []
+tags:
+- name: Delivery Times Slots Management
+  description: Manage delivery time slots
+paths:
+  /shipping/{tenant}/delivery-times/{deliveryTimeId}/slots:
+    parameters:
+    - schema:
+        type: string
+      name: tenant
+      in: path
+      required: true
+    - schema:
+        type: string
+      name: deliveryTimeId
+      in: path
+      required: true
+    get:
+      summary: Getting all the delivery time slots
+      tags:
+      - Delivery Times Slots Management
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SlotCreation'
+              examples:
+                sample response:
+                  value:
+                  - id: 5bb01144-7c72-4659-9ca2-f1f435108c63
+                    shippingMethod: method1
+                    deliveryTimeRange:
+                      timeFrom: '10:00'
+                      timeTo: '12:00'
+                    cutOffTime:
+                      time: '2023-06-12T06:00:00.000Z'
+                      cutOffDayShift: 1
+                      deliveryCycleName: morning
+                    capacity: 100
+        '401':
+          $ref: '#/components/responses/unauthorized_401'
+        '403':
+          $ref: '#/components/responses/yaasAware_403'
+        '404':
+          $ref: '#/components/responses/notFound_404'
+        '500':
+          $ref: '#/components/responses/internalError_500'
+      operationId: GET-shipping-retrieve-delivery-time-slots
+      description: 'Retrieves all the slots for a given delivery time.
+
+
+        In case of any validation problem, the below `errorCodes` can be returned:
+
+        - **DELIVERY-TIME-404002**: Delivery time with given id does not exist
+
+        - **DELIVERY-TIME-500001**: Internal problem with the service'
+      security:
+      - oAuth2:
+        - shipping.shipping_read
+    post:
+      summary: Creating a delivery time slot
+      tags:
+      - Delivery Times Slots Management
+      parameters:
+      - $ref: '#/components/parameters/validateOverlapQuery'
+      operationId: POST-shipping-create-delivery-time-slot
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+              examples:
+                Sample response:
+                  value:
+                    id: 800c4f51-035d-43b4-bbbb-b9ba0c630242
+        '400':
+          $ref: '#/components/responses/yaasAware_400'
+        '401':
+          $ref: '#/components/responses/unauthorized_401'
+        '403':
+          $ref: '#/components/responses/yaasAware_403'
+        '409':
+          $ref: '#/components/responses/resourceConflict_409'
+        '500':
+          $ref: '#/components/responses/internalError_500'
+      description: 'Creates a new time slot for the given delivery time.
+
+
+        In case of any validation problem, the below `errorCodes` can be returned:
+
+        - **DELIVERY-TIME-400003**: Delivery time of `weekday` type overlaps on existing one
+
+        - **DELIVERY-TIME-400004**: Delivery time of `singleDay` type overlaps on existing one
+
+        - **DELIVERY-TIME-400005**: Slot overlaps delivery time of another slots in given delivery time
+
+        - **DELIVERY-TIME-400006**: Delivery time of `datePeriod` type overlaps on existing one
+
+        - **DELIVERY-TIME-400007**: Duplicated time ranges and cutOff time different slots
+
+        - **DELIVERY-TIME-400010**: Provided shipping method does not belong to the given zone
+
+        - **DELIVERY-TIME-400011**: Delivery ''timeFrom'' cannot be after ''timeTo''
+
+        - **DELIVERY-TIME-400015**: There are duplicated slot ids in the slots array
+
+        - **DELIVERY-TIME-400018**: Delivery `cutOffTime` cannot be after ''timeTo''
+
+        - **DELIVERY-TIME-404001**: Delivery time with given id does not exist
+
+        - **DELIVERY-TIME-500001**: Internal problem with the service
+
+        - **DELIVERY-TIME-SLOT-400001**: There are overlapping slot id in the request
+
+        - **DELIVERY-TIME-SLOT-400002**: The slot id from the payload must match the id from the url
+
+        - **DELIVERY-TIME-SLOT-400003**: Slot with provided id already exists in the given delivery time
+
+        - **DELIVERY-TIME-SLOT-400004**: Duplicated time ranges and cutOff time in the existing slots
+
+        - **DELIVERY-TIME-SLOT-400005**: The slot cut off day is set when the delivery time date or period is set
+
+        - **DELIVERY-TIME-SLOT-400006**: The slot cut off day is set when the delivery day shift is set'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SlotCreation'
+            examples:
+              Sample request payload:
+                value:
+                  shippingMethod: method2
+                  deliveryTimeRange:
+                    timeFrom: '10:00'
+                    timeTo: '12:00'
+                  cutOffTime:
+                    time: '2023-06-12T06:00:00.000Z'
+                    cutOffDayShift: 1
+                    deliveryCycleName: evening
+                  capacity: 100
+      security:
+      - oAuth2:
+        - shipping.shipping_manage
+    delete:
+      summary: Deleting all the delivery time slots
+      tags:
+      - Delivery Times Slots Management
+      operationId: DELETE-shipping-remove-all-delivery-times-slots
+      responses:
+        '204':
+          description: No Content
+        '401':
+          $ref: '#/components/responses/unauthorized_401'
+        '403':
+          $ref: '#/components/responses/yaasAware_403'
+        '404':
+          $ref: '#/components/responses/notFound_404'
+        '500':
+          $ref: '#/components/responses/internalError_500'
+      description: 'Deletes all the time slots for the given delivery time.
+
+
+        In case of any validation problem, the below `errorCodes` can be returned:
+
+        - **DELIVERY-TIME-404002**: Delivery time with given id does not exist
+
+        - **DELIVERY-TIME-500001**: Internal problem with the service'
+      security:
+      - oAuth2:
+        - shipping.shipping_manage
+    servers:
+    - url: https://api.emporix.io
+  /shipping/{tenant}/delivery-times/{deliveryTimeId}/slots/{slotId}:
+    parameters:
+    - schema:
+        type: string
+      name: tenant
+      in: path
+      required: true
+    - schema:
+        type: string
+      name: deliveryTimeId
+      in: path
+      required: true
+    - schema:
+        type: string
+      name: slotId
+      in: path
+      required: true
+    get:
+      summary: Getting a delivery time slot
+      tags:
+      - Delivery Times Slots Management
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SlotCreation'
+              examples:
+                Sample response:
+                  value:
+                    id: 800c4f51-035d-43b4-bbbb-b9ba0c630242
+                    shippingMethod: method2
+                    deliveryTimeRange:
+                      timeFrom: '10:00'
+                      timeTo: '12:00'
+                    cutOffTime:
+                      time: '2023-06-12T06:00:00.000Z'
+                      cutOffDayShift: 1
+                      deliveryCycleName: evening
+                    capacity: 100
+        '401':
+          $ref: '#/components/responses/unauthorized_401'
+        '403':
+          $ref: '#/components/responses/yaasAware_403'
+        '404':
+          $ref: '#/components/responses/notFound_404'
+        '500':
+          $ref: '#/components/responses/internalError_500'
+      operationId: get-tenant-delivery-times-deliveryTimeId-slots-slotId
+      description: 'Retrieves the given delivery time slot''s details.
+
+
+        In case of any validation problem, the below `errorCodes` can be returned:
+
+        - **DELIVERY-TIME-500001**: Internal problem with the service
+
+        - **DELIVERY-TIME-404002**: Delivery time with given id doesn''t exists in the system
+
+        - **DELIVERY-TIME-SLOT-404001**: Slot with provided id doesn''t exists in the given delivery time'
+      security:
+      - oAuth2:
+        - shipping.shipping_read
+    put:
+      summary: Updating a delivery time slot
+      tags:
+      - Delivery Times Slots Management
+      parameters:
+      - $ref: '#/components/parameters/validateOverlapQuery'
+      operationId: PUT-shipping-update-delivery-time-slot
+      responses:
+        '200':
+          description: OK
+        '400':
+          $ref: '#/components/responses/yaasAware_400'
+        '401':
+          $ref: '#/components/responses/unauthorized_401'
+        '403':
+          $ref: '#/components/responses/yaasAware_403'
+        '404':
+          $ref: '#/components/responses/notFound_404'
+        '409':
+          $ref: '#/components/responses/resourceConflict_409'
+        '500':
+          $ref: '#/components/responses/internalError_500'
+      description: 'Updates a single delivery time slot with given information.
+
+        ### Note:
+
+        Depending on a case, a different set of fields is allowed.
+
+
+        In case of any validation problem, the below `errorCodes` can be returned:
+
+        - **DELIVERY-TIME-400003**: Delivery time of `weekday` type overlaps on existing one
+
+        - **DELIVERY-TIME-400004**: Delivery time of `singleDay` type overlaps on existing one
+
+        - **DELIVERY-TIME-400005**: Slot overlaps delivery time of another slots in given delivery time
+
+        - **DELIVERY-TIME-400006**: Delivery time of `datePeriod` type overlaps on existing one
+
+        - **DELIVERY-TIME-400007**: Duplicated time ranges and cutOff time different slots
+
+        - **DELIVERY-TIME-400010**: Provided shipping method does not belong to the given zone
+
+        - **DELIVERY-TIME-400011**: Delivery ''timeFrom'' cannot be after ''timeTo''
+
+        - **DELIVERY-TIME-400015**: There are duplicated slot ids in the slots array
+
+        - **DELIVERY-TIME-400018**: Delivery `cutOffTime` cannot be after ''timeTo''
+
+        - **DELIVERY-TIME-404002**: Delivery time with given id does not exist
+
+        - **DELIVERY-TIME-500001**: Internal problem with the service
+
+        - **DELIVERY-TIME-SLOT-400001**: There are overlapping slot id in the request
+
+        - **DELIVERY-TIME-SLOT-400002**: The slot id from the payload must match the id from the url
+
+        - **DELIVERY-TIME-SLOT-400003**: Slot with provided id already exists in the given delivery time
+
+        - **DELIVERY-TIME-SLOT-400004**: Duplicated time ranges and cutOff time in the existing slots
+
+        - **DELIVERY-TIME-SLOT-404001**: Slot with provided id doesn''t exists in the given delivery time
+
+        - **DELIVERY-TIME-SLOT-400005**: The slot cut off day is set when the delivery time date or period is set
+
+        - **DELIVERY-TIME-SLOT-400006**: The slot cut off day is set when the delivery day shift is set'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SlotCreation'
+            examples:
+              Sample request payload:
+                value:
+                  shippingMethod: method2
+                  deliveryTimeRange:
+                    timeFrom: '10:00'
+                    timeTo: '12:00'
+                  cutOffTime:
+                    time: '2023-06-12T06:00:00.000Z'
+                    cutOffDayShift: 1
+                    deliveryCycleName: evening
+                  capacity: 100
+      security:
+      - oAuth2:
+        - shipping.shipping_manage
+    patch:
+      summary: Partial updating of a delivery time slot
+      tags:
+      - Delivery Times Slots Management
+      parameters:
+      - $ref: '#/components/parameters/validateOverlapQuery'
+      operationId: PATCH-shipping-update-delivery-time-slot
+      responses:
+        '200':
+          description: OK
+        '400':
+          $ref: '#/components/responses/yaasAware_400'
+        '401':
+          $ref: '#/components/responses/unauthorized_401'
+        '403':
+          $ref: '#/components/responses/yaasAware_403'
+        '404':
+          $ref: '#/components/responses/notFound_404'
+        '500':
+          $ref: '#/components/responses/internalError_500'
+      description: 'Partially updates a single delivery time slot with given information.
+
+        Note: Depending on a case, a different set of fields is allowed.
+
+
+        The patch request consists of a set of operations, that should be defined according to RFC-6902 standard
+
+
+        In case of any validation problem, the below `errorCodes` can be returned:
+
+        - **DELIVERY-TIME-400003**: Delivery time of `weekday` type overlaps on existing one
+
+        - **DELIVERY-TIME-400004**: Delivery time of `singleDay` type overlaps on existing one
+
+        - **DELIVERY-TIME-400005**: Slot overlaps delivery time of another slots in given delivery time
+
+        - **DELIVERY-TIME-400006**: Delivery time of `datePeriod` type overlaps on existing one
+
+        - **DELIVERY-TIME-400007**: Duplicated time ranges and cutOff time different slots
+
+        - **DELIVERY-TIME-400010**: Provided shipping method does not belong to the given zone
+
+        - **DELIVERY-TIME-400011**: Delivery ''timeFrom'' cannot be after ''timeTo''
+
+        - **DELIVERY-TIME-400015**: There are duplicated slot ids in the slots array
+
+        - **DELIVERY-TIME-400018**: Delivery `cutOffTime` cannot be after ''timeTo''
+
+        - **DELIVERY-TIME-404002**: Delivery time with given id does not exist
+
+        - **DELIVERY-TIME-500001**: Internal problem with the service
+
+        - **DELIVERY-TIME-SLOT-400001**: There are overlapping slot id in the request
+
+        - **DELIVERY-TIME-SLOT-400002**: The slot id from the payload must match the id from the url
+
+        - **DELIVERY-TIME-SLOT-400003**: Slot with provided id already exists in the given delivery time
+
+        - **DELIVERY-TIME-SLOT-400004**: Duplicated time ranges and cutOff time in the existing slots
+
+        - **DELIVERY-TIME-SLOT-404001**: Slot with provided id doesn''t exists in the given delivery time
+
+        - **DELIVERY-TIME-SLOT-400005**: The slot cut off day is set when the delivery time date or period is set
+
+        - **DELIVERY-TIME-SLOT-400006**: The slot cut off day is set when the delivery day shift is set'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Patch'
+            examples:
+              Sample request:
+                value:
+                - op: replace
+                  path: /shippingMethod
+                  value: testMethod
+      security:
+      - oAuth2:
+        - shipping.shipping_manage
+    delete:
+      summary: Deleting a delivery time slot
+      tags:
+      - Delivery Times Slots Management
+      operationId: DELETE-shipping-remove-delivery-times-slot
+      responses:
+        '204':
+          description: No Content
+        '401':
+          $ref: '#/components/responses/unauthorized_401'
+        '403':
+          $ref: '#/components/responses/yaasAware_403'
+        '404':
+          $ref: '#/components/responses/notFound_404'
+        '500':
+          $ref: '#/components/responses/internalError_500'
+      description: 'Deletes a single delivery time slot.
+
+
+        In case of any validation problem, the below `errorCodes` can be returned:
+
+        - **DELIVERY-TIME-404002**: Delivery time with given id does not exist
+
+        - **DELIVERY-TIME-500001**: Internal problem with the service
+
+        - **DELIVERY-TIME-SLOT-404001**: Slot with provided id doesn''t exists in the given delivery time'
+      security:
+      - oAuth2:
+        - shipping.shipping_manage
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    errorMessage:
+      title: error
+      description: Schema for API specified errors.
+      type: object
+      properties:
+        status:
+          minimum: 100
+          maximum: 599
+          description: original HTTP error code, should be consistent with the response HTTP code
+          type: integer
+        type:
+          pattern: '[a-z]+[a-z_]*[a-z]+'
+          description: classification of the error type, lower case with underscore eg validation_failure
+          type: string
+        message:
+          description: descriptive error message for debugging
+          type: string
+        moreInfo:
+          type: string
+          description: link to documentation to investigate further and finding support
+        errorCode:
+          type: string
+          description: The error code which specify the problem
+        details:
+          description: list of problems causing this error
+          type: array
+          items:
+            title: errorDetail
+            description: schema for specific error cause
+            anyOf:
+            - type: string
+            - type: object
+              properties:
+                field:
+                  description: a bean notation expression specifying the element in request data causing the error, eg shipTo[0].country, this can be empty if violation was not field specific
+                  type: string
+                type:
+                  pattern: '[a-z]+[a-z_]*[a-z]+'
+                  description: classification of the error detail type, lower case with underscore eg missing_value, this value must be always interpreted in context of the general error type.
+                  type: string
+                message:
+                  description: descriptive error detail message for debugging
+                  type: string
+                moreInfo:
+                  type: string
+                  description: link to documentation to investigate further and finding support for error detail
+      required:
+      - status
+      - type
+    DeliveryTimeRange:
+      title: Time range
+      description: A `from` to `to` time range for which the object is valid
+      type: object
+      properties:
+        timeFrom:
+          pattern: ^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$
+          type: string
+          description: Time from which the object is valid, provided in local time (e.g. 10:00)
+        timeTo:
+          pattern: ^(2[0-4]|[01]?[0-9]):([0-5]?[0-9])$
+          type: string
+          description: Time to which the object is valid, provided in local time (e.g. 10:00).
+      required:
+      - timeFrom
+      - timeTo
+    CutOffTIme:
+      title: Cut-Off Time
+      description: This denotes the latest point in time by which an action (such as an order or request) must be completed for a specific Delivery Time. This attribute is key in determining the end of a time window for certain operations and helps maintain efficiency in the delivery process.
+      type: object
+      properties:
+        time:
+          type: string
+          description: The cut-off time refers to the deadline by which an order must be placed to be eligible for same-day processing and shipping. Date is compliant with the ISO 8601 standard, but only time is taking into account.
+        cutOffDayShift:
+          type: integer
+          minimum: 0
+          default: 0
+          description: Indicates in how many days the order has been delivered when the order has been completed before cut-off time. Property is only available for delivery times of weekday type.
+        deliveryCycleName:
+          type: string
+          description: An optional suffix that is added to delivery cycle name
+      required:
+      - time
+    SlotCreation:
+      title: Slot
+      description: ''
+      type: object
+      properties:
+        id:
+          type: string
+          description: 'Delivery Time Slot ID: Autogenerated (if not provided in request) or User-Defined'
+        shippingMethod:
+          description: Selected shipping method which is available for the Delivery Time in the given Time Slot
+          type: string
+        deliveryTimeRange:
+          $ref: '#/components/schemas/DeliveryTimeRange'
+        cutOffTime:
+          $ref: '#/components/schemas/CutOffTIme'
+        capacity:
+          type: integer
+          description: A capacity determines how many orders the given Delivery Time Slot can handle
+      required:
+      - shippingMethod
+      - deliveryTimeRange
+      - cutOffTime
+      - capacity
+    Patch:
+      type: array
+      items:
+        type: object
+        properties:
+          op:
+            type: string
+            description: 'Indicates an operation which should be done. Available operations: `add`, `remove` and `replace`'
+          path:
+            type: string
+            description: 'Indicates a path for which the value should be applied. For example: `/shippingMethod`, `/cutOffTime/day`'
+          value:
+            description: Indicates a value that should be changed or added. The value can be of a primitive type, like string, number, boolean or it can be an object or an array.
+            oneOf:
+            - type: string
+            - type: object
+  responses:
+    unauthorized_401:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+    yaasAware_403:
+      description: 'Given authorization scopes are not sufficient and do not match required scopes.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Forbidden:
+              value:
+                status: 403
+                message: User not authorized.
+                type: Forbidden
+                details:
+                - Missing required scopes
+    internalError_500:
+      description: 'Some server side error occurred.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Internal Server Error:
+              value:
+                status: 500
+                message: Something went wrong while processing the request. Please contact the administrator.
+                errorCode: ENTITY-500001
+                moreInfo: ''
+                type: internal_service_error
+    resourceConflict_409:
+      description: 'Creation failed because there was a conflict with another resource. Details of the error are included in the response payload.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Conflict:
+              value:
+                status: 409
+                message: The requested resource could not be updated due to server-side validation.
+                moreInfo: ''
+                type: conflict_resource
+    notFound_404:
+      description: 'The requested resource does not exist.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Not Found:
+              value:
+                status: 404
+                message: The requested URI does not map to a single element resource.
+                errorCode: ENTITY-GET-404001
+                moreInfo: ''
+                type: element_resource_non_existing
+    yaasAware_400:
+      description: Request syntactically incorrect. Details of the error are included in the response payload.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Bad request:
+              value:
+                status: 400
+                message: There are validation problems, see details section for more information
+                moreInfo: ''
+                type: validation_violation
+                details:
+                - field: tenant
+                  message: size must be between 2 and 16
+                  type: invalid_header
+  parameters:
+    validateOverlapQuery:
+      name: validateOverlap
+      description: The flag allows to enable or disable the validation which checks if the delivery time ranges from slots of the same shipping method overlap each other.
+      in: query
+      required: false
+      schema:
+        type: boolean
+        default: true
+  securitySchemes:
+    oAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            shipping.shipping_manage: Needed to manage shipping settings.
+            shipping.shipping_read: Needed to read shipping settings.
+x-refined-from:
+- emporix-shipping-openapi.yml
+- emporix-shipping-openapi.yml

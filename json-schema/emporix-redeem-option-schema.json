@@ -1,0 +1,234 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-redeem-option-schema.json",
+  "title": "redeemOption",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-reward-points-openapi.yml#/components/schemas/redeemOption",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "ID of the redemption option to be used at reward points exchange"
+    },
+    "type": {
+      "type": "string",
+      "description": "Option type, typically 'coupon'."
+    },
+    "name": {
+      "type": "string",
+      "description": "Name of the redeem option that can be presented to customer"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of the redeem option that can be presented to customer"
+    },
+    "points": {
+      "type": "integer",
+      "description": "Points to deduct from customer's account at coupon creation"
+    },
+    "coupon": {
+      "$ref": "#/$defs/coupon"
+    },
+    "pointsAfterCoupon": {
+      "type": "integer"
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "description": "Version of the redeem option"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the redeem option has been created."
+        },
+        "modifiedAt": {
+          "type": "string",
+          "description": "Timestamp when the redeem option has been modified."
+        }
+      }
+    }
+  },
+  "required": [
+    "type",
+    "name",
+    "points"
+  ],
+  "$defs": {
+    "coupon": {
+      "title": "Coupon API",
+      "description": "Coupons describe voucher-like commerce capabilities.",
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Coupon code, for example: WINTER-SALE, 10OFF (read-only)",
+          "type": "string"
+        },
+        "name": {
+          "description": "Localized coupon name",
+          "type": "string"
+        },
+        "description": {
+          "description": "Localized coupon description",
+          "type": "string"
+        },
+        "discountType": {
+          "description": "'PERCENT' for relative values, 'ABSOLUTE' for float values referring to a specific currency, 'FREE_SHIPPING' for reducing the shipping cost to 0.",
+          "enum": [
+            "PERCENT",
+            "ABSOLUTE",
+            "FREE_SHIPPING"
+          ],
+          "type": "string"
+        },
+        "discountPercentage": {
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Discount percentage within a range [0.00, 100.00]. Must be specified only if type is 'PERCENT'.",
+          "type": "number"
+        },
+        "discountAbsolute": {
+          "title": "Money Amount",
+          "description": "Must be specified only if type is 'ABSOLUTE'",
+          "type": "object",
+          "properties": {
+            "amount": {
+              "default": 0,
+              "minimum": 0,
+              "description": "Total amount in the specified currency.",
+              "type": "number"
+            },
+            "currency": {
+              "default": "USD",
+              "pattern": "^[a-zA-Z]{3}$",
+              "description": "ISO 4217 currency code, e.g.: USD, EUR, CHF",
+              "type": "string"
+            }
+          }
+        },
+        "allowAnonymous": {
+          "default": false,
+          "description": "Defines if the coupon can be redeemed by anonymous users",
+          "type": "boolean"
+        },
+        "maxRedemptions": {
+          "default": -1,
+          "description": "Maximum number of redemptions; -1 designates 'unlimited' (seller-only)",
+          "type": "number"
+        },
+        "maxRedemptionsPerCustomer": {
+          "default": -1,
+          "description": "Maximum number of redemptions per customer; -1 designates 'unlimited'. Cannot be specified for coupons which can be redeemed by anonymous users.",
+          "type": "number"
+        },
+        "restrictions": {
+          "$ref": "#/$defs/restrictions"
+        },
+        "issuedTo": {
+          "description": "Id of the customer who originally received the coupon (seller-only).",
+          "type": "string"
+        },
+        "redemptionCount": {
+          "description": "The number of times a specific coupon has been redeemed. Read-only, set through server. (seller-only)",
+          "type": "number"
+        },
+        "status": {
+          "description": "Current status of the coupon (read-only). 'INACTIVE': the coupon is only valid in the future; 'VALID': can be used; 'EXPIRED': the coupon validity period has expired; 'USED': the maximum number of redemptions for the coupon has been reached.",
+          "enum": [
+            "INACTIVE",
+            "VALID",
+            "EXPIRED",
+            "USED"
+          ],
+          "type": "string"
+        },
+        "links": {
+          "description": "Hypermedia reference to coupon actions (read-only, customer-only)",
+          "type": "array",
+          "items": {
+            "description": "Hypermedia reference to a resource",
+            "type": "object",
+            "properties": {
+              "rel": {
+                "description": "Link relation type",
+                "type": "string"
+              },
+              "title": {
+                "description": "Link title",
+                "type": "string"
+              },
+              "href": {
+                "description": "Target URI of the link",
+                "type": "string"
+              },
+              "type": {
+                "description": "Content type of the referenced resource",
+                "type": "string"
+              }
+            },
+            "required": [
+              "rel",
+              "title",
+              "href",
+              "type"
+            ]
+          }
+        },
+        "deleted": {
+          "description": "Flag to mark a coupon as deleted (a.k.a. Soft delete). It is a read-only and seller-only attribute",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "discountType"
+      ]
+    },
+    "restrictions": {
+      "title": "Restrictions",
+      "type": "object",
+      "properties": {
+        "validFor": {
+          "default": [],
+          "description": "A list of identifiers of customers that can redeem the coupon. Cannot be specified for coupons which can be redeemed by anonymous users.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "validFrom": {
+          "format": "date-time",
+          "type": "string",
+          "description": "Must be provided in the ISO 8601 format (http://www.iso.org/iso/home/standards/iso8601.htm), e.g. '2015-01-31T23:59:59.999Z'"
+        },
+        "validUntil": {
+          "format": "date-time",
+          "type": "string",
+          "description": "Must be provided in the ISO 8601 format (http://www.iso.org/iso/home/standards/iso8601.htm), e.g. '2015-01-31T23:59:59.999Z'"
+        },
+        "minOrderValue": {
+          "title": "Money Amount",
+          "description": "Minimum order value which entitles the customer to redeem the coupon",
+          "type": "object",
+          "properties": {
+            "amount": {
+              "default": 0,
+              "minimum": 0,
+              "description": "Total amount in the specified currency",
+              "type": "number"
+            },
+            "currency": {
+              "default": "USD",
+              "pattern": "^[a-zA-Z]{3}$",
+              "description": "ISO 4217 currency code, e.g.: USD, EUR, CHF",
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

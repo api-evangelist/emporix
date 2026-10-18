@@ -1,0 +1,726 @@
+openapi: 3.2.0
+info:
+  title: Emporix Shipping Zones API
+  version: ''
+  contact:
+    name: Emporix
+    url: https://emporix.com
+    email: documentation@emporix.com
+  description: 'Operations tagged Shipping Zones across 2 of this provider''s published API definitions: emporix-shipping-openapi.yml, emporix-shipping-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- oAuth2: []
+tags:
+- name: Shipping Zones
+  description: Manage shipping zones
+paths:
+  /shipping/{tenant}/{site}/zones:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    - $ref: '#/components/parameters/site'
+    post:
+      tags:
+      - Shipping Zones
+      summary: Creating a shipping zone
+      operationId: POST-shipping-create-shipping-zone
+      description: Creates a new shipping zone for the specified site.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Zone'
+            examples:
+              Zone create payload with name as a String:
+                $ref: '#/components/examples/ZoneCreateString'
+              Zone create payload with name as a Map:
+                $ref: '#/components/examples/ZoneCreateMap'
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/site'
+      - $ref: '#/components/parameters/content-language'
+      responses:
+        '201':
+          description: Resource successfully created.
+          content:
+            application/json:
+              examples:
+                Zone creation response:
+                  $ref: '#/components/examples/ZoneCreationResponse'
+              schema:
+                $ref: '#/components/schemas/ResourceCreatedResponse'
+        '400':
+          $ref: '#/components/responses/zone_400'
+        '401':
+          $ref: '#/components/responses/unauthorized_401'
+        '403':
+          $ref: '#/components/responses/yaasAware_403'
+        '404':
+          $ref: '#/components/responses/notFound_404'
+        '409':
+          $ref: '#/components/responses/zone_409'
+        '500':
+          $ref: '#/components/responses/internalError_500'
+      security:
+      - oAuth2:
+        - shipping.shipping_manage
+    get:
+      tags:
+      - Shipping Zones
+      summary: Retrieving shipping zones
+      operationId: GET-shipping-list-shipping-zones
+      description: Retrieves shipping zones for the specified site.
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/site'
+      - $ref: '#/components/parameters/activeMethods'
+      - $ref: '#/components/parameters/expand'
+      - $ref: '#/components/parameters/accept-language'
+      responses:
+        '200':
+          description: Resource successfully retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Zones'
+              examples:
+                zones with name as a string:
+                  $ref: '#/components/examples/ZoneStringList'
+                zones with name as a map:
+                  $ref: '#/components/examples/ZoneMapList'
+        '400':
+          $ref: '#/components/responses/zone_400'
+        '401':
+          $ref: '#/components/responses/unauthorized_401'
+        '500':
+          $ref: '#/components/responses/internalError_500'
+      security:
+      - oAuth2: []
+    servers:
+    - url: https://api.emporix.io
+  /shipping/{tenant}/{site}/zones/{zoneId}:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    - $ref: '#/components/parameters/site'
+    - $ref: '#/components/parameters/zoneId'
+    get:
+      tags:
+      - Shipping Zones
+      summary: Retrieving a shipping zone
+      operationId: GET-shipping-retrieve-shipping-zone
+      description: Retrieves the specified shipping zone's details.
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/site'
+      - $ref: '#/components/parameters/zoneId'
+      - $ref: '#/components/parameters/activeMethods'
+      - $ref: '#/components/parameters/expand'
+      - $ref: '#/components/parameters/accept-language'
+      responses:
+        '200':
+          description: Resource successfully retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Zone'
+              examples:
+                zone with name as string:
+                  $ref: '#/components/examples/ZoneNameAsString'
+                zone with name as map:
+                  $ref: '#/components/examples/ZoneNameAsMap'
+        '400':
+          $ref: '#/components/responses/zone_400'
+        '401':
+          $ref: '#/components/responses/unauthorized_401'
+        '404':
+          $ref: '#/components/responses/zone_notFound_404'
+        '500':
+          $ref: '#/components/responses/internalError_500'
+      security:
+      - oAuth2: []
+    put:
+      tags:
+      - Shipping Zones
+      summary: Updating a shipping zone
+      operationId: PUT-shipping-update-shipping-zone
+      description: Fully updates the specified shipping zone.
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/site'
+      - $ref: '#/components/parameters/zoneId'
+      - $ref: '#/components/parameters/content-language'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Zone'
+            examples:
+              Zone update payload with name as a String:
+                $ref: '#/components/examples/ZoneCreateString'
+              Zone update payload with name as a Map:
+                $ref: '#/components/examples/ZoneCreateMap'
+      responses:
+        '200':
+          description: Resource successfully updated.
+        '400':
+          $ref: '#/components/responses/zone_400'
+        '401':
+          $ref: '#/components/responses/unauthorized_401'
+        '403':
+          $ref: '#/components/responses/yaasAware_403'
+        '404':
+          $ref: '#/components/responses/zone_notFound_404'
+        '500':
+          $ref: '#/components/responses/internalError_500'
+      security:
+      - oAuth2:
+        - shipping.shipping_manage
+    patch:
+      tags:
+      - Shipping Zones
+      summary: Partially updating a shipping zone
+      operationId: PATCH-shipping-update-shipping-zone
+      description: Partially updates the specified shipping zone.
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/site'
+      - $ref: '#/components/parameters/zoneId'
+      - $ref: '#/components/parameters/content-language'
+      requestBody:
+        description: Partial update operation will update only fields which are in the payload.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Zone'
+            examples:
+              Zone update payload with name as a String:
+                $ref: '#/components/examples/ZoneCreateString'
+              Zone update payload with name as a Map:
+                $ref: '#/components/examples/ZoneCreateMap'
+      responses:
+        '200':
+          description: Resource successfully updated.
+        '400':
+          $ref: '#/components/responses/zone_400'
+        '401':
+          $ref: '#/components/responses/unauthorized_401'
+        '403':
+          $ref: '#/components/responses/yaasAware_403'
+        '404':
+          $ref: '#/components/responses/zone_notFound_404'
+        '500':
+          $ref: '#/components/responses/internalError_500'
+      security:
+      - oAuth2:
+        - shipping.shipping_manage
+    delete:
+      tags:
+      - Shipping Zones
+      summary: Deleting a shipping zone
+      operationId: DELETE-shipping-remove-shipping-zone
+      description: Deletes the specified shipping zone.
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/site'
+      - $ref: '#/components/parameters/zoneId'
+      responses:
+        '204':
+          description: Resource successfully deleted.
+        '400':
+          $ref: '#/components/responses/yaasAware_400'
+        '401':
+          $ref: '#/components/responses/unauthorized_401'
+        '403':
+          $ref: '#/components/responses/yaasAware_403'
+        '404':
+          $ref: '#/components/responses/zone_notFound_404'
+        '500':
+          $ref: '#/components/responses/internalError_500'
+      security:
+      - oAuth2:
+        - shipping.shipping_manage
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    Zone:
+      title: Zone
+      description: The zone is an area where shipments can be delivered.
+      type: object
+      properties:
+        id:
+          description: Delivery zone's unique identifier.
+          type: string
+        default:
+          description: Flag indicating whether the zone is the default delivery zone for the site.
+          type: boolean
+        name:
+          $ref: '#/components/schemas/LocalizedValue'
+        shipTo:
+          $ref: '#/components/schemas/ShipTo'
+        methods:
+          $ref: '#/components/schemas/Methods'
+      required:
+      - id
+      - name
+      - shipTo
+    MonetaryAmount:
+      title: Monetary amount
+      description: Amount of money in a given currency.
+      type: object
+      properties:
+        currency:
+          description: Three-letter currency code, compliant with the ISO 4217 standard.
+          type: string
+        amount:
+          type: number
+          minimum: 0
+          description: Amount in specified currency.
+      required:
+      - currency
+      - amount
+    Method:
+      title: Shipping method
+      description: Shipping methods define the types of deliveries and properties such as delivery fees.
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          $ref: '#/components/schemas/LocalizedValue'
+        maxOrderValue:
+          $ref: '#/components/schemas/MonetaryAmount'
+        active:
+          description: Flag indicating whether the shipping method is active.
+          type: boolean
+        fees:
+          $ref: '#/components/schemas/Fees'
+        shippingTaxCode:
+          description: Shipping method's tax code.
+          type: string
+        shippingGroupId:
+          description: Shipping groups unique identifier.
+          type: string
+      required:
+      - id
+      - name
+      - fees
+    Zones:
+      title: Collection of zones
+      type: array
+      items:
+        $ref: '#/components/schemas/Zone'
+    LocalizedValue:
+      oneOf:
+      - type: string
+        description: String value in the specified language.
+        example: FedEx 2Day
+      - type: object
+        additionalProperties:
+          type: string
+        description: 'Map of translations in form of language:translation pairs.
+
+          The keys (languages) should be ISO language codes.'
+        example:
+          en: FedEx 2Day
+    ResourceCreatedResponse:
+      title: Resource created
+      description: Link to created resource with unique resource identifier.
+      type: object
+      properties:
+        id:
+          type: string
+          description: Created resource’s unique identifier.
+    errorMessage:
+      title: error
+      description: Schema for API specified errors.
+      type: object
+      properties:
+        status:
+          minimum: 100
+          maximum: 599
+          description: original HTTP error code, should be consistent with the response HTTP code
+          type: integer
+        type:
+          pattern: '[a-z]+[a-z_]*[a-z]+'
+          description: classification of the error type, lower case with underscore eg validation_failure
+          type: string
+        message:
+          description: descriptive error message for debugging
+          type: string
+        moreInfo:
+          type: string
+          description: link to documentation to investigate further and finding support
+        errorCode:
+          type: string
+          description: The error code which specify the problem
+        details:
+          description: list of problems causing this error
+          type: array
+          items:
+            title: errorDetail
+            description: schema for specific error cause
+            anyOf:
+            - type: string
+            - type: object
+              properties:
+                field:
+                  description: a bean notation expression specifying the element in request data causing the error, eg shipTo[0].country, this can be empty if violation was not field specific
+                  type: string
+                type:
+                  pattern: '[a-z]+[a-z_]*[a-z]+'
+                  description: classification of the error detail type, lower case with underscore eg missing_value, this value must be always interpreted in context of the general error type.
+                  type: string
+                message:
+                  description: descriptive error detail message for debugging
+                  type: string
+                moreInfo:
+                  type: string
+                  description: link to documentation to investigate further and finding support for error detail
+      required:
+      - status
+      - type
+    ShipTo:
+      title: ShipTo
+      description: Collection of shipping destinations
+      type: array
+      items:
+        $ref: '#/components/schemas/ShipToItem'
+    Methods:
+      title: Collection of shipping methods
+      type: array
+      items:
+        $ref: '#/components/schemas/Method'
+    Fees:
+      title: Collection of fees
+      type: array
+      items:
+        $ref: '#/components/schemas/Fee'
+    ShipToItem:
+      title: shipToItem
+      description: Shipping destination containing country and postal code.
+      type: object
+      properties:
+        country:
+          type: string
+          description: ISO2 or ISO3 formatted country code.
+        postalCode:
+          type: string
+          description: PostalCode containing numbers and/or letters. Can be incomplete and followed by single '*' to match all the postalCodes starting with the same numbers/letters.
+      required:
+      - country
+    Fee:
+      title: Fee
+      description: Fee is a shipping cost for a given shipping method and parameters.
+      type: object
+      properties:
+        cost:
+          $ref: '#/components/schemas/MonetaryAmount'
+        minOrderValue:
+          $ref: '#/components/schemas/MonetaryAmount'
+        shippingGroupId:
+          description: Shipping group unique identifier.
+          type: string
+      required:
+      - cost
+      - minOrderValue
+  examples:
+    ZoneCreateString:
+      value:
+        shipTo:
+        - country: DE
+          postalCode: '70190'
+        name: Zone 1
+        id: zone1
+        default: true
+    ZoneCreateMap:
+      value:
+        shipTo:
+        - country: DE
+          postalCode: '70190'
+        name:
+          en: zone 1
+          de: Zone 1
+        id: zone1
+        default: true
+    ZoneCreationResponse:
+      value:
+        id: zone1
+    ZoneNameAsString:
+      value:
+        id: zone1
+        name: Zone 1
+        shipTo:
+        - country: DE
+          postalCode: '70190'
+        default: true
+    ZoneNameAsMap:
+      value:
+        id: zone1
+        name:
+          en: zone 1
+          de: Zone 1
+        shipTo:
+        - country: DE
+          postalCode: '70190'
+        default: true
+    ZoneMapList:
+      value:
+      - id: zone1
+        shipTo:
+        - country: DE
+          postalCode: '70190'
+        name:
+          en: zone 1
+          de: Zone 1
+        default: true
+      - id: zone2
+        shipTo:
+        - country: DE
+          postalCode: '70192'
+        name:
+          en: zone 2
+          de: Zone 2
+        default: false
+    ZoneStringList:
+      value:
+      - id: zone1
+        name: Zone 1
+        shipTo:
+        - country: DE
+          postalCode: '70190'
+        default: true
+      - id: zone2
+        name: Zone 2
+        shipTo:
+        - country: DE
+          postalCode: '70192'
+        default: false
+  parameters:
+    expand:
+      description: '* **methods**: To return zones with expanded shipping methods.
+
+        * **fees**: To expand the configured fees for those shipping methods.'
+      name: expand
+      in: query
+      required: false
+      schema:
+        type: string
+        example: methods,fees
+    activeMethods:
+      description: '* If set to `true`, only active methods are included.
+
+        * If set to `false`, only inactive methods are included.
+
+        * If not specified, all expanded shipping methods are included.'
+      name: activeMethods
+      in: query
+      required: false
+      schema:
+        type: string
+    content-language:
+      in: header
+      name: Content-Language
+      required: false
+      description: 'The Content-Language request HTTP header defines language of the payload.
+
+        When the Content-Language header is empty, all localized fields in a payload should be in a map format,
+
+        where the key is a language code and the value is a translation.'
+      schema:
+        type: string
+        example: fr
+    site:
+      description: 'Site unique identifier. A site is a specific shop.
+
+
+        If the tenant owns only one shop, the value should be set to `main`.
+
+        '
+      name: site
+      in: path
+      required: true
+      schema:
+        type: string
+    tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: The tenant should always be written in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+    zoneId:
+      description: Shipping zone's unique identifier.
+      name: zoneId
+      in: path
+      required: true
+      schema:
+        type: string
+    accept-language:
+      in: header
+      name: Accept-Language
+      required: false
+      description: 'The Accept-Language request HTTP header defines which languages the client is able to understand, and which locale variant is preferred.
+
+        It can be a priority list working as a fallback mechanism.
+
+        If the Accept-Language header is empty, all languages for localized fields are returned in a map format where the key is language code and the value is a translation.'
+      schema:
+        type: string
+        example: fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7
+  responses:
+    zone_notFound_404:
+      description: 'The requested resource does not exist.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Not Found:
+              value:
+                status: 404
+                message: A zone with id 'zone5' does not exist.
+                type: resource_not_found
+    notFound_404:
+      description: 'The requested resource does not exist.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Not Found:
+              value:
+                status: 404
+                message: The requested URI does not map to a single element resource.
+                errorCode: ENTITY-GET-404001
+                moreInfo: ''
+                type: element_resource_non_existing
+    zone_400:
+      description: Request syntactically incorrect. Details of the error are included in the response payload.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Bad request:
+              value:
+                status: 400
+                message: The request violates validation constraints.
+                type: validation_violation
+                errorCode: ENTITY-400001
+                details:
+                - field: shipTo[0].country
+                  message: shipTo[0].country Provided value is not a valid country code
+                  type: invalid_field
+    yaasAware_403:
+      description: 'Given authorization scopes are not sufficient and do not match required scopes.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Forbidden:
+              value:
+                status: 403
+                message: User not authorized.
+                type: Forbidden
+                details:
+                - Missing required scopes
+    zone_409:
+      description: 'Creation failed because there was a conflict with another resource. Details of the error are included in the response payload.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Conflict:
+              value:
+                status: 409
+                message: A zone with id 'zone1' already exists.
+                errorCode: ENTITY-409001
+                type: conflict_resource
+    unauthorized_401:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+    yaasAware_400:
+      description: Request syntactically incorrect. Details of the error are included in the response payload.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Bad request:
+              value:
+                status: 400
+                message: There are validation problems, see details section for more information
+                moreInfo: ''
+                type: validation_violation
+                details:
+                - field: tenant
+                  message: size must be between 2 and 16
+                  type: invalid_header
+    internalError_500:
+      description: 'Some server side error occurred.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Internal Server Error:
+              value:
+                status: 500
+                message: Something went wrong while processing the request. Please contact the administrator.
+                errorCode: ENTITY-500001
+                moreInfo: ''
+                type: internal_service_error
+  securitySchemes:
+    oAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            shipping.shipping_manage: Needed to manage shipping settings.
+            shipping.shipping_read: Needed to read shipping settings.
+x-refined-from:
+- emporix-shipping-openapi.yml
+- emporix-shipping-openapi.yml

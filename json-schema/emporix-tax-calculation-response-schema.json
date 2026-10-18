@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-tax-calculation-response-schema.json",
+  "title": "taxCalculationResponse",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-tax-service-openapi.yml#/components/schemas/taxCalculationResponse",
+  "type": "object",
+  "properties": {
+    "commandUuid": {
+      "type": "string",
+      "description": "Calculation command's unique identifier."
+    },
+    "input": {
+      "type": "object",
+      "description": "Information based on which the price was calculated.",
+      "properties": {
+        "sourceLocation": {
+          "description": "Country for which the provided price was originally defined.",
+          "allOf": [
+            {
+              "$ref": "#/$defs/location"
+            }
+          ]
+        },
+        "sourceTaxClass": {
+          "type": "string",
+          "description": "Tax class originally applied to the provided price."
+        },
+        "targetLocation": {
+          "description": "Country for which the price was calculated.",
+          "allOf": [
+            {
+              "$ref": "#/$defs/location"
+            }
+          ]
+        },
+        "targetTaxClass": {
+          "type": "string",
+          "description": "Tax class that was applied when calculating the price."
+        },
+        "includesTax": {
+          "type": "boolean",
+          "description": "Flag indicating whether the price provided in the request was expressed as net or gross.\n\n| Value | Description |\n| --- | --- |\n| `true` | Prices will be expressed as gross values. |\n| `false` | Prices will be expressed as net values. |"
+        },
+        "price": {
+          "type": "number",
+          "description": "Original price value."
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "description": "Calculation results.",
+      "properties": {
+        "netPrice": {
+          "type": "number",
+          "description": "Calculated net price."
+        },
+        "grossPrice": {
+          "type": "number",
+          "description": "Calculated gross price."
+        },
+        "sourceTaxRate": {
+          "type": "number",
+          "description": "Tax rate originally applied to the provided price."
+        },
+        "targetTaxRate": {
+          "type": "number",
+          "description": "Tax rate that was applied when calculating the price."
+        }
+      }
+    }
+  },
+  "$defs": {
+    "location": {
+      "type": "object",
+      "description": "",
+      "properties": {
+        "countryCode": {
+          "type": "string",
+          "description": "Code of the country for which the tax classes are specified, as defined in the Country Service."
+        }
+      },
+      "required": [
+        "countryCode"
+      ]
+    }
+  }
+}

@@ -1,0 +1,21 @@
+generated: '2026-10-18'
+method: searched
+generator: extract-docs-artifacts.py (deepseek)
+source: https://developer.emporix.io/user-guides/getting-started/developer-portal/manage-apikeys.md
+sources:
+- https://developer.emporix.io/user-guides/getting-started/developer-portal/manage-apikeys.md
+- https://developer.emporix.io/user-guides/system-management/authentication-and-authorization.md
+- https://developer.emporix.io/user-guides/system-management/authentication-and-authorization/authentication.md
+- https://developer.emporix.io/user-guides/system-management/authentication-and-authorization/authentication/user-authentication.md
+description: Authentication schemes for Emporix API as documented in the developer portal
+schemes:
+- type: apiKey
+  name: API Key Authentication
+  evidence: To authorize API requests, you need `Client ID` and `Secret` of a specific API key depending on the request you want to send.
+  how_to_obtain: 'When you create an Emporix tenant, you obtain keys to the following types of : Emporix API, Storefront API, and Custom API.
+    You can easily copy the credentials with the **copy** icon or view the `Secret` with the **preview** icon. Also, it is possible to regenerate
+    the API keys by choosing the **renew** option.'
+docs: https://developer.emporix.io/user-guides/getting-started/developer-portal/manage-apikeys.md
+note: The documentation mentions API keys with Client ID and Secret for authorization, but doesn't specify exactly how they are used in requests
+  (header name, query parameter, etc.). The pages mention authentication methods like SSO, Microsoft Entra ID, Auth0, and Keycloak, but these
+  appear to be for user/customer authentication rather than API client authentication.

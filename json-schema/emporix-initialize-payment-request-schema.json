@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-initialize-payment-request-schema.json",
+  "title": "initializePaymentRequest",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-payment-gateway-openapi.yml#/components/schemas/initializePaymentRequest",
+  "type": "object",
+  "properties": {
+    "order": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Identifier of an order for which the payment should be authorized."
+        }
+      }
+    },
+    "paymentModeId": {
+      "type": "string",
+      "description": "Identifier of a payment mode configured in the payment-gateway service for a given tenant."
+    },
+    "creditCardToken": {
+      "type": "string",
+      "description": "Indicates a payment method token, usually generated on a frontend site, when an user provides a credit card information."
+    }
+  }
+}

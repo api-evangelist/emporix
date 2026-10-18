@@ -1,0 +1,283 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-site-dto-schema.json",
+  "title": "Site",
+  "description": "Information about the site.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-site-settings-service-openapi.yml#/components/schemas/SiteDto",
+  "type": "object",
+  "required": [
+    "code",
+    "name",
+    "defaultLanguage",
+    "languages",
+    "currency",
+    "homeBase",
+    "shipToCountries",
+    "taxDeterminationBasedOn"
+  ],
+  "properties": {
+    "code": {
+      "type": "string",
+      "pattern": "^[^\\s#]+$",
+      "description": "Site unique identifier."
+    },
+    "name": {
+      "type": "string",
+      "description": "Site name."
+    },
+    "active": {
+      "type": "boolean",
+      "description": "Flag indicating whether the site is active."
+    },
+    "default": {
+      "type": "boolean",
+      "description": "Flag indicating whether the site is the  tenant default site."
+    },
+    "includesTax": {
+      "type": "boolean",
+      "description": "Indicates whether prices for the site should be returned in gross (when includesTax=true) or net (when includesTax=false). "
+    },
+    "defaultLanguage": {
+      "type": "string",
+      "description": "Site's default language, compliant with the IETF BCP-47 standard. Regional variants such as `fr-ca` are supported.",
+      "minLength": 2,
+      "pattern": "^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$"
+    },
+    "languages": {
+      "type": "array",
+      "description": "Languages supported by the site.\n\n**Note**: The languages must be compliant with the IETF BCP-47 standard. Regional variants such as `fr-ca` are supported.",
+      "items": {
+        "type": "string",
+        "minLength": 2,
+        "pattern": "^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$"
+      }
+    },
+    "currency": {
+      "$ref": "#/$defs/CurrencyDto"
+    },
+    "availableCurrencies": {
+      "type": "array",
+      "description": "List of the currencies supported by the site",
+      "items": {
+        "$ref": "#/$defs/CurrencyDto"
+      }
+    },
+    "homeBase": {
+      "$ref": "#/$defs/HomeBaseDto"
+    },
+    "shipToCountries": {
+      "type": "array",
+      "description": "Codes of countries to which the site ships products.\n\n**Note**: The country codes must be compliant with the ISO 3166-1 alpha-2 standard.",
+      "items": {
+        "type": "string",
+        "minLength": 2,
+        "maxLength": 2,
+        "pattern": "^[A-Z]{2}"
+      }
+    },
+    "shipping": {
+      "type": "array",
+      "description": "Shipping service configurations.",
+      "items": {
+        "$ref": "#/$defs/ServiceConfigurationDto"
+      }
+    },
+    "payment": {
+      "type": "array",
+      "description": "Payment service configurations.",
+      "items": {
+        "$ref": "#/$defs/ServiceConfigurationDto"
+      }
+    },
+    "tax": {
+      "type": "array",
+      "description": "Tax service configurations.\n\n**The `tax` field is in preview mode** - some of the features may not be fully operational yet.",
+      "items": {
+        "$ref": "#/$defs/ServiceConfigurationDto"
+      }
+    },
+    "assistedBuying": {
+      "$ref": "#/$defs/AssistedBuying"
+    },
+    "metadata": {
+      "$ref": "#/$defs/DefaultDtoMetadata"
+    },
+    "taxDeterminationBasedOn": {
+      "$ref": "#/$defs/taxDeterminationBasedOn"
+    },
+    "mixins": {
+      "type": "object",
+      "description": "Site additional properties.",
+      "additionalProperties": true
+    },
+    "cartCalculationScale": {
+      "type": "integer",
+      "description": "Number of decimal points used in the cart calculation. Must be zero or a positive value.",
+      "default": 2,
+      "minimum": 0
+    }
+  },
+  "$defs": {
+    "AddressDto": {
+      "title": "Address",
+      "type": "object",
+      "required": [
+        "country",
+        "zipCode"
+      ],
+      "properties": {
+        "street": {
+          "type": "string"
+        },
+        "streetNumber": {
+          "type": "string"
+        },
+        "streetAppendix": {
+          "type": "string"
+        },
+        "extraLine1": {
+          "type": "string"
+        },
+        "extraLine2": {
+          "type": "string"
+        },
+        "extraLine3": {
+          "type": "string"
+        },
+        "extraLine4": {
+          "type": "string"
+        },
+        "zipCode": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        }
+      },
+      "description": "Site address."
+    },
+    "AssistedBuying": {
+      "title": "AssistedBuying",
+      "type": "object",
+      "properties": {
+        "storefrontUrl": {
+          "type": "string",
+          "description": "Storefront URL, where an employee should be redirected when the assisted buying mechanism is used."
+        }
+      }
+    },
+    "CurrencyDto": {
+      "type": "string",
+      "description": "Currency used by the site, compliant with the ISO 4217 standard.",
+      "minLength": 3,
+      "maxLength": 3,
+      "pattern": "^[A-Z]{3}"
+    },
+    "DefaultDtoMetadata": {
+      "title": "Metadata",
+      "type": "object",
+      "properties": {
+        "mixins": {
+          "type": "object",
+          "description": "Mixin schema URLs.",
+          "additionalProperties": true
+        },
+        "version": {
+          "type": "integer"
+        }
+      }
+    },
+    "HomeBaseDto": {
+      "title": "HomeBase",
+      "type": "object",
+      "required": [
+        "address"
+      ],
+      "properties": {
+        "address": {
+          "$ref": "#/$defs/AddressDto"
+        },
+        "location": {
+          "$ref": "#/$defs/LocationDto"
+        },
+        "timezone": {
+          "type": "string",
+          "description": "The timezone of the site home base location. Must be a valid IANA timezone identifier.\n\nIf not specified, no timezone will be set. When specified, the value must be a valid timezone ID as defined in the IANA Time Zone Database.\n\nExamples of valid timezones:\n- Europe/Paris\n- America/New_York \n- Asia/Tokyo\n- UTC\n\nInvalid timezone values (e.g., \"Europe/Xp\") will result in a 400 Bad Request response.\n"
+        }
+      },
+      "description": "Site location."
+    },
+    "LocationDto": {
+      "title": "Location",
+      "type": "object",
+      "properties": {
+        "latitude": {
+          "type": "number",
+          "format": "double"
+        },
+        "longitude": {
+          "type": "number",
+          "format": "double"
+        }
+      },
+      "description": "Site geographical location."
+    },
+    "ServiceConfigurationDto": {
+      "title": "Service Configuration",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Service configuration's unique identifier."
+        },
+        "name": {
+          "type": "string",
+          "description": "Service configuration's name."
+        },
+        "serviceType": {
+          "type": "string"
+        },
+        "serviceUrl": {
+          "type": "string"
+        },
+        "active": {
+          "type": "boolean",
+          "default": true,
+          "description": "Flag indicating whether the service is active."
+        },
+        "configuration": {
+          "$ref": "#/$defs/ServiceSettingsDto"
+        }
+      }
+    },
+    "ServiceSettingsDto": {
+      "title": "Service Settings",
+      "type": "object",
+      "properties": {
+        "public": {
+          "type": "object"
+        },
+        "restricted": {
+          "type": "object"
+        }
+      }
+    },
+    "taxDeterminationBasedOn": {
+      "type": "string",
+      "enum": [
+        "BILLING_ADDRESS",
+        "SHIPPING_ADDRESS"
+      ],
+      "description": "Specifies whether tax calculation is based on customer billing address or shipping address. Default value is `BILLING_ADDRESS`."
+    }
+  }
+}

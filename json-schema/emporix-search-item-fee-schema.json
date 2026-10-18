@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-search-item-fee-schema.json",
+  "title": "SearchItemFee",
+  "description": "Search ItemFee request body.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-fee-openapi.yml#/components/schemas/SearchItemFee",
+  "type": "object",
+  "properties": {
+    "productId": {
+      "type": "string"
+    },
+    "siteCodes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "pageNumber": {
+      "type": "integer",
+      "default": 1
+    },
+    "pageSize": {
+      "type": "integer",
+      "default": 16
+    }
+  },
+  "required": [
+    "productId",
+    "siteCodes"
+  ]
+}

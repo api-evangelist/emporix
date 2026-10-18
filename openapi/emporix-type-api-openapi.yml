@@ -1,0 +1,332 @@
+openapi: 3.2.0
+info:
+  title: Emporix Type API
+  version: ''
+  contact:
+    email: documentation@emporix.com
+  description: 'Operations tagged Type across 2 of this provider''s published API definitions: emporix-schema-openapi.yml, emporix-schema-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Type
+paths:
+  /schema/{tenant}/schemas/{id}/types:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    - $ref: '#/components/parameters/id'
+    - $ref: '#/components/parameters/version'
+    - $ref: '#/components/parameters/trait_mode'
+    put:
+      summary: Updating types of a schema
+      description: Updates assigned types to the schema. It's allowed to change the assigned types to the newest schema as well as to the previous versions of the schema. This operation does not generate a new version of the schema.
+      tags:
+      - Type
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SchemaTypes'
+            examples:
+              SchemaTypes:
+                value:
+                - PRODUCT
+                - ORDER
+                - AVAILABILITY
+        description: ''
+      responses:
+        '204':
+          description: No content
+        '400':
+          $ref: '#/components/responses/Bad_request_400_cl'
+        '401':
+          $ref: '#/components/responses/Unathorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '404':
+          $ref: '#/components/responses/Not_Found_404'
+      operationId: PUT-schema-update-schema-types
+      security:
+      - OAuth2:
+        - schema.schema_manage
+    servers:
+    - url: https://api.emporix.io
+  /schema/{tenant}/types:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    get:
+      summary: Retrieving types
+      description: Retrieves types which have at least one schema assigned.
+      tags:
+      - Type
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypesResponse'
+              examples:
+                Types:
+                  value:
+                  - AVAILABILITY
+                  - LOCATION
+                  - ORDER
+                  - PRODUCT
+                  - QUOTE
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+      operationId: GET-schema-retrieve-schema-types
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    ErrorResponse:
+      required:
+      - code
+      - message
+      - status
+      type: object
+      properties:
+        id:
+          type:
+          - string
+          - 'null'
+        code:
+          type: integer
+          format: int32
+        status:
+          type: string
+        message:
+          type: string
+        errorCode:
+          type:
+          - string
+          - 'null'
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              type:
+                type: string
+              message:
+                type: string
+              moreInfo:
+                type: string
+    SchemaTypes:
+      type: array
+      description: List of types to which assign the schema.
+      items:
+        $ref: '#/components/schemas/SchemaType'
+    TypesResponse:
+      type: array
+      items:
+        type: string
+    SchemaType:
+      type: string
+      description: Type which the schema should be assigned to. Can be one of the predefined values or any custom schema type id.
+      enum:
+      - AVAILABILITY
+      - CART
+      - CART_ITEM
+      - CATEGORY
+      - COMPANY
+      - COUPON
+      - CUSTOMER
+      - CUSTOMER_ADDRESS
+      - LOCATION
+      - ORDER
+      - ORDER_ENTRY
+      - PRODUCT
+      - QUOTE
+      - RETURN
+      - PRICE_LIST
+      - SITE
+      - CUSTOM_ENTITY
+      - VENDOR
+      - VENDOR_LOCATION
+      - MEDIA
+  responses:
+    Unauthorized_401:
+      description: Given request is unauthorized - the authorization token is invalid or has expired. It usually means that the tenant from the token does not match tenant from path.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid Access Token:
+              value:
+                fault:
+                  faultstring: Invalid Access Token
+                  detail:
+                    errorcode: keymanagement.service.invalid_access_token
+            Unauthorized:
+              value: {}
+    Not_Found_404:
+      description: Given resource cannot be found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            Schema does not exists:
+              value:
+                resourceId: 084bcag6-66b8-4ddd-9489-65c5f6449e94
+                code: 404
+                status: Not Found
+                message: Error while getting resource.
+                details:
+                - message: Resource with id '084bcaf6-66b8-4ddd-9489-65c5f6449e94' not found
+    Unathorized_401:
+      description: Given request is unauthorized - the authorization token is invalid or has expired. It usually means that tenant from the token does not match tenant from path.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid Access Token:
+              value:
+                fault:
+                  faultstring: Invalid Access Token
+                  detail:
+                    errorcode: keymanagement.service.invalid_access_token
+            Unauthorized:
+              value: {}
+    Forbidden_403:
+      description: Permission denied due to insufficient rights. This may happen when the request does not contain sufficient scopes for the given query values.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            Forbidden:
+              value:
+                code: 403
+                status: Forbidden
+                message: You need to choose the required scope to complete this action.
+                details:
+                - message: 'Required scope(s): schema.schema_manage'
+    Bad_request_400_cl:
+      description: Unsupported content language provided.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              status:
+                type: string
+              message:
+                type: string
+              errorCode:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    field:
+                      type: string
+                    type:
+                      type: string
+                    message:
+                      type: string
+                    moreInfo:
+                      type: string
+          examples:
+            Bad request:
+              value:
+                code: 400
+                status: Bad Request
+                message: Language header validation failed.
+                details:
+                - message: 'Following languages are not supported: ''ru'''
+  parameters:
+    trait_mode:
+      name: mode
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+        - REPLACE
+        - ADD
+        - REMOVE
+        default: REPLACE
+      description: Defines how types assigned to given schema should be resolved. REPLACE is a default value. REPLACE takes provided types and replaces the existing ones with it. ADD adds provided types to the existing ones. REMOVE removes provided types from the existing ones.
+    id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Unique identifier of the entity.
+    tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: Always write the tenant name in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+    version:
+      name: version
+      in: query
+      required: true
+      schema:
+        type: integer
+      description: Version of the entity.
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            schema.schema_manage: Required for managing schemas.
+            schema.schema_read: Required for reading schemas.
+            schema.custominstance_read: Read custom instances of any custom schema type.
+            schema.custominstance_manage: Manage custom instances of any custom schema type.
+            custom.{lowerCaseType}_manage: Manage custom instances of a given type. For example, for type `DOCUMENT` → `custom.document_manage`.
+            custom.{lowerCaseType}_manage_own: Allows to manage only your own custom instances of a given type. For example, for type `DOCUMENT` → `custom.document_manage_own`.
+            custom.{lowerCaseType}_read: Read custom instances of a given type. For example, for type `DOCUMENT` → `custom.document_read`.
+            custom.{lowerCaseType}_read_own: Allows to read only your own custom instances of a given type. For example, for type `DOCUMENT` → `custom.document_read_own`.
+x-refined-from:
+- emporix-schema-openapi.yml
+- emporix-schema-openapi.yml

@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-import-stream-schema.json",
+  "title": "Stream",
+  "description": "A stream that extracts from a source, maps fields, and upserts into an Emporix target type.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-import-service-openapi.yml#/components/schemas/ImportStream",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "The stream identifier."
+    },
+    "configId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "The parent configuration."
+    },
+    "name": {
+      "type": "string",
+      "description": "The stream name."
+    },
+    "sourceEntity": {
+      "type": "string",
+      "description": "The logical source entity or record."
+    },
+    "targetWriter": {
+      "type": "string",
+      "description": "The target writer code, for example `emporix.customEntity`."
+    },
+    "targetType": {
+      "type": "string",
+      "description": "The default target type (custom-entity type identifier)."
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "STANDALONE",
+        "COMPOSITE_CHILD",
+        "COMPOSITE_MERGE"
+      ],
+      "description": "How the stream contributes to the target."
+    },
+    "deltaField": {
+      "type": "string",
+      "description": "The source field whose value is tracked as the delta watermark. A delta run extracts only the records whose value is newer than the last run's."
+    },
+    "deltaFieldFormat": {
+      "type": "string",
+      "enum": [
+        "DATE",
+        "UNIX_SECONDS",
+        "UNIX_MILLIS"
+      ],
+      "description": "How the delta field's values are formatted, so they can be compared correctly."
+    },
+    "compositeParent": {
+      "type": "string",
+      "description": "For a composite child stream, the name of the stream it contributes to."
+    },
+    "linkingField": {
+      "type": "string",
+      "description": "For a composite child stream, the source field holding its parent's key."
+    },
+    "embedAttribute": {
+      "type": "string",
+      "description": "For a composite child stream, the parent attribute its records are embedded into."
+    },
+    "childStrategy": {
+      "type": "string",
+      "enum": [
+        "EMBED",
+        "PATCH"
+      ],
+      "description": "How a composite child's records reach the parent object."
+    },
+    "writeStrategy": {
+      "type": "string",
+      "enum": [
+        "PATCH",
+        "MERGE_PUT",
+        "REPLACE_PUT"
+      ],
+      "description": "How an existing target object is updated. `PATCH` changes only the mapped fields and preserves everything else; `REPLACE_PUT` replaces the whole object, so fields this import does not manage are cleared."
+    },
+    "discriminatorField": {
+      "type": "string",
+      "description": "A source field whose value routes each record to a different target type, as defined by `discriminatorMap`."
+    },
+    "discriminatorMap": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Maps a discriminator value to the target type that receives those records."
+    },
+    "deleteConfig": {
+      "type": "object",
+      "description": "How deletes are detected in the source and propagated to the target. Omit for an upsert-only\nstream. `MARKER`: a field on the record flags it as deleted. `TOMBSTONE`: a separate source\nrecord lists the deleted IDs.",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "MARKER",
+            "TOMBSTONE"
+          ],
+          "description": "How a deleted record is recognised."
+        },
+        "markerField": {
+          "type": "string",
+          "description": "`MARKER` only. The source field that flags a record as deleted."
+        },
+        "markerValues": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "`MARKER` only. The values of `markerField` that mean deleted."
+        },
+        "record": {
+          "type": "string",
+          "description": "`TOMBSTONE` only. The explicit name of the source record that lists deleted IDs. Omit this\nproperty when the name can be derived from the imported record by adding a prefix or suffix —\nfor example, `invoice_deleted` for an `invoice` stream. Specify it when the deletion record\ndoes not follow that naming convention."
+        }
+      }
+    },
+    "healthThresholds": {
+      "$ref": "#/$defs/HealthThresholds"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the stream was created."
+    },
+    "enabled": {
+      "type": "boolean",
+      "description": "Whether the stream is active."
+    }
+  },
+  "$defs": {
+    "HealthThresholds": {
+      "title": "Health thresholds",
+      "type": "object",
+      "description": "The limits that decide whether a stream is reported as `GREEN`, `AMBER`, or `RED`. Each field is optional and resolves independently. An unset field falls back through the hierarchy, from the most specific level to the least specific: stream, configuration, tenant, then the built-in default.",
+      "properties": {
+        "failureRatioAmber": {
+          "type": "number",
+          "format": "double",
+          "description": "The share of failed records (0..1) at or above which the stream is `AMBER`."
+        },
+        "failureRatioRed": {
+          "type": "number",
+          "format": "double",
+          "description": "The share of failed records (0..1) at or above which the stream is `RED`."
+        },
+        "staleAmberHours": {
+          "type": "integer",
+          "description": "The age threshold, in hours, for the stream's newest data. The stream is `AMBER` when the data's age reaches or exceeds this threshold."
+        },
+        "staleRedHours": {
+          "type": "integer",
+          "description": "The age threshold, in hours, for the stream's newest data. The stream is `RED` when the data's age reaches or exceeds this threshold."
+        },
+        "failedRunIsRed": {
+          "type": "boolean",
+          "description": "Whether a failed most-recent run makes the stream `RED` regardless of the other limits."
+        }
+      }
+    }
+  }
+}

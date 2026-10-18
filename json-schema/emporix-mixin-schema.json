@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-mixin-schema.json",
+  "title": "Mixin",
+  "description": "Represents a single mixin. The payload is represented as a map with a single key and value, where key represents a mixin group name and value represents a map with keys and values.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-site-settings-service-openapi.yml#/components/schemas/Mixin",
+  "type": "object",
+  "additionalProperties": true
+}

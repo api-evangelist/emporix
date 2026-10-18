@@ -1,0 +1,378 @@
+openapi: 3.2.0
+info:
+  title: Emporix Index Jobs API
+  version: ''
+  contact:
+    name: Emporix
+    url: https://www.emporix.com/contact-us
+  description: 'Operations tagged Index Jobs across 2 of this provider''s published API definitions: emporix-search-service-openapi.yml, emporix-search-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Index Jobs
+paths:
+  /search/{tenant}/jobs:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    get:
+      summary: Retrieving index jobs
+      operationId: GET-search-tenant-jobs
+      tags:
+      - Index Jobs
+      description: '!Preview
+
+
+        {% hint style="danger" %}
+
+        This functionality is in preview mode - some of the features may not be fully operational yet.
+
+        {% endhint %}
+
+
+        Retrieves index jobs for the tenant.'
+      security:
+      - OAuth2:
+        - search.search_read
+      parameters:
+      - $ref: '#/components/parameters/query_pageNumber'
+      - $ref: '#/components/parameters/query_pageSize'
+      - $ref: '#/components/parameters/query_sort_createdAt'
+      - $ref: '#/components/parameters/query_q'
+      - $ref: '#/components/parameters/query_fields_job'
+      - $ref: '#/components/parameters/header_X-Total-Count'
+      responses:
+        '200':
+          description: The request succeeded. The body is the current page of jobs.
+          headers:
+            X-Total-Count:
+              description: Number of jobs. Present only when the request `X-Total-Count` header is `true`.
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IndexJob'
+              examples:
+                Jobs:
+                  value:
+                  - id: 66f1a2b3c4d5e6f708192a3b
+                    status: in_progress
+                    type: create_index
+                    indexId: vehicles
+                    message: Creating index vehicles--VEHICLE for type VEHICLE
+                    metadata:
+                      version: 1
+                      createdAt: '2026-03-12T10:00:00.000Z'
+                      modifiedAt: '2026-03-12T10:00:00.000Z'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_search_read'
+        '500':
+          $ref: '#/components/responses/500_resp_common'
+    servers:
+    - url: https://api.emporix.io
+  /search/{tenant}/jobs/{id}:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    - $ref: '#/components/parameters/path_job_id'
+    get:
+      summary: Retrieving an index job
+      operationId: GET-search-tenant-jobs-id
+      tags:
+      - Index Jobs
+      description: '!Preview
+
+
+        {% hint style="danger" %}
+
+        This functionality is in preview mode - some of the features may not be fully operational yet.
+
+        {% endhint %}
+
+
+        Retrieves one index job.'
+      security:
+      - OAuth2:
+        - search.search_read
+      parameters:
+      - $ref: '#/components/parameters/query_fields_job'
+      responses:
+        '200':
+          description: The job exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IndexJob'
+              examples:
+                One job:
+                  value:
+                    id: 66f1a2b3c4d5e6f708192a3b
+                    status: success
+                    type: create_index
+                    indexId: vehicles
+                    message: Creating index vehicles--VEHICLE for type VEHICLE
+                    response: Index created.
+                    metadata:
+                      version: 1
+                      createdAt: '2026-03-12T10:00:00.000Z'
+                      modifiedAt: '2026-03-12T10:04:00.000Z'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_search_read'
+        '404':
+          description: No job with this id exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          $ref: '#/components/responses/500_resp_common'
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    ErrorMessage:
+      type: object
+      description: Error returned for a failed request.
+      properties:
+        code:
+          type: integer
+          description: HTTP status code.
+        status:
+          type: string
+          description: HTTP status code as text.
+        message:
+          type: string
+          description: Explanation of the failure.
+        details:
+          type: array
+          description: Field-level or scope-level messages, when the failure has more than one part.
+          items:
+            type: object
+            properties:
+              message:
+                type: string
+                description: One part of the failure.
+    ResourceMetadata:
+      type: object
+      description: Version and timestamps for a stored resource.
+      properties:
+        version:
+          type: integer
+          description: Stored version. The first version is 1.
+          example: 1
+        createdAt:
+          type: string
+          format: date-time
+          description: Time when the resource was created.
+          example: '2026-03-12T10:00:00.000Z'
+        modifiedAt:
+          type: string
+          format: date-time
+          description: Time when the resource was last modified.
+          example: '2026-03-12T10:04:00.000Z'
+    IndexJob:
+      type: object
+      description: One index build or deletion job.
+      properties:
+        id:
+          type: string
+          description: Job id.
+          example: 66f1a2b3c4d5e6f708192a3b
+        status:
+          type: string
+          description: Current state of the job.
+          enum:
+          - in_progress
+          - success
+          - failure
+          example: in_progress
+        type:
+          type: string
+          description: Kind of index change.
+          enum:
+          - create_index
+          - update_index
+          - delete_index
+          example: create_index
+        indexId:
+          type: string
+          description: Index id.
+          example: vehicles
+        message:
+          type: string
+          description: Text recorded when the job started.
+          example: Creating index vehicles--VEHICLE for type VEHICLE
+        response:
+          type: string
+          description: Result text recorded when the job finishes.
+          example: Index created.
+        metadata:
+          $ref: '#/components/schemas/ResourceMetadata'
+    ErrorMessageFault:
+      type: object
+      description: Authorization error returned by the API gateway.
+      properties:
+        fault:
+          type: object
+          properties:
+            faultstring:
+              type: string
+              description: Authorization failure.
+            detail:
+              type: object
+              properties:
+                errorcode:
+                  type: string
+                  description: Gateway error code.
+  parameters:
+    query_pageSize:
+      name: pageSize
+      in: query
+      description: Number of items to be retrieved per page.
+      schema:
+        default: 60
+        minimum: 1
+        maximum: 2000
+        type: integer
+    header_X-Total-Count:
+      name: X-Total-Count
+      in: header
+      required: false
+      description: Flag indicating whether the total count of retrieved items should be returned.
+      schema:
+        default: false
+        type: boolean
+    query_fields_job:
+      name: fields
+      in: query
+      description: Comma-separated list of job properties to return. When the parameter is omitted, the job is returned in full.
+      schema:
+        type: string
+        example: id,status,type,indexId
+    path_job_id:
+      name: id
+      in: path
+      required: true
+      description: Identifier of the index job.
+      schema:
+        type: string
+        example: 66f1a2b3c4d5e6f708192a3b
+    path_tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'Your Emporix tenant''s name.
+
+        **Note**: The tenant should always be written in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+    query_q:
+      name: q
+      in: query
+      description: 'A standard query parameter is used to search for specific values.
+
+
+        See: [Standard practises - Query parameter](https://developer.emporix.io/api-documentation/standard-practices/q-param)'
+      schema:
+        type: string
+    query_sort_createdAt:
+      name: sort
+      in: query
+      description: 'Comma-separated list of properties used to sort the results. The order of properties indicates their priority.
+
+
+        Possible values:
+
+
+        * `{fieldName}`
+
+        * `{fieldName}:ASC`
+
+        * `{fieldName}:DESC`
+
+
+        When the direction is omitted, the field is sorted in ascending order. When `sort` is omitted, results are ordered by `metadata.createdAt` descending.'
+      schema:
+        type: string
+        example: name:ASC
+    query_pageNumber:
+      name: pageNumber
+      in: query
+      description: 'Page number to be retrieved. The number of the first page is 1.
+
+        '
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+  responses:
+    401_resp_common:
+      description: The authorization token is invalid or has expired.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessageFault'
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            Access token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+    403_search_read:
+      description: The access token does not include `search.search_read`.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Missing search scope:
+              value:
+                code: 403
+                status: '403'
+                message: User not authorized.
+                details:
+                - message: Missing one of required scopes '[search.search_read]'
+    500_resp_common:
+      description: A server-side error occurred.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Internal Server Error:
+              value:
+                code: 500
+                status: '500'
+                message: The server has encountered an error during processing the request data while trying to connect to the database.
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            search.search_read: Needed to search documents, to read saved searches, and to read search indexes and index jobs.
+            search.search_manage: Needed to create, update, and delete saved searches and search indexes.
+            schema.custominstance_read: Needed to read every custom entity instance. When this scope is absent, `custom.{type}_read` or `custom.{type}_read_own` can still allow the search.
+x-refined-from:
+- emporix-search-service-openapi.yml
+- emporix-search-service-openapi.yml

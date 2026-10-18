@@ -1,0 +1,553 @@
+openapi: 3.2.0
+info:
+  title: Emporix Shipping Cost API
+  version: ''
+  contact:
+    name: Emporix
+    url: https://emporix.com
+    email: documentation@emporix.com
+  description: 'Operations tagged Shipping Cost across 2 of this provider''s published API definitions: emporix-shipping-openapi.yml, emporix-shipping-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- oAuth2: []
+tags:
+- name: Shipping Cost
+  description: Manage shipping costs
+paths:
+  /shipping/{tenant}/{site}/quote:
+    post:
+      tags:
+      - Shipping Cost
+      summary: Calculating the final shipping cost
+      operationId: POST-shipping-calculate-shipping-cost
+      description: 'The endpoint returns shipping methods, which contain the matching fee for all zones.
+
+
+        The storefront uses this endpoint to list available methods for a destination and cart total. Checkout Service calls the same endpoint again to re-price the selected method and zone.'
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/site'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuotePayload'
+            examples:
+              quote calculation payload:
+                $ref: '#/components/examples/QuotePayload'
+      responses:
+        '200':
+          description: Shipping costs calculated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuoteResponse'
+              examples:
+                quote response:
+                  $ref: '#/components/examples/QuoteResponse'
+        '400':
+          $ref: '#/components/responses/quote_400'
+        '401':
+          $ref: '#/components/responses/unauthorized_401'
+        '404':
+          $ref: '#/components/responses/notFound_404'
+        '500':
+          $ref: '#/components/responses/internalError_500'
+    servers:
+    - url: https://api.emporix.io
+  /shipping/{tenant}/{site}/quote/minimum:
+    post:
+      tags:
+      - Shipping Cost
+      summary: Calculating the minimum shipping cost
+      operationId: POST-shipping-calculate-min-shipping-cost
+      description: 'Retrieves the minimum shipping cost for a destination and cart total.
+
+
+        Cart Service uses this endpoint to show an estimated shipping amount on the cart when no delivery window is set. Checkout Service does not call this endpoint.'
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/site'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuotePayload'
+            examples:
+              quote calculation payload:
+                $ref: '#/components/examples/QuotePayload'
+      responses:
+        '200':
+          description: Shipping costs calculated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MinimumFee'
+              examples:
+                quote response:
+                  $ref: '#/components/examples/MinimumFee'
+        '400':
+          $ref: '#/components/responses/quote_400'
+        '401':
+          $ref: '#/components/responses/unauthorized_401'
+        '404':
+          $ref: '#/components/responses/notFound_404'
+        '500':
+          $ref: '#/components/responses/internalError_500'
+      security:
+      - oAuth2: []
+    servers:
+    - url: https://api.emporix.io
+  /shipping/{tenant}/{site}/quote/slot:
+    post:
+      tags:
+      - Shipping Cost
+      summary: Calculating the shipping cost for a given slot
+      operationId: POST-shipping-calculate-slot-shipping-cost
+      description: 'Retrieves the shipping cost related to a particular delivery slot.
+
+
+        Cart Service uses this endpoint to show an estimated shipping amount when the cart has a delivery window and a slot. This is not a checkout step.'
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/site'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuoteSlot'
+            examples:
+              Quote slot calculation example:
+                $ref: '#/components/examples/QuoteSlotPayload'
+      responses:
+        '200':
+          description: Shipping costs calculated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MinimumFee'
+              examples:
+                quote response:
+                  $ref: '#/components/examples/MinimumFee'
+        '400':
+          $ref: '#/components/responses/quote_400'
+        '401':
+          $ref: '#/components/responses/unauthorized_401'
+        '404':
+          $ref: '#/components/responses/notFound_404'
+        '500':
+          $ref: '#/components/responses/internalError_500'
+      security:
+      - oAuth2: []
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    QuoteSlot:
+      title: Quote slot request schema
+      description: Example of payload for shipping cost calculation.
+      type: object
+      properties:
+        customerId:
+          description: Customer unique identifier.
+          type: string
+        cartTotal:
+          description: Total amount for the given cart.
+          type: object
+          required:
+          - amount
+          - currency
+          properties:
+            amount:
+              description: Amount in specified currency.
+              type: number
+              minimum: 0
+            currency:
+              type: string
+              description: Three-letter currency code, compliant with the ISO 4217 standard.
+              pattern: '[A-Z]{3}'
+        shipFromAddress:
+          $ref: '#/components/schemas/Address'
+        shipToAddress:
+          $ref: '#/components/schemas/Address'
+        slotId:
+          type: string
+          description: The `slotId`` which the quote should be calculated for.
+        deliveryWindowId:
+          type: string
+          description: The delivery window id which the slot with selected shipping method exists for.
+      required:
+      - cartTotal
+      - slotId
+      - deliveryWindowId
+    MonetaryAmount:
+      title: Monetary amount
+      description: Amount of money in a given currency.
+      type: object
+      properties:
+        currency:
+          description: Three-letter currency code, compliant with the ISO 4217 standard.
+          type: string
+        amount:
+          type: number
+          minimum: 0
+          description: Amount in specified currency.
+      required:
+      - currency
+      - amount
+    QuoteResponseMethods:
+      title: Quote response shipping methods
+      type: object
+      description: Example quote response which contains fee for specific method.
+      properties:
+        id:
+          type: string
+        name:
+          $ref: '#/components/schemas/LocalizedValue'
+        fee:
+          $ref: '#/components/schemas/MonetaryAmount'
+        shippingTaxCode:
+          type: string
+    QuoteResponseItem:
+      title: Quote response item
+      type: object
+      description: Example quote response which contains fee for specific method and zone.
+      properties:
+        zone:
+          type: object
+          properties:
+            id:
+              description: Delivery zone's unique identifier.
+              type: string
+            name:
+              $ref: '#/components/schemas/LocalizedValue'
+        methods:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuoteResponseMethods'
+    LocalizedValue:
+      oneOf:
+      - type: string
+        description: String value in the specified language.
+        example: FedEx 2Day
+      - type: object
+        additionalProperties:
+          type: string
+        description: 'Map of translations in form of language:translation pairs.
+
+          The keys (languages) should be ISO language codes.'
+        example:
+          en: FedEx 2Day
+    QuotePayload:
+      title: Quote request payload
+      description: Example of payload for shipping cost calculation.
+      type: object
+      properties:
+        customerId:
+          description: Customer unique identifier.
+          type: string
+        cartTotal:
+          description: Total amount for the given cart.
+          type: object
+          required:
+          - amount
+          - currency
+          properties:
+            amount:
+              description: Amount in specified currency.
+              type: number
+              minimum: 0
+            currency:
+              type: string
+              description: Three-letter currency code, compliant with the ISO 4217 standard.
+              pattern: '[A-Z]{3}'
+        shipFromAddress:
+          $ref: '#/components/schemas/Address'
+        shipToAddress:
+          $ref: '#/components/schemas/Address'
+      required:
+      - cartTotal
+      - shipToAddress
+    errorMessage:
+      title: error
+      description: Schema for API specified errors.
+      type: object
+      properties:
+        status:
+          minimum: 100
+          maximum: 599
+          description: original HTTP error code, should be consistent with the response HTTP code
+          type: integer
+        type:
+          pattern: '[a-z]+[a-z_]*[a-z]+'
+          description: classification of the error type, lower case with underscore eg validation_failure
+          type: string
+        message:
+          description: descriptive error message for debugging
+          type: string
+        moreInfo:
+          type: string
+          description: link to documentation to investigate further and finding support
+        errorCode:
+          type: string
+          description: The error code which specify the problem
+        details:
+          description: list of problems causing this error
+          type: array
+          items:
+            title: errorDetail
+            description: schema for specific error cause
+            anyOf:
+            - type: string
+            - type: object
+              properties:
+                field:
+                  description: a bean notation expression specifying the element in request data causing the error, eg shipTo[0].country, this can be empty if violation was not field specific
+                  type: string
+                type:
+                  pattern: '[a-z]+[a-z_]*[a-z]+'
+                  description: classification of the error detail type, lower case with underscore eg missing_value, this value must be always interpreted in context of the general error type.
+                  type: string
+                message:
+                  description: descriptive error detail message for debugging
+                  type: string
+                moreInfo:
+                  type: string
+                  description: link to documentation to investigate further and finding support for error detail
+      required:
+      - status
+      - type
+    QuoteResponse:
+      title: Quote response
+      description: Example quote response which contains a list of fees for various methods and delivery zone.
+      type: array
+      items:
+        $ref: '#/components/schemas/QuoteResponseItem'
+    MinimumFee:
+      title: Minimum fee
+      type: object
+      description: Minimum available delivery fee for given parameters.
+      properties:
+        fee:
+          $ref: '#/components/schemas/MonetaryAmount'
+    Address:
+      title: Address
+      description: Address of billing or delivery that contains customer or company name and location including street, street number, zipcode, and country.
+      type: object
+      properties:
+        street:
+          description: Name of the street.
+          type: string
+        streetNumber:
+          type: string
+        extraLine1:
+          type: string
+        extraLine2:
+          type: string
+        extraLine3:
+          type: string
+        extraLine4:
+          type: string
+        zipCode:
+          maxLength: 9
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        country:
+          type: string
+      required:
+      - zipCode
+      - country
+  examples:
+    QuoteResponse:
+      value:
+      - zone:
+          id: europe
+          name:
+            en: Europe
+            de: Europa
+        methods:
+        - id: fedex-2dayground
+          name:
+            en: FedEx 2Day
+            de: FedEx 2 Tage
+          fee:
+            amount: 4.99
+            currency: EUR
+        - id: dhl
+          name: DHL
+          fee:
+            amount: 2.99
+            currency: EUR
+      - zone:
+          id: northamerica
+          name:
+            en: North America
+            de: Nord Amerika
+        methods:
+        - id: dhl-air
+          name:
+            en: DHL Air
+            de: DHL Flug
+          fee:
+            amount: 9.99
+            currency: EUR
+        - id: dhl-normal
+          name: DHL Normal
+          fee:
+            amount: 5.99
+            currency: EUR
+    QuoteSlotPayload:
+      value:
+        customerId: C0012
+        cartTotal:
+          amount: 100.34
+          currency: USD
+        deliveryWindowId: '123'
+        slotId: '456'
+    QuotePayload:
+      value:
+        customerId: C001
+        cartTotal:
+          amount: 100.34
+          currency: USD
+        shipFromAddress:
+          street: Patterson Fork Road
+          streetNumber: '2095'
+          zipCode: '60606'
+          city: Chicago
+          country: US
+          state: IL
+        shipToAddress:
+          street: Cheng Xiang Zhen Guan Tang Lu
+          streetNumber: '1031'
+          extraLine1: No. 2058
+          extraLine2: Suzhou City
+          zipCode: '201202'
+          city: Taicang City
+          state: Jiangsu Province
+          country: CN
+    MinimumFee:
+      value:
+        fee:
+          amount: 4.99
+          currency: EUR
+  responses:
+    notFound_404:
+      description: 'The requested resource does not exist.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Not Found:
+              value:
+                status: 404
+                message: The requested URI does not map to a single element resource.
+                errorCode: ENTITY-GET-404001
+                moreInfo: ''
+                type: element_resource_non_existing
+    unauthorized_401:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+    quote_400:
+      description: Request syntactically incorrect. Details of the error are included in the response payload.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Bad request:
+              value:
+                status: 400
+                message: validation_violation.
+                type: validation_violation
+                details:
+                - field: shipToAddress
+                  message: 'shipToAddress: must not be null, cartTotal: must not be null'
+                  type: missing_field
+                - field: cartTotal
+                  message: cartTotal must not be null
+                  type: missing_field
+    internalError_500:
+      description: 'Some server side error occurred.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorMessage'
+          examples:
+            Internal Server Error:
+              value:
+                status: 500
+                message: Something went wrong while processing the request. Please contact the administrator.
+                errorCode: ENTITY-500001
+                moreInfo: ''
+                type: internal_service_error
+  parameters:
+    site:
+      description: 'Site unique identifier. A site is a specific shop.
+
+
+        If the tenant owns only one shop, the value should be set to `main`.
+
+        '
+      name: site
+      in: path
+      required: true
+      schema:
+        type: string
+    tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: The tenant should always be written in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+  securitySchemes:
+    oAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            shipping.shipping_manage: Needed to manage shipping settings.
+            shipping.shipping_read: Needed to read shipping settings.
+x-refined-from:
+- emporix-shipping-openapi.yml
+- emporix-shipping-openapi.yml

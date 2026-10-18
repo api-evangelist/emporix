@@ -1,0 +1,273 @@
+openapi: 3.2.0
+info:
+  title: Svix Emporix Shared Account API
+  version: ''
+  contact:
+    email: documentation@emporix.com
+  description: 'Operations tagged Svix Emporix Shared Account across 2 of this provider''s published API definitions: emporix-webhook-service-openapi.yml, emporix-webhook-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Svix Emporix Shared Account
+paths:
+  /webhook/{tenant}/dashboard-access:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    get:
+      summary: Retrieving a dashboard access URL
+      tags:
+      - Svix Emporix Shared Account
+      responses:
+        '200':
+          description: ''
+          headers:
+            Content-Type:
+              schema:
+                type: string
+              description: application/json
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardAccess'
+              examples:
+                Response example:
+                  value:
+                    url: https://app.svix.com/login#key=eyJhcHBJZCI6ICJhcHBfMXRSdFl
+                    token: appsk_kV3ts5tKPNJN4Dl25cMTfUNdmabxbX0O
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '404':
+          $ref: '#/components/responses/NotFound_404'
+        '500':
+          $ref: '#/components/responses/InternalServerError_500'
+      operationId: GET-webhook-access-tenant-svix
+      description: Retrieves a Svix magic login link (authentication embedded) and an authentication token needed to connect a tenant to their consumer application portal.
+      security:
+      - OAuth2:
+        - webhook.subscription_manage
+    servers:
+    - url: https://api.emporix.io
+  /webhook/{tenant}/statistics:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    get:
+      summary: Retrieving webhooks statistics
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+              description: application/json
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookStatistics'
+              examples:
+                WebhooksLimitStatisticsExample:
+                  value:
+                    monthStatistics:
+                    - statisticsMonth: 2022-09
+                      succesfullySentWebhooks: 8994
+                    - statisticsMonth: 2022-08
+                      succesfullySentWebhooks: 2137
+                    webhooksLimit: 10000
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+        '500':
+          $ref: '#/components/responses/InternalServerError_500'
+      operationId: GET-webhook-retrieve-statistics
+      description: Retrieves statistics on the number of emitted events and provides information on the limit of webhook notifications configured for a specific tenant.
+      security:
+      - OAuth2:
+        - webhook.subscription_read
+      parameters:
+      - $ref: '#/components/parameters/from_month'
+      - $ref: '#/components/parameters/to_month'
+      tags:
+      - Svix Emporix Shared Account
+    servers:
+    - url: https://api.emporix.io
+components:
+  responses:
+    Unauthorized_401:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            Access token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+    InternalServerError_500:
+      description: Some server-side error occurred. Details are provided in the response payload.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            InternalServerErrorExample:
+              $ref: '#/components/examples/InternalServerError_500'
+    Forbidden_403:
+      description: Given authorization scopes are not sufficient and do not match the scopes required by the endpoint.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            InsufficientPermissionsExample:
+              $ref: '#/components/examples/InsufficientPermissions_403'
+    NotFound_404:
+      description: The requested resource does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            NotFoundExample:
+              $ref: '#/components/examples/NotFound_404'
+  schemas:
+    ErrorMessage:
+      title: Error message
+      description: Object returned in error responses.
+      type: object
+      properties:
+        code:
+          description: Original HTTP error code. Must be consistent with the response HTTP code.
+          type: integer
+        status:
+          type: string
+        message:
+          description: Descriptive error message for debugging.
+          type: string
+        details:
+          description: List of problems causing the error.
+          type: array
+          items:
+            type: string
+      required:
+      - code
+      - status
+    DashboardAccess:
+      type: object
+      properties:
+        url:
+          type: string
+          description: Svix application dashboard access URL with embedded authentication.
+        token:
+          type: string
+          description: Authentication token for accessing the Svix application dashboard.
+    WebhookStatistics:
+      title: Webhooks limit statistics
+      type: object
+      properties:
+        monthStatistics:
+          type: array
+          items:
+            $ref: '#/components/schemas/MonthStatistics'
+        webhooksLimit:
+          type: integer
+          description: Maximum number of events that the tenant is allowed to send in a specified month.
+    MonthStatistics:
+      title: Webhook monthly statistics
+      type: object
+      properties:
+        statisticsMonth:
+          type: string
+          description: Month for which statistics should be retrieved, provided in the "YYYY-MM" format.
+        succesfullySentWebhooks:
+          type: integer
+          description: Number of events sent successfully to the customer's configured endpoints.
+  examples:
+    InsufficientPermissions_403:
+      value:
+        code: 403
+        status: Forbidden
+        message: The access to the requested resource has been forbidden by the server.
+    NotFound_404:
+      value:
+        code: 404
+        status: Not Found
+        message: No catalog events found.
+    InternalServerError_500:
+      value:
+        code: 500
+        status: Internal Server Error
+        message: A server-side exception occurred that prevented the system from correctly returning the result.
+  parameters:
+    from_month:
+      name: fromYearMonth
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 'Month from which statistics should be retrieved.
+
+
+        **Note**: The value should be provided in the "YYYY-MM" format.
+
+        '
+    path_tenant:
+      name: tenant
+      in: path
+      required: true
+      schema:
+        type: string
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: The tenant name should always be provided in lowercase.
+
+        '
+    to_month:
+      name: toYearMonth
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 'Month to which statistics should be retrieved.
+
+
+        **Note**: The value should be provided in the "YYYY-MM" format.
+
+        '
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes:
+            webhook.subscription_read: Needed to read subscriptions.
+            webhook.subscription_manage: Needed to manage subscriptions.
+          tokenUrl: https://api.emporix.io/oauth/token
+x-refined-from:
+- emporix-webhook-service-openapi.yml
+- emporix-webhook-service-openapi.yml

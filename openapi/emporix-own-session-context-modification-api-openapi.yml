@@ -1,0 +1,186 @@
+openapi: 3.2.0
+info:
+  title: Emporix Own session context modification API
+  version: ''
+  contact:
+    email: documentation@emporix.com
+  description: 'Operations tagged Own session context modification across 2 of this provider''s published API definitions: emporix-session-context-openapi.yml, emporix-session-context-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Own session context modification
+paths:
+  /session-context/{tenant}/me/context/attributes/{attributeName}:
+    description: The own session-context resource.
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    - $ref: '#/components/parameters/path_attributeName'
+    delete:
+      tags:
+      - Own session context modification
+      summary: Deleting an attribute from own session context
+      operationId: DELETE-session-context-remove-attribute-sessionId
+      description: 'Removes a specified attribute from a session context associated with the `sessionId` derived from the Authorization token used in the call.
+
+        Recommended for performing calls from the storefront.
+
+
+        **Note**: Optimistic locking is not taken into account here.'
+      responses:
+        '204':
+          $ref: '#/components/responses/204_DELETE_attributeName'
+        '404':
+          $ref: '#/components/responses/404_session'
+        '500':
+          $ref: '#/components/responses/500_common'
+      security:
+      - CustomerAccessToken: []
+    servers:
+    - url: https://api.emporix.io
+  /session-context/{tenant}/me/context/attributes:
+    description: The own session-context resource.
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    post:
+      tags:
+      - Own session context modification
+      summary: Adding a new attribute to a session context
+      operationId: POST-session-context-add-attribute-own-sessionId
+      description: 'Adds an attribute to a session context associated with the session-id derived from the Authorization token used in the call.
+
+        Recommended for performing calls from the storefront.
+
+
+        **Note**: Optimistic locking is not taken into account here.'
+      responses:
+        '201':
+          $ref: '#/components/responses/201_POST_attributes'
+        '404':
+          $ref: '#/components/responses/404_session'
+        '500':
+          $ref: '#/components/responses/500_common'
+      requestBody:
+        $ref: '#/components/requestBodies/attributes_POST'
+      security:
+      - CustomerAccessToken: []
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    ErrorMessage:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: HTTP Status Code
+          example: 404
+        message:
+          type: string
+          description: Detailed error message
+    ContextAttribute:
+      title: ContextAttribute
+      description: Context attribute
+      type: object
+      properties:
+        key:
+          type: string
+          description: Additional context information key
+        value:
+          description: Additional context information value
+          oneOf:
+          - type: object
+          - type: string
+      required:
+      - key
+      - value
+  responses:
+    404_session:
+      description: A session context with the provided ID was not found.
+      content:
+        application/json:
+          schema:
+            allOf:
+            - type: object
+              properties:
+                sessionId:
+                  type: string
+                  description: Unique identifier of the session.
+            - $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            404 example:
+              value:
+                sessionId: 62528895-b561-4518-bfdc-2cbf52a07845
+                code: 404
+                message: Session not found
+    500_common:
+      description: A server-side error occurred.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Internal server error:
+              value:
+                code: 500
+                message: Problem encountered while trying to connect to the database.
+    201_POST_attributes:
+      description: The request was successful. The attribute was added to the session context.
+      content:
+        application/json:
+          schema:
+            type: string
+            description: Name of the created attribute.
+          examples:
+            Attribute created:
+              value: attribute name
+    204_DELETE_attributeName:
+      description: The request was successful. The attribute has been deleted from the session context.
+  parameters:
+    path_tenant:
+      name: tenant
+      in: path
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: The tenant name should always be provided in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+      required: true
+    path_attributeName:
+      name: attributeName
+      in: path
+      schema:
+        type: string
+      description: Name of the attribute that should be deleted from the session context.
+      required: true
+  requestBodies:
+    attributes_POST:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ContextAttribute'
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            sessioncontext.context_manage: Manage session context
+    CustomerAccessToken:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'Customer or anonymous access token. Use the token obtained from the storefront session (e.g. [Requesting an anonymous token](https://developer.emporix.io/api-documentation/api-guides/companies-and-customers/customer-management/api-reference/authentication-and-authorization#get-customerlogin-auth-anonymous-login) or [Logging in a customer](https://developer.emporix.io/api-documentation/api-guides/companies-and-customers/customer-management/api-reference/authentication-and-authorization#post-customer-tenant-login)).
+
+        '
+x-refined-from:
+- emporix-session-context-openapi.yml
+- emporix-session-context-openapi.yml

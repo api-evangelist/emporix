@@ -1,0 +1,792 @@
+openapi: 3.2.0
+info:
+  title: Emporix Agent Logs API
+  version: ''
+  contact:
+    name: Emporix
+    url: https://emporix.com
+    email: documentation@emporix.com
+  description: 'Operations tagged Agent Logs across 2 of this provider''s published API definitions: emporix-ai-service-openapi.yml, emporix-ai-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+tags:
+- name: Agent Logs
+  description: Read Agent Logs
+paths:
+  /ai-service/{tenant}/agentic/logs/requests:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    - $ref: '#/components/parameters/qParam'
+    - $ref: '#/components/parameters/pageSize'
+    - $ref: '#/components/parameters/pageNumber'
+    - $ref: '#/components/parameters/trait_cursor_next'
+    - $ref: '#/components/parameters/trait_cursor_prev'
+    - $ref: '#/components/parameters/sort'
+    - $ref: '#/components/parameters/fields'
+    - $ref: '#/components/parameters/header_xTotalCount'
+    get:
+      summary: Listing agent requests
+      operationId: GET-ai-list-requests
+      responses:
+        '200':
+          $ref: '#/components/responses/200_resp_GET_agent_requests'
+        '400':
+          $ref: '#/components/responses/400_resp_common'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_resp_common'
+      description: 'Retrieves agent requests based on the provided query.
+
+
+        Supports offset pagination (`pageNumber`, `pageSize`) and cursor pagination (`next`, `prev`). Cursor pagination is active when `next` or `prev` is provided.
+
+
+        In cursor mode:
+
+        - `next` and `prev` cannot be used together and return `400`.
+
+        - `pageNumber` is ignored.
+
+        - the `X-Total-Count` request header is ignored and the `X-Total-Count` response header is not returned.
+
+
+        If no sort is provided, results are returned in `_id:ASC` order. If a sort is provided, `_id:ASC` is appended as a tie-breaker when `_id` is not already part of the sort.'
+      security:
+      - OAuth2:
+        - ai.agent_read
+      tags:
+      - Agent Logs
+    servers:
+    - url: https://api.emporix.io
+  /ai-service/{tenant}/agentic/logs/requests/{requestId}:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    - schema:
+        type: string
+      name: requestId
+      in: path
+      required: true
+    get:
+      parameters:
+      - $ref: '#/components/parameters/fields'
+      summary: Retrieving agent request by ID
+      operationId: GET-ai-retrieve-request
+      responses:
+        '200':
+          $ref: '#/components/responses/200_resp_GET_agent_request'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_resp_common'
+        '404':
+          $ref: '#/components/responses/404_resp_common'
+      description: Retrieves the agent request by given ID.
+      security:
+      - OAuth2:
+        - ai.agent_read
+      tags:
+      - Agent Logs
+    servers:
+    - url: https://api.emporix.io
+  /ai-service/{tenant}/agentic/logs/requests/search:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    post:
+      parameters:
+      - $ref: '#/components/parameters/pageSize'
+      - $ref: '#/components/parameters/pageNumber'
+      - $ref: '#/components/parameters/trait_cursor_next'
+      - $ref: '#/components/parameters/trait_cursor_prev'
+      - $ref: '#/components/parameters/sort'
+      - $ref: '#/components/parameters/fields'
+      - $ref: '#/components/parameters/header_xTotalCount'
+      summary: Searching agent requests
+      operationId: POST-ai-search-requests
+      responses:
+        '200':
+          $ref: '#/components/responses/200_resp_GET_agent_requests'
+        '400':
+          $ref: '#/components/responses/400_resp_common'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_resp_common'
+      requestBody:
+        $ref: '#/components/requestBodies/QParamSearchBody'
+      description: 'Searches for agent requests based on the provided query.
+
+
+        Supports offset pagination (`pageNumber`, `pageSize`) and cursor pagination (`next`, `prev`). Cursor pagination is active when `next` or `prev` is provided.
+
+
+        In cursor mode:
+
+        - `next` and `prev` cannot be used together and return `400`.
+
+        - `pageNumber` is ignored.
+
+        - the `X-Total-Count` request header is ignored and the `X-Total-Count` response header is not returned.
+
+
+        If no sort is provided, results are returned in `_id:ASC` order. If a sort is provided, `_id:ASC` is appended as a tie-breaker when `_id` is not already part of the sort.'
+      security:
+      - OAuth2:
+        - ai.agent_read
+      tags:
+      - Agent Logs
+    servers:
+    - url: https://api.emporix.io
+  /ai-service/{tenant}/agentic/logs/sessions:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    - $ref: '#/components/parameters/qParam'
+    - $ref: '#/components/parameters/pageSize'
+    - $ref: '#/components/parameters/pageNumber'
+    - $ref: '#/components/parameters/trait_cursor_next'
+    - $ref: '#/components/parameters/trait_cursor_prev'
+    - $ref: '#/components/parameters/sort'
+    - $ref: '#/components/parameters/fields'
+    - $ref: '#/components/parameters/header_xTotalCount'
+    get:
+      summary: Listing agent sessions
+      operationId: GET-ai-list-sessions
+      responses:
+        '200':
+          $ref: '#/components/responses/200_resp_GET_agent_sessions'
+        '400':
+          $ref: '#/components/responses/400_resp_common'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_resp_common'
+      description: 'Retrieves agent sessions based on the provided query.
+
+
+        Supports offset pagination (`pageNumber`, `pageSize`) and cursor pagination (`next`, `prev`). Cursor pagination is active when `next` or `prev` is provided.
+
+
+        In cursor mode:
+
+        - `next` and `prev` cannot be used together and return `400`.
+
+        - `pageNumber` is ignored.
+
+        - the `X-Total-Count` request header is ignored and the `X-Total-Count` response header is not returned.
+
+
+        If no sort is provided, results are returned in `_id:ASC` order. If a sort is provided, `_id:ASC` is appended as a tie-breaker when `_id` is not already part of the sort.'
+      security:
+      - OAuth2:
+        - ai.agent_read
+      tags:
+      - Agent Logs
+    servers:
+    - url: https://api.emporix.io
+  /ai-service/{tenant}/agentic/logs/sessions/{sessionId}:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    - schema:
+        type: string
+      name: sessionId
+      in: path
+      required: true
+    get:
+      parameters:
+      - $ref: '#/components/parameters/fields'
+      summary: Retrieving agent session by ID
+      operationId: GET-ai-retrieve-session
+      responses:
+        '200':
+          $ref: '#/components/responses/200_resp_GET_agent_session'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_resp_common'
+        '404':
+          $ref: '#/components/responses/404_resp_common'
+      description: Retrieves the agent session by given ID.
+      security:
+      - OAuth2:
+        - ai.agent_read
+      tags:
+      - Agent Logs
+    servers:
+    - url: https://api.emporix.io
+  /ai-service/{tenant}/agentic/logs/sessions/search:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    post:
+      parameters:
+      - $ref: '#/components/parameters/pageSize'
+      - $ref: '#/components/parameters/pageNumber'
+      - $ref: '#/components/parameters/trait_cursor_next'
+      - $ref: '#/components/parameters/trait_cursor_prev'
+      - $ref: '#/components/parameters/sort'
+      - $ref: '#/components/parameters/fields'
+      - $ref: '#/components/parameters/header_xTotalCount'
+      summary: Searching agent sessions
+      operationId: POST-ai-search-sessions
+      responses:
+        '200':
+          $ref: '#/components/responses/200_resp_GET_agent_sessions'
+        '400':
+          $ref: '#/components/responses/400_resp_common'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_resp_common'
+      requestBody:
+        $ref: '#/components/requestBodies/QParamSearchBody'
+      description: 'Searches for agent sessions based on the provided query.
+
+
+        Supports offset pagination (`pageNumber`, `pageSize`) and cursor pagination (`next`, `prev`). Cursor pagination is active when `next` or `prev` is provided.
+
+
+        In cursor mode:
+
+        - `next` and `prev` cannot be used together and return `400`.
+
+        - `pageNumber` is ignored.
+
+        - the `X-Total-Count` request header is ignored and the `X-Total-Count` response header is not returned.
+
+
+        If no sort is provided, results are returned in `_id:ASC` order. If a sort is provided, `_id:ASC` is appended as a tie-breaker when `_id` is not already part of the sort.'
+      security:
+      - OAuth2:
+        - ai.agent_read
+      tags:
+      - Agent Logs
+    servers:
+    - url: https://api.emporix.io
+components:
+  parameters:
+    qParam:
+      in: query
+      name: q
+      description: 'A standard query parameter is used to search for specific values.
+
+
+        See: [Standard Practices - Query parameter](https://developer.emporix.io/api-documentation/standard-practices/q-param)
+
+        '
+      schema:
+        type: string
+    sort:
+      schema:
+        type: string
+      in: query
+      name: sort
+      description: List of properties used to sort the results, separated by colons.
+    trait_cursor_next:
+      name: next
+      in: query
+      required: false
+      schema:
+        type: string
+        maxLength: 4096
+      description: 'Opaque cursor from the `X-Next-Cursor` response header. Use it to retrieve the next set of results.
+
+        Cannot be combined with `prev` in the same request; sending both returns `400 Bad Request`.
+
+        When provided, cursor pagination is active: `pageNumber` is ignored and the `X-Total-Count` request header is ignored (the `X-Total-Count` response header is not returned).
+
+        '
+    trait_cursor_prev:
+      name: prev
+      in: query
+      required: false
+      schema:
+        type: string
+        maxLength: 4096
+      description: 'Opaque cursor from the `X-Prev-Cursor` response header. Use it to retrieve the previous set of results. Cannot be combined with `next` in the same request; sending both returns `400 Bad Request`. When provided, cursor pagination is active and `pageNumber` is ignored.
+
+        '
+    header_xTotalCount:
+      schema:
+        type: boolean
+      in: header
+      name: X-Total-Count
+      description: Flag indicating whether the total number of retrieved results should be returned.
+    path_tenant:
+      name: tenant
+      in: path
+      required: true
+      schema:
+        type: string
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: The tenant name should always be provided in lowercase.
+
+        '
+    pageNumber:
+      schema:
+        type: string
+      in: query
+      name: pageNumber
+      description: The page number to be retrieved. The size of the pages should be specified by the `pageSize` parameter.
+    pageSize:
+      schema:
+        type: string
+      in: query
+      name: pageSize
+      description: The number of documents to be retrieved per page.
+    fields:
+      schema:
+        type: string
+      in: query
+      name: fields
+      description: Fields to be returned in the response.
+  schemas:
+    ErrorMessage:
+      type: object
+      properties:
+        code:
+          type: integer
+        type:
+          type: string
+        message:
+          type: string
+        moreInfo:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              type:
+                type: string
+              message:
+                type: string
+              moreInfo:
+                type: string
+      description: ''
+    AgentSessionResponse:
+      type: object
+      properties:
+        sessionId:
+          type: string
+          description: Unique identifier of the session.
+        triggerAgentId:
+          type: string
+          description: Unique identifier of the agent that triggered the session.
+        severity:
+          $ref: '#/components/schemas/LogSeverity'
+        agents:
+          type: array
+          items:
+            type: string
+          description: List of agent IDs that participated in this session.
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentLogMessageResponse'
+          description: List of log messages associated with this session.
+        duration:
+          type: integer
+          format: int64
+          description: Duration of the session in seconds.
+        promptTokens:
+          type: integer
+          format: int64
+          description: Cumulative LLM prompt token count for this session.
+        completionTokens:
+          type: integer
+          format: int64
+          description: Cumulative LLM completion token count for this session.
+        metadata:
+          $ref: '#/components/schemas/MetadataResponse'
+    LogSeverity:
+      type: string
+      enum:
+      - INFO
+      - WARNING
+      - ERROR
+      description: Severity level of the log entry.
+    QParamSearchBody:
+      type: object
+      properties:
+        q:
+          type: string
+          description: "A standard query parameter is used to search for specific values. \n\nSee: [Standard Practices - Query parameter](https://developer.emporix.io/api-documentation/standard-practices/q-param)\n"
+    AgentRequestResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the request log.
+        sessionId:
+          type: string
+          description: Unique identifier of the session.
+        requestId:
+          type: string
+          description: Unique identifier of the request.
+        triggerAgentId:
+          type: string
+          description: Unique identifier of the agent that triggered the request.
+        collaborationAgents:
+          type: array
+          items:
+            type: string
+          description: List of agent IDs that collaborated in this request.
+        severity:
+          $ref: '#/components/schemas/LogSeverity'
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentLogMessageResponse'
+          description: List of log messages associated with this request.
+        duration:
+          type: integer
+          format: int64
+          description: Duration of the request in seconds.
+        promptTokens:
+          type: integer
+          format: int64
+          description: Cumulative LLM prompt token count for this request.
+        completionTokens:
+          type: integer
+          format: int64
+          description: Cumulative LLM completion token count for this request.
+        agentVersion:
+          type: integer
+          minimum: 1
+          description: Version of the agent which triggered the request.
+        metadata:
+          $ref: '#/components/schemas/MetadataResponse'
+    ErrorMessageFault:
+      type: object
+      properties:
+        fault:
+          type: object
+          properties:
+            faultstring:
+              type: string
+            detail:
+              type: object
+              properties:
+                errorcode:
+                  type: string
+    AgentLogMessageResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp when the log message was created.
+        severity:
+          $ref: '#/components/schemas/LogSeverity'
+        message:
+          type: string
+          description: The log message content.
+        agentId:
+          type: string
+          description: Unique identifier of the agent that generated the log.
+        agentVersion:
+          type: integer
+          minimum: 1
+          description: Version of the agent that wrote this log message.
+        requestId:
+          type: string
+          description: Unique identifier of the request associated with the log.
+        isBusinessLog:
+          type: boolean
+          description: Whether this is a business log entry.
+    MetadataResponse:
+      allOf:
+      - $ref: '#/components/schemas/MetadataRequest'
+      - type: object
+        properties:
+          createdAt:
+            description: 'Date and time when the object was created. The value is approved as an ISO-8601 representation of an Instant. For example: `2022-04-30T13:18:02.379Z`'
+            type: string
+          modifiedAt:
+            description: 'Date and time when the object was last modified. The value is approved as an ISO-8601 representation of an Instant. For example: `2022-04-30T13:18:02.379Z`'
+            type: string
+        required:
+        - version
+        - createdAt
+        - modifiedAt
+    MetadataRequest:
+      type: object
+      properties:
+        version:
+          minimum: 1
+          type: integer
+          description: Version of the object. The version is required during the update operation because of the optimistic locking mechanism.
+      required:
+      - version
+  responses:
+    403_resp_common:
+      description: Authorization scopes of the access token are not sufficient and do not match the scopes required by the endpoint.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Access forbidden:
+              value:
+                code: 403
+                status: Forbidden
+                message: The access to the requested resource has been forbidden by the server.
+    200_resp_GET_agent_sessions:
+      description: List of agent sessions.
+      headers:
+        X-Total-Count:
+          description: Total number of agent sessions for the given criteria. Returned only for offset pagination when requested with the `X-Total-Count` header.
+          schema:
+            type: integer
+            format: int32
+        X-Next-Cursor:
+          description: Opaque cursor for retrieving the next page. Returned on non-empty responses when a next page exists.
+          schema:
+            type: string
+        X-Prev-Cursor:
+          description: Opaque cursor for retrieving the previous page. Returned on non-empty responses when a previous page exists.
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/AgentSessionResponse'
+          examples:
+            Agent Sessions:
+              value:
+              - sessionId: sess-123e4567-e89b-12d3-a456-426614174000
+                triggerAgentId: complaint-agent
+                severity: INFO
+                agents:
+                - complaint-agent
+                - complaint-agent-categorization
+                messages:
+                - timestamp: '2025-01-15T10:30:27.167Z'
+                  severity: INFO
+                  message: Session started
+                  agentId: complaint-agent
+                  agentVersion: 3
+                  requestId: req-123e4567-e89b-12d3-a456-426614174000
+                  isBusinessLog: false
+                - timestamp: '2025-01-15T10:30:28.234Z'
+                  severity: INFO
+                  message: Handed off to categorization agent
+                  agentId: complaint-agent
+                  agentVersion: 3
+                  requestId: req-123e4567-e89b-12d3-a456-426614174000
+                  isBusinessLog: true
+                duration: 120
+                promptTokens: 2468
+                completionTokens: 890
+                metadata:
+                  version: 1
+                  createdAt: '2025-01-15T10:30:27.167Z'
+                  modifiedAt: '2025-01-15T10:30:29.234Z'
+    200_resp_GET_agent_request:
+      description: A single agent request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AgentRequestResponse'
+          examples:
+            Agent Request:
+              value:
+                id: req-123e4567-e89b-12d3-a456-426614174000
+                sessionId: sess-123e4567-e89b-12d3-a456-426614174000
+                requestId: req-123e4567-e89b-12d3-a456-426614174000
+                triggerAgentId: complaint-agent
+                collaborationAgents:
+                - complaint-agent-categorization
+                severity: INFO
+                messages:
+                - timestamp: '2025-01-15T10:30:28.234Z'
+                  severity: INFO
+                  message: Retrieved order details successfully
+                  agentId: complaint-agent
+                  agentVersion: 3
+                  requestId: req-123e4567-e89b-12d3-a456-426614174000
+                  isBusinessLog: true
+                - timestamp: '2025-01-15T10:30:29.456Z'
+                  severity: WARNING
+                  message: Order status check returned unexpected value
+                  agentId: complaint-agent
+                  agentVersion: 3
+                  requestId: req-123e4567-e89b-12d3-a456-426614174000
+                  isBusinessLog: false
+                duration: 45
+                promptTokens: 1234
+                completionTokens: 567
+                agentVersion: 3
+                metadata:
+                  version: 1
+                  createdAt: '2025-01-15T10:30:27.167Z'
+                  modifiedAt: '2025-01-15T10:30:29.456Z'
+    200_resp_GET_agent_session:
+      description: A single agent session.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AgentSessionResponse'
+          examples:
+            Agent Session:
+              value:
+                sessionId: sess-123e4567-e89b-12d3-a456-426614174000
+                triggerAgentId: complaint-agent
+                severity: INFO
+                agents:
+                - complaint-agent
+                - complaint-agent-categorization
+                messages:
+                - timestamp: '2025-01-15T10:30:28.234Z'
+                  severity: INFO
+                  message: Retrieved order details successfully
+                  agentId: complaint-agent
+                  agentVersion: 3
+                  requestId: req-123e4567-e89b-12d3-a456-426614174000
+                  isBusinessLog: true
+                - timestamp: '2025-01-15T10:30:30.789Z'
+                  severity: INFO
+                  message: Categorization agent processing request
+                  agentId: complaint-agent-categorization
+                  agentVersion: 2
+                  requestId: req-123e4567-e89b-12d3-a456-426614174000
+                  isBusinessLog: false
+                duration: 120
+                promptTokens: 2468
+                completionTokens: 890
+                metadata:
+                  version: 1
+                  createdAt: '2025-01-15T10:30:27.167Z'
+                  modifiedAt: '2025-01-15T10:30:30.789Z'
+    400_resp_common:
+      description: The request was syntactically incorrect.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Code must not be null:
+              value:
+                code: 400
+                status: Bad Request
+                message: Validation problem with request body.
+                details:
+                - message: code must not be null nor blank
+    401_resp_common:
+      description: The authorization token is invalid or has expired.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessageFault'
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            Access token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+    404_resp_common:
+      description: Example response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Resource not found:
+              value:
+                resourceId: 628cd20c6e8b2432b6346ca6
+                code: 404
+                status: Not Found
+                message: The resource with id 628cd20c6e8b2432b6346ca6 has not been found.
+    200_resp_GET_agent_requests:
+      description: List of agent requests.
+      headers:
+        X-Total-Count:
+          description: Total number of agent requests for the given criteria. Returned only for offset pagination when requested with the `X-Total-Count` header.
+          schema:
+            type: integer
+            format: int32
+        X-Next-Cursor:
+          description: Opaque cursor for retrieving the next page. Returned on non-empty responses when a next page exists.
+          schema:
+            type: string
+        X-Prev-Cursor:
+          description: Opaque cursor for retrieving the previous page. Returned on non-empty responses when a previous page exists.
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/AgentRequestResponse'
+          examples:
+            Agent Requests:
+              value:
+              - id: req-123e4567-e89b-12d3-a456-426614174000
+                sessionId: sess-123e4567-e89b-12d3-a456-426614174000
+                requestId: req-123e4567-e89b-12d3-a456-426614174000
+                triggerAgentId: complaint-agent
+                collaborationAgents:
+                - complaint-agent-categorization
+                severity: INFO
+                messages:
+                - timestamp: '2025-01-15T10:30:27.167Z'
+                  severity: INFO
+                  message: Agent started processing request
+                  agentId: complaint-agent
+                  agentVersion: 3
+                  requestId: req-123e4567-e89b-12d3-a456-426614174000
+                  isBusinessLog: false
+                - timestamp: '2025-01-15T10:30:28.234Z'
+                  severity: INFO
+                  message: Retrieved order details successfully
+                  agentId: complaint-agent
+                  agentVersion: 3
+                  requestId: req-123e4567-e89b-12d3-a456-426614174000
+                  isBusinessLog: true
+                duration: 45
+                promptTokens: 1234
+                completionTokens: 567
+                agentVersion: 3
+                metadata:
+                  version: 1
+                  createdAt: '2025-01-15T10:30:27.167Z'
+                  modifiedAt: '2025-01-15T10:30:28.234Z'
+  requestBodies:
+    QParamSearchBody:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/QParamSearchBody'
+          examples:
+            Search Request:
+              value:
+                q: name:~Complaint
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes:
+            ai.text_manage: Needed to execute actions related to the text generation.
+            ai.completion_manage: Needed to execute actions related to the AI completions.
+            ai.agentexecution_manage: Needed to execute agentic chat.
+            ai.agentexecution_manage_own: Needed to execute agentic chat by customers.
+            ai.agent_read: Needed to read AI agents.
+            ai.agent_manage: Needed to manage AI agents.
+          tokenUrl: https://api.emporix.io/oauth/token
+x-refined-from:
+- emporix-ai-service-openapi.yml
+- emporix-ai-service-openapi.yml

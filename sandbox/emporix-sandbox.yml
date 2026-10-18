@@ -1,0 +1,8 @@
+generated: '2026-10-18'
+method: searched
+source: https://developer.emporix.io/api-documentation/quickstart/api-intro.md
+description: "Tenant-based sandbox environment"
+docs: "Create your first tenant for testing"
+test_vs_live: "Tenant isolation"
+test_data: "Manage Showcase and Sample Data feature"
+note: "Sandbox testing appears to be tenant-based with sample data capabilities."

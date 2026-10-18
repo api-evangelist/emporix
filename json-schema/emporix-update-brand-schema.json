@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-update-brand-schema.json",
+  "title": "Brand",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-brand-service-openapi.yml#/components/schemas/updateBrand",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Brand name."
+    },
+    "description": {
+      "type": "string",
+      "description": "Brand description."
+    },
+    "localizedName": {
+      "type": "object",
+      "description": "Map of key-value pairs containing localized names of the brand.",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "localizedDescription": {
+      "type": "object",
+      "description": "Map of key-value pairs containing localized descriptions of the brand.",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "metadata": {
+      "$ref": "#/$defs/updateMetaData"
+    }
+  },
+  "$defs": {
+    "updateMetaData": {
+      "title": "Metadata",
+      "type": "object",
+      "properties": {
+        "version": {
+          "minimum": 1,
+          "type": "integer",
+          "description": "Object version."
+        }
+      }
+    }
+  }
+}

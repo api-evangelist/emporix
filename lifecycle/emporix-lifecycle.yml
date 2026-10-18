@@ -1,0 +1,19 @@
+generated: '2026-10-18'
+method: searched
+source: https://developer.emporix.io/api-documentation/quickstart/api-intro.md
+versioning:
+  policy: unknown
+  evidence: No versioning policy documentation found
+deprecation:
+  policy: unknown
+  evidence: No deprecation policy documentation found
+status_page: https://status.emporix.io
+sla:
+  policy: unknown
+  evidence: No SLA documentation found
+support_period:
+  policy: unknown
+  evidence: No support period documentation found
+sunset_policy:
+  policy: unknown
+  evidence: No sunset policy documentation found

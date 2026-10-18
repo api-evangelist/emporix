@@ -1,0 +1,25 @@
+generated: '2026-10-18'
+method: searched
+generator: extract-docs-artifacts.py (deepseek)
+source: https://developer.emporix.io/user-guides/system-management/webhooks-user-guide.md
+sources:
+- https://developer.emporix.io/user-guides/system-management/webhooks-user-guide.md
+- https://developer.emporix.io/user-guides/system-management/webhooks-user-guide/hmac-configuration.md
+- https://developer.emporix.io/user-guides/system-management/webhooks-user-guide/azure-service-bus-integration.md
+- https://developer.emporix.io/user-guides/system-management/webhooks-user-guide/amazon-sqs-integration.md
+description: Emporix webhook events and delivery configuration
+events:
+- event: schema.custom-instance-created
+  description: Custom entity instance created event
+- event: schema.custom-instance-updated
+  description: Custom entity instance updated event
+- event: schema.custom-instance-deleted
+  description: Custom entity instance deleted event
+- event: product.created
+  description: Product creation event
+docs: https://developer.emporix.io/user-guides/system-management/webhooks-user-guide.md
+note: The pages mention "All actions that take place in the Emporix API are considered events" but only list these specific event types. The examples
+  show product.created and schema.custom-instance-* events.
+delivery:
+  auth: HMAC with emporix-event-signature header
+  signature: SHA-256 HMAC with Base64 encoding

@@ -1,0 +1,565 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-quote-response-schema.json",
+  "title": "QuoteResponse",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-quote-openapi.yml#/components/schemas/QuoteResponse",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Quote ID\n\n**NOTE**:\nIf not specified during creation, this attribute is automatically generated. It is also possible to assign a custom ID."
+    },
+    "businessModel": {
+      "type": "string",
+      "description": "Business model of the quote.",
+      "enum": [
+        "B2B",
+        "B2C"
+      ]
+    },
+    "customerReference": {
+      "type": "string",
+      "description": "Customer-provided reference stored on the quote."
+    },
+    "customerComment": {
+      "type": "string",
+      "description": "Customer-provided comment stored on the quote."
+    },
+    "customer": {
+      "type": "object",
+      "description": "This attribute contains details about the customer for whom the quote was created.",
+      "properties": {
+        "customerId": {
+          "type": "string",
+          "description": "The ID of the customer for whom the quote was created."
+        },
+        "firstName": {
+          "type": "string",
+          "description": "Customer's first name\n\n**NOTE**:\nThis attribute is filled automatically after the quote is created."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "Customer's last name\n\n**NOTE**:\nThis attribute is filled automatically after the quote is created."
+        },
+        "contactEmail": {
+          "type": "string",
+          "description": "Customer's contact email\n\n**NOTE**:\nThis attribute is filled automatically after the quote is created."
+        }
+      }
+    },
+    "employee": {
+      "type": "object",
+      "description": "This attribute contains details about the employee that is processing the quote.",
+      "properties": {
+        "employeeId": {
+          "type": "string",
+          "description": "The ID of the employee that is processing the quote."
+        },
+        "firstName": {
+          "type": "string",
+          "description": "Employee's first name\n\n**NOTE**:\nThis attribute is filled automatically after the quote is created or the employee ID is updated."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "Employee's last name.\n\n**NOTE**:\nThis attribute is filled automatically after the quote is created or the employee ID is updated."
+        }
+      }
+    },
+    "cartId": {
+      "type": "string",
+      "description": "The ID of the cart from which the quote was created (not available when the quote was created manually)"
+    },
+    "legalEntityId": {
+      "type": "string",
+      "description": "Identifier of the legal entity linked to the quote."
+    },
+    "company": {
+      "type": "object",
+      "deprecated": true,
+      "description": "**This field is deprecated**. Use `legalEntityId` to identify the company. The object remains populated for compatibility and contains the company name stored on the quote.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The company name for which the quote was created."
+        }
+      }
+    },
+    "siteCode": {
+      "type": "string",
+      "description": "The site code for which the quote was created"
+    },
+    "orderId": {
+      "type": "string",
+      "description": "The ID of the order which was created based on the quote. The order is created and assigned to the quote when status of the quote transitions to `ACCEPTED`."
+    },
+    "currency": {
+      "type": "string",
+      "description": "The currency of the quote prices."
+    },
+    "status": {
+      "type": "object",
+      "description": "The status of the quote.",
+      "properties": {
+        "value": {
+          "type": "string",
+          "description": "The status value of the quote."
+        },
+        "comment": {
+          "type": "string",
+          "description": "Comment relating to the status."
+        },
+        "quoteReason": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/QuoteReasonResponse"
+            },
+            {
+              "type": "object",
+              "description": "The reason for status change."
+            }
+          ]
+        }
+      }
+    },
+    "validTo": {
+      "type": "string",
+      "format": "date-time",
+      "description": "The date until which the quote is valid and can be accepted by the customer."
+    },
+    "comment": {
+      "type": "object",
+      "description": "Employee and customer comments.",
+      "properties": {
+        "employeeComment": {
+          "type": "string",
+          "description": "Employee comment"
+        }
+      }
+    },
+    "billingAddress": {
+      "$ref": "#/$defs/AddressResponse"
+    },
+    "shippingAddress": {
+      "$ref": "#/$defs/AddressResponse"
+    },
+    "totalPrice": {
+      "type": "object",
+      "description": "The calculated total price details.",
+      "properties": {
+        "currency": {
+          "type": "string",
+          "description": "Currency of the value."
+        },
+        "netValue": {
+          "type": "number",
+          "description": "The total net value."
+        },
+        "grossValue": {
+          "type": "number",
+          "description": "The total gross value."
+        },
+        "taxValue": {
+          "type": "number",
+          "description": "The amount of the tax for the total price."
+        }
+      }
+    },
+    "subtotalPrice": {
+      "type": "object",
+      "description": "The calculated quote subtotal price.",
+      "properties": {
+        "currency": {
+          "type": "string",
+          "description": "Currency of the value."
+        },
+        "netValue": {
+          "type": "number",
+          "description": "The subtotal net value."
+        },
+        "grossValue": {
+          "type": "number",
+          "description": "The subtotal gross value."
+        },
+        "taxValue": {
+          "type": "number",
+          "description": "The subtotal tax value."
+        }
+      }
+    },
+    "taxAggregate": {
+      "type": "object",
+      "description": "Tax aggregation of the total price.",
+      "properties": {
+        "lines": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "The tax code."
+              },
+              "amount": {
+                "type": "number",
+                "description": "The amount of the tax."
+              },
+              "rate": {
+                "type": "number",
+                "description": "The tax rate."
+              },
+              "taxable": {
+                "type": "number",
+                "description": "The total taxable amount."
+              }
+            }
+          }
+        }
+      }
+    },
+    "shipping": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/QuoteShipping"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "grossValue": {
+              "type": "number",
+              "description": "Gross value of the shipping cost."
+            },
+            "methodName": {
+              "type": "object",
+              "description": "Localized name of the shipping method selected by the customer.",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "items": {
+      "type": "array",
+      "description": "A list of quote items.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the quote item used for patch operations on the item."
+          },
+          "quantity": {
+            "type": "object",
+            "description": "The attribute contains details about the item quantity.",
+            "properties": {
+              "quantity": {
+                "type": "number",
+                "description": "The quantity of the item that is used for the price calculation."
+              },
+              "unitCode": {
+                "type": "string",
+                "description": "The unit code of the quantity (it must be one of the units defined in the Unit Handling Service)."
+              }
+            }
+          },
+          "price": {
+            "type": "object",
+            "description": "Item price details.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "Defines if product is external or internal. If the product is internal, it's taken from the Emporix Product Service. If the price is external, it's a custom product from external system.",
+                "enum": [
+                  "INTERNAL",
+                  "EXTERNAL"
+                ]
+              },
+              "priceId": {
+                "type": "string",
+                "description": "The ID of the price that was initially assigned to the item."
+              },
+              "unitPrice": {
+                "type": "number",
+                "description": "The original unit price of the item that is copied from the initial price."
+              },
+              "newUnitPrice": {
+                "type": "number",
+                "description": "The new unit price that is auto-calculated based on provided `quantity` and `totalNetValue` values."
+              },
+              "discount": {
+                "type": "number",
+                "description": "The difference in percentage between `unitPrice` and `newUnitPrice`."
+              },
+              "totalNetValue": {
+                "type": "number",
+                "description": "The total net price of the item that is initially based on the provided price, but it can be overridden to allow for a merchant discount."
+              },
+              "tax": {
+                "type": "object",
+                "description": "This attribute contains information about the calculated item tax.",
+                "properties": {
+                  "taxClass": {
+                    "type": "string",
+                    "description": "The tax class assigned to the item is initially copied from the initial price."
+                  },
+                  "taxRate": {
+                    "type": "number",
+                    "description": "The tax rate that is copied from the initial price."
+                  },
+                  "prices": {
+                    "type": "object",
+                    "description": "The auto-calculated item net and gross prices ",
+                    "properties": {
+                      "grossValue": {
+                        "type": "number"
+                      },
+                      "netValue": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                }
+              },
+              "mixins": {
+                "type": "object",
+                "description": "Mixins request.",
+                "additionalProperties": true
+              },
+              "metadata": {
+                "type": "object",
+                "description": "Metadata request.",
+                "properties": {
+                  "mixins": {
+                    "type": "object",
+                    "description": "Links to the mixin schemas.",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          },
+          "product": {
+            "type": "object",
+            "description": "Product details.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "Defines if product is external or internal. If the product is internal, it's taken from the Emporix Product Service. If the price is external, it's a custom product from external system.",
+                "enum": [
+                  "INTERNAL",
+                  "EXTERNAL"
+                ]
+              },
+              "productId": {
+                "type": "string",
+                "description": "The ID of the product or variant assigned to the quote item."
+              },
+              "name": {
+                "type": "object",
+                "description": "This attribute contains the product name language map.\n\n**NOTE**:\nAfter the item has been added to the quote, the product name language map attribute is automatically populated."
+              },
+              "media": {
+                "type": "object",
+                "description": "This attribute comprises the product media information and is automatically populated upon the creation of the quote.",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "ID of the media."
+                  },
+                  "contentType": {
+                    "type": "string",
+                    "description": "The content type of the media. For example: `image/jpg`."
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "The url to the product media."
+                  }
+                }
+              },
+              "taxClasses": {
+                "type": "object",
+                "description": "Map of key-value pairs that associates tax classes with locations (countries)."
+              },
+              "mixins": {
+                "type": "object",
+                "description": "Mixins request.",
+                "additionalProperties": true
+              },
+              "metadata": {
+                "type": "object",
+                "description": "Metadata request.",
+                "properties": {
+                  "mixins": {
+                    "type": "object",
+                    "description": "Links to the mixin schemas.",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "mixins": {
+      "type": "object",
+      "description": "Mixins request.",
+      "additionalProperties": true
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Quote metadata details.",
+      "properties": {
+        "mixins": {
+          "type": "object",
+          "description": "Links to the mixin schemas.",
+          "additionalProperties": true
+        },
+        "version": {
+          "type": "integer",
+          "description": "Version of the quote that is used for the optimistic locking handling."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Quote creation timestamp."
+        },
+        "modifiedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Quote modification timestamp."
+        }
+      }
+    },
+    "restriction": {
+      "$ref": "#/$defs/Restriction"
+    }
+  },
+  "$defs": {
+    "AddressResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The ID of the address."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the address."
+        },
+        "addressLine1": {
+          "type": "string",
+          "description": "First line of the address."
+        },
+        "addressLine2": {
+          "type": "string",
+          "description": "Second line of the address."
+        },
+        "city": {
+          "type": "string",
+          "description": "City name."
+        },
+        "postcode": {
+          "type": "string",
+          "description": "The postal code of the city."
+        },
+        "state": {
+          "type": "string",
+          "description": "The state where the city is located."
+        },
+        "countryCode": {
+          "type": "string",
+          "description": "The code of the country location."
+        }
+      }
+    },
+    "QuoteReasonResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The quote reason ID."
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "CHANGE",
+            "DECLINE"
+          ],
+          "description": "Type of the quote reason."
+        },
+        "message": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Localized message - can be either string or map with languages as map's keys accordingly to specified 'Accept-Language' header."
+        },
+        "code": {
+          "type": "string",
+          "description": "Code of the reason for the quote status change."
+        },
+        "metadata": {
+          "type": "object",
+          "description": "The Quote Reason metadata details.",
+          "properties": {
+            "version": {
+              "type": "integer",
+              "description": "Version of the quote reason that is used for the optimistic locking handling."
+            },
+            "createdAt": {
+              "type": "string",
+              "format": "date-time",
+              "description": "The Quote Reason creation timestamp."
+            },
+            "modifiedAt": {
+              "type": "string",
+              "format": "date-time",
+              "description": "The Quote Reason modification timestamp."
+            }
+          }
+        }
+      }
+    },
+    "QuoteShipping": {
+      "type": "object",
+      "description": "The shipping cost of the quote.",
+      "properties": {
+        "value": {
+          "type": "number",
+          "description": "Net value of the shipping cost."
+        },
+        "methodId": {
+          "type": "string",
+          "description": "Shipping method's unique identifier."
+        },
+        "zoneId": {
+          "type": "string",
+          "description": "Shipping zone identifier."
+        },
+        "shippingTaxCode": {
+          "type": "string",
+          "description": "Tax code of the shipping method."
+        }
+      }
+    },
+    "Restriction": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Access control identifier that determines who can view or manage the quotes.\n\n**Purpose**: Restricts quote visibility based on scope permissions. Only users/applications \nwith matching restriction scopes can access quotes with a specific restriction value.\n\n**Access Control**:\n- *Reading*: Users can only query and view quotes with the `restriction` value that matches one of their authorized restrictions.\n\n**Validation**: The value must exist in the tenant's configured list of valid restrictions.\n\n**Restriction Synchronization**:\n- If quote is created by a customer (based on a cart) and `restriction` property is not set, the `restriction` value of quote is inherited from customer's restriction.\n- If a quote is created by an employee and the `restriction` property is not set with tenant configuration property `enableSyncBetweenRestrictionsAndSiteCodes` set to `true`, the `restriction` field automatically syncs with quote's siteCode property.\n"
+    }
+  }
+}

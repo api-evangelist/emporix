@@ -1,0 +1,587 @@
+openapi: 3.2.0
+info:
+  title: Emporix Job API
+  version: ''
+  contact:
+    name: Emporix
+    url: https://emporix.com
+    email: documentation@emporix.com
+  description: 'Operations tagged Job across 2 of this provider''s published API definitions: emporix-ai-service-openapi.yml, emporix-ai-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+tags:
+- name: Job
+  description: Manage Jobs
+paths:
+  /ai-service/{tenant}/jobs:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    - $ref: '#/components/parameters/qParam'
+    - $ref: '#/components/parameters/pageSize'
+    - $ref: '#/components/parameters/pageNumber'
+    - $ref: '#/components/parameters/trait_cursor_next'
+    - $ref: '#/components/parameters/trait_cursor_prev'
+    - $ref: '#/components/parameters/sort'
+    - $ref: '#/components/parameters/fields'
+    - $ref: '#/components/parameters/header_xTotalCount'
+    get:
+      summary: Listing available jobs
+      operationId: GET-ai-list-jobs
+      responses:
+        '200':
+          $ref: '#/components/responses/200_resp_GET_jobs'
+        '400':
+          $ref: '#/components/responses/400_resp_common'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_resp_common'
+      description: 'Retrieves agent jobs.
+
+
+        Supports offset pagination (`pageNumber`, `pageSize`) and cursor pagination (`next`, `prev`). Cursor pagination is active when `next` or `prev` is provided.
+
+
+        In cursor mode:
+
+        - `next` and `prev` cannot be used together and return `400`.
+
+        - `pageNumber` is ignored.
+
+        - the `X-Total-Count` request header is ignored and the `X-Total-Count` response header is not returned.
+
+
+        If no sort is provided, results are returned in `_id:ASC` order. If a sort is provided, `_id:ASC` is appended as a tie-breaker when `_id` is not already part of the sort.'
+      security:
+      - OAuth2:
+        - ai.agent_read
+      tags:
+      - Job
+    servers:
+    - url: https://api.emporix.io
+  /ai-service/{tenant}/jobs/search:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    post:
+      parameters:
+      - $ref: '#/components/parameters/pageSize'
+      - $ref: '#/components/parameters/pageNumber'
+      - $ref: '#/components/parameters/trait_cursor_next'
+      - $ref: '#/components/parameters/trait_cursor_prev'
+      - $ref: '#/components/parameters/sort'
+      - $ref: '#/components/parameters/fields'
+      - $ref: '#/components/parameters/header_xTotalCount'
+      summary: Searching jobs
+      operationId: POST-ai-search-jobs
+      responses:
+        '200':
+          $ref: '#/components/responses/200_resp_GET_jobs'
+        '400':
+          $ref: '#/components/responses/400_resp_common'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_resp_common'
+      description: 'Searches agent jobs based on the provided query in the request body.
+
+
+        Supports offset pagination (`pageNumber`, `pageSize`) and cursor pagination (`next`, `prev`). Cursor pagination is active when `next` or `prev` is provided.
+
+
+        In cursor mode:
+
+        - `next` and `prev` cannot be used together and return `400`.
+
+        - `pageNumber` is ignored.
+
+        - the `X-Total-Count` request header is ignored and the `X-Total-Count` response header is not returned.
+
+
+        If no sort is provided, results are returned in `_id:ASC` order. If a sort is provided, `_id:ASC` is appended as a tie-breaker when `_id` is not already part of the sort.'
+      security:
+      - OAuth2:
+        - ai.agent_read
+      tags:
+      - Job
+      requestBody:
+        $ref: '#/components/requestBodies/QParamSearchBody'
+    servers:
+    - url: https://api.emporix.io
+  /ai-service/{tenant}/jobs/{jobId}:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    - schema:
+        type: string
+      name: jobId
+      in: path
+      required: true
+    get:
+      parameters:
+      - $ref: '#/components/parameters/fields'
+      summary: Retrieving available job
+      operationId: GET-ai-job
+      responses:
+        '200':
+          description: A job details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+              examples:
+                Jobs:
+                  value:
+                    id: 68835cc3ef4e8e1425c360ad
+                    status: success
+                    sessionId: 123e4567-e89b-12d3-a456-426614174000
+                    agentType: complaint
+                    type: AGENT_CHAT
+                    agentId: complaint-agent
+                    commerceEvent: product.product-updated
+                    message: "Dear Customer,\n\nWe have successfully processed your support request regarding the incorrect information on invoice EIN251131 for order EON1031. Our team has verified the order and customer details, confirming both the order and legal entity were found.\nThank you for your patience and cooperation.\n\nBest regards,  \n[Your Support Team]"
+                    metadata:
+                      version: 1
+                      createdAt: '2025-07-25T10:30:27.167Z'
+                      modifiedAt: '2025-07-25T10:31:14.509Z'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_resp_common'
+        '404':
+          $ref: '#/components/responses/404_resp_common'
+      description: Retrieves agent job by its ID.
+      security:
+      - OAuth2:
+        - ai.agent_read
+      tags:
+      - Job
+    delete:
+      summary: Deleting a job
+      operationId: DELETE-ai-job
+      responses:
+        '204':
+          description: Given job has been deleted.
+        '400':
+          $ref: '#/components/responses/400_resp_common'
+        '401':
+          $ref: '#/components/responses/401_resp_common'
+        '403':
+          $ref: '#/components/responses/403_resp_common'
+        '404':
+          $ref: '#/components/responses/404_resp_common'
+      description: Deletes job by given ID.
+      security:
+      - OAuth2:
+        - ai.agent_manage
+      tags:
+      - Job
+    servers:
+    - url: https://api.emporix.io
+components:
+  parameters:
+    qParam:
+      in: query
+      name: q
+      description: 'A standard query parameter is used to search for specific values.
+
+
+        See: [Standard Practices - Query parameter](https://developer.emporix.io/api-documentation/standard-practices/q-param)
+
+        '
+      schema:
+        type: string
+    sort:
+      schema:
+        type: string
+      in: query
+      name: sort
+      description: List of properties used to sort the results, separated by colons.
+    trait_cursor_next:
+      name: next
+      in: query
+      required: false
+      schema:
+        type: string
+        maxLength: 4096
+      description: 'Opaque cursor from the `X-Next-Cursor` response header. Use it to retrieve the next set of results.
+
+        Cannot be combined with `prev` in the same request; sending both returns `400 Bad Request`.
+
+        When provided, cursor pagination is active: `pageNumber` is ignored and the `X-Total-Count` request header is ignored (the `X-Total-Count` response header is not returned).
+
+        '
+    trait_cursor_prev:
+      name: prev
+      in: query
+      required: false
+      schema:
+        type: string
+        maxLength: 4096
+      description: 'Opaque cursor from the `X-Prev-Cursor` response header. Use it to retrieve the previous set of results. Cannot be combined with `next` in the same request; sending both returns `400 Bad Request`. When provided, cursor pagination is active and `pageNumber` is ignored.
+
+        '
+    header_xTotalCount:
+      schema:
+        type: boolean
+      in: header
+      name: X-Total-Count
+      description: Flag indicating whether the total number of retrieved results should be returned.
+    path_tenant:
+      name: tenant
+      in: path
+      required: true
+      schema:
+        type: string
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: The tenant name should always be provided in lowercase.
+
+        '
+    pageNumber:
+      schema:
+        type: string
+      in: query
+      name: pageNumber
+      description: The page number to be retrieved. The size of the pages should be specified by the `pageSize` parameter.
+    pageSize:
+      schema:
+        type: string
+      in: query
+      name: pageSize
+      description: The number of documents to be retrieved per page.
+    fields:
+      schema:
+        type: string
+      in: query
+      name: fields
+      description: Fields to be returned in the response.
+  schemas:
+    ErrorMessage:
+      type: object
+      properties:
+        code:
+          type: integer
+        type:
+          type: string
+        message:
+          type: string
+        moreInfo:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              type:
+                type: string
+              message:
+                type: string
+              moreInfo:
+                type: string
+      description: ''
+    QParamSearchBody:
+      type: object
+      properties:
+        q:
+          type: string
+          description: "A standard query parameter is used to search for specific values. \n\nSee: [Standard Practices - Query parameter](https://developer.emporix.io/api-documentation/standard-practices/q-param)\n"
+    ImportedEntity:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID of the imported entity.
+        name:
+          type: string
+          description: Name of the imported entity.
+        state:
+          type: string
+          description: State of the imported entity.
+          enum:
+          - TO_CREATE
+          - ENABLED
+          - DISABLED
+          - EXISTS
+          - FAILED
+        details:
+          type: array
+          description: Reasons the entity was skipped, disabled, or failed during import.
+          items:
+            $ref: '#/components/schemas/ImportDetails'
+    ExportResult:
+      type: object
+      properties:
+        data:
+          type: string
+          description: The base64 encoded JSON value of the exported agents with related tools and MCP servers.
+        checksum:
+          type: string
+          description: Checksum calculated based on JSON value. Validates if importing JSON is exactly the same as the exported one.
+    ErrorMessageFault:
+      type: object
+      properties:
+        fault:
+          type: object
+          properties:
+            faultstring:
+              type: string
+            detail:
+              type: object
+              properties:
+                errorcode:
+                  type: string
+    Job:
+      type: object
+      description: Contains information about the job result - whether it was successful or not, what was the agent output etc.
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the job.
+        agentType:
+          $ref: '#/components/schemas/AgentType'
+        status:
+          $ref: '#/components/schemas/JobStatus'
+        type:
+          $ref: '#/components/schemas/JobType'
+        exportResult:
+          $ref: '#/components/schemas/ExportResult'
+        importResult:
+          $ref: '#/components/schemas/ImportResult'
+        sessionId:
+          type: string
+          description: Unique identifier of the session. Send this value back as the `session-id` header on later chat and attachment calls.
+        agentId:
+          type: string
+          description: Unique identifier of the agent.
+        message:
+          type: string
+          description: Agent message.
+        commerceEvent:
+          type: string
+          description: Commerce event which triggered the job.
+        metadata:
+          $ref: '#/components/schemas/MetadataResponse'
+    JobStatus:
+      type: string
+      enum:
+      - in_progress
+      - success
+      - failure
+      - skipped
+      description: Status of the job.
+    JobType:
+      type: string
+      enum:
+      - IMPORT
+      - EXPORT
+      - AGENT_CHAT
+      description: Type of the job.
+    ImportResult:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Short summary of the import.
+        summary:
+          type: object
+          description: Summary of the import.
+          properties:
+            agents:
+              type: array
+              items:
+                $ref: '#/components/schemas/ImportedEntity'
+            tools:
+              type: array
+              items:
+                $ref: '#/components/schemas/ImportedEntity'
+            mcpServers:
+              type: array
+              items:
+                $ref: '#/components/schemas/ImportedEntity'
+    AgentType:
+      type: string
+      description: Type of the agent handling the request.
+      enum:
+      - generic
+      - complaint
+      - anti_fraud
+    ImportDetails:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Machine-readable reason code for UI localization.
+          enum:
+          - MISSING_FUNCTION
+          - MISSING_TOKEN
+          - NOT_IMPORTABLE
+          - ALREADY_EXISTS
+          - AGENT_IMPORTED_DISABLED
+          - IMPORT_FAILED
+        objectId:
+          type: string
+          description: ID of the related object, such as a function ID or token ID.
+        objectName:
+          type: string
+          description: Display name of the related object, such as a tool name.
+        message:
+          type: string
+          description: English fallback message when a localized string is not available.
+    MetadataResponse:
+      allOf:
+      - $ref: '#/components/schemas/MetadataRequest'
+      - type: object
+        properties:
+          createdAt:
+            description: 'Date and time when the object was created. The value is approved as an ISO-8601 representation of an Instant. For example: `2022-04-30T13:18:02.379Z`'
+            type: string
+          modifiedAt:
+            description: 'Date and time when the object was last modified. The value is approved as an ISO-8601 representation of an Instant. For example: `2022-04-30T13:18:02.379Z`'
+            type: string
+        required:
+        - version
+        - createdAt
+        - modifiedAt
+    MetadataRequest:
+      type: object
+      properties:
+        version:
+          minimum: 1
+          type: integer
+          description: Version of the object. The version is required during the update operation because of the optimistic locking mechanism.
+      required:
+      - version
+  responses:
+    403_resp_common:
+      description: Authorization scopes of the access token are not sufficient and do not match the scopes required by the endpoint.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Access forbidden:
+              value:
+                code: 403
+                status: Forbidden
+                message: The access to the requested resource has been forbidden by the server.
+    400_resp_common:
+      description: The request was syntactically incorrect.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Code must not be null:
+              value:
+                code: 400
+                status: Bad Request
+                message: Validation problem with request body.
+                details:
+                - message: code must not be null nor blank
+    401_resp_common:
+      description: The authorization token is invalid or has expired.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessageFault'
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            Access token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+    404_resp_common:
+      description: Example response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            Resource not found:
+              value:
+                resourceId: 628cd20c6e8b2432b6346ca6
+                code: 404
+                status: Not Found
+                message: The resource with id 628cd20c6e8b2432b6346ca6 has not been found.
+    200_resp_GET_jobs:
+      description: List of available jobs.
+      headers:
+        X-Total-Count:
+          description: Total number of jobs for the given criteria. Returned only for offset pagination when requested with the `X-Total-Count` header.
+          schema:
+            type: integer
+            format: int32
+        X-Next-Cursor:
+          description: Opaque cursor for retrieving the next page. Returned on non-empty responses when a next page exists.
+          schema:
+            type: string
+        X-Prev-Cursor:
+          description: Opaque cursor for retrieving the previous page. Returned on non-empty responses when a previous page exists.
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Job'
+          examples:
+            Jobs:
+              value:
+              - id: 68835cc3ef4e8e1425c360ad
+                status: success
+                sessionId: 123e4567-e89b-12d3-a456-426614174000
+                agentType: complaint
+                type: AGENT_CHAT
+                agentId: complaint-agent
+                commerceEvent: product.product-updated
+                message: 'Dear Customer,
+
+
+                  We have successfully processed your support request regarding the incorrect information on invoice EIN251131 for order EON1031. Our team has verified the order and customer details, confirming both the order and legal entity were found.
+
+                  Thank you for your patience and cooperation.
+
+
+                  Best regards,
+
+                  [Your Support Team]'
+                metadata:
+                  version: 1
+                  createdAt: '2025-07-25T10:30:27.167Z'
+                  modifiedAt: '2025-07-25T10:31:14.509Z'
+  requestBodies:
+    QParamSearchBody:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/QParamSearchBody'
+          examples:
+            Search Request:
+              value:
+                q: name:~Complaint
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes:
+            ai.text_manage: Needed to execute actions related to the text generation.
+            ai.completion_manage: Needed to execute actions related to the AI completions.
+            ai.agentexecution_manage: Needed to execute agentic chat.
+            ai.agentexecution_manage_own: Needed to execute agentic chat by customers.
+            ai.agent_read: Needed to read AI agents.
+            ai.agent_manage: Needed to manage AI agents.
+          tokenUrl: https://api.emporix.io/oauth/token
+x-refined-from:
+- emporix-ai-service-openapi.yml
+- emporix-ai-service-openapi.yml

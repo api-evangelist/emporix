@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-address-create-dto-schema.json",
+  "title": "AddressCommonDto",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-customer-management-openapi.yml#/components/schemas/AddressCreateDto",
+  "type": "object",
+  "properties": {
+    "contactName": {
+      "type": "string"
+    },
+    "companyName": {
+      "type": "string"
+    },
+    "street": {
+      "type": "string"
+    },
+    "streetNumber": {
+      "type": "string"
+    },
+    "streetAppendix": {
+      "type": "string"
+    },
+    "extraLine1": {
+      "type": "string"
+    },
+    "extraLine2": {
+      "type": "string"
+    },
+    "extraLine3": {
+      "type": "string"
+    },
+    "extraLine4": {
+      "type": "string"
+    },
+    "zipCode": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string"
+    },
+    "country": {
+      "type": "string"
+    },
+    "state": {
+      "type": "string"
+    },
+    "contactPhone": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "type": "string"
+      }
+    },
+    "metadata": {
+      "$ref": "#/$defs/BasicMetadataDto"
+    },
+    "mixins": {
+      "type": "object",
+      "description": "Customer address' additional properties.",
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "BasicMetadataDto": {
+      "title": "DefaultDtoMetadata",
+      "type": "object",
+      "properties": {
+        "mixins": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "description": "Links to mixin schemas."
+    }
+  }
+}

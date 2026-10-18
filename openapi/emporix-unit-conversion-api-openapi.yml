@@ -1,0 +1,358 @@
+openapi: 3.2.0
+info:
+  title: Emporix Unit conversion API
+  version: ''
+  contact:
+    email: documentation@emporix.com
+  description: 'Operations tagged Unit conversion across 2 of this provider''s published API definitions: emporix-unit-handling-service-openapi.yml, emporix-unit-handling-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Unit conversion
+  description: Convert Units
+paths:
+  /unit-handling/{tenant}/units/conversion-factor-commands:
+    description: The conversion factor command
+    put:
+      tags:
+      - Unit conversion
+      summary: Fetching conversion factor
+      description: Calculates conversion factor for the given pair of units.
+      security:
+      - OAuth2: []
+      parameters:
+      - $ref: '#/components/parameters/tenant-path'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConversionFactorPayload'
+      responses:
+        '201':
+          description: The factor has been successfully calculated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversionFactorResponse'
+              example:
+                commandUuid: e948a54d-ffeb-405a-9614-c68406274554,
+                input:
+                  sourceUnit: us-fl-oz,
+                  targetUnit: cl
+                output:
+                  conversionFactor: 2.95735296
+        '400':
+          description: The conversion factor cannot be fetched due to wrong parameters.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadConversionRequest400'
+              examples:
+                Mandatory field not specified:
+                  value:
+                    code: 400
+                    status: Bad Request
+                    message: There is a validation error. Please check the details.
+                    details:
+                    - The conversion input must be specified
+                Converting units of different type:
+                  value:
+                    code: 400
+                    status: Bad Request
+                    message: Units of different type cannot be converted.
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse401'
+        '404':
+          description: At least one of the specified units cannot be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound404'
+              examples:
+                Unit not found:
+                  $ref: '#/components/examples/UnitNotFound404'
+        '500':
+          $ref: '#/components/responses/ServerErrorResponse500'
+      operationId: PUT-unit-handling-calculate-conversion-factor
+    servers:
+    - url: https://api.emporix.io
+  /unit-handling/{tenant}/units/convert-unit-commands:
+    description: The convert unit command
+    put:
+      tags:
+      - Unit conversion
+      summary: Converting unit
+      description: Converts the source unit to a target unit.
+      security:
+      - OAuth2: []
+      parameters:
+      - $ref: '#/components/parameters/tenant-path'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConversionPayload'
+        description: ''
+      responses:
+        '201':
+          description: The unit has ben successfully converted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversionResponse'
+              examples:
+                Conversion response:
+                  value:
+                    commandUuid: 83ddc478-89d7-48e1-8b6c-527f4c67fb56
+                    input:
+                      sourceUnitAmount: 100
+                      sourceUnit: us-fl-oz
+                      targetUnit: cl
+                    output:
+                      targetUnitAmount: 295.735296
+                      targetUnit: cl
+        '400':
+          description: The unit cannot be converted due to wrong parameters.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadConversionRequest400'
+              examples:
+                Mandatory field not specified:
+                  value:
+                    code: 400
+                    status: Bad Request
+                    message: There is a validation error. Please check the details.
+                    details:
+                    - The conversion input must be specified
+                Converting units of different type:
+                  value:
+                    code: 400
+                    status: Bad Request,
+                    message: Units of different type cannot be converted.
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse401'
+        '404':
+          description: At least one of the specified units cannot be found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound404'
+              examples:
+                Unit not found:
+                  $ref: '#/components/examples/UnitNotFound404'
+        '500':
+          $ref: '#/components/responses/ServerErrorResponse500'
+      operationId: PUT-unit-handling-convert-unit
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    ConversionFactorPayload:
+      type: object
+      properties:
+        commandUuid:
+          description: Optional client-generated identifier used to correlate a conversion command across request, response, and logs.
+          type: string
+        input:
+          $ref: '#/components/schemas/ConversionFactorInput'
+      required:
+      - input
+    ConversionFactorOutput:
+      description: Output payload
+      properties:
+        conversionFactor:
+          type: number
+          description: The conversion factor.
+          example: 0.001
+    ConversionOutput:
+      description: Output payload. Contains the computed result of a conversion factor - conversionFactor (number) and unit conversion - targetUnitAmount (number) and targetUnit (string).
+      properties:
+        targetUnitAmount:
+          type: number
+          description: The amount in the target unit after conversion from the source unit.
+          example: 0.1
+        targetUnit:
+          type: string
+          description: The target unit.
+          example: kg
+    ConversionFactorResponse:
+      type: object
+      properties:
+        commandUuid:
+          type: string
+        input:
+          $ref: '#/components/schemas/ConversionFactorInput'
+        output:
+          $ref: '#/components/schemas/ConversionFactorOutput'
+    BadConversionRequest400:
+      properties:
+        code:
+          type: integer
+          description: HTTP Status Code.
+          example: 400
+        status:
+          type: string
+          description: HTTP Status Description.
+          example: Bad Request
+        message:
+          type: string
+          description: Error message.
+          example: Units of different type cannot be converted.
+    ConversionInput:
+      description: The input payload for conversion. Contains the source unit code, target unit code, and optionally the source unit amount to convert.
+      type: object
+      properties:
+        sourceUnitAmount:
+          type: number
+          description: The source unit quantity.
+          example: 100
+        sourceUnit:
+          type: string
+          description: The source unit code.
+          example: g
+        targetUnit:
+          type: string
+          description: The target unit code.
+          example: kg
+      required:
+      - sourceUnit
+      - targetUnit
+    Unauthorized401:
+      properties:
+        fault:
+          type: object
+          properties:
+            faultstring:
+              type: string
+              example: Invalid access token
+            detail:
+              type: object
+              properties:
+                errorcode:
+                  type: string
+                  example: oauth.v2.InvalidAccessToken
+    ConversionFactorInput:
+      description: The input is the conversion parameters object containing the source unit code, target unit code, and the amount to convert (amount required for convert-unit, optional for conversion-factor).
+      type: object
+      properties:
+        sourceUnitAmount:
+          type: number
+        sourceUnit:
+          type: string
+          description: The source unit code.
+          example: g
+        targetUnit:
+          type: string
+          description: The target unit code.
+          example: kg
+      required:
+      - sourceUnit
+      - targetUnit
+    ConversionPayload:
+      type: object
+      properties:
+        commandUuid:
+          type: string
+        input:
+          $ref: '#/components/schemas/ConversionInput'
+      required:
+      - input
+    UnexpectedError:
+      properties:
+        code:
+          type: integer
+          description: HTTP Status Code.
+          example: 500
+        status:
+          type: string
+          description: HTTP Status.
+          example: Internal server error.
+        message:
+          type: string
+          description: Detailed error message
+          example: There is internal server error.
+    NotFound404:
+      properties:
+        unitCode:
+          type: string
+          description: The code of the requested unit.
+          example: g
+        code:
+          type: integer
+          description: HTTP Status Code.
+          example: 404
+        status:
+          type: string
+          description: HTTP Status.
+          example: Not Found
+        message:
+          type: string
+          description: Detailed error message.
+          example: The unit with code g has not been found.
+    ConversionResponse:
+      type: object
+      properties:
+        commandUuid:
+          type: string
+        input:
+          $ref: '#/components/schemas/ConversionInput'
+        output:
+          $ref: '#/components/schemas/ConversionOutput'
+  responses:
+    ServerErrorResponse500:
+      description: Unexpected server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnexpectedError'
+    UnauthorizedResponse401:
+      description: 'Given request is unauthorized - the authorization token is invalid or has expired.
+
+
+        Details will be provided in the response payload.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Unauthorized401'
+          examples:
+            Access Token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+  parameters:
+    tenant-path:
+      in: path
+      name: tenant
+      required: true
+      description: The tenant name.
+      schema:
+        type: string
+  examples:
+    UnitNotFound404:
+      value:
+        unitCode: g
+        code: 404
+        status: Not Found
+        message: The unit with code g has not been found.
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            unithandling.unit_manage: Needed to manage measurement units.
+x-refined-from:
+- emporix-unit-handling-service-openapi.yml
+- emporix-unit-handling-service-openapi.yml

@@ -1,0 +1,207 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-import-run-schema.json",
+  "title": "Run",
+  "description": "An import run and its reconciled counters.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-import-service-openapi.yml#/components/schemas/ImportRun",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "The run identifier."
+    },
+    "configId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "The configuration the run belongs to."
+    },
+    "tenant": {
+      "type": "string",
+      "description": "The owning tenant."
+    },
+    "trigger": {
+      "type": "string",
+      "enum": [
+        "MANUAL",
+        "SCHEDULED"
+      ],
+      "description": "What triggered the run."
+    },
+    "dryRunSample": {
+      "type": "array",
+      "description": "Dry-run only. A sample of the mapped records that would be written, so the mapping can be previewed without a real import. Absent on normal runs. Each stream is sampled separately, up to the `sampleSize` set in the run request. A parent stream's records include the records of its composite child streams that have `childStrategy` set to `EMBED` or `PATCH`. Those child records appear in the parent attribute named by the child stream's `embedAttribute`, as a real import writes them. Only child records inside the child stream's own sample are included, so a sampled parent record can show fewer child records than the source contains for that parent, or none. Child records are also sampled under their own stream.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "stream": {
+            "type": "string",
+            "description": "The stream that produced the sample record."
+          },
+          "targetType": {
+            "type": "string",
+            "description": "The resolved target type the record would be written to."
+          },
+          "key": {
+            "type": "string",
+            "description": "The record's natural/deterministic key."
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "The mapped target fields that would be written."
+          }
+        }
+      }
+    },
+    "origin": {
+      "type": "string",
+      "description": "What requested the run. The `origin` value from the trigger request, or the `trigger` value when `origin` was omitted. Use this field to distinguish a dashboard run from a run started by an integration scenario. The field is absent on runs recorded before it existed."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "QUEUED",
+        "RUNNING",
+        "RESUMABLE",
+        "SUCCEEDED",
+        "PARTIAL",
+        "FAILED",
+        "CANCELLED",
+        "ABORTED"
+      ],
+      "description": "The run status. Possible values:\n\n* `QUEUED` – the run waits to start. Nothing has been read yet, and the run has no per-stream\n  progress. `queueWaitingFor` says what the run waits for.\n* `RUNNING` – the run is executing.\n* `RESUMABLE` – the run was interrupted, for example by a service restart, and resumes automatically\n  from its last checkpoint. It is not a final status.\n* `SUCCEEDED` – the run finished, and every record was processed.\n* `PARTIAL` – the run finished, but not completely: some records failed, a limit skipped records,\n  or a stream was not run. The `message` field and the per-stream progress give the details.\n* `FAILED` – the run stopped because of an error.\n* `CANCELLED` – the run was cancelled.\n* `ABORTED` – the service refused to start the run because of the import configuration, for example\n  mappings that have never been published or a changed target schema. Nothing was read or written."
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "FULL",
+        "DELTA"
+      ],
+      "description": "The run mode."
+    },
+    "startedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the run was requested. If the run was queued first, it began executing later, at `executionStartedAt`."
+    },
+    "executionStartedAt": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time",
+      "description": "When the run began executing. Equal to `startedAt`, or later by the time the run spent in the queue. `null` while the run is `QUEUED`, and on runs recorded before the field existed."
+    },
+    "finishedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the run finished."
+    },
+    "queuePosition": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "`QUEUED` runs only. The run's position among the queued runs that can start, where `1` starts next. Runs of all tenants share the queue, and a tenant with fewer runs executing goes first. The value is approximate, because the queue changes while you read it. The field is absent when the run is not queued, when it waits for something other than a worker, or when the service has not yet calculated it."
+    },
+    "queueWaitingFor": {
+      "type": "string",
+      "enum": [
+        "WORKER",
+        "PREVIOUS_RUN",
+        "TENANT_LIMIT"
+      ],
+      "description": "`QUEUED` runs only. What the run waits for. Possible values:\n\n* `WORKER` – the run waits for a free worker. `queuePosition` gives its place in the queue.\n* `PREVIOUS_RUN` – the run waits for the configuration's current run to finish.\n* `TENANT_LIMIT` – the run waits for one of the tenant's runs to finish, because\n  `maxConcurrentImports` runs are already executing.\n\nThe field is absent when the run is not queued, or when the service has not yet calculated it."
+    },
+    "supersededRequests": {
+      "type": "integer",
+      "description": "The number of later scheduled run requests that were added to this run while it was queued. A configuration has at most one queued run, so a scheduled request that arrives while a real run of the whole configuration is queued does not queue a second run."
+    },
+    "lastRequestedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the latest scheduled run request counted in `supersededRequests` was made. Absent when `supersededRequests` is `0`."
+    },
+    "recordsRead": {
+      "type": "integer",
+      "description": "Records read (created + updated + skipped + deleted + failed)."
+    },
+    "created": {
+      "type": "integer",
+      "description": "Records created."
+    },
+    "updated": {
+      "type": "integer",
+      "description": "Records updated."
+    },
+    "skipped": {
+      "type": "integer",
+      "description": "Records skipped because they were unchanged."
+    },
+    "failed": {
+      "type": "integer",
+      "description": "Records that failed."
+    },
+    "deleted": {
+      "type": "integer",
+      "description": "Records deleted."
+    },
+    "duplicateKeys": {
+      "type": "integer",
+      "description": "Source rows that repeat a key already imported in this run. The import keeps the last row of each repeated key and discards earlier rows. Duplicate keys do not fail the run; they mean the source feed is not unique on the key the stream imports by."
+    },
+    "unresolvedParents": {
+      "type": "integer",
+      "description": "Child records that were not imported because their parent could not be found. Counted separately from `skipped`, which counts records that were already up to date."
+    },
+    "message": {
+      "type": "string",
+      "description": "A terminal status message, typically set on failure."
+    },
+    "retryOfRunId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "When the run retries another run's failed records, the identifier of that original run."
+    },
+    "force": {
+      "type": "boolean",
+      "description": "Whether the run rewrote every record, bypassing the skip-if-unchanged check."
+    },
+    "dryRun": {
+      "type": "boolean",
+      "description": "Whether the run only extracted, mapped, and validated, writing nothing to the target. A dry run legitimately reports zero for every counter, so this distinguishes it from a run that wrote nothing because it failed."
+    },
+    "cancelRequested": {
+      "type": "boolean",
+      "description": "Whether cancellation has been requested for a run that is still finishing."
+    },
+    "dryRunSampleSize": {
+      "type": "integer",
+      "description": "For a dry run, how many mapped records were kept as a sample."
+    },
+    "dryRunPublished": {
+      "type": "boolean",
+      "description": "Dry-run only. Whether the dry run used the published mappings (`true`) or the draft mappings (`false`)."
+    },
+    "mappingVersions": {
+      "type": "array",
+      "description": "The published mapping version each stream uses in this run, fixed when the run starts executing. Version `0` means that the stream has no published mappings. The field is absent while the run is `QUEUED`, on a dry run of the draft mappings, and on runs recorded before it existed.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "streamId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The stream identifier."
+          },
+          "version": {
+            "type": "integer",
+            "description": "The published mapping version the stream uses."
+          }
+        }
+      }
+    }
+  }
+}

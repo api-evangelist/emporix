@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-tax-update-schema.json",
+  "title": "taxUpdate",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-tax-service-openapi.yml#/components/schemas/taxUpdate",
+  "allOf": [
+    {
+      "$ref": "#/$defs/taxCreation"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "metadata": {
+          "$ref": "#/$defs/metadata"
+        }
+      },
+      "required": [
+        "metadata"
+      ]
+    }
+  ],
+  "$defs": {
+    "location": {
+      "type": "object",
+      "description": "",
+      "properties": {
+        "countryCode": {
+          "type": "string",
+          "description": "Code of the country for which the tax classes are specified, as defined in the Country Service."
+        }
+      },
+      "required": [
+        "countryCode"
+      ]
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "createdAt": {
+          "description": "Date and time when the object was created.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "modifiedAt": {
+          "description": "Date and time when the object was last modified.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "version": {
+          "minimum": 1,
+          "type": "integer",
+          "description": "Version of the object."
+        }
+      }
+    },
+    "taxClass": {
+      "title": "taxClass",
+      "type": "object",
+      "description": "Single tax class. ",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Unique tax class code."
+        },
+        "name": {
+          "description": "Tax class name.\n\n* If the `Content-Language` header is set to `*`, then the name should be provided as a map of translations, where each key is a language code and the value is the name in its respective language.\n* If the `Content-Language` header is set to a specific language, the name should be provided as a string.\n* If the `Content-Language` header is empty, the endpoint will asume that the name is provided in the default language defined in the Configuration Service.\n\n**Note**: You can provide the names only in languages defined in the Configuration Service. In case the name is provided in a language that is not defined in the Configuration Service, the request will be rejected.",
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "description": {
+          "description": "Tax class description.\n\n* If the `Content-Language` header is set to `*`, then the description should be provided as a map of translations, where each key is a language code and the value is the description in its respective language.\n* If the `Content-Language` header is set to a specific language, the description should be provided as a string.\n* If the `Content-Language` header is empty, the endpoint will asume that the description is provided in the default language defined in the Configuration Service.\n\n**Note**: You can provide the descriptions only in languages defined in the Configuration Service. In case the description is provided in a language that is not defined in the Configuration Service, the request will be rejected.",
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "order": {
+          "type": "integer",
+          "description": "Number indicating the position on the tax class list. Tax classes in a configuration are sorted based on their `order` values in ascending order."
+        },
+        "rate": {
+          "type": "number",
+          "description": "Tax rate, expressed as a number.\n\nFor example, if the tax rate is 23%, this field should be set to `23`."
+        },
+        "isDefault": {
+          "type": "boolean",
+          "description": "Indicates that the tax class is a default tax class for the tax configuration. Only one tax class can be marked as a default for a particular tax configuration."
+        }
+      },
+      "required": [
+        "code",
+        "name",
+        "rate"
+      ]
+    },
+    "taxCreation": {
+      "title": "taxCreation",
+      "type": "object",
+      "description": "Tax configuration for a specified location. It consists of a country code and a list of tax classes applicable in that country.  ",
+      "properties": {
+        "location": {
+          "$ref": "#/$defs/location"
+        },
+        "taxClasses": {
+          "type": "array",
+          "description": "List of tax classes applicable in the specified country.",
+          "items": {
+            "$ref": "#/$defs/taxClass"
+          }
+        }
+      },
+      "required": [
+        "location",
+        "taxClasses"
+      ]
+    }
+  }
+}

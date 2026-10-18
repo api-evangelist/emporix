@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-reindex-request-schema.json",
+  "title": "ReindexRequest",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-indexing-service-openapi.yml#/components/schemas/ReindexRequest",
+  "type": "object",
+  "properties": {
+    "entityType": {
+      "$ref": "#/$defs/ReindexEntityType"
+    },
+    "rag": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether products should be reindexed for RAG. This property is applicable only when `entityType` is `PRODUCT`."
+    }
+  },
+  "required": [
+    "entityType"
+  ],
+  "$defs": {
+    "ReindexEntityType": {
+      "type": "string",
+      "description": "Entity type which should be reindexed. It supports `ORDER`, `PRODUCT` and custom schema types."
+    }
+  }
+}

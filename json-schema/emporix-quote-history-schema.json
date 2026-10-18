@@ -1,0 +1,304 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-quote-history-schema.json",
+  "title": "QuoteHistory",
+  "description": "Quote update operation list.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-quote-openapi.yml#/components/schemas/QuoteHistory",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "description": "The unique ID of the audit log.",
+        "type": "string"
+      },
+      "op": {
+        "description": "operation type",
+        "enum": [
+          "ADD",
+          "REMOVE",
+          "REPLACE",
+          "CREATE"
+        ],
+        "type": "string"
+      },
+      "path": {
+        "description": "Path that indicates on which element the update has been executed.",
+        "enum": [
+          "/quote",
+          "/status",
+          "/validTo",
+          "/comment",
+          "/billingAddressId",
+          "/shippingAddressId",
+          "/companyName",
+          "/legalEntityId",
+          "/customerId",
+          "/shipping",
+          "/restriction",
+          "/items",
+          "/items/{itemId}",
+          "/items/{itemId}/price",
+          "/items/{itemId}/mixins/{mixinsPath}",
+          "/items/{itemId}/metadata/mixins/{mixinsPath}",
+          "/items/{itemId}/product/mixins/{mixinsPath}",
+          "/items/{itemId}/product/metadata/mixins/{mixinsPath}",
+          "/mixins/{mixinsPath}",
+          "/metadata/{mixinsPath}"
+        ],
+        "type": "string"
+      },
+      "newValue": {
+        "allOf": [
+          {
+            "$ref": "#/$defs/QuoteUpdateValues"
+          },
+          {
+            "type": "object",
+            "description": "New value after the update."
+          }
+        ]
+      },
+      "previousValue": {
+        "allOf": [
+          {
+            "$ref": "#/$defs/QuoteUpdateValues"
+          },
+          {
+            "type": "object",
+            "description": "Value before update."
+          }
+        ],
+        "description": "Value before update."
+      },
+      "userId": {
+        "type": "string",
+        "description": "ID of the user who modified the item."
+      },
+      "userFirstName": {
+        "type": "string",
+        "description": "First name of the user who modified the item."
+      },
+      "userLastName": {
+        "type": "string",
+        "description": "Last name of the user who modified the item."
+      },
+      "userType": {
+        "enum": [
+          "EMPLOYEE",
+          "CUSTOMER",
+          "SYSTEM"
+        ],
+        "type": "string"
+      },
+      "restriction": {
+        "$ref": "#/$defs/Restriction"
+      },
+      "modifiedAt": {
+        "type": "string",
+        "description": "Modification date."
+      }
+    }
+  },
+  "$defs": {
+    "QuoteItemIds": {
+      "type": "array",
+      "description": "List of item IDs.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "itemId": {
+            "type": "string",
+            "description": "ID of the item."
+          }
+        }
+      }
+    },
+    "QuoteItemUpdate": {
+      "type": "object",
+      "description": "Quote item model.",
+      "properties": {
+        "quantity": {
+          "type": "object",
+          "properties": {
+            "quantity": {
+              "type": "number"
+            },
+            "unitCode": {
+              "type": "string"
+            }
+          }
+        },
+        "price": {
+          "$ref": "#/$defs/QuoteItemUpdatePriceRow"
+        },
+        "product": {
+          "type": "object",
+          "properties": {
+            "productId": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "required": [
+        "itemType",
+        "quantity",
+        "price",
+        "product"
+      ]
+    },
+    "QuoteItemUpdatePrice": {
+      "type": "object",
+      "description": "TotalNetValue item model.",
+      "properties": {
+        "totalNetValue": {
+          "type": "number"
+        }
+      }
+    },
+    "QuoteItemUpdatePriceRow": {
+      "type": "object",
+      "description": "Price details",
+      "properties": {
+        "priceId": {
+          "type": "string",
+          "description": "The ID of the matched price"
+        },
+        "unitePrice": {
+          "minimum": 0,
+          "type": "number",
+          "description": "The effective unit price of the product"
+        },
+        "totalNetValue": {
+          "minimum": 0,
+          "type": "number",
+          "description": "The total net value for the entire quantity of the item."
+        },
+        "tax": {
+          "type": "object",
+          "description": "The tax information of the item.",
+          "required": [
+            "taxClass"
+          ],
+          "properties": {
+            "taxClass": {
+              "type": "string",
+              "description": "The matched tax class of the item."
+            },
+            "taxRate": {
+              "type": "number",
+              "description": "The tax rate of the item."
+            }
+          }
+        }
+      },
+      "required": [
+        "tax"
+      ]
+    },
+    "QuoteItemsReplaceUpdate": {
+      "type": "array",
+      "description": "Quote item ID.",
+      "items": {
+        "allOf": [
+          {
+            "$ref": "#/$defs/QuoteItemUpdate"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "itemId": {
+                "type": "string",
+                "description": "ID of the item. It's generated automatically when it's not provided."
+              }
+            }
+          }
+        ]
+      }
+    },
+    "QuoteShipping": {
+      "type": "object",
+      "description": "The shipping cost of the quote.",
+      "properties": {
+        "value": {
+          "type": "number",
+          "description": "Net value of the shipping cost."
+        },
+        "methodId": {
+          "type": "string",
+          "description": "Shipping method's unique identifier."
+        },
+        "zoneId": {
+          "type": "string",
+          "description": "Shipping zone identifier."
+        },
+        "shippingTaxCode": {
+          "type": "string",
+          "description": "Tax code of the shipping method."
+        }
+      }
+    },
+    "QuoteUpdateStatus": {
+      "type": "object",
+      "description": "Quote status.",
+      "properties": {
+        "value": {
+          "type": "string",
+          "description": "The status value of the code."
+        },
+        "comment": {
+          "type": "string",
+          "description": "The comment to the status."
+        },
+        "quoteReasonId": {
+          "type": "string",
+          "description": "The ID of the quote reason. Can be provided only in following scenarios:\n- when changing state from OPEN to IN_PROGRESS - quote reason has to be of CHANGE type\n- when changing state from OPEN to DECLINED - quote reason has to be of DECLINE type\n- when changing state from IN_PROGRESS to DECLINED_BY_MERCHANT - quote reason has to be of DECLINE type"
+        }
+      },
+      "required": [
+        "value"
+      ]
+    },
+    "QuoteUpdateValues": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/QuoteItemUpdate"
+        },
+        {
+          "$ref": "#/$defs/QuoteItemsReplaceUpdate"
+        },
+        {
+          "$ref": "#/$defs/QuoteItemUpdatePrice"
+        },
+        {
+          "$ref": "#/$defs/QuoteUpdateStatus"
+        },
+        {
+          "$ref": "#/$defs/QuoteShipping"
+        },
+        {
+          "$ref": "#/$defs/QuoteItemIds"
+        },
+        {
+          "type": "string",
+          "description": "Value of the string type."
+        },
+        {
+          "type": "object",
+          "description": "Mixin request."
+        }
+      ]
+    },
+    "Restriction": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Access control identifier that determines who can view or manage the quotes.\n\n**Purpose**: Restricts quote visibility based on scope permissions. Only users/applications \nwith matching restriction scopes can access quotes with a specific restriction value.\n\n**Access Control**:\n- *Reading*: Users can only query and view quotes with the `restriction` value that matches one of their authorized restrictions.\n\n**Validation**: The value must exist in the tenant's configured list of valid restrictions.\n\n**Restriction Synchronization**:\n- If quote is created by a customer (based on a cart) and `restriction` property is not set, the `restriction` value of quote is inherited from customer's restriction.\n- If a quote is created by an employee and the `restriction` property is not set with tenant configuration property `enableSyncBetweenRestrictionsAndSiteCodes` set to `true`, the `restriction` field automatically syncs with quote's siteCode property.\n"
+    }
+  }
+}

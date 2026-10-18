@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-dynamic-variant-recalculation-request-schema.json",
+  "title": "dynamicVariantRecalculationRequest",
+  "description": "Request body for triggering dynamic variant recalculation. Accepts up to 1000 product IDs at any level of the hierarchy — the system resolves the root for each ID automatically. Intended to be called after a batch of products has been fully ingested, not per individual product write.\n",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-product-service-openapi.yml#/components/schemas/dynamicVariantRecalculationRequest",
+  "type": "object",
+  "required": [
+    "productIds"
+  ],
+  "properties": {
+    "productIds": {
+      "type": "array",
+      "description": "List of product IDs (variants at any hierarchy level) for which recalculation should be triggered. The system groups IDs by their root product and creates one job per unique root.\n",
+      "minItems": 1,
+      "maxItems": 1000,
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

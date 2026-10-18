@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-location-update-schema.json",
+  "title": "Location update payload",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-client-management-openapi.yml#/components/schemas/locationUpdate",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The name of the location"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "HEADQUARTER",
+        "WAREHOUSE",
+        "OFFICE"
+      ],
+      "description": "The type of the location."
+    },
+    "contactDetails": {
+      "$ref": "#/$defs/contactDetails"
+    },
+    "metadata": {
+      "$ref": "#/$defs/metadataUpdate"
+    },
+    "mixins": {
+      "type": "object",
+      "description": "Mixins request. A map where a key represent mixins set name and a value represent a map with key-value pairs.",
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "type",
+    "contactDetails"
+  ],
+  "$defs": {
+    "contactDetails": {
+      "title": "Contact Details",
+      "type": "object",
+      "properties": {
+        "emails": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The list of contact emails."
+        },
+        "phones": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The list of contact phone numbers."
+        },
+        "addressLine1": {
+          "type": "string",
+          "description": "The first address line of the contact."
+        },
+        "addressLine2": {
+          "type": "string",
+          "description": "The second address line of the contact."
+        },
+        "city": {
+          "type": "string",
+          "description": "The city of the contact."
+        },
+        "state": {
+          "type": "string",
+          "description": "The state of the contact."
+        },
+        "postcode": {
+          "type": "string",
+          "description": "The post code of the contact."
+        },
+        "countryCode": {
+          "type": "string",
+          "description": "The country code of the contact."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Allows to tag the location."
+        }
+      }
+    },
+    "metadataUpdate": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "minimum": 1,
+          "type": "integer",
+          "description": "Version of the document."
+        },
+        "mixins": {
+          "type": "object",
+          "description": "Links to the mixin schemas. A map where the keys represent mixins set attributes and the values represent url to a schema for a particular set.",
+          "additionalProperties": true
+        }
+      }
+    }
+  }
+}

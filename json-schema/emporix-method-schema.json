@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-method-schema.json",
+  "title": "Shipping method",
+  "description": "Shipping methods define the types of deliveries and properties such as delivery fees.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-shipping-openapi.yml#/components/schemas/Method",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "$ref": "#/$defs/LocalizedValue"
+    },
+    "maxOrderValue": {
+      "$ref": "#/$defs/MonetaryAmount"
+    },
+    "active": {
+      "description": "Flag indicating whether the shipping method is active.",
+      "type": "boolean"
+    },
+    "fees": {
+      "$ref": "#/$defs/Fees"
+    },
+    "shippingTaxCode": {
+      "description": "Shipping method's tax code.",
+      "type": "string"
+    },
+    "shippingGroupId": {
+      "description": "Shipping groups unique identifier.",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "fees"
+  ],
+  "$defs": {
+    "Fee": {
+      "title": "Fee",
+      "description": "Fee is a shipping cost for a given shipping method and parameters.",
+      "type": "object",
+      "properties": {
+        "cost": {
+          "$ref": "#/$defs/MonetaryAmount"
+        },
+        "minOrderValue": {
+          "$ref": "#/$defs/MonetaryAmount"
+        },
+        "shippingGroupId": {
+          "description": "Shipping group unique identifier.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cost",
+        "minOrderValue"
+      ]
+    },
+    "Fees": {
+      "title": "Collection of fees",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Fee"
+      }
+    },
+    "LocalizedValue": {
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "String value in the specified language."
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Map of translations in form of language:translation pairs.\nThe keys (languages) should be ISO language codes."
+        }
+      ]
+    },
+    "MonetaryAmount": {
+      "title": "Monetary amount",
+      "description": "Amount of money in a given currency.",
+      "type": "object",
+      "properties": {
+        "currency": {
+          "description": "Three-letter currency code, compliant with the ISO 4217 standard.",
+          "type": "string"
+        },
+        "amount": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Amount in specified currency."
+        }
+      },
+      "required": [
+        "currency",
+        "amount"
+      ]
+    }
+  }
+}

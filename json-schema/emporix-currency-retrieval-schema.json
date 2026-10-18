@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-currency-retrieval-schema.json",
+  "title": "currencyRetrieval",
+  "description": "Represents a single currency. The currency consists of a code compliant with ISO-4217 (https://www.iso.org/iso-4217-currency-codes.html) and a currency name. The name field is localized.",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-currency-service-openapi.yml#/components/schemas/currencyRetrieval",
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string",
+      "description": "Currency code. The currency symbol consists of three capital letters and is a valid ISO-4217 code (https://www.iso.org/iso-4217-currency-codes.html).\n"
+    },
+    "name": {
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "Currency name in the specified language."
+        },
+        {
+          "type": "object",
+          "description": "Map of translations in the form of `key:value` pairs, where `key` is the language code and `value` is the translation.\nBoth the source and target currency codes must be compliant with the ISO-4217 standard (see https://www.iso.org/iso-4217-currency-codes.html).",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      ],
+      "description": "The currency name.\nIf the `Accept-Language` is set to `*`, each internationalized field is returned as a map that contains all translations in the format of `key:value` pairs, where `key` is the language code and `value` is the translation.\nThe `Accept-Language` can contain the priority list of languages which should be returned. Always one language is returned as a single string field. Example: 'fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7'\nIf the `Accept-Language` header is empty, the translation will be returned in the language defined in the `Configuration service` as default."
+    },
+    "metadata": {
+      "$ref": "#/$defs/metadata"
+    }
+  },
+  "$defs": {
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "createdAt": {
+          "description": "Time of document creation.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "modifiedAt": {
+          "description": "Time of document modification.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "version": {
+          "minimum": 1,
+          "type": "integer",
+          "description": "Document version."
+        }
+      }
+    }
+  }
+}

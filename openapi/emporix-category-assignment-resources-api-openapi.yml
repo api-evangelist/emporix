@@ -1,0 +1,1159 @@
+openapi: 3.2.0
+info:
+  title: Emporix Category Assignment Resources API
+  version: ''
+  contact:
+    email: documentation@emporix.com
+  description: 'Operations tagged Category Assignment Resources across 2 of this provider''s published API definitions: emporix-category-tree-openapi.yml, emporix-category-tree-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2:
+  - category.category_manage
+  - category.category_read_unpublished
+  - category.category_publish
+  - category.category_unpublish
+tags:
+- name: Category Assignment Resources
+  description: Manage Category Assignments
+paths:
+  /category/{tenant}/categories/{categoryId}/assignments/references/bulk:
+    put:
+      tags:
+      - Category Assignment Resources
+      summary: Updating assignment of resources to a category
+      description: 'Assigns resources (such as products) to a specified category in bulk. Creates new assignments if they do not exist and updates existing ones.
+
+
+        The maximum batch size is 200.'
+      operationId: PUT-category-tree-update-category-assignments
+      parameters:
+      - name: tenant
+        in: path
+        description: 'Your Emporix tenant name.
+
+
+          **Note**: The tenant should always be written in lowercase.
+
+          '
+        required: true
+        schema:
+          type: string
+          example: saasdev2
+      - name: categoryId
+        in: path
+        description: 'Category unique identifier generated when the category is created.
+
+          '
+        required: true
+        deprecated: false
+        allowEmptyValue: false
+        allowReserved: false
+        schema:
+          type: string
+          example: 084bcaf6-66b8-4ddd-9489-65c5f6449e94
+        example: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkAssignmentUpsertRequest'
+        required: true
+      responses:
+        '207':
+          description: Multi-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkAssignmentResponse'
+        '400':
+          description: Request was syntactically incorrect. Details will be provided in the response payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    code: 400
+                    status: Bad Request
+                    message: Assignment reference validation failed
+                    details:
+                    - Please provide a valid assignment reference id
+        '403':
+          description: Permission denied due to insufficient rights. This may happen when request does not contain sufficient scopes for given query values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    code: 403
+                    status: Forbidden
+                    message: You need a scope for this action.
+                    details:
+                    - 'Required scope(s): category.category_manage'
+        '404':
+          description: Category with the specified categoryId does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    resourceId: 084bcaf6-66b8-4ddd-9489-65c5f6449e94
+                    code: 404
+                    status: Not Found
+                    message: Error while getting category
+                    details:
+                    - Category with id '084bcaf6-66b8-4ddd-9489-65c5f6449e94' not found
+      security:
+      - OAuth2:
+        - category.category_manage
+    servers:
+    - url: https://api.emporix.io
+  /category/{tenant}/categories/{categoryId}/assignments/bulk:
+    post:
+      tags:
+      - Category Assignment Resources
+      summary: Assigning resources to a category
+      description: 'Assigns resources (such as products) to a specified category.
+
+
+        The maximum batch size is 200.'
+      operationId: POST-category-tree-assign-category-resources
+      parameters:
+      - name: tenant
+        in: path
+        description: 'Your Emporix tenant name.
+
+
+          **Note**: The tenant should always be written in lowercase.
+
+          '
+        required: true
+        schema:
+          type: string
+          example: saasdev2
+      - name: categoryId
+        in: path
+        description: 'Category unique identifier generated when the category is created.
+
+          '
+        required: true
+        deprecated: false
+        allowEmptyValue: false
+        allowReserved: false
+        schema:
+          type: string
+          example: 084bcaf6-66b8-4ddd-9489-65c5f6449e94
+        example: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkAssignmentRequest'
+        required: true
+      responses:
+        '207':
+          description: Multi-status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkAssignmentResponse'
+        '400':
+          description: Request was syntactically incorrect. Details will be provided in the response payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    code: 400
+                    status: Bad Request
+                    message: Assignment reference validation failed
+                    details:
+                    - Please provide a valid assignment reference id
+        '403':
+          description: Permission denied due to insufficient rights. This may happen when request does not contain sufficient scopes for given query values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    code: 403
+                    status: Forbidden
+                    message: You need a scope for this action.
+                    details:
+                    - 'Required scope(s): category.category_manage'
+        '404':
+          description: Category with the specified categoryId does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    resourceId: 084bcaf6-66b8-4ddd-9489-65c5f6449e94
+                    code: 404
+                    status: Not Found
+                    message: Error while getting category
+                    details:
+                    - Category with id '084bcaf6-66b8-4ddd-9489-65c5f6449e94' not found
+      security:
+      - OAuth2:
+        - category.category_manage
+    servers:
+    - url: https://api.emporix.io
+  /category/{tenant}/categories/{categoryId}/assignments:
+    get:
+      tags:
+      - Category Assignment Resources
+      summary: Retrieving resources assigned to a category
+      description: 'Retrieves resources (such as products) assigned to a specified category. The localizedName field contains the resource (product) name. This information is attached to the assignment asynchronously and is visible in the response when retrieved.
+
+        ***
+
+
+        ### Additional scope info
+
+
+        * `category.category_read_unpublished` - Only required if the category has not been published.'
+      operationId: GET-category-tree-retrieve-category-assignments
+      parameters:
+      - name: tenant
+        in: path
+        description: 'Your Emporix tenant name.
+
+
+          **Note**: The tenant should always be written in lowercase.
+
+          '
+        required: true
+        schema:
+          type: string
+          example: saasdev2
+      - name: categoryId
+        in: path
+        description: 'Category unique identifier generated when the category is created.
+
+          '
+        required: true
+        deprecated: false
+        allowEmptyValue: false
+        allowReserved: false
+        schema:
+          type: string
+          example: 084bcaf6-66b8-4ddd-9489-65c5f6449e94
+        example: ''
+      - name: assignmentType
+        in: query
+        description: 'Resource type assigned to the category.
+
+          Possible values:
+
+          * `PRODUCT`
+
+          '
+        schema:
+          type: string
+          default: PRODUCT
+          enum:
+          - PRODUCT
+      - name: ref.localizedName
+        in: query
+        description: 'Localized name of the item assigned to the category.
+
+          '
+        schema:
+          type: string
+          example: Twix
+      - name: ref.id
+        in: query
+        description: 'Identifier of the item assigned to the category.
+
+          '
+        schema:
+          type: string
+          example: 5c3348bda9812100098ffaa3
+      - name: showUnpublished
+        in: query
+        description: 'If set to `true`, resources assigned to not published categories are retrieved as well.
+
+          Possible values:
+
+          * `true`
+
+          * `false`
+
+
+          **Note**: To get unpublished categories you need to have `category.category_read_unpublished` scope.
+
+          '
+        schema:
+          type: boolean
+          example: true
+          default: false
+      - name: withSubcategories
+        in: query
+        description: 'If set to `true`, resources assigned to subcategories are retrieved as well.
+
+          Possible values:
+
+          * `true`
+
+          * `false`
+
+          '
+        schema:
+          type: boolean
+          example: true
+          default: false
+      - name: segmentsIds
+        in: query
+        description: 'List of segment IDs used to filter assignments — only category assignments will be returned, where the category is assigned to the provided list of segments.
+
+          '
+        schema:
+          type: string
+          example: segmentId1,segmentId2
+      - name: pageNumber
+        in: query
+        description: 'Page number to be retrieved. The number of the first page is 1.
+
+          **Note**: If the `pageNumber` parameter is passed, size of the pages must be specified in the `pageSize` parameter.
+
+          '
+        schema:
+          minimum: 1
+          type: integer
+          format: int32
+          default: 1
+      - name: pageSize
+        in: query
+        description: 'Number of export files to be retrieved per page.
+
+          '
+        schema:
+          minimum: 1
+          type: integer
+          format: int32
+          default: 60
+      - name: sort
+        in: query
+        description: 'List of properties used to sort the results, separated by commas. This list is validated against available fields. Sorting by deprecated field is forbidden.
+
+          Possible values:
+
+          * `{fieldName}:ASC`
+
+          * `{fieldName}:DESC`
+
+          * `{fieldName}:ASC,{fieldName2}:DESC`
+
+          * `{internationalizedFieldName.en}:ASC` - contains localized field name and extension. Valid only if Accepted-language header contains this extension and it is supported by configuration of the tenant. If all language are accepted (Accept-language=''*'') then extension must exist in tenant configuration. No other sorting are allowed for this specific internationalized field.
+
+          * `{internationalizedFieldName}:ASC` - contains only localized field name. Extension will be deducted based on Accept-language header. If all language are accepted (Accept-language=''*'') then extension is taken from tenant configuration and is equal to default language. In other case the language with highest priority is taken. No other sorting are allowed for this specific localized field.
+
+          '
+        schema:
+          type: string
+          example: '{fieldName}:ASC,{fieldName2}:DESC'
+      - name: Accept-Language
+        in: header
+        description: 'List of properties used to project and sort the results, separated by commas.
+
+          Possible values:
+
+          * `*` - each internationalized field is returned as a map containing all available (specified in tenant configuration) translations. This is also the default behaviour if the header is not set.
+
+          * `en`, `en,de` - each internationalized field is returned as a map containing translation specified by a header value. If translation is not supported by tenant configuration then exception is thrown. First language is the one with highest priority.
+
+          * `fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5` - each internationalized field is returned as a map containing translation specified by a header value. If translation is not supported by tenant configuration then exception is thrown.
+
+          '
+        schema:
+          type: string
+          example: '`*`, `en`, `en,de,fr`, `en-EN`, `fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7`'
+          default: '*'
+      - name: X-Total-Count
+        in: header
+        description: 'The header value indicates if the total count of entities should be returned.
+
+          Possible values:
+
+          * `true`
+
+          * `false`
+
+          Default value: `false`
+
+          '
+        schema:
+          type: boolean
+          example: true
+          default: false
+      - schema:
+          type: boolean
+          default: false
+        in: query
+        name: hideUnpublishedProducts
+        description: If set to `true` only assignments with published products will be returned. The default value is `false`
+      responses:
+        '200':
+          description: The request was successful. The category assignments are returned.
+          headers:
+            X-Total-Count:
+              description: Total amount of references assigned to a category.
+              schema:
+                type: integer
+                format: int32
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CategoryAssignment'
+              examples:
+                example:
+                  value:
+                  - id: d7d1745d-6b46-40a7-87d8-ecb60b8260f6
+                    categoryId: d7d1745d-6b46-40a7-87d8-ecb60b8260f5
+                    ref:
+                      id: 521266ca-a411-4550-a7ab-aeeb4ce74133
+                      type: PRODUCT
+                      localizedName:
+                        en: product name
+        '400':
+          description: Request was syntactically incorrect. Details will be provided in the response payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    code: 400
+                    status: Bad Request
+                    message: Accept-Language validation failed.
+                    details:
+                    - 'Following languages are not supported: ''ru'''
+        '403':
+          description: Permission denied due to insufficient rights. This may happen when request does not contain sufficient scopes for given query values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    code: 403
+                    status: Forbidden
+                    message: You need a scope for this action.
+                    details:
+                    - 'Required scope(s): category.category_read_unpublished'
+        '404':
+          description: Category with the specified categoryId does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    resourceId: 084bcaf6-66b8-4ddd-9489-65c5f6449e94
+                    code: 404
+                    status: Not Found
+                    message: Error while getting category
+                    details:
+                    - Category with id '084bcaf6-66b8-4ddd-9489-65c5f6449e94' not found
+      security: []
+    post:
+      tags:
+      - Category Assignment Resources
+      summary: Assigning a resource to a category
+      description: Assigns a resource to a specified category.
+      operationId: POST-category-tree-assign-resource
+      parameters:
+      - name: tenant
+        in: path
+        description: 'Your Emporix tenant name.
+
+
+          **Note**: The tenant should always be written in lowercase.
+
+          '
+        required: true
+        schema:
+          type: string
+          example: saasdev2
+      - name: categoryId
+        in: path
+        description: 'Category unique identifier generated when the category is created.
+
+          '
+        required: true
+        deprecated: false
+        allowEmptyValue: false
+        allowReserved: false
+        schema:
+          type: string
+          example: 084bcaf6-66b8-4ddd-9489-65c5f6449e94
+        example: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignmentRequest'
+        required: true
+      responses:
+        '201':
+          description: The resource has been successfully assigned to the category.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignmentIdResponse'
+        '400':
+          description: Request was syntactically incorrect. Details will be provided in the response payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    code: 400
+                    status: Bad Request
+                    message: Assignment reference validation failed
+                    details:
+                    - Please provide a valid assignment reference id
+        '403':
+          description: Permission denied due to insufficient rights. This may happen when request does not contain sufficient scopes for given query values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    code: 403
+                    status: Forbidden
+                    message: You need a scope for this action.
+                    details:
+                    - 'Required scope(s): category.category_manage'
+        '404':
+          description: Category with the specified categoryId does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    resourceId: 084bcaf6-66b8-4ddd-9489-65c5f6449e94
+                    code: 404
+                    status: Not Found
+                    message: Error while getting category
+                    details:
+                    - Category with id '084bcaf6-66b8-4ddd-9489-65c5f6449e94' not found
+      security:
+      - OAuth2:
+        - category.category_manage
+    delete:
+      tags:
+      - Category Assignment Resources
+      summary: Deleting all category assignments
+      description: Deletes all assignments for a specified category.
+      operationId: DELETE-category-tree-remove-all-category-assignments
+      parameters:
+      - name: tenant
+        in: path
+        description: 'Your Emporix tenant name.
+
+
+          **Note**: The tenant should always be written in lowercase.
+
+          '
+        required: true
+        schema:
+          type: string
+          example: saasdev2
+      - name: categoryId
+        in: path
+        description: 'Category unique identifier generated when the category is created.
+
+          '
+        required: true
+        deprecated: false
+        allowEmptyValue: false
+        allowReserved: false
+        schema:
+          type: string
+          example: 084bcaf6-66b8-4ddd-9489-65c5f6449e94
+        example: ''
+      - name: assignmentType
+        in: query
+        description: 'Resource type assigned to the category.
+
+          Possible values:
+
+          * `PRODUCT`
+
+          '
+        schema:
+          type: string
+          default: PRODUCT
+          enum:
+          - PRODUCT
+      responses:
+        '204':
+          description: Assignments has been successfully deleted
+        '403':
+          description: Permission denied due to insufficient rights. This may happen when request does not contain sufficient scopes for given query values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    code: 403
+                    status: Forbidden
+                    message: You need a scope for this action.
+                    details:
+                    - 'Required scope(s): category.category_manage'
+        '404':
+          description: Category with the specified categoryId does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    resourceId: 084bcaf6-66b8-4ddd-9489-65c5f6449e94
+                    code: 404
+                    status: Not Found
+                    message: Error while getting category
+                    details:
+                    - Category with id '084bcaf6-66b8-4ddd-9489-65c5f6449e94' not found
+      security:
+      - OAuth2:
+        - category.category_manage
+    servers:
+    - url: https://api.emporix.io
+  /category/{tenant}/categories/{categoryId}/assignments/{assignmentId}:
+    delete:
+      tags:
+      - Category Assignment Resources
+      summary: Deleting a category assignment by id
+      description: Deletes an assignment from a specified category.
+      operationId: DELETE-category-tree-remove-category-assignment
+      parameters:
+      - name: tenant
+        in: path
+        description: 'Your Emporix tenant name.
+
+
+          **Note**: The tenant should always be written in lowercase.
+
+          '
+        required: true
+        schema:
+          type: string
+          example: saasdev2
+      - name: categoryId
+        in: path
+        description: 'Category unique identifier generated when the category is created.
+
+          '
+        required: true
+        deprecated: false
+        allowEmptyValue: false
+        allowReserved: false
+        schema:
+          type: string
+          example: 084bcaf6-66b8-4ddd-9489-65c5f6449e94
+        example: ''
+      - name: assignmentId
+        in: path
+        description: 'Assignment unique identifier
+
+          '
+        required: true
+        deprecated: false
+        allowEmptyValue: false
+        allowReserved: false
+        schema:
+          type: string
+          example: '1256792345'
+        example: ''
+      responses:
+        '204':
+          description: Assignment has been successfully deleted.
+        '400':
+          description: Request was syntactically incorrect. Details will be provided in the response payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    code: 400
+                    status: Bad Request
+                    message: Assignment reference validation failed
+                    details:
+                    - Please provide a valid assignment reference id
+        '403':
+          description: Permission denied due to insufficient rights. This may happen when request does not contain sufficient scopes for given query values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    code: 403
+                    status: Forbidden
+                    message: You need a scope for this action.
+                    details:
+                    - 'Required scope(s): category.category_manage'
+        '404':
+          description: Category with the specified categoryId does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    resourceId: 084bcaf6-66b8-4ddd-9489-65c5f6449e94
+                    code: 404
+                    status: Not Found
+                    message: Error while getting category
+                    details:
+                    - Category with id '084bcaf6-66b8-4ddd-9489-65c5f6449e94' not found
+      security:
+      - OAuth2:
+        - category.category_manage
+    servers:
+    - url: https://api.emporix.io
+  /category/{tenant}/categories/{categoryId}/assignments/references/{referenceId}:
+    put:
+      tags:
+      - Category Assignment Resources
+      summary: Upserting a resource to a category assignment
+      description: 'Creates or updates an assignment of a resource to a specified category.
+
+        If any assignment with given categoryId and referenceId does not exist then a new assignment is created.'
+      operationId: PUT-category-tree-assign-resource
+      parameters:
+      - name: tenant
+        in: path
+        description: 'Your Emporix tenant name.
+
+
+          **Note**: The tenant should always be written in lowercase.
+
+          '
+        required: true
+        schema:
+          type: string
+          example: saasdev2
+      - name: categoryId
+        in: path
+        description: 'Category unique identifier generated when the category is created.
+
+          '
+        required: true
+        deprecated: false
+        allowEmptyValue: false
+        allowReserved: false
+        schema:
+          type: string
+          example: 084bcaf6-66b8-4ddd-9489-65c5f6449e94
+        example: ''
+      - name: referenceId
+        in: path
+        description: 'Assignment reference unique identifier, for example: productId.
+
+          '
+        required: true
+        deprecated: false
+        allowEmptyValue: false
+        allowReserved: false
+        schema:
+          type: string
+          example: 084bcaf6-66b8-4ddd-9489-65c5f6449e94
+        example: ''
+      responses:
+        '201':
+          description: The resource has been successfully assigned to the category.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignmentIdResponse'
+        '204':
+          description: The resource assignment to the category has been updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignmentIdResponse'
+        '400':
+          description: Request was syntactically incorrect. Details will be provided in the response payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    code: 400
+                    status: Bad Request
+                    message: Assignment reference validation failed
+                    details:
+                    - Please provide a valid assignment reference id
+        '403':
+          description: Permission denied due to insufficient rights. This may happen when request does not contain sufficient scopes for given query values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    code: 403
+                    status: Forbidden
+                    message: You need a scope for this action.
+                    details:
+                    - 'Required scope(s): category.category_manage'
+        '404':
+          description: Category with the specified categoryId does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    resourceId: 084bcaf6-66b8-4ddd-9489-65c5f6449e94
+                    code: 404
+                    status: Not Found
+                    message: Error while getting category
+                    details:
+                    - Category with id '084bcaf6-66b8-4ddd-9489-65c5f6449e94' not found
+      security:
+      - OAuth2:
+        - category.category_manage
+    delete:
+      tags:
+      - Category Assignment Resources
+      summary: Deleting a category assignment by reference id
+      description: Deletes an assignment from a specified category.
+      operationId: DELETE-category-tree-remove-category-assignment-by-reference-id
+      parameters:
+      - name: tenant
+        in: path
+        description: 'Your Emporix tenant name.
+
+
+          **Note**: The tenant should always be written in lowercase.
+
+          '
+        required: true
+        schema:
+          type: string
+          example: saasdev2
+      - name: categoryId
+        in: path
+        description: 'Category unique identifier generated when the category is created.
+
+          '
+        required: true
+        deprecated: false
+        allowEmptyValue: false
+        allowReserved: false
+        schema:
+          type: string
+          example: 084bcaf6-66b8-4ddd-9489-65c5f6449e94
+        example: ''
+      - name: referenceId
+        in: path
+        description: 'Assignment reference unique identifier, for example: productId.
+
+          '
+        required: true
+        deprecated: false
+        allowEmptyValue: false
+        allowReserved: false
+        schema:
+          type: string
+          example: '1256792345'
+        example: ''
+      responses:
+        '204':
+          description: Assignment has been successfully deleted.
+        '400':
+          description: Request was syntactically incorrect. Details will be provided in the response payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    code: 400
+                    status: Bad Request
+                    message: Assignment reference validation failed
+                    details:
+                    - Please provide a valid assignment reference id
+        '403':
+          description: Permission denied due to insufficient rights. This may happen when request does not contain sufficient scopes for given query values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    code: 403
+                    status: Forbidden
+                    message: You need a scope for this action.
+                    details:
+                    - 'Required scope(s): category.category_manage'
+        '404':
+          description: Category with the specified categoryId does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                example:
+                  value:
+                    resourceId: 084bcaf6-66b8-4ddd-9489-65c5f6449e94
+                    code: 404
+                    status: Not Found
+                    message: Error while getting category
+                    details:
+                    - Category with id '084bcaf6-66b8-4ddd-9489-65c5f6449e94' not found
+      security:
+      - OAuth2:
+        - category.category_manage
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    ErrorResponse:
+      required:
+      - code
+      - details
+      - message
+      - status
+      type: object
+      properties:
+        resourceId:
+          type:
+          - string
+          - 'null'
+        code:
+          type: integer
+          format: int32
+        status:
+          type: string
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            type: string
+    Reference:
+      required:
+      - id
+      - type
+      type: object
+      properties:
+        id:
+          minLength: 1
+          type: string
+          description: Assignment reference unique identifier, for example product ID.
+        type:
+          minLength: 1
+          type: string
+          enum:
+          - PRODUCT
+          description: Assignment reference type, for example 'product'.
+      description: Assignment reference.
+    CategoryAssignmentRefQueryDocument:
+      required:
+      - id
+      - localizedName
+      - type
+      type: object
+      properties:
+        id:
+          type: string
+          description: Assignment reference unique identifier, for example product ID.
+        type:
+          type: string
+          enum:
+          - PRODUCT
+          description: Assignment reference type, for example 'product'.
+        localizedName:
+          type: object
+          additionalProperties:
+            type: string
+          description: Assignment reference localized name.
+      description: Localized category description in a form of a map of translations.
+    BulkAssignmentResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          assignmentId:
+            type: string
+            description: ID of generated document.
+          productId:
+            type: string
+            description: ID of the product.
+          index:
+            type: integer
+            description: Index of the item in the array.
+          code:
+            type: integer
+            description: HTTP status' code.
+          status:
+            type: string
+            description: HTTP status.
+          message:
+            type: string
+            description: Error message which is present only when creation of the assignment failed.
+      example:
+      - assignmentId: e243dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+        productId: '123456'
+        index: 0
+        code: 201
+        status: CREATED
+      - assignmentId: e333dc9e-a3f6-4573-bb01-a8ae21d2d443
+        productId: '234567'
+        index: 1
+        code: 201
+        status: CREATED
+    BulkAssignmentUpsertRequest:
+      type: array
+      minItems: 1
+      maxItems: 200
+      items:
+        type: object
+        properties:
+          ref:
+            type: object
+            properties:
+              id:
+                minLength: 1
+                type: string
+                description: Assignment reference unique identifier, for example product ID.
+            required:
+            - id
+        required:
+        - ref
+      example:
+      - ref:
+          id: '1639265'
+      - ref:
+          id: '1639266'
+    AssignmentRequest:
+      required:
+      - ref
+      type: object
+      properties:
+        ref:
+          $ref: '#/components/schemas/Reference'
+          description: Assignment reference.
+      example:
+        ref:
+          id: '1639265'
+          type: PRODUCT
+    AssignmentIdResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID of generated document.
+      example:
+        id: e243dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+    BulkAssignmentRequest:
+      type: array
+      minItems: 1
+      maxItems: 200
+      items:
+        type: object
+        properties:
+          ref:
+            type: object
+            properties:
+              id:
+                minLength: 1
+                type: string
+                description: Assignment reference unique identifier, for example product ID.
+              type:
+                minLength: 1
+                type: string
+                enum:
+                - PRODUCT
+                description: Assignment reference type, for example 'product'.
+            required:
+            - id
+            - type
+        required:
+        - ref
+      example:
+      - ref:
+          id: '1639265'
+          type: PRODUCT
+      - ref:
+          id: '1639266'
+          type: PRODUCT
+    CategoryAssignment:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Assignment unique identifier generated when the assignment is created.
+        categoryId:
+          type: string
+          description: Assignment category identifier.
+        ref:
+          allOf:
+          - $ref: '#/components/schemas/CategoryAssignmentRefQueryDocument'
+          - description: Localized category description in a form of a map of translations.
+      description: Definition od category assignment
+      example:
+        value:
+        - id: 647b1108-e6fd-4139-b831-5ac5fded6d52
+          categoryId: 084bcaf6-66b8-4ddd-9489-65c5f6449e94
+          ref:
+            id: 123439302
+            type: product
+            localizedName:
+              en: Bread
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            category.category_manage: Manage a category
+            category.category_read_unpublished: Read unpublished categories
+            category.category_publish: Publish a category
+            category.category_unpublish: Unpublish a category
+x-refined-from:
+- emporix-category-tree-openapi.yml
+- emporix-category-tree-openapi.yml

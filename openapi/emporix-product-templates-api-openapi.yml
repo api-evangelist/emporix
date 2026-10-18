@@ -1,0 +1,670 @@
+openapi: 3.2.0
+info:
+  title: Emporix Product Templates API
+  version: ''
+  contact:
+    email: documentation@emporix.com
+  description: 'Operations tagged Product Templates across 2 of this provider''s published API definitions: emporix-product-service-openapi.yml, emporix-product-service-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Product Templates
+  description: Manage product templates. Product templates define a set of attributes which are common for all product instances based on that template.
+paths:
+  /product/{tenant}/product-templates:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    get:
+      summary: Retrieving all product templates
+      tags:
+      - Product Templates
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/productTemplatesResponse'
+              examples:
+                Product template with enum attribute:
+                  value:
+                  - id: 634cea2740033d7c2e7b03a8
+                    name:
+                      en: T-shirt
+                    attributes:
+                    - key: color
+                      name:
+                        en: Color
+                        pl: Kolor
+                      type: TEXT
+                      metadata:
+                        mandatory: false
+                        variantAttribute: true
+                        defaultValue: GREEN
+                      values:
+                      - key: GREEN
+                      - key: RED
+                    metadata:
+                      variantAttributesSchema: https://res.cloudinary.com/saas-ag/raw/upload/emporix-docs/634cea2740033d7c2e7b03a8-variantAttributes_v1.json
+                      templateAttributesSchema: https://res.cloudinary.com/saas-ag/raw/upload/emporix-docs/634cea2740033d7c2e7b03a8-templateAttributes_v1.json
+                      createdAt: '2022-03-31T09:52:15.423Z'
+                      modifiedAt: '2022-03-31T09:52:15.423Z'
+                      version: 1
+        '400':
+          $ref: '#/components/responses/common_response_BadRequest_400'
+        '401':
+          $ref: '#/components/responses/common_response_Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/common_response_Forbidden_403'
+        '500':
+          $ref: '#/components/responses/common_response_InternalServerError_500'
+      operationId: GET-product-list-templates
+      security:
+      - OAuth2:
+        - product.product_template_read
+      description: 'Retrieves all product templates. You can filter the results with query parameters.
+
+
+        A product template defines a set of attributes which are common for all product instances based on that template.'
+      parameters:
+      - $ref: '#/components/parameters/header_x_total_count'
+      - $ref: '#/components/parameters/header_accept_language'
+      - $ref: '#/components/parameters/query_page_number'
+      - $ref: '#/components/parameters/query_page_size'
+      - $ref: '#/components/parameters/query_sort'
+      - $ref: '#/components/parameters/query_q_param_product_template'
+    post:
+      summary: Creating a new product template
+      operationId: POST-product-create-template
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: Identifier of the newly created product template.
+              examples:
+                Product template response:
+                  value:
+                    id: 624c3e7c3406122baacc7e93
+        '400':
+          $ref: '#/components/responses/common_response_BadRequest_400'
+        '401':
+          $ref: '#/components/responses/common_response_Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/common_response_Forbidden_403'
+        '500':
+          $ref: '#/components/responses/common_response_InternalServerError_500'
+      tags:
+      - Product Templates
+      security:
+      - OAuth2:
+        - product.product_template_manage
+      description: 'Creates a new product template.
+
+
+        A product template defines a set of attributes which are common for all product instances based on that template.'
+      parameters:
+      - $ref: '#/components/parameters/header_content_language'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/productTemplateCreation'
+            examples:
+              Product template:
+                value:
+                  id: 545b4e3dfaee4c10def3db24
+                  name:
+                    en: T-shirt
+                  attributes:
+                  - key: color
+                    name:
+                      en: Color
+                      pl: Kolor
+                    type: TEXT
+                    metadata:
+                      mandatory: false
+                      variantAttribute: true
+                      defaultValue: GREEN
+                    values:
+                    - key: GREEN
+                    - key: RED
+    servers:
+    - url: https://api.emporix.io
+  /product/{tenant}/product-templates/{product-template-id}:
+    parameters:
+    - $ref: '#/components/parameters/path_tenant'
+    - $ref: '#/components/parameters/path_productTemplateId'
+    get:
+      summary: Retrieving a product template
+      tags:
+      - Product Templates
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/productTemplateResponse'
+              examples:
+                Product template:
+                  value:
+                    id: 634cea2740033d7c2e7b03a8
+                    name:
+                      en: T-shirt
+                    attributes:
+                    - key: color
+                      name:
+                        en: Color
+                        pl: Kolor
+                      type: TEXT
+                      metadata:
+                        mandatory: false
+                        variantAttribute: false
+                        defaultValue: GREEN
+                      values:
+                      - key: GREEN
+                      - key: RED
+                    metadata:
+                      variantAttributesSchema: https://res.cloudinary.com/saas-ag/raw/upload/emporix-docs/634cea2740033d7c2e7b03a8-variantAttributes_v1.json
+                      templateAttributesSchema: https://res.cloudinary.com/saas-ag/raw/upload/emporix-docs/634cea2740033d7c2e7b03a8-templateAttributes_v1.json
+                      createdAt: '2022-03-31T09:52:15.423Z'
+                      modifiedAt: '2022-03-31T09:52:15.423Z'
+                      version: 1
+        '401':
+          $ref: '#/components/responses/common_response_Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/common_response_Forbidden_403'
+        '404':
+          $ref: '#/components/responses/product_NotFound_404'
+        '500':
+          $ref: '#/components/responses/common_response_InternalServerError_500'
+      operationId: GET-product-retrieve-template
+      parameters:
+      - $ref: '#/components/parameters/header_accept_language'
+      - $ref: '#/components/parameters/query_version_parameter_product_template'
+      security:
+      - OAuth2:
+        - product.product_template_read
+      description: 'Retrieves a specified product template''s details.
+
+
+        A product template defines a set of attributes which are common for all product instances based on that template.'
+    put:
+      summary: Updating a product template
+      operationId: PUT-product-update-template
+      responses:
+        '204':
+          description: No Content
+        '400':
+          $ref: '#/components/responses/common_response_BadRequest_400'
+        '401':
+          $ref: '#/components/responses/common_response_Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/common_response_Forbidden_403'
+        '404':
+          $ref: '#/components/responses/product_NotFound_404'
+        '409':
+          $ref: '#/components/responses/common_response_Conflict_409'
+        '500':
+          $ref: '#/components/responses/common_response_InternalServerError_500'
+      tags:
+      - Product Templates
+      security:
+      - OAuth2:
+        - product.product_template_manage
+      description: 'Updates a specified product template by replacing all of its existing data with data from the request body.
+
+
+        **Note**: Every product template update creates a new version of the template. Products based on previous versions are not automatically updated. In order to see the changes (for example new attributes) on the product level, you need to update the template version in applicable products.'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/productTemplateUpdate'
+            examples:
+              Product template:
+                value:
+                  name:
+                    en: T-shirt
+                  attributes:
+                  - key: color
+                    name:
+                      en: Color
+                      pl: Kolor
+                    type: TEXT
+                    metadata:
+                      mandatory: false
+                      variantAttribute: true
+                      defaultValue: GREEN
+                    values:
+                    - key: GREEN
+                    - key: RED
+                  metadata:
+                    version: 1
+        description: ''
+      parameters:
+      - $ref: '#/components/parameters/header_content_language'
+    delete:
+      summary: Deleting a product template
+      operationId: DELETE-product-remove-template
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+        required: false
+      responses:
+        '204':
+          description: No Content
+        '401':
+          $ref: '#/components/responses/common_response_Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/common_response_Forbidden_403'
+        '500':
+          $ref: '#/components/responses/common_response_InternalServerError_500'
+      tags:
+      - Product Templates
+      security:
+      - OAuth2:
+        - product.product_template_manage
+      description: Deletes a specified product template. Only product templates which are not used in products and parent variants can be deleted.
+    servers:
+    - url: https://api.emporix.io
+components:
+  parameters:
+    query_page_size:
+      name: pageSize
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 60
+      description: The number of documents being retrieved on the page.
+    header_x_total_count:
+      name: X-Total-Count
+      in: header
+      required: false
+      schema:
+        type: boolean
+      description: Flag indicating whether the total number of retrieved results should be returned.
+    header_content_language:
+      name: Content-Language
+      in: header
+      required: false
+      schema:
+        type: string
+      description: 'The Content-Language request HTTP header defines a language or multiple languages of the request body.
+
+
+        * If the `Content-Language` header is set to `*`, the localized fields should be provided as maps of translations, where the keys are language codes and values are the fields in their respective languages.
+
+        * If the `Content-Language` header is set to a specific language, the localized fields should be provided as strings.
+
+        * If the `Content-Language` header is empty, the endpoint interprets the localized fields as being provided in the default language or the languages defined in the Configuration Service.
+
+
+        **Note**: You can provide the localized fields only in languages defined in the Configuration Service. In case the fields are provided in languages that are not defined in the Configuration Service, the request is rejected.
+
+        '
+    path_productTemplateId:
+      name: product-template-id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Unique identifier of the product template.
+    path_tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: The tenant should always be written in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+    query_page_number:
+      name: pageNumber
+      in: query
+      required: false
+      schema:
+        type: integer
+      description: The page number to be retrieved where the size of the pages must be specified by the pageSize parameter. The number of the first page is 1.
+    header_accept_language:
+      name: Accept-Language
+      in: header
+      required: false
+      schema:
+        type: string
+      description: The Accept-Language request HTTP header defines which languages the client is able to understand, and which locale variant is preferred. If empty, the default system language is assumed. It can be a priority list working as a fallback mechanism.
+    query_sort:
+      name: sort
+      in: query
+      required: false
+      schema:
+        type: string
+      description: "Fields to sort the response data by following order of the parameters from left to right.\nCan contain multiple fields in format: `field name:sort direction` separated by a comma.\nThe colon with `sort direction` parameter is redundant and descending order is taken only if it is equal to `desc` or `DESC`.\nAscending order is considered in any other case.\nWhile sorting by a localised field the following rule is taken into account:\n  1. If a localized field contains information about a language, then the language should be used. For example `name.en:ASC`. In that case en language is used for sorting the name property. The language suffix takes precedence over `Accept-Language` header.\n  2. If a localized field does not contain information about a language, then the `Accept-Language` header is used. For example `name:ASC` and `Accept-Language: de`. In that case `de` is used for sorting the name property.\n  3. If a localized field does not contain information about language and `Accept-Language` header contains `*`, then the default language from configuration service is used as a language. For example `name:ASC` and `Accept-Language: *` and default language is pl then pl is used as a language for name property.\n  4. If a localized field does not contains information about language and `Accept-Language` header does not exists in the request, then the default language from configuration service is used.  \"\n"
+    query_q_param_product_template:
+      name: q
+      in: query
+      required: false
+      schema:
+        type: string
+      description: "Standard query parameter used to search for specific values.   \n* Searching for an item by string property: `q=id:31065d5b-b62e`, where `id` is the field name and `31065d5b-b62e` is its required value.   \n* Searching for an item by localized field property: `q=name.en:T-s` where `name` is the name of the field, `en` is a language code and `T-s` is a required value of this field.   This query works only for localized fields, which are stored in a Map format where `key` is a language code and `value` is translation to particular language.   + Searching for items by date property. All numer-based property queries are valid also for dates. In that case the date should be placed within double quotes: `q=metadata.createdAt:(>=\"2021-05-18T07:27:27.455Z\" AND <\"2021-05-20T07:27:27.455Z\")`   + Searching for items with non existing or empty property: `q=name.en:null` where `name.en` is a name of fields that has value `null`.   + Searching for items with existing property: `q=attributes:exists` where `attributes` is a name of field that has `non null` value.   + Searching for items by multiple specific values: `q=id:(5c3325baa9812100098ff48f,5c3325d1a9812100098ff494)` where `id` is name of field and strings within a bracket are it''s required value.   + Searching for items by multiple fields: `q=id:5c3325baa9812100098ff48f name.en:T-s` where `id` and ''name.en'' are the names of fields. All documents that contain given values of these fields are returned. Multiple fields separated by space can be specified. Multiple values for each field can be also specified in a format presented above.   + Searching for items with string fields conforming to a regex: `q=name.en:~ABCD12` or `q=name.en:(~AB CD)` - in case of searching for strings with space, where `name` is the name of field and `ABCD12` or `AB CD` is it''s querying regex.'\n"
+    query_version_parameter_product_template:
+      name: version
+      in: query
+      required: false
+      schema:
+        type: string
+      description: Version of the product template. If the parameter is not provided, the latest version of product template is returned.
+  schemas:
+    productTemplateResponse:
+      allOf:
+      - $ref: '#/components/schemas/productTemplateCreation'
+      - type: object
+        properties:
+          metadata:
+            $ref: '#/components/schemas/productTemplateMetadata'
+    productTemplateCreation:
+      title: productTemplateCreation
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/productTemplateBase'
+      - type: object
+        properties:
+          id:
+            type: string
+            description: Identifier of the product template.
+    productTemplatesResponse:
+      title: productTemplatesResponse
+      type: array
+      items:
+        $ref: '#/components/schemas/productTemplateResponse'
+    productErrorMessage:
+      allOf:
+      - $ref: '#/components/schemas/coreErrorMessage'
+      - type: object
+        properties:
+          productId:
+            type: string
+            description: Identifier of the product.
+    coreErrorMessageWithDetails:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/coreErrorMessage'
+      - type: object
+        properties:
+          details:
+            type: array
+            description: Error message details.
+            items:
+              type: object
+              properties:
+                field:
+                  type: string
+                type:
+                  type: string
+                message:
+                  type: string
+                moreInfo:
+                  type: string
+    values:
+      type: array
+      items:
+        $ref: '#/components/schemas/value'
+    productTemplateUpdate:
+      title: productTemplateUpdate
+      allOf:
+      - $ref: '#/components/schemas/productTemplateBase'
+      - type: object
+        properties:
+          metadata:
+            type: object
+            properties:
+              version:
+                type: number
+                description: Version of the object. The value is required while product template update.
+            required:
+            - version
+      required:
+      - name
+      - attributes
+      - metadata
+    value:
+      type: object
+      properties:
+        key:
+          oneOf:
+          - type: string
+          - type: number
+          - type: boolean
+    coreErrorMessage:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: HTTP Status Code.
+        status:
+          type: string
+          description: HTTP Status.
+        message:
+          type: string
+          description: Error message.
+    productTemplateMetadata:
+      title: productTemplateMetadata
+      type: object
+      properties:
+        variantAttributesSchema:
+          type: string
+          description: Schema url of the variant attributes.
+        templateAttributesSchema:
+          type: string
+          description: Schema url of the template attributes.
+        createdAt:
+          type: string
+          description: 'Date and time when the object was created, compliant with the ISO 8601 standard. For example: `2022-03-31T09:52:15.423Z`'
+        modifiedAt:
+          type: string
+          description: 'Date and time when the object was last modified, compliant with the ISO 8601 standard. For example: `2022-03-31T09:52:15.423Z`'
+        version:
+          type: number
+          description: Version of the object. The value is required during update operation.
+    productTemplateAttribute:
+      title: productTemplateAttribute
+      type: object
+      properties:
+        key:
+          type: string
+          description: 'An identifier of the attribute. The key is used as a field name in a product instance created based on the product template. The key can contain only alphanumeric characters. '
+        name:
+          type: object
+          additionalProperties:
+            type: string
+          description: Localized resource name in a form of a map of translations.
+        type:
+          type: string
+          description: 'Attribute type. Correct values: `TEXT`, `NUMBER`, `BOOLEAN`, `DATETIME`. Regardless of the chosen type, the defaultValue and values fields are validated. The DATETIME values must be compliant with the ISO 8601 standard, for example: 2022-03-31T09:52:15.423Z.'
+        metadata:
+          type: object
+          description: Metadata contains additional information about the attribute.
+          properties:
+            mandatory:
+              type: boolean
+              description: Indicates whether the attribute should be treated as a mandatory.
+            variantAttribute:
+              type: boolean
+              description: 'Indicates whether the attribute is a variant-specific attribute. Variant attributes are taken into account during variants creation.
+
+                If the value is set to true, then the ''values'' array cannot be null.'
+            defaultValue:
+              description: The attribute stores a default value for the attribute.
+              oneOf:
+              - type: string
+              - type: boolean
+              - type: number
+        values:
+          allOf:
+          - $ref: '#/components/schemas/values'
+          - type: object
+            description: 'If the values are populated then the attribute behaves as an enum property. In other words, the attribute in a product instance can contain only values mentioned in this array. For each
+
+              attribute the value should consist of object with key and localized names.'
+      required:
+      - key
+      - name
+      - type
+      - metadata
+    productTemplateBase:
+      type: object
+      properties:
+        name:
+          type: object
+          description: Localized product template name in a form of a map of translations.
+          additionalProperties:
+            type: string
+        attributes:
+          type: array
+          description: List of attributes related to the product template.
+          items:
+            $ref: '#/components/schemas/productTemplateAttribute'
+      required:
+      - name
+      - attributes
+  responses:
+    common_response_Unauthorized_401:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid access token:
+              value:
+                fault:
+                  faultstring: Invalid access token
+                  detail:
+                    errorcode: oauth.v2.InvalidAccessToken
+            Access token expired:
+              value:
+                fault:
+                  faultstring: Access Token expired
+                  detail:
+                    errorcode: keymanagement.service.access_token_expired
+    common_response_Forbidden_403:
+      description: Access forbidden. The caller is not allowed to access this resource.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/coreErrorMessage'
+          examples:
+            Forbidden:
+              value:
+                code: 403
+                status: Forbidden
+                message: The access to the requested resource has been forbidden by the server.
+    common_response_InternalServerError_500:
+      description: Internal Server Error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/coreErrorMessage'
+          examples:
+            Internal Server Error:
+              value:
+                code: 500
+                status: Internal Server Error
+                message: Problem encountered while trying to connect to the database.
+    common_response_Conflict_409:
+      description: 'There are three possible reasons:
+
+        1. Product with given code already exists, please choose unique code for your product
+
+        2. Optimistic locking failed. If user sends metadata/version attribute which is outdated (someone else updated product in the time user was performing his changes). User should retrieve the latest product data and retry the request.
+
+        3. Optimistic locking failed. User did not provide metadata/version attribute in update request, but someone else updated product while it was internally handled by product service. Resending the same request can result in successful update, but the update can override recently persisted changes.
+
+        '
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/coreErrorMessageWithDetails'
+          examples:
+            Conflict:
+              value:
+                code: 409
+                status: Conflict
+                message: Conflict - a resource with given code or id has already exist.
+    common_response_BadRequest_400:
+      description: Bad request due to validation, incorrect parameters, etc.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/coreErrorMessage'
+          examples:
+            Validation Error:
+              $ref: '#/components/examples/common_response_validation_exception_BadRequest_400'
+    product_NotFound_404:
+      description: Resource has not been found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/productErrorMessage'
+          examples:
+            Product not found:
+              $ref: '#/components/examples/product_NotFound_404'
+  examples:
+    common_response_validation_exception_BadRequest_400:
+      value:
+        code: 400
+        status: Bad Request
+        message: Validation problem with request body.
+    product_NotFound_404:
+      value:
+        productId: 628cd20c6e8b2432b6346ca6
+        code: 404
+        status: Not Found
+        message: The product with id 628cd20c6e8b2432b6346ca6 has not been found.
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            product.product_manage: Needed to manage products.
+            product.product_publish: Needed to publish products.
+            product.product_unpublish: Needed to unpublish products.
+            product.product_read_unpublished: Needed to retrieve unpublished products.
+            product.product_read_by_vendor: The scope allows vendor to read products with assigned vendor.
+            product.product_manage_by_vendor: The scope allows vendor to manage products with assigned vendor.
+            product.price_manage: Needed to manage product prices.
+            product.product_template_read: Needed for reading product templates.
+            product.product_template_manage: Needed for updating and removing a product template.
+x-refined-from:
+- emporix-product-service-openapi.yml
+- emporix-product-service-openapi.yml

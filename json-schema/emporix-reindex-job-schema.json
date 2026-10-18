@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/emporix/main/json-schema/emporix-reindex-job-schema.json",
+  "title": "ReindexJob",
+  "x-generated": "2026-10-18",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/emporix-indexing-service-openapi.yml#/components/schemas/ReindexJob",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier of the reindex job."
+    },
+    "entityType": {
+      "$ref": "#/$defs/ReindexEntityType"
+    },
+    "message": {
+      "type": "string",
+      "description": "In case if reindex job finishes with `FAILURE` status, the message is populated with information what was the reason of the failure."
+    },
+    "status": {
+      "$ref": "#/$defs/ReindexJobStatus"
+    },
+    "expectedCount": {
+      "type": "integer",
+      "description": "Expected number of entities which need to be indexed."
+    },
+    "processedCount": {
+      "type": "integer",
+      "description": "Actual number of entities which were indexed. Allows to track the progress of reindexing process."
+    },
+    "metadata": {
+      "$ref": "#/$defs/Metadata"
+    }
+  },
+  "$defs": {
+    "Metadata": {
+      "type": "object",
+      "properties": {
+        "createdAt": {
+          "description": "Date and time when the object was created. The value is approved as an ISO-8601 representation of an Instant. For example: `2022-04-30T13:18:02.379Z`",
+          "type": "string",
+          "format": "date-time"
+        },
+        "modifiedAt": {
+          "description": "Date and time when the object was last modified. The value is approved as an ISO-8601 representation of an Instant. For example: `2022-04-30T13:18:02.379Z`",
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "ReindexEntityType": {
+      "type": "string",
+      "description": "Entity type which should be reindexed. It supports `ORDER`, `PRODUCT` and custom schema types."
+    },
+    "ReindexJobStatus": {
+      "type": "string",
+      "description": "Informs about status of reindex job. `PENDING` means that the maximum number of parallel `IN_PROGRESS` jobs is reached and such job will be processed when one of current `IN_PROGRESS` jobs is released. `PUBLISHED` means that all the indexing events were emitted. `SUCCESS` means that all the indexing events were consumed.",
+      "enum": [
+        "FAILURE",
+        "IN_PROGRESS",
+        "PENDING",
+        "PUBLISHED",
+        "SUCCESS"
+      ]
+    }
+  }
+}

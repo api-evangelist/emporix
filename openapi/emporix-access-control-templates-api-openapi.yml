@@ -1,0 +1,593 @@
+openapi: 3.2.0
+info:
+  title: Emporix Access Control Templates API
+  version: ''
+  contact:
+    name: Emporix
+    url: https://emporix.com
+    email: documentation@emporix.com
+  description: 'Operations tagged Access Control Templates across 2 of this provider''s published API definitions: emporix-iam-openapi.yml, emporix-iam-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.emporix.io
+security:
+- OAuth2: []
+tags:
+- name: Access Control Templates
+paths:
+  /iam/{tenant}/templates:
+    parameters:
+    - $ref: '#/components/parameters/tenant'
+    get:
+      tags:
+      - Access Control Templates
+      summary: Retrieving all access control templates
+      description: Retrieves all access controls templates available for the tenant. A template contains a list of the most popular access controls combined together in order to provide convenient access to the system.
+      operationId: GET-iam-list-access-control-templates
+      parameters:
+      - $ref: '#/components/parameters/tenant'
+      - $ref: '#/components/parameters/trait_paged_pageNumber'
+      - $ref: '#/components/parameters/trait_paged_pageSize'
+      - $ref: '#/components/parameters/trait_sort'
+      - $ref: '#/components/parameters/trait_name_query_param'
+      - $ref: '#/components/parameters/trait_description_query_param'
+      - $ref: '#/components/parameters/trait_acceptLanguage_header'
+      - $ref: '#/components/parameters/X-Total-Count'
+      - schema:
+          type: string
+          example: accessControls
+          enum:
+          - accessControls
+        in: query
+        name: expand
+        description: Adds expanded access controls with resource and role objects to the response.
+      responses:
+        '200':
+          description: The request was successful. A list of role templates is returned.
+          headers:
+            X-Total-Count:
+              description: Total number of retrieved role templates.
+              schema:
+                type: integer
+                format: int32
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TemplateQueryDocument'
+              examples:
+                Templates list:
+                  value:
+                  - id: Z843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    name:
+                      en: Example name
+                      de: Beispielname
+                    description:
+                      en: Example role template description
+                      de: Beispiel Accessnbeschreibung
+                    accessControls:
+                    - f543dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    - Z843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                Expanded templates list:
+                  value:
+                  - id: Z843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+                    name:
+                      de: Katalogmanager
+                      en: Catalog Manager
+                    description:
+                      de: Vorlage für Katalogmanager-Zugriffskontrollen
+                      en: Template for Catalog Manager access controls
+                    accessControls:
+                    - 1ac869fc-d548-4ec8-8e06-c01491314117
+                    - 4ac869fc-d548-4ec8-8e06-c01491314114
+                    accessControlsDocuments:
+                    - id: 1ac869fc-d548-4ec8-8e06-c01491314117
+                      roleId: 1rl5e52e-6e27-4ac5-9471-2467d3fb7500
+                      resourceId: 1sr5e52e-6e27-4ac5-9471-2467d3fb7518
+                      domains:
+                      - example_domain
+                      name:
+                        de: Konfiguration | Konfiguration viewer
+                        en: Configuration | Configuration viewer
+                      role:
+                        id: 1rl5e52e-6e27-4ac5-9471-2467d3fb7500
+                        name:
+                          de: Zuschauer
+                          en: Viewer
+                        description:
+                          de: Zuschauerrolle
+                          en: Viewer role
+                        metadata:
+                          version: 1
+                          createdAt: '2022-06-27T23:32:24.676Z'
+                          modifiedAt: '2022-06-27T23:32:24.676Z'
+                      resource:
+                        id: 1sr5e52e-6e27-4ac5-9471-2467d3fb7518
+                        name:
+                          de: Konfiguration | Konfiguration Ressource
+                          en: Configuration | Configuration resource
+                        description:
+                          de: KonfigurationService with Konfigurationressource
+                          en: Configuration service with configuration resource
+                        code: configuration.configuration
+                        metadata:
+                          version: 1
+                          createdAt: '2022-06-27T23:32:24.418Z'
+                          modifiedAt: '2022-06-27T23:32:24.418Z'
+                      metadata:
+                        version: 1
+                        createdAt: '2022-06-27T23:32:25.539Z'
+                        modifiedAt: '2022-06-27T23:32:25.539Z'
+                    - id: 4ac869fc-d548-4ec8-8e06-c01491314113
+                      roleId: 1rl5e52e-6e27-4ac5-9471-2467d3fb7502
+                      resourceId: 1sr5e52e-6e27-4ac5-9471-2467d3fb7514
+                      domains:
+                      - example_domain
+                      name:
+                        de: Katalog | Katalog manager
+                        en: Catalog | Catalog manager
+                      role:
+                        id: 1rl5e52e-6e27-4ac5-9471-2467d3fb7502
+                        name:
+                          de: Manager
+                          en: Manager
+                        description:
+                          de: Managerrolle
+                          en: Administrator role
+                        metadata:
+                          version: 1
+                          createdAt: '2022-06-27T23:32:24.704Z'
+                          modifiedAt: '2022-06-27T23:32:24.704Z'
+                      resource:
+                        id: 1sr5e52e-6e27-4ac5-9471-2467d3fb7514
+                        name:
+                          de: Katalog | Katalog Ressource
+                          en: Catalog | Catalog resource
+                        description:
+                          de: Katalog Service with Katalog Ressource
+                          en: Catalog service with catalog resource
+                        code: catalog.catalog
+                        metadata:
+                          version: 1
+                          createdAt: '2022-06-27T23:32:24.406Z'
+                          modifiedAt: '2022-06-27T23:32:24.406Z'
+                      metadata:
+                        version: 1
+                        createdAt: '2022-06-27T23:32:25.148Z'
+                        modifiedAt: '2022-06-27T23:32:25.148Z'
+        '400':
+          $ref: '#/components/responses/Bad_request_400'
+        '401':
+          $ref: '#/components/responses/Unauthorized_401'
+        '403':
+          $ref: '#/components/responses/Forbidden_403'
+      security:
+      - OAuth2:
+        - iam.template_read
+    servers:
+    - url: https://api.emporix.io
+components:
+  schemas:
+    RolesMetadata:
+      required:
+      - createdAt
+      - version
+      type: object
+      properties:
+        version:
+          type: integer
+          description: Role document version.
+          format: int32
+        createdAt:
+          type: string
+          description: Timestamp indicating when the role was created.
+          format: date-time
+        modifiedAt:
+          type: string
+          description: Timestamp indicating when the role was last modified.
+          format: date-time
+    TemplateQueryDocument:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Role template unique identifier generated when the role template is created.
+        name:
+          type: object
+          additionalProperties:
+            type: string
+          description: Localized role template name in the form of a map of translations.
+        description:
+          type: object
+          additionalProperties:
+            type: string
+          description: Localized role template description in the form of a map of translations.
+        accessControls:
+          type: array
+          description: Access controls unique identifiers associated with this role template.
+          items:
+            type: string
+        accessControlsDocuments:
+          type: array
+          description: Expanded Access controls documents
+          items:
+            $ref: '#/components/schemas/AccessControlQueryDocument'
+      description: Definition of role template
+    AccessControlMetadataQueryDocument:
+      required:
+      - createdAt
+      - version
+      type: object
+      properties:
+        version:
+          type: integer
+          description: Access control document version.
+          format: int32
+        createdAt:
+          type: string
+          description: Timestamp indicating when the access control was created.
+          format: date-time
+        modifiedAt:
+          type: string
+          description: Timestamp indicating when the access control was last modified.
+          format: date-time
+      description: Access control metadata.
+    ResourcesMetadataQueryDocument:
+      required:
+      - createdAt
+      - version
+      type: object
+      properties:
+        version:
+          type: integer
+          description: Resource document version.
+          format: int32
+        createdAt:
+          type: string
+          description: Timestamp indicating when the resource was created.
+          format: date-time
+        modifiedAt:
+          type: string
+          description: Timestamp indicating when the resource was last modified.
+          format: date-time
+      description: Resource metadata.
+    RolePermissionsDocument:
+      type: object
+      description: Role permissions list.
+      title: ''
+      properties:
+        applicablePermissionResources:
+          type: array
+          description: 'Allows you to allowlist resources that the permission is applicable to. Can only contain resources specified in the permission document under `applicableResources`.
+
+            '
+          items:
+            type: string
+        id:
+          type: string
+          description: Reference to the permission document with specific resources defined.
+      required:
+      - id
+    AccessControlQueryDocument:
+      type: object
+      description: Definition of access control
+      properties:
+        id:
+          type: string
+          description: Assignment unique identifier generated when the assignment is created.
+        roleId:
+          type: string
+          deprecated: true
+          description: Role unique identifier associated with this access control.
+        resourceId:
+          type: string
+          deprecated: true
+          description: Resource unique identifier associated with this access control.
+        domains:
+          type: array
+          description: Domain identifiers associated with this access control.
+          items:
+            type: string
+          example:
+          - example_domain
+        name:
+          type: object
+          additionalProperties:
+            type: string
+          description: Localized resource name in the form of a map of translations.
+        role:
+          $ref: '#/components/schemas/RoleQueryDocument'
+        resource:
+          $ref: '#/components/schemas/ResourceQueryDocument'
+        metadata:
+          $ref: '#/components/schemas/AccessControlMetadataQueryDocument'
+        scopes:
+          type: array
+          description: A list of resolved scopes for a particular access control.
+          items:
+            type: string
+        restrictionAware:
+          type: boolean
+          description: Determines whether this access control generates scopes with restriction suffixes when assigned to a group that has restrictions defined. When `true`, the generated scopes will include restrictions (e.g. order.`order_manage--DE`) based on the group's restrictions list. When `false`, scopes are generated without restriction suffixes regardless of the group's restrictions.
+        restrictedTo:
+          type: string
+          enum:
+          - CUSTOMER
+          - EMPLOYEE
+          description: 'Restricts the type of group this access control can be assigned to.
+
+            * `CUSTOMER` - the access control can be assigned only to groups of `CUSTOMER` user type.
+
+            * `EMPLOYEE` - the access control can be assigned only to groups of `EMPLOYEE` user type.
+
+
+            If this property is not present, the access control can be assigned to any group regardless of its user type.
+
+            '
+        predefined:
+          type: boolean
+          readOnly: true
+          description: Indicated whether this access control is predefined in the system or was created by a user.
+        vendorAware:
+          type: boolean
+          readOnly: true
+          description: Indicated whether this access control is associated with vendor scopes.
+    RoleQueryDocument:
+      type: object
+      description: Role definition associated with this access control.
+      example:
+        id: Z843dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+        name:
+          en: Example name
+          de: Beispielname
+        description:
+          en: Example role description
+          de: Beispiel Berechtigungsbeschreibung
+        permissions:
+        - id: R143dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+          applicablePermissionResources:
+          - Z243dc9e-a3f6-4573-bb01-a8ae21d2d43g
+        - id: Z243dc9e-a3f6-4573-bb01-a8ae21d2d4ae
+        metadata:
+          version: 1
+          createdAt: '2022-01-04 10:44:51.871Z'
+          modifiedAt: '2022-01-05 12:44:51.456Z'
+      properties:
+        id:
+          type: string
+          description: Role unique identifier generated when the role is created.
+        name:
+          type: object
+          additionalProperties:
+            type: string
+          description: Localized role name in the form of a map of translations.
+        description:
+          type: object
+          additionalProperties:
+            type: string
+          description: Localized role description in the form of a map of translations.
+        permissions:
+          type: array
+          description: Permissions unique identifier list declared for this role.
+          items:
+            $ref: '#/components/schemas/RolePermissionsDocument'
+        metadata:
+          $ref: '#/components/schemas/RolesMetadata'
+    ResourceQueryDocument:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Resource unique identifier generated when the resource is created.
+        name:
+          type: object
+          additionalProperties:
+            type: string
+          description: Localized resource name in the form of a map of translations.
+        description:
+          type: object
+          additionalProperties:
+            type: string
+          description: Localized resource description in the form of a map of translations.
+        code:
+          type: string
+          description: Resource unique code identifier.
+        metadata:
+          $ref: '#/components/schemas/ResourcesMetadataQueryDocument'
+      description: Resource definition associated with this access control.
+  parameters:
+    trait_description_query_param:
+      name: description
+      in: query
+      required: false
+      schema:
+        type: string
+      description: Search by the description of the the given resource, it is conformed against all of the specified accepted-languages.
+    trait_paged_pageNumber:
+      name: pageNumber
+      in: query
+      description: 'Page number to be retrieved. The number of the first page is 1.
+
+        '
+      schema:
+        default: 1
+        minimum: 1
+        type: integer
+    trait_name_query_param:
+      name: name
+      in: query
+      required: false
+      schema:
+        type: string
+      description: 'Search by the name of a given resource. The value is conformed against all of the specified accepted languages.
+
+        '
+    tenant:
+      name: tenant
+      in: path
+      required: true
+      description: 'Your Emporix tenant name.
+
+
+        **Note**: The tenant name should always be written in lowercase.
+
+        '
+      schema:
+        pattern: ^[a-z][a-z0-9]+$
+        minLength: 3
+        maxLength: 16
+        type: string
+    trait_acceptLanguage_header:
+      name: Accept-Language
+      in: header
+      required: false
+      schema:
+        type: string
+      description: 'List of language codes acceptable for the response. You can specify factors that indicate which language should be retrieved if the one with a higher factor was not found in the localized fields. If the value is specified, then it must be present in the tenant configuration.
+
+        * If the header is set to a particular language or a list of languages, all localized fields are retrieved as strings.
+
+        * If the header is set to `*`, all localized fields are retrieved as maps of translations, where the keys are language codes and values are the fields in their respective languages.
+
+        * If the header is empty, localized fields are retrieved in the default language defined in the Configuration Service.
+
+        '
+    trait_paged_pageSize:
+      name: pageSize
+      in: query
+      description: 'Number of items to be retrieved per page.
+
+        '
+      schema:
+        default: 60
+        minimum: 1
+        type: integer
+    X-Total-Count:
+      name: X-Total-Count
+      in: header
+      required: false
+      schema:
+        type: boolean
+        example: true
+        default: false
+      description: 'Flag indicating whether the total number of retrieved items should be returned.
+
+        '
+    trait_sort:
+      name: sort
+      in: query
+      description: "List of properties used to sort the results, separated by colons. The order of properties indicates their priority in sorting.\n\nPossible values:\n* `{fieldName}`\n* `{fieldName}:asc`\n* `{fieldName}:desc`\n\n**Note:** If you want to sort the results by localized properties, the possible values are as follows:\n  * `{fieldName}.{language}`\n  * `{fieldName}.{language}:asc`\n  * `{fieldName}.{language}:desc`\n\nIf the sorting direction is not specified, the fields are sorted in ascending order."
+      schema:
+        type: string
+  responses:
+    Forbidden_403:
+      description: Scope validation failed, details will be provided in response message
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+              status:
+                type: string
+              details:
+                type: array
+                items:
+                  type: string
+          examples:
+            'Scope is missing ':
+              value:
+                code: 403
+                message: Scope validation failed
+                status: Forbidden
+                details:
+                - Missing required scopes '[scope_name]'
+    Bad_request_400:
+      description: Unsupported language provided.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              status:
+                type: string
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: string
+          examples:
+            Unsupported language:
+              value:
+                code: 400
+                status: Bad Request
+                message: Language header validation failed
+                details:
+                - 'Following languages are not supported: ''ru'''
+    Unauthorized_401:
+      description: Given request is unauthorized - the authorization token is invalid or has expired. It usually means that tenant from the token does not match tenant from path.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              fault:
+                type: object
+                properties:
+                  faultstring:
+                    type: string
+                  detail:
+                    type: object
+                    properties:
+                      errorcode:
+                        type: string
+          examples:
+            Invalid Access Token:
+              value:
+                fault:
+                  faultstring: Invalid Access Token
+                  detail:
+                    errorcode: keymanagement.service.invalid_access_token
+            Unauthorized:
+              value: {}
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.emporix.io/oauth/token
+          scopes:
+            iam.access_read: ''
+            iam.access_manage: ''
+            iam.assignment_create_own: ''
+            iam.assignment_manage: ''
+            iam.assignment_delete_own: ''
+            iam.permission_read: ''
+            iam.permission_create: ''
+            iam.permission_update: ''
+            iam.permission_delete: ''
+            iam.role_read: ''
+            iam.role_create: ''
+            iam.role_update: ''
+            iam.role_delete: ''
+            iam.group_read: ''
+            iam.group_read_own: ''
+            iam.user_read: ''
+            iam.user_read_own: ''
+            iam.user_create: ''
+            iam.user_update: ''
+            iam.user_delete: ''
+            iam.scope_manage: ''
+            iam.scope_read: ''
+            iam.scope_read_own: ''
+            iam.resource_read: ''
+            iam.template_read: ''
+x-refined-from:
+- emporix-iam-openapi.yml
+- emporix-iam-openapi.yml
