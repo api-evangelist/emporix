@@ -23,6 +23,7 @@ checked:
 - https://printify.com/integrations/
 - https://www.bigcommerce.com/apps/
 - https://www.printful.com/integrations
+- terraform/integrations/terraform-integration-edges.yml
 summary: null
 marketplace_apps: []
 edges:
@@ -48,22 +49,6 @@ edges:
   relationship: core-infrastructure
   evidence: https://developer.emporix.io/user-guides/extensibility-and-integrations/integrations/sap-integration/sap-sales-quotes-integration.md
   evidence_url: https://developer.emporix.io/user-guides/extensibility-and-integrations/integrations/sap-integration/sap-sales-quotes-integration.md
-- partner_name: Contentful (own)
-  partner: contentful
-  partner_match: mirror
-  mirror_match: domain
-  type: marketplace
-  relationship: platform-app
-  direction: third-party
-  channel: partner-built
-  marketplace: own
-  evidence: https://www.contentful.com/marketplace/emporix/
-  mirror_of: contentful/integrations/contentful-integration-edges.yml
-  apps:
-  - Emporix App
-  listing_count: 1
-  detected: '2026-10-19'
-  detected_by: mirror-platform-listings.py
 - partner_name: MACH Alliance
   partner: null
   partner_match: register
@@ -96,6 +81,39 @@ edges:
       lapsed: false
   detected_by: sweep-mach-headless-commerce.py
   first_seen: '2026-10-20'
+- partner_name: Contentful (own)
+  partner: contentful
+  partner_match: mirror
+  mirror_match: domain
+  type: marketplace
+  relationship: platform-app
+  direction: third-party
+  channel: partner-built
+  marketplace: own
+  evidence: https://www.contentful.com/marketplace/emporix/
+  mirror_of: contentful/integrations/contentful-integration-edges.yml
+  apps:
+  - Emporix App
+  listing_count: 1
+  detected: '2026-10-19'
+  detected_by: mirror-platform-listings.py
+- partner_name: Terraform (terraform-registry)
+  partner: terraform
+  partner_match: mirror
+  mirror_match: register
+  type: marketplace
+  relationship: platform-app
+  direction: third-party
+  channel: partner-built
+  marketplace: terraform-registry
+  evidence: https://registry.terraform.io/providers/emporix/emporix
+  mirror_of: terraform/integrations/terraform-integration-edges.yml
+  apps:
+  - emporix/emporix
+  listing_count: 1
+  detected: '2026-10-21'
+  detected_by: mirror-platform-listings.py
+  category: infrastructure-as-code provider registry listing
 templates: []
 note: No public marketplace listings found on Zapier, Make.com, or other integration platforms. Integration documentation
   focuses on enterprise systems (SAP, Celonis) and workflow automation (Make).

@@ -34,18 +34,6 @@
   relationship: core-infrastructure
   status: not-a-workflow
   arazzo: null
-- slug: emporix-contentful-own
-  label: Contentful (own)
-  partner: contentful
-  partner_name: Contentful (own)
-  type: marketplace
-  marketplace: own
-  channel: partner-built
-  evidence: https://www.contentful.com/marketplace/emporix/
-  source: edge
-  relationship: platform-app
-  status: not-a-workflow
-  arazzo: null
 - slug: emporix-mach-alliance
   label: MACH Alliance
   partner_name: MACH Alliance
@@ -76,5 +64,30 @@
       product_type: MACH certified ISV
       certifier: MACH Alliance
       lapsed: false
+  status: not-a-workflow
+  arazzo: null
+- slug: emporix-contentful-own
+  label: Contentful (own)
+  partner: contentful
+  partner_name: Contentful (own)
+  type: marketplace
+  marketplace: own
+  channel: partner-built
+  evidence: https://www.contentful.com/marketplace/emporix/
+  source: edge
+  relationship: platform-app
+  status: not-a-workflow
+  arazzo: null
+- slug: emporix-terraform-terraform-registry
+  label: Terraform (terraform-registry)
+  partner: terraform
+  partner_name: Terraform (terraform-registry)
+  category: infrastructure-as-code provider registry listing
+  type: marketplace
+  marketplace: terraform-registry
+  channel: partner-built
+  evidence: https://registry.terraform.io/providers/emporix/emporix
+  source: edge
+  relationship: platform-app
   status: not-a-workflow
   arazzo: null
