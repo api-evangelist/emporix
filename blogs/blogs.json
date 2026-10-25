@@ -1,0 +1,14 @@
+{
+  "repo": "emporix",
+  "feeds": [
+    {
+      "source": "https://www.emporix.com/blog",
+      "feed_url": "https://www.emporix.com/blog/rss.xml",
+      "title": "",
+      "saved": 1,
+      "method": "discovered"
+    }
+  ],
+  "post_count": 1,
+  "fetched": "2026-10-24T12:29:31Z"
+}
